@@ -1,6 +1,49 @@
-# SafeECGMatch Release
+<h1 align="center">SafeECGMatch: Calibration-Aware Joint Frequency and Time
+Space Semi-Supervised Learning for Open-Set ECG Classification</h1>
 
-This directory is a self-contained ECG-only release package for the paper experiments. It exposes a small release surface, keeps only the ECG training path, and replaces notebook orchestration with reproducible CLI scripts.
+<p align="center">
+  <a><strong>Hongkyu Koh</strong></a>
+  &nbsp;·&nbsp;
+ 
+  <a href="https://scholar.google.com/citations?user=1rBh9xkAAAAJ"><strong>Ikbeom Jang</strong></a><sup>†</sup>
+  <br>
+  <sub><sub><sup>†</sup> Corresponding author</sub>
+</p>
+
+<p align="center">
+  <img src="./images/REV_GraphicalAbstract.png" width="900">
+</p>
+
+Official repository for the paper
+
+**SafeECGMatch: Calibration-Aware Joint Frequency and Time
+Space Semi-Supervised Learning for Open-Set ECG Classification**
+
+
+
+## Abstract
+
+*Electrocardiogram (ECG) classification models often suffer from
+severe label scarcity, making semi-supervised learning (SSL) an at-
+tractive strategy for reducing annotation costs. In clinical settings,
+however, unlabeled pools frequently contain out-of-distribution
+(OOD) anomalies or diagnostic groups absent from the labeled
+set. Standard SSL forces incorrect pseudo-labels onto these unseen
+classes, producing overconfident predictions. To address this, we
+propose SafeECGMatch, a calibration-aware safe SSL framework
+for single-label ECG classification under label distribution mis-
+match. Methodologically, SafeECGMatch employs a dual-branch
+architecture extracting time-frequency latent representations via
+ECG-specific augmentations. Crucially, it dynamically aligns confi-
+dence with empirical accuracy through adaptive label smoothing
+and temperature scaling, calibrating both the multiclass classifier
+and the OOD detector across temporal and spectral domains. This
+joint optimization allows trustworthy OOD rejection and reliable
+pseudo-labeling. Evaluated on the PTB-XL and PhysioNet/CinC
+Challenge benchmarks, SafeECGMatch achieves state-of-the-art
+accuracy and calibration, advancing reliable knowledge discovery
+in physiological time-series. *
+
 
 ## What Is Here
 
