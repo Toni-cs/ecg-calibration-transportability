@@ -2,16 +2,17 @@
 Space Semi-Supervised Learning for Open-Set ECG Classification</h1>
 
 <p align="center">
-  <a><strong>Hongkyu Koh</strong></a>
-  &nbsp;·&nbsp;
- 
-  <a href="https://scholar.google.com/citations?user=1rBh9xkAAAAJ"><strong>Ikbeom Jang</strong></a><sup>†</sup>
+  <strong>Hongkyu Koh</strong>
+  &nbsp;&nbsp;
+  <a href="https://scholar.google.com/citations?user=1rBh9xkAAAAJ">
+    <strong>Ikbeom Jang</strong>
+  </a><sup>†</sup>
   <br>
-  <sub><sub><sup>†</sup> Corresponding author</sub>
+  <sup>†</sup> Corresponding author
 </p>
 
 <p align="center">
-  <img src="./images/REV_GraphicalAbstract.png" width="900">
+  <img src="./utils/main_figure.png" width="900">
 </p>
 
 Official repository for the paper
@@ -23,7 +24,7 @@ Space Semi-Supervised Learning for Open-Set ECG Classification**
 
 ## Abstract
 
-*Electrocardiogram (ECG) classification models often suffer from
+Electrocardiogram (ECG) classification models often suffer from
 severe label scarcity, making semi-supervised learning (SSL) an at-
 tractive strategy for reducing annotation costs. In clinical settings,
 however, unlabeled pools frequently contain out-of-distribution
@@ -42,7 +43,7 @@ joint optimization allows trustworthy OOD rejection and reliable
 pseudo-labeling. Evaluated on the PTB-XL and PhysioNet/CinC
 Challenge benchmarks, SafeECGMatch achieves state-of-the-art
 accuracy and calibration, advancing reliable knowledge discovery
-in physiological time-series. *
+in physiological time-series. 
 
 
 ## What Is Here
