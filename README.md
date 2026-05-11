@@ -8,7 +8,7 @@ Space Semi-Supervised Learning for Open-Set ECG Classification</h1>
     <strong>Ikbeom Jang</strong>
   </a><sup>†</sup>
   <br>
-  <sup>†</sup> Corresponding author
+  <small><sup>†</sup> Corresponding author</small>
 </p>
 
 <p align="center">
@@ -24,6 +24,7 @@ Space Semi-Supervised Learning for Open-Set ECG Classification**
 
 ## Abstract
 
+<p><em>
 Electrocardiogram (ECG) classification models often suffer from
 severe label scarcity, making semi-supervised learning (SSL) an at-
 tractive strategy for reducing annotation costs. In clinical settings,
@@ -43,7 +44,8 @@ joint optimization allows trustworthy OOD rejection and reliable
 pseudo-labeling. Evaluated on the PTB-XL and PhysioNet/CinC
 Challenge benchmarks, SafeECGMatch achieves state-of-the-art
 accuracy and calibration, advancing reliable knowledge discovery
-in physiological time-series. 
+in physiological time-series.
+</em></p>
 
 
 ## What Is Here
