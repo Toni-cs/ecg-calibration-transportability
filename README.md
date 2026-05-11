@@ -12,7 +12,7 @@ Space Semi-Supervised Learning for Open-Set ECG Classification</h1>
 </p>
 
 <p align="center">
-  <img src="./utils/main_figure.png" width="900">
+  <img src="./assets/main_figure.png" width="900">
 </p>
 
 Official repository for the paper
