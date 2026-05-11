@@ -8,7 +8,9 @@ Space Semi-Supervised Learning for Open-Set ECG Classification</h1>
     <strong>Ikbeom Jang</strong>
   </a><sup>†</sup>
   <br>
-  <small><sup>†</sup> Corresponding author</small>
+  <span style="font-size: 12px;">
+    <sup>†</sup> Corresponding author
+  </span>
 </p>
 
 <p align="center">
