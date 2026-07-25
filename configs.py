@@ -481,8 +481,8 @@ class CaliMatchConfig(ConfigBase):
             choices=("finetune", "test", "semi"),
         )
 
-        parser.add_argument("--tau", type=float, default=0.95)
-        parser.add_argument("--pi", type=float, default=0.5)
+        parser.add_argument("--tau", type=float, default=0.9)
+        parser.add_argument("--pi", type=float, default=0.6)
 
         parser.add_argument(
             "--train-n-bins",
