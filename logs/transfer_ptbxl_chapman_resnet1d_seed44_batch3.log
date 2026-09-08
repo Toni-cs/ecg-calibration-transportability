@@ -1,0 +1,51 @@
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2162r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\resnet1d\seed44\best_model.pt (epoch 10, val_ece=0.0092, d_model=64, n_layers=2)
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0213 [+0.0004,+0.0262] | OOD ΔECE=+0.0250 [+0.0228,+0.0265] | decay=+0.0038
+  [platt] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0217 [+0.0040,+0.0259] | OOD ΔECE=+0.0459 [+0.0396,+0.0504] | decay=+0.0243
+  [isotonic] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0163 [+0.0004,+0.0228] | OOD ΔECE=+0.0354 [+0.0311,+0.0397] | decay=+0.0191
+  [vector] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0200 [+0.0115,+0.0253] | OOD ΔECE=+0.0733 [+0.0638,+0.0811] | decay=+0.0532
+  [matrix] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0213 [+0.0107,+0.0272] | OOD ΔECE=+0.0445 [+0.0340,+0.0540] | decay=+0.0232
+  [dirichlet] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0214 [+0.0110,+0.0271] | OOD ΔECE=+0.0449 [+0.0347,+0.0545] | decay=+0.0235
+  [em_prior] π̂_target=[0.18  0.184 0.632 0.004 0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [em_prior] w=π̂/π_train=[0.45 0.73 2.88 0.04 0.  ]
+  [em_prior] [sanity] π̂_ID=[0.428 0.338 0.197 0.037 0.   ] w_ID=[1.07 1.35 0.9  0.35 0.  ] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0011 [-0.0102,+0.0068] | OOD ΔECE=+0.0137 [-0.0001,+0.0275] | decay=+0.0148
+  [bbse_prior] π̂_target=[0.156 0.061 0.754 0.029 0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [bbse_prior] w=π̂/π_train=[0.39 0.25 3.44 0.28 0.  ]
+  [bbse_prior] cond(C)=95.2 rank=5/5
+  [bbse_prior] [sanity] π̂_ID=[0.406 0.248 0.218 0.104 0.024] w_ID=[1.02 0.99 0.99 1.   0.88] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0089 [-0.0034,+0.0192] | OOD ΔECE=+0.0122 [-0.0033,+0.0292] | decay=+0.0033
+
+Saved to checkpoints\transfer\ptbxl_chapman\resnet1d\seed44\transfer_result.json
+
+============================================================
+S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)
+============================================================
+  ts        decay均值=+0.0038 sd=0.0000 (n=1 seed)
+  platt     decay均值=+0.0243 sd=0.0000 (n=1 seed)
+  isotonic  decay均值=+0.0191 sd=0.0000 (n=1 seed)
+  vector    decay均值=+0.0532 sd=0.0000 (n=1 seed)
+  matrix    decay均值=+0.0232 sd=0.0000 (n=1 seed)
+  dirichlet decay均值=+0.0235 sd=0.0000 (n=1 seed)
+  em_prior  decay均值=+0.0148 sd=0.0000 (n=1 seed)
+  bbse_prior decay均值=+0.0033 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\resnet1d\aggregate.json

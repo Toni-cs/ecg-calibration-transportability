@@ -1,0 +1,58 @@
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Epoch 1/50 | train_loss=1.0412 train_acc=60.92% | val_loss=0.8883 val_acc=68.38% ECE=0.0543
+Epoch 2/50 | train_loss=0.8913 train_acc=67.80% | val_loss=0.8211 val_acc=71.93% ECE=0.0376
+Epoch 3/50 | train_loss=0.8426 train_acc=69.73% | val_loss=0.8251 val_acc=69.59% ECE=0.0229
+Epoch 4/50 | train_loss=0.8078 train_acc=71.15% | val_loss=0.7525 val_acc=73.52% ECE=0.0336
+Epoch 5/50 | train_loss=0.7840 train_acc=71.79% | val_loss=0.7423 val_acc=73.14% ECE=0.0299
+Epoch 6/50 | train_loss=0.7658 train_acc=72.67% | val_loss=0.7350 val_acc=73.47% ECE=0.0219
+Epoch 7/50 | train_loss=0.7524 train_acc=73.08% | val_loss=0.7306 val_acc=73.38% ECE=0.0299
+Epoch 8/50 | train_loss=0.7437 train_acc=73.88% | val_loss=0.6888 val_acc=76.23% ECE=0.0344
+Epoch 9/50 | train_loss=0.7361 train_acc=73.66% | val_loss=0.7379 val_acc=73.80% ECE=0.0328
+Epoch 10/50 | train_loss=0.7274 train_acc=73.93% | val_loss=0.7329 val_acc=73.89% ECE=0.0420
+Epoch 11/50 | train_loss=0.7167 train_acc=74.31% | val_loss=0.6849 val_acc=76.09% ECE=0.0389
+Epoch 12/50 | train_loss=0.7082 train_acc=74.70% | val_loss=0.6462 val_acc=77.63% ECE=0.0153
+Epoch 13/50 | train_loss=0.6992 train_acc=75.10% | val_loss=0.6995 val_acc=75.25% ECE=0.0231
+Epoch 14/50 | train_loss=0.6914 train_acc=75.38% | val_loss=0.6523 val_acc=76.93% ECE=0.0177
+Epoch 15/50 | train_loss=0.6831 train_acc=75.97% | val_loss=0.6515 val_acc=77.35% ECE=0.0233
+Epoch 16/50 | train_loss=0.6761 train_acc=75.78% | val_loss=0.6471 val_acc=77.44% ECE=0.0111
+Epoch 17/50 | train_loss=0.6713 train_acc=76.25% | val_loss=0.6401 val_acc=77.49% ECE=0.0220
+Epoch 18/50 | train_loss=0.6628 train_acc=76.69% | val_loss=0.6288 val_acc=78.05% ECE=0.0125
+Epoch 19/50 | train_loss=0.6621 train_acc=76.52% | val_loss=0.6412 val_acc=77.30% ECE=0.0360
+Epoch 20/50 | train_loss=0.6526 train_acc=76.59% | val_loss=0.6043 val_acc=79.08% ECE=0.0206
+Epoch 21/50 | train_loss=0.6427 train_acc=77.39% | val_loss=0.6257 val_acc=77.21% ECE=0.0409
+Epoch 22/50 | train_loss=0.6422 train_acc=77.13% | val_loss=0.5998 val_acc=79.31% ECE=0.0389
+Epoch 23/50 | train_loss=0.6351 train_acc=77.43% | val_loss=0.5882 val_acc=79.54% ECE=0.0347
+Epoch 24/50 | train_loss=0.6300 train_acc=77.82% | val_loss=0.6034 val_acc=78.94% ECE=0.0225
+Epoch 25/50 | train_loss=0.6250 train_acc=77.97% | val_loss=0.5827 val_acc=79.26% ECE=0.0136
+Epoch 26/50 | train_loss=0.6213 train_acc=77.99% | val_loss=0.5776 val_acc=80.20% ECE=0.0183
+Early stopping at epoch 26
+[chapman] 患者级四分割: train(12156p/12156r) val(2028p/2028r) cal(2027p/2027r) test(4053p/4053r)
+[chapman] 标签分布(test): {'STTC': 2823, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Traceback (most recent call last):
+  File "D:\A1\ecg-lab-v2\scripts\eval_transfer.py", line 236, in <module>
+    main()
+  File "D:\A1\ecg-lab-v2\scripts\eval_transfer.py", line 211, in main
+    r = run_pair(args, args.source, args.source_dir,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\A1\ecg-lab-v2\scripts\eval_transfer.py", line 123, in run_pair
+    tgt_eval = evaluate(model, tgt_loaders, device, compute_calibration=False)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\A1\ecg-lab-v2\scripts\train.py", line 176, in evaluate
+    for x, y in dataloader:
+                ^^^^^^^^^^
+  File "C:\python\Lib\site-packages\torch\utils\data\dataloader.py", line 741, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "C:\python\Lib\site-packages\torch\utils\data\dataloader.py", line 801, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\python\Lib\site-packages\torch\utils\data\_utils\fetch.py", line 54, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+            ~~~~~~~~~~~~^^^^^
+  File "D:\A1\ecg-lab-v2\src\data\datasets.py", line 179, in __getitem__
+    x = self._load_signal(self.npy_paths[idx])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\A1\ecg-lab-v2\src\data\datasets.py", line 157, in _load_signal
+    raise ValueError(f"信号含NaN/Inf: {path}")
+ValueError: 信号含NaN/Inf: data\chapman_processed_v2\data\chapman_JS14627.npy

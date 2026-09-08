@@ -1,0 +1,30 @@
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2162r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Epoch 1/50 | train_loss=0.9585 train_acc=64.86% | val_loss=0.8638 val_acc=70.63% ECE=0.0242
+Epoch 2/50 | train_loss=0.8308 train_acc=69.94% | val_loss=0.8248 val_acc=69.43% ECE=0.0280
+Epoch 3/50 | train_loss=0.7701 train_acc=72.28% | val_loss=0.7243 val_acc=74.42% ECE=0.0382
+Epoch 4/50 | train_loss=0.7388 train_acc=73.74% | val_loss=0.6991 val_acc=74.88% ECE=0.0401
+Epoch 5/50 | train_loss=0.7197 train_acc=74.05% | val_loss=0.6839 val_acc=75.30% ECE=0.0518
+Epoch 6/50 | train_loss=0.7041 train_acc=74.86% | val_loss=0.6665 val_acc=76.87% ECE=0.0293
+Epoch 7/50 | train_loss=0.6855 train_acc=75.46% | val_loss=0.6638 val_acc=76.92% ECE=0.0418
+Epoch 8/50 | train_loss=0.6739 train_acc=76.11% | val_loss=0.6495 val_acc=77.29% ECE=0.0320
+Epoch 9/50 | train_loss=0.6658 train_acc=76.50% | val_loss=0.6145 val_acc=78.45% ECE=0.0191
+Epoch 10/50 | train_loss=0.6532 train_acc=76.92% | val_loss=0.6393 val_acc=77.75% ECE=0.0228
+Epoch 11/50 | train_loss=0.6492 train_acc=77.26% | val_loss=0.6177 val_acc=77.89% ECE=0.0092
+Epoch 12/50 | train_loss=0.6368 train_acc=77.50% | val_loss=0.5870 val_acc=78.86% ECE=0.0192
+Epoch 13/50 | train_loss=0.6266 train_acc=77.84% | val_loss=0.5779 val_acc=79.65% ECE=0.0242
+Epoch 14/50 | train_loss=0.6200 train_acc=78.16% | val_loss=0.5873 val_acc=79.56% ECE=0.0317
+Epoch 15/50 | train_loss=0.6122 train_acc=78.46% | val_loss=0.5767 val_acc=79.65% ECE=0.0300
+Epoch 16/50 | train_loss=0.6054 train_acc=78.85% | val_loss=0.5736 val_acc=79.46% ECE=0.0216
+Epoch 17/50 | train_loss=0.5962 train_acc=79.07% | val_loss=0.5471 val_acc=80.02% ECE=0.0250
+Epoch 18/50 | train_loss=0.5865 train_acc=79.45% | val_loss=0.5668 val_acc=79.74% ECE=0.0130
+Epoch 19/50 | train_loss=0.5780 train_acc=79.61% | val_loss=0.5332 val_acc=80.94% ECE=0.0294
+Epoch 20/50 | train_loss=0.5689 train_acc=79.99% | val_loss=0.5542 val_acc=80.48% ECE=0.0388
+Epoch 21/50 | train_loss=0.5657 train_acc=80.01% | val_loss=0.5550 val_acc=79.88% ECE=0.0500
+Early stopping at epoch 21
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0213 [+0.0004,+0.0262] | OOD ΔECE=+0.0250 [+0.0228,+0.0265] | decay=+0.0038
+  [platt] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)

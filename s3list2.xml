@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><Name>physionet-open</Name><Prefix>challenge-202</Prefix><KeyCount>1</KeyCount><MaxKeys>30</MaxKeys><Delimiter>/</Delimiter><IsTruncated>false</IsTruncated><CommonPrefixes><Prefix>challenge-2022/</Prefix></CommonPrefixes></ListBucketResult>

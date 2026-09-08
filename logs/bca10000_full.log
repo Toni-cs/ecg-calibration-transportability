@@ -1,0 +1,1403 @@
+[plan] 60 runs to do, 0 already BCa-complete
+
+============================================================
+BCa B=10000: chapman -> cpsc [inceptiontime] seed42
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\inceptiontime\seed42\best_model.pt (epoch 5, val_ece=0.0106, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0075 [+0.0022,+0.0111] | OOD ¦¤ECE=+0.0139 [+0.0135,+0.0143] | decay=+0.0064
+
+Saved to checkpoints\transfer\chapman_cpsc\inceptiontime\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0064 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\inceptiontime\aggregate.json
+
+[ret=0] chapman->cpsc inceptiontime seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [inceptiontime] seed43
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\inceptiontime\seed43\best_model.pt (epoch 3, val_ece=0.0188, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0012 [-0.0016,+0.0039] | OOD ¦¤ECE=+0.0101 [+0.0099,+0.0103] | decay=+0.0089
+
+Saved to checkpoints\transfer\chapman_cpsc\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0089 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\inceptiontime\aggregate.json
+
+[ret=0] chapman->cpsc inceptiontime seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [inceptiontime] seed44
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\inceptiontime\seed44\best_model.pt (epoch 13, val_ece=0.0159, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0104 [+0.0021,+0.0150] | OOD ¦¤ECE=+0.0186 [+0.0181,+0.0191] | decay=+0.0082
+
+Saved to checkpoints\transfer\chapman_cpsc\inceptiontime\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0082 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\inceptiontime\aggregate.json
+
+[ret=0] chapman->cpsc inceptiontime seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [inceptiontime] seed45
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\inceptiontime\seed45\best_model.pt (epoch 4, val_ece=0.0053, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0019 [-0.0014,+0.0043] | OOD ¦¤ECE=-0.0057 [-0.0058,-0.0055] | decay=-0.0075
+
+Saved to checkpoints\transfer\chapman_cpsc\inceptiontime\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0075 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\inceptiontime\aggregate.json
+
+[ret=0] chapman->cpsc inceptiontime seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [inceptiontime] seed46
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\inceptiontime\seed46\best_model.pt (epoch 14, val_ece=0.0083, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0044 [-0.0039,+0.0092] | OOD ¦¤ECE=+0.0130 [+0.0126,+0.0133] | decay=+0.0086
+
+Saved to checkpoints\transfer\chapman_cpsc\inceptiontime\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0086 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\inceptiontime\aggregate.json
+
+[ret=0] chapman->cpsc inceptiontime seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [resnet1d] seed42
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\resnet1d\seed42\best_model.pt (epoch 9, val_ece=0.0112, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0002 [-0.0091,+0.0076] | OOD ¦¤ECE=+0.0205 [+0.0200,+0.0211] | decay=+0.0203
+
+Saved to checkpoints\transfer\chapman_cpsc\resnet1d\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0203 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\resnet1d\aggregate.json
+
+[ret=0] chapman->cpsc resnet1d seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [resnet1d] seed43
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\resnet1d\seed43\best_model.pt (epoch 1, val_ece=0.0064, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0003 [+0.0000,+0.0004] | OOD ¦¤ECE=-0.0006 [-0.0006,-0.0006] | decay=-0.0009
+
+Saved to checkpoints\transfer\chapman_cpsc\resnet1d\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0009 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\resnet1d\aggregate.json
+
+[ret=0] chapman->cpsc resnet1d seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [resnet1d] seed44
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\resnet1d\seed44\best_model.pt (epoch 3, val_ece=0.0115, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0007 [-0.0025,+0.0032] | OOD ¦¤ECE=+0.0078 [+0.0075,+0.0080] | decay=+0.0085
+
+Saved to checkpoints\transfer\chapman_cpsc\resnet1d\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0085 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\resnet1d\aggregate.json
+
+[ret=0] chapman->cpsc resnet1d seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [resnet1d] seed45
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\resnet1d\seed45\best_model.pt (epoch 13, val_ece=0.0102, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0016 [-0.0104,+0.0093] | OOD ¦¤ECE=+0.0271 [+0.0263,+0.0279] | decay=+0.0287
+
+Saved to checkpoints\transfer\chapman_cpsc\resnet1d\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0287 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\resnet1d\aggregate.json
+
+[ret=0] chapman->cpsc resnet1d seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> cpsc [resnet1d] seed46
+============================================================
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\resnet1d\seed46\best_model.pt (epoch 2, val_ece=0.0134, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0024 [-0.0101,+0.0082] | OOD ¦¤ECE=+0.0169 [+0.0163,+0.0174] | decay=+0.0193
+
+Saved to checkpoints\transfer\chapman_cpsc\resnet1d\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0193 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\resnet1d\aggregate.json
+
+[ret=0] chapman->cpsc resnet1d seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [inceptiontime] seed42
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\inceptiontime\seed42\best_model.pt (epoch 2, val_ece=0.0183, d_model=32, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0004 [-0.0009,+0.0017] | OOD ¦¤ECE=-0.0025 [-0.0035,-0.0016] | decay=-0.0028
+
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0028 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] chapman->ptbxl inceptiontime seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [inceptiontime] seed43
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\inceptiontime\seed43\best_model.pt (epoch 3, val_ece=0.0115, d_model=32, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0005 [-0.0032,+0.0041] | OOD ¦¤ECE=+0.0095 [+0.0068,+0.0107] | decay=+0.0090
+
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0090 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] chapman->ptbxl inceptiontime seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [inceptiontime] seed44
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\inceptiontime\seed44\best_model.pt (epoch 10, val_ece=0.0139, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2162r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0055 [+0.0024,+0.0095] | OOD ¦¤ECE=+0.0136 [+0.0106,+0.0152] | decay=+0.0081
+
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0081 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] chapman->ptbxl inceptiontime seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [inceptiontime] seed45
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\inceptiontime\seed45\best_model.pt (epoch 3, val_ece=0.0120, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2188r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0128 [-0.0175,-0.0070] | OOD ¦¤ECE=+0.0238 [+0.0208,+0.0250] | decay=+0.0366
+
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0366 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] chapman->ptbxl inceptiontime seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [inceptiontime] seed46
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\inceptiontime\seed46\best_model.pt (epoch 9, val_ece=0.0147, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2175r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0048 [-0.0049,+0.0103] | OOD ¦¤ECE=+0.0162 [+0.0141,+0.0176] | decay=+0.0114
+
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0114 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] chapman->ptbxl inceptiontime seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [resnet1d] seed42
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\resnet1d\seed42\best_model.pt (epoch 11, val_ece=0.0148, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0031 [-0.0123,+0.0101] | OOD ¦¤ECE=+0.0309 [+0.0291,+0.0318] | decay=+0.0340
+
+Saved to checkpoints\transfer\chapman_ptbxl\resnet1d\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0340 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\resnet1d\aggregate.json
+
+[ret=0] chapman->ptbxl resnet1d seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [resnet1d] seed43
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\resnet1d\seed43\best_model.pt (epoch 15, val_ece=0.0142, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0128 [+0.0088,+0.0161] | OOD ¦¤ECE=+0.0291 [+0.0284,+0.0298] | decay=+0.0163
+
+Saved to checkpoints\transfer\chapman_ptbxl\resnet1d\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0163 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\resnet1d\aggregate.json
+
+[ret=0] chapman->ptbxl resnet1d seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [resnet1d] seed44
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\resnet1d\seed44\best_model.pt (epoch 11, val_ece=0.0108, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2162r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0059 [+0.0009,+0.0083] | OOD ¦¤ECE=+0.0172 [+0.0168,+0.0176] | decay=+0.0113
+
+Saved to checkpoints\transfer\chapman_ptbxl\resnet1d\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0113 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\resnet1d\aggregate.json
+
+[ret=0] chapman->ptbxl resnet1d seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [resnet1d] seed45
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\resnet1d\seed45\best_model.pt (epoch 0, val_ece=0.0140, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2188r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0010 [-0.0019,+0.0008] | OOD ¦¤ECE=-0.0036 [-0.0036,-0.0035] | decay=-0.0025
+
+Saved to checkpoints\transfer\chapman_ptbxl\resnet1d\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0025 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\resnet1d\aggregate.json
+
+[ret=0] chapman->ptbxl resnet1d seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: chapman -> ptbxl [resnet1d] seed46
+============================================================
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\resnet1d\seed46\best_model.pt (epoch 11, val_ece=0.0106, d_model=64, n_layers=2)
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2175r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0042 [-0.0077,+0.0022] | OOD ¦¤ECE=+0.0149 [+0.0140,+0.0154] | decay=+0.0191
+
+Saved to checkpoints\transfer\chapman_ptbxl\resnet1d\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0191 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\resnet1d\aggregate.json
+
+[ret=0] chapman->ptbxl resnet1d seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [inceptiontime] seed42
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\inceptiontime\seed42\best_model.pt (epoch 7, val_ece=0.0177, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0029 [+0.0004,+0.0051] | OOD ¦¤ECE=+0.0065 [+0.0061,+0.0067] | decay=+0.0036
+
+Saved to checkpoints\transfer\cpsc_chapman\inceptiontime\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0036 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\inceptiontime\aggregate.json
+
+[ret=0] cpsc->chapman inceptiontime seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [inceptiontime] seed43
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\inceptiontime\seed43\best_model.pt (epoch 12, val_ece=0.0203, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0012 [-0.0182,+0.0162] | OOD ¦¤ECE=+0.0209 [+0.0203,+0.0213] | decay=+0.0221
+
+Saved to checkpoints\transfer\cpsc_chapman\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0221 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\inceptiontime\aggregate.json
+
+[ret=0] cpsc->chapman inceptiontime seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [inceptiontime] seed44
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\inceptiontime\seed44\best_model.pt (epoch 7, val_ece=0.0219, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0164 [+0.0095,+0.0195] | OOD ¦¤ECE=+0.0182 [+0.0167,+0.0186] | decay=+0.0018
+
+Saved to checkpoints\transfer\cpsc_chapman\inceptiontime\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0018 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\inceptiontime\aggregate.json
+
+[ret=0] cpsc->chapman inceptiontime seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [inceptiontime] seed45
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\inceptiontime\seed45\best_model.pt (epoch 11, val_ece=0.0159, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0091 [-0.0042,+0.0183] | OOD ¦¤ECE=+0.0245 [+0.0242,+0.0249] | decay=+0.0155
+
+Saved to checkpoints\transfer\cpsc_chapman\inceptiontime\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0155 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\inceptiontime\aggregate.json
+
+[ret=0] cpsc->chapman inceptiontime seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [inceptiontime] seed46
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\inceptiontime\seed46\best_model.pt (epoch 2, val_ece=0.0272, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0014 [+0.0007,+0.0019] | OOD ¦¤ECE=+0.0024 [+0.0024,+0.0025] | decay=+0.0010
+
+Saved to checkpoints\transfer\cpsc_chapman\inceptiontime\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0010 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\inceptiontime\aggregate.json
+
+[ret=0] cpsc->chapman inceptiontime seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [resnet1d] seed42
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\resnet1d\seed42\best_model.pt (epoch 0, val_ece=0.0307, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0002 [-0.0013,+0.0011] | OOD ¦¤ECE=-0.0010 [-0.0012,-0.0008] | decay=-0.0008
+
+Saved to checkpoints\transfer\cpsc_chapman\resnet1d\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0008 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\resnet1d\aggregate.json
+
+[ret=0] cpsc->chapman resnet1d seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [resnet1d] seed43
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\resnet1d\seed43\best_model.pt (epoch 6, val_ece=0.0192, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0038 [-0.0027,+0.0069] | OOD ¦¤ECE=+0.0096 [+0.0094,+0.0098] | decay=+0.0059
+
+Saved to checkpoints\transfer\cpsc_chapman\resnet1d\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0059 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\resnet1d\aggregate.json
+
+[ret=0] cpsc->chapman resnet1d seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [resnet1d] seed44
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\resnet1d\seed44\best_model.pt (epoch 4, val_ece=0.0269, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0152 [-0.0179,-0.0093] | OOD ¦¤ECE=-0.0168 [-0.0170,-0.0165] | decay=-0.0016
+
+Saved to checkpoints\transfer\cpsc_chapman\resnet1d\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0016 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\resnet1d\aggregate.json
+
+[ret=0] cpsc->chapman resnet1d seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [resnet1d] seed45
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\resnet1d\seed45\best_model.pt (epoch 2, val_ece=0.0190, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0137 [+0.0034,+0.0213] | OOD ¦¤ECE=+0.0181 [+0.0145,+0.0208] | decay=+0.0043
+
+Saved to checkpoints\transfer\cpsc_chapman\resnet1d\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0043 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\resnet1d\aggregate.json
+
+[ret=0] cpsc->chapman resnet1d seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> chapman [resnet1d] seed46
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\resnet1d\seed46\best_model.pt (epoch 7, val_ece=0.0227, d_model=64, n_layers=2)
+[chapman] ×Ó¿Õ¼ä½µ¼¶: ±£Áô19785Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı458Ìõ (·Ö²¼{'HYP': 458})
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0017 [+0.0006,+0.0021] | OOD ¦¤ECE=+0.0017 [+0.0016,+0.0019] | decay=-0.0000
+
+Saved to checkpoints\transfer\cpsc_chapman\resnet1d\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0000 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\resnet1d\aggregate.json
+
+[ret=0] cpsc->chapman resnet1d seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [inceptiontime] seed42
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed42\best_model.pt (epoch 7, val_ece=0.0177, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2103r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0029 [+0.0003,+0.0051] | OOD ¦¤ECE=+0.0068 [+0.0066,+0.0069] | decay=+0.0038
+
+Saved to checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0038 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] cpsc->ptbxl inceptiontime seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [inceptiontime] seed43
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed43\best_model.pt (epoch 12, val_ece=0.0203, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2073r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0012 [-0.0181,+0.0164] | OOD ¦¤ECE=+0.0203 [+0.0198,+0.0207] | decay=+0.0215
+
+Saved to checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0215 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] cpsc->ptbxl inceptiontime seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [inceptiontime] seed44
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed44\best_model.pt (epoch 18, val_ece=0.0238, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2122r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0158 [+0.0086,+0.0192] | OOD ¦¤ECE=+0.0195 [+0.0190,+0.0200] | decay=+0.0037
+
+Saved to checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0037 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] cpsc->ptbxl inceptiontime seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [inceptiontime] seed45
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed45\best_model.pt (epoch 16, val_ece=0.0196, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2116r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0052 [-0.0069,+0.0137] | OOD ¦¤ECE=+0.0197 [+0.0193,+0.0201] | decay=+0.0145
+
+Saved to checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0145 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] cpsc->ptbxl inceptiontime seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [inceptiontime] seed46
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed46\best_model.pt (epoch 13, val_ece=0.0223, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2173r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0002 [+0.0001,+0.0002] | OOD ¦¤ECE=+0.0002 [+0.0002,+0.0002] | decay=+0.0000
+
+Saved to checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0000 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] cpsc->ptbxl inceptiontime seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [resnet1d] seed42
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\resnet1d\seed42\best_model.pt (epoch 7, val_ece=0.0222, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2103r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0114 [+0.0071,+0.0143] | OOD ¦¤ECE=+0.0150 [+0.0148,+0.0153] | decay=+0.0037
+
+Saved to checkpoints\transfer\cpsc_ptbxl\resnet1d\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0037 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\resnet1d\aggregate.json
+
+[ret=0] cpsc->ptbxl resnet1d seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [resnet1d] seed43
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\resnet1d\seed43\best_model.pt (epoch 3, val_ece=0.0184, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2073r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0048 [+0.0010,+0.0052] | OOD ¦¤ECE=-0.0050 [-0.0051,-0.0049] | decay=-0.0098
+
+Saved to checkpoints\transfer\cpsc_ptbxl\resnet1d\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0098 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\resnet1d\aggregate.json
+
+[ret=0] cpsc->ptbxl resnet1d seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [resnet1d] seed44
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\resnet1d\seed44\best_model.pt (epoch 8, val_ece=0.0233, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2122r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0032 [-0.0042,-0.0009] | OOD ¦¤ECE=-0.0049 [-0.0049,-0.0048] | decay=-0.0017
+
+Saved to checkpoints\transfer\cpsc_ptbxl\resnet1d\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0017 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\resnet1d\aggregate.json
+
+[ret=0] cpsc->ptbxl resnet1d seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [resnet1d] seed45
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\resnet1d\seed45\best_model.pt (epoch 13, val_ece=0.0155, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2116r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0130 [+0.0061,+0.0171] | OOD ¦¤ECE=+0.0176 [+0.0173,+0.0180] | decay=+0.0047
+
+Saved to checkpoints\transfer\cpsc_ptbxl\resnet1d\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0047 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\resnet1d\aggregate.json
+
+[ret=0] cpsc->ptbxl resnet1d seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: cpsc -> ptbxl [resnet1d] seed46
+============================================================
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\resnet1d\seed46\best_model.pt (epoch 8, val_ece=0.0387, d_model=64, n_layers=2)
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2173r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0261 [+0.0219,+0.0294] | OOD ¦¤ECE=+0.0302 [+0.0295,+0.0308] | decay=+0.0041
+
+Saved to checkpoints\transfer\cpsc_ptbxl\resnet1d\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0041 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\resnet1d\aggregate.json
+
+[ret=0] cpsc->ptbxl resnet1d seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [inceptiontime] seed42
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\inceptiontime\seed42\best_model.pt (epoch 13, val_ece=0.0125, d_model=32, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0239 [+0.0168,+0.0310] | OOD ¦¤ECE=+0.0308 [+0.0275,+0.0335] | decay=+0.0069
+
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0069 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->chapman inceptiontime seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [inceptiontime] seed43
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\inceptiontime\seed43\best_model.pt (epoch 8, val_ece=0.0186, d_model=32, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0245 [+0.0160,+0.0301] | OOD ¦¤ECE=+0.0254 [+0.0225,+0.0277] | decay=+0.0009
+
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0009 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->chapman inceptiontime seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [inceptiontime] seed44
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2162r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\inceptiontime\seed44\best_model.pt (epoch 6, val_ece=0.0144, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0173 [+0.0110,+0.0203] | OOD ¦¤ECE=+0.0203 [+0.0195,+0.0207] | decay=+0.0030
+
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0030 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->chapman inceptiontime seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [inceptiontime] seed45
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2188r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\inceptiontime\seed45\best_model.pt (epoch 12, val_ece=0.0148, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0162 [+0.0029,+0.0226] | OOD ¦¤ECE=+0.0226 [+0.0200,+0.0245] | decay=+0.0064
+
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0064 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->chapman inceptiontime seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [inceptiontime] seed46
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2175r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\inceptiontime\seed46\best_model.pt (epoch 1, val_ece=0.0104, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=-0.0011 [-0.0026,+0.0023] | OOD ¦¤ECE=-0.0026 [-0.0029,-0.0023] | decay=-0.0015
+
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0015 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->chapman inceptiontime seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [resnet1d] seed42
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\resnet1d\seed42\best_model.pt (epoch 6, val_ece=0.0075, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0145 [+0.0053,+0.0230] | OOD ¦¤ECE=+0.0249 [+0.0189,+0.0271] | decay=+0.0104
+
+Saved to checkpoints\transfer\ptbxl_chapman\resnet1d\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0104 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\resnet1d\aggregate.json
+
+[ret=0] ptbxl->chapman resnet1d seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [resnet1d] seed43
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\resnet1d\seed43\best_model.pt (epoch 12, val_ece=0.0137, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0338 [+0.0201,+0.0448] | OOD ¦¤ECE=+0.0385 [+0.0320,+0.0431] | decay=+0.0047
+
+Saved to checkpoints\transfer\ptbxl_chapman\resnet1d\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0047 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\resnet1d\aggregate.json
+
+[ret=0] ptbxl->chapman resnet1d seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [resnet1d] seed44
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2162r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\resnet1d\seed44\best_model.pt (epoch 10, val_ece=0.0092, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0213 [+0.0068,+0.0272] | OOD ¦¤ECE=+0.0250 [+0.0227,+0.0264] | decay=+0.0038
+
+Saved to checkpoints\transfer\ptbxl_chapman\resnet1d\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0038 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\resnet1d\aggregate.json
+
+[ret=0] ptbxl->chapman resnet1d seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [resnet1d] seed45
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2188r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\resnet1d\seed45\best_model.pt (epoch 4, val_ece=0.0146, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0228 [+0.0139,+0.0270] | OOD ¦¤ECE=+0.0262 [+0.0231,+0.0279] | decay=+0.0035
+
+Saved to checkpoints\transfer\ptbxl_chapman\resnet1d\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0035 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\resnet1d\aggregate.json
+
+[ret=0] ptbxl->chapman resnet1d seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> chapman [resnet1d] seed46
+============================================================
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(13006p/17192r) val(1859p/2175r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\resnet1d\seed46\best_model.pt (epoch 15, val_ece=0.0138, d_model=64, n_layers=2)
+[chapman] »¼Õß¼¶ËÄ·Ö¸î: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] ±êÇ©·Ö²¼(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0239 [+0.0131,+0.0328] | OOD ¦¤ECE=+0.0286 [+0.0220,+0.0343] | decay=+0.0047
+
+Saved to checkpoints\transfer\ptbxl_chapman\resnet1d\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0047 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\resnet1d\aggregate.json
+
+[ret=0] ptbxl->chapman resnet1d seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [inceptiontime] seed42
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2103r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed42\best_model.pt (epoch 12, val_ece=0.0093, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0196 [+0.0142,+0.0260] | OOD ¦¤ECE=+0.0271 [+0.0244,+0.0289] | decay=+0.0075
+
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0075 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->cpsc inceptiontime seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [inceptiontime] seed43
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2073r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed43\best_model.pt (epoch 18, val_ece=0.0122, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0166 [+0.0076,+0.0228] | OOD ¦¤ECE=+0.0245 [+0.0222,+0.0260] | decay=+0.0080
+
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0080 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->cpsc inceptiontime seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [inceptiontime] seed44
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2122r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed44\best_model.pt (epoch 13, val_ece=0.0071, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0183 [+0.0097,+0.0266] | OOD ¦¤ECE=+0.0320 [+0.0303,+0.0332] | decay=+0.0137
+
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0137 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->cpsc inceptiontime seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [inceptiontime] seed45
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2116r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed45\best_model.pt (epoch 5, val_ece=0.0105, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0006 [-0.0121,+0.0112] | OOD ¦¤ECE=+0.0131 [+0.0105,+0.0149] | decay=+0.0124
+
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0124 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->cpsc inceptiontime seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [inceptiontime] seed46
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2173r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed46\best_model.pt (epoch 3, val_ece=0.0128, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0097 [+0.0027,+0.0141] | OOD ¦¤ECE=+0.0146 [+0.0123,+0.0158] | decay=+0.0049
+
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0049 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->cpsc inceptiontime seed46 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [resnet1d] seed42
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2103r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\resnet1d\seed42\best_model.pt (epoch 4, val_ece=0.0132, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0010 [-0.0004,+0.0017] | OOD ¦¤ECE=+0.0025 [+0.0023,+0.0026] | decay=+0.0014
+
+Saved to checkpoints\transfer\ptbxl_cpsc\resnet1d\seed42\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0014 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\resnet1d\aggregate.json
+
+[ret=0] ptbxl->cpsc resnet1d seed42 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [resnet1d] seed43
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2073r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\resnet1d\seed43\best_model.pt (epoch 1, val_ece=0.0138, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0197 [+0.0157,+0.0213] | OOD ¦¤ECE=+0.0186 [+0.0152,+0.0208] | decay=-0.0011
+
+Saved to checkpoints\transfer\ptbxl_cpsc\resnet1d\seed43\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=-0.0011 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\resnet1d\aggregate.json
+
+[ret=0] ptbxl->cpsc resnet1d seed43 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [resnet1d] seed44
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2122r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\resnet1d\seed44\best_model.pt (epoch 28, val_ece=0.0058, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0635 [+0.0481,+0.0770] | OOD ¦¤ECE=+0.0826 [+0.0773,+0.0855] | decay=+0.0191
+
+Saved to checkpoints\transfer\ptbxl_cpsc\resnet1d\seed44\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0191 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\resnet1d\aggregate.json
+
+[ret=0] ptbxl->cpsc resnet1d seed44 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [resnet1d] seed45
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2116r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\resnet1d\seed45\best_model.pt (epoch 8, val_ece=0.0092, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0001 [-0.0008,+0.0010] | OOD ¦¤ECE=+0.0016 [+0.0015,+0.0017] | decay=+0.0015
+
+Saved to checkpoints\transfer\ptbxl_cpsc\resnet1d\seed45\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0015 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\resnet1d\aggregate.json
+
+[ret=0] ptbxl->cpsc resnet1d seed45 å®Œæˆ
+
+============================================================
+BCa B=10000: ptbxl -> cpsc [resnet1d] seed46
+============================================================
+[ptbxl] ×Ó¿Õ¼ä½µ¼¶: ±£Áô21048Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı474Ìõ (·Ö²¼{'HYP': 474})
+[ptbxl] »¼Õß¼¶ËÄ·Ö¸î: train(12724p/16829r) val(1818p/2173r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] ±êÇ©·Ö²¼(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\resnet1d\seed46\best_model.pt (epoch 2, val_ece=0.0099, d_model=64, n_layers=2)
+[cpsc] ×Ó¿Õ¼ä½µ¼¶: ±£Áô10285Ìõ (×Ó¿Õ¼ä('CD', 'MI', 'NORM', 'STTC'))£¬ÌŞ³ı11Ìõ (·Ö²¼{'HYP': 11})
+[cpsc] »¼Õß¼¶ËÄ·Ö¸î: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] ±êÇ©·Ö²¼(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrapÍÆ¶ÏÖĞ... (B=10000, method=bca, metric=gpu)
+  [ts] ID bootstrapÍÆ¶ÏÖĞ...
+[ts       ] ID ¦¤ECE=+0.0126 [+0.0070,+0.0175] | OOD ¦¤ECE=+0.0209 [+0.0191,+0.0222] | decay=+0.0083
+
+Saved to checkpoints\transfer\ptbxl_cpsc\resnet1d\seed46\transfer_result.json
+
+============================================================
+S1 ¿ç¿âÖ÷ÖÕµã»ã×Ü (ID¡úOOD ¦¤ECE Ë¥¼õ)
+============================================================
+  ts        decay¾ùÖµ=+0.0083 sd=0.0000 (n=1 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\resnet1d\aggregate.json
+
+[ret=0] ptbxl->cpsc resnet1d seed46 å®Œæˆ
+
+BCa B=10000 å…¨ç½‘æ ¼å®Œæˆï¼š60 runsï¼Œå¤±è´¥ 0ã€‚

@@ -1,12 +1,14 @@
-"""ECG Classification Model with Bidirectional Mamba Backbone (2026 SOTA)
+"""ECG Classification Model (architecture-agnostic; BiMamba default)
 
 架构流程（全链路，无死代码）：
-12-lead ECG → Pointwise Stem → BiMamba Layers → **AttentionPooling** → LayerNorm+GELU MLP → 温度缩放 → Softmax
+12-lead ECG → backbone(可选 BiMamba / ResNet1D / InceptionTime) →
+AttentionPooling → LayerNorm+GELU MLP → 温度缩放 → Softmax
 
-特性：
-- Attention Pooling：学习关注判别性时间步（ECG上优于mean pooling）
-- 可学习温度参数：后续校准修复研究的基础
-- MC-Dropout：不确定性量化
+- backbone 契约：输入 (batch, n_leads, seq_len)，输出 (batch, seq_len_out,
+  d_model) 的时序特征；AttentionPooling 对任意 seq_len_out 生效。
+- 温度缩放：主协议 T≡1 冻结训练，只做后验TS（对抗性审查修复）。
+- §4 三架构对比：仅替换 backbone（build_backbone 按名取），分类头恒等，
+  保证校准修复对比在相同池化/分类/温度条件下公平。
 """
 
 import math
@@ -16,7 +18,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from .s4_backbone import ECGMambaBackbone
+from .baselines import build_backbone
 
 
 class AttentionPooling(nn.Module):
@@ -37,7 +39,7 @@ class AttentionPooling(nn.Module):
 
 
 class ECGClassifier(nn.Module):
-    """ECG分类器（Bidirectional Mamba + AttentionPooling + 校准就绪）"""
+    """ECG分类器（主干可选 BiMamba/ResNet1D/InceptionTime + AttentionPooling + 校准就绪）"""
 
     def __init__(
         self,
@@ -48,13 +50,16 @@ class ECGClassifier(nn.Module):
         dropout: float = 0.1,
         temperature: float = 1.0,
         learnable_temp: bool = False,  # 主协议：T≡1冻结训练，温度只做后验TS（对抗性审查修复）
+        backbone_type: str = "mamba",  # mamba | resnet1d | inceptiontime（协议§4）
     ):
         super().__init__()
         self.in_channels = in_channels
         self.d_model = d_model
         self.num_classes = num_classes
+        self.backbone_type = backbone_type
 
-        self.backbone = ECGMambaBackbone(
+        self.backbone = build_backbone(
+            backbone_type,
             in_channels=in_channels,
             d_model=d_model,
             n_layers=n_layers,
@@ -148,14 +153,16 @@ def create_ecg_classifier(
     n_layers: int = 4,
     num_classes: int = 5,
     dropout: float = 0.1,
+    backbone_type: str = "mamba",
     **kwargs,
 ) -> ECGClassifier:
-    """工厂函数"""
+    """工厂函数（backbone_type: mamba/resnet1d/inceptiontime）"""
     return ECGClassifier(
         in_channels=in_channels,
         d_model=d_model,
         n_layers=n_layers,
         num_classes=num_classes,
         dropout=dropout,
+        backbone_type=backbone_type,
         **kwargs,
     )

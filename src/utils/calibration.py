@@ -256,13 +256,17 @@ def smooth_ece(probs, labels, bandwidth: Optional[float] = None) -> float:
 
     - logit 空间核（Błasiok & Nakkiran 思想）：避免概率空间端点饱和
       （p→1 时 logit 分辨率远高于 p，修复对抗审查 N9 端点饱和反例）
-    - 带宽默认 h = 0.45（logit 空间固定带宽，标定：完美校准底噪 n=500→0.033、
-      n=2000→0.027、n=20000→0.020；n=200 冒烟量级→0.050 为信息极限）
+    - 带宽默认 h = 0.45·(n/2000)^(−0.2)（F3修复：实现与协议§11"带宽n^(−0.2)"
+    声称对齐；标定锚点 n=2000→h=0.45，与既有底噪标定一致——完美校准底噪
+    ECE值（非带宽h）：n=500→ECE≈0.028、n=2000→ECE≈0.027、n=20000→ECE≈0.019；
+    n=200 冒烟量级→ECE≈0.049 为信息极限。
+    对应带宽h值：n=500→h≈0.594、n=2000→h=0.45、n=20000→h≈0.284、n=200→h≈0.713。
+    固定带宽敏感性可显式传 bandwidth=0.45 复现旧行为）
 
     Args:
         probs: 预测概率 (n,)
         labels: 真实标签 (n,)
-        bandwidth: logit 空间核带宽（默认0.45）
+        bandwidth: logit 空间核带宽（默认 0.45·(n/2000)^(−0.2)，F3修复见docstring）
 
     Returns:
         SmoothECE值（完全校准的数据 → 趋近0）
@@ -271,7 +275,8 @@ def smooth_ece(probs, labels, bandwidth: Optional[float] = None) -> float:
     labels = np.asarray(labels, dtype=float)
     n = len(probs)
     if bandwidth is None:
-        bandwidth = 0.45  # logit 空间固定带宽（标定见 docstring）
+        # F3修复：n^(-0.2)缩放（协议§11声称），锚点n=2000→0.45
+        bandwidth = 0.45 * (n / 2000.0) ** (-0.2)
 
     # logit 空间高斯核
     p_clip = np.clip(probs, 1e-6, 1 - 1e-6)
@@ -291,6 +296,124 @@ def smooth_ece(probs, labels, bandwidth: Optional[float] = None) -> float:
     return float(abs_err.mean())
 
 
+def smooth_ece_gpu(probs, labels, bandwidth=None, device=None):
+    """smooth_ece 的 PyTorch GPU 实现（float64，与 CPU 版数值一致）
+
+    用于 bootstrap/jackknife 大量重复调用的加速：n=4050 时 CPU 单次 ~0.59s，
+    GPU 单次 ~10ms（RTX 5060 实测）。无 CUDA 时自动回退 CPU 版。
+
+    Args/Returns: 与 smooth_ece 完全相同（bandwidth 逻辑一致）
+    """
+    import torch
+    probs = np.asarray(probs, dtype=np.float64)
+    labels = np.asarray(labels, dtype=np.float64)
+    n = len(probs)
+    if bandwidth is None:
+        bandwidth = 0.45 * (n / 2000.0) ** (-0.2)
+
+    if device is None:
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+    if device == "cpu" or not torch.cuda.is_available():
+        return smooth_ece(probs, labels, bandwidth=bandwidth)
+
+    t_p = torch.from_numpy(probs).to(device)
+    t_l = torch.from_numpy(labels).to(device)
+    p_clip = torch.clamp(t_p, 1e-6, 1 - 1e-6)
+    logit_p = torch.log(p_clip / (1 - p_clip))
+
+    abs_err = torch.empty(n, dtype=torch.float64, device=device)
+    chunk = max(1, int(2e7 // max(n, 1)))  # 与CPU版同块策略
+    for s in range(0, n, chunk):
+        e = min(s + chunk, n)
+        z = (logit_p[s:e, None] - logit_p[None, :]) / bandwidth
+        w = torch.exp(-0.5 * z ** 2)
+        w_sum = w.sum(dim=1)
+        acc_i = (w * t_l[None, :]).sum(dim=1) / torch.clamp(w_sum, min=1e-12)
+        abs_err[s:e] = torch.abs(acc_i - t_p[s:e])
+
+    return float(abs_err.mean().item())
+
+
+def _bca_interval(theta_hat: float, boot_stats: np.ndarray,
+                  jackknife_stats: np.ndarray, confidence: float) -> Tuple[float, float]:
+    """BCa区间（bias-correction + acceleration）
+
+    F2修复：此前的"CI"实为percentile；预注册§7:116要求BCa。
+    - bias-correction z0：bootstrap分布相对点估计的中位偏移
+    - acceleration a：delete-group/delete-cluster jackknife（Efron 1987标准公式）
+    返回percentile截断点（百分比）。
+
+    已知近似（R4轮对抗审查登记，P2级）：
+    - delete-group jackknife（G组剔除）相对delete-1 jackknife的加速度项被组均值
+      稀释约√m倍（m=组均样本数），a系统性低估→CI偏窄；cluster场景用
+      leave-one-cluster-out（每患者一簇）近似delete-1，偏差更小
+    - θ̂位于bootstrap分布同侧极端时z0饱和→截断点相等→零宽CI（触发时警告）
+    """
+    from scipy.stats import norm
+    boot_stats = np.asarray(boot_stats, dtype=float)
+    boot_stats = boot_stats[np.isfinite(boot_stats)]
+    B = len(boot_stats)
+    if B < 10:
+        return (float('nan'), float('nan'))
+
+    prop_less = ((np.sum(boot_stats < theta_hat)
+                  + 0.5 * np.sum(boot_stats == theta_hat)) / B)
+    z0 = norm.ppf(np.clip(prop_less, 1e-6, 1 - 1e-6))
+
+    j = np.asarray(jackknife_stats, dtype=float)
+    j = j[np.isfinite(j)]
+    d = j.mean() - j
+    denom = 6.0 * float(np.sum(d ** 2)) ** 1.5
+    a = float(np.sum(d ** 3)) / denom if denom > 0 else 0.0
+
+    z_alpha = norm.ppf((1 - confidence) / 2)
+    z_1alpha = norm.ppf(1 - (1 - confidence) / 2)
+
+    def _adj(z):
+        denom_adj = 1 - a * (z0 + z)
+        if abs(denom_adj) < 1e-12:
+            return 1 - (1 - confidence) / 2 if z > 0 else (1 - confidence) / 2
+        return float(norm.cdf(z0 + (z0 + z) / denom_adj))
+
+    a1 = np.clip(_adj(z_alpha), 1e-6, 1 - 1e-6)
+    a2 = np.clip(_adj(z_1alpha), 1e-6, 1 - 1e-6)
+    lo, hi = np.percentile(boot_stats, [a1 * 100, a2 * 100])
+    if lo == hi:
+        warnings.warn("BCa区间退化为零宽（z0饱和：点估计位于bootstrap分布同侧极端），"
+                      "CI不可用——建议检查效应量或改用percentile敏感性")
+    return float(lo), float(hi)
+
+
+def _group_jackknife_benefit(probs_raw, probs_cal, labels, metric, clusters,
+                             n_groups=100):
+    """ΔECE的jackknife影响值（BCa加速度项）
+
+    F2修复：cluster提供时=leave-one-cluster-out（患者级，协议语义）；
+    否则=delete-group jackknife（G=min(100,n)组剔除，delete-m近似，
+    O(n²)metric下控制成本）。返回每次剔除后的ΔECE。
+    """
+    n = len(labels)
+    if clusters is not None:
+        clusters = np.asarray(clusters)
+        units = np.unique(clusters)
+        member_idx = [np.where(clusters == u)[0] for u in units]
+    else:
+        g = min(n_groups, n)
+        perm = np.random.default_rng(0).permutation(n)
+        member_idx = np.array_split(perm, g)
+    jacks = np.empty(len(member_idx))
+    for k, idxs in enumerate(member_idx):
+        keep = np.ones(n, dtype=bool)
+        keep[idxs] = False
+        if keep.sum() < 10:
+            jacks[k] = np.nan
+            continue
+        r_b = float(metric(probs_raw[keep], labels[keep]))
+        c_b = float(metric(probs_cal[keep], labels[keep]))
+        jacks[k] = r_b - c_b
+    return jacks
+
+
 def benefit_inference(
     probs_raw: np.ndarray,
     probs_cal: np.ndarray,
@@ -300,15 +423,19 @@ def benefit_inference(
     confidence: float = 0.95,
     clusters: Optional[np.ndarray] = None,
     rng: Optional[np.random.Generator] = None,
+    bci_method: str = "bca",
 ) -> dict:
     """校准修复收益的配对bootstrap推断（论文主终点）
 
-    统计修复（对抗性审查FATAL-1/FATAL-3）：
+    统计修复（对抗性审查FATAL-1/FATAL-3 + R轮F2）：
     - 主终点 = 绝对收益 ΔECE = metric(probs_raw) - metric(probs_cal)，带配对CI
       （比值ECE_raw/ECE_cal有floor effect与估计器偏差伪影，降级为次要描述量）
     - before/after在同一批样本上强正相关 → 必须同一重采样索引上配对计算
-    - 支持患者级cluster重采样
-    - 同时返回比值R（次要）与比值CI
+    - 支持患者级cluster重采样（clusters=患者ID）
+    - bci_method='bca'（默认，F2修复：预注册§7:116要求BCa，含bias-correction与
+      delete-group/leave-one-cluster-out jackknife加速度）；'percentile'仅作敏感性
+    - n_bootstrap默认10000（F2修复：此前train.py传2000≠预注册B=10,000）
+    - 同时返回比值R（次要）与比值CI（percentile——比值含inf/nan，BCa不稳）
 
     Args:
         probs_raw: 未校准概率
@@ -319,10 +446,11 @@ def benefit_inference(
         confidence: 置信水平
         clusters: 患者ID（可选）
         rng: Generator
+        bci_method: 'bca'（默认）| 'percentile'
 
     Returns:
         dict(benefit=ΔECE, benefit_ci=(lo,hi), ratio=R, ratio_ci=(lo,hi),
-             raw=..., cal=...)
+             raw=..., cal=..., method=...)
     """
     probs_raw = np.asarray(probs_raw, dtype=float)
     probs_cal = np.asarray(probs_cal, dtype=float)
@@ -345,6 +473,7 @@ def benefit_inference(
             'benefit_ci': (float('nan'), float('nan')),
             'ratio': float(ratio_point),
             'ratio_ci': (float('nan'), float('nan')),
+            'method': 'none',
         }
 
     if clusters is not None:
@@ -368,8 +497,14 @@ def benefit_inference(
         ratios[b] = r_b / c_b if c_b > 0 else np.nan
 
     alpha = (1 - confidence) / 2
-    b_lo, b_hi = np.percentile(benefits, [alpha * 100, (1 - alpha) * 100])
     r_lo, r_hi = np.nanpercentile(ratios, [alpha * 100, (1 - alpha) * 100])
+
+    if bci_method == "bca":
+        jacks = _group_jackknife_benefit(probs_raw, probs_cal, labels,
+                                         metric, clusters)
+        b_lo, b_hi = _bca_interval(benefit_point, benefits, jacks, confidence)
+    else:
+        b_lo, b_hi = np.percentile(benefits, [alpha * 100, (1 - alpha) * 100])
 
     return {
         'raw': raw_point,
@@ -378,6 +513,7 @@ def benefit_inference(
         'benefit_ci': (float(b_lo), float(b_hi)),
         'ratio': float(ratio_point),
         'ratio_ci': (float(r_lo), float(r_hi)),
+        'method': bci_method,
     }
 
 
@@ -638,4 +774,87 @@ def compute_all_metrics(
         'brier_reliability': reliability,
         'brier_resolution': resolution,
         'brier_uncertainty': uncertainty,
+    }
+
+
+def two_layer_benefit_inference(
+    probs_raw_test: np.ndarray,
+    labels_test: np.ndarray,
+    fit_probs: np.ndarray,
+    fit_labels: np.ndarray,
+    fit_fn,
+    apply_fn,
+    metric=ece,
+    b_val: int = 200,
+    b_test: int = 2000,
+    confidence: float = 0.95,
+    rng: Optional[np.random.Generator] = None,
+) -> dict:
+    """两层联合bootstrap（F2修复：协议§7:117"val重采样→拟合T→test重采样→指标"）
+
+    温度拟合集的不确定性传入ΔECE的CI：
+    - 第一层（b_val次）：温度拟合集有放回重采样 → fit_fn重拟合 → T分布
+    - 第二层（b_test次）：测试集有放回重采样 idx → 从T分布抽T_b → apply_fn →
+      配对ΔECE_b
+    CI = T不确定性 ⊕ 重采样不确定性的联合percentile（非嵌套实现，成本可控；
+    协议注记：嵌套B=10000×重拟合在O(n²) metric下不可行，此为诚实近似并已登记）。
+
+    Args:
+        probs_raw_test: 测试集未校准概率（1D max-prob或2D矩阵，与fit/apply闭包一致）
+        labels_test: 测试集标签（top-label场景为correct mask，与主终点语义一致）
+        fit_probs/fit_labels: 温度拟合集概率/标签（协议：cal split）
+        fit_fn: (probs, labels) -> T 的拟合闭包
+        apply_fn: (probs, T) -> 校准后概率 的应用闭包
+        metric: 校准误差（主终点=smooth_ece，由调用方传入）
+        b_val/b_test: 两层重复数
+        rng: Generator
+
+    Returns:
+        dict(t_hat, t_std, benefit, benefit_ci, benefit_ci_percentile_only)
+    """
+    probs_raw_test = np.asarray(probs_raw_test)
+    labels_test = np.asarray(labels_test, dtype=float)
+    fit_probs = np.asarray(fit_probs)
+    fit_labels = np.asarray(fit_labels)
+    if rng is None:
+        rng = np.random.default_rng(0)
+
+    t_hat = float(fit_fn(fit_probs, fit_labels))
+    n_fit = len(fit_labels)
+    n_test = len(labels_test)
+
+    t_draws = np.empty(b_val)
+    for b in range(b_val):
+        idx = rng.choice(n_fit, n_fit, replace=True)
+        t_draws[b] = float(fit_fn(fit_probs[idx], fit_labels[idx]))
+    t_std = float(np.std(t_draws)) if b_val > 1 else 0.0
+
+    benefits = np.empty(b_test)
+    for b in range(b_test):
+        idx = rng.choice(n_test, n_test, replace=True)
+        t_b = float(rng.choice(t_draws)) if b_val > 0 else t_hat
+        probs_cal_b = apply_fn(probs_raw_test[idx], t_b)
+        mp_raw = (probs_raw_test[idx].max(axis=1)
+                  if probs_raw_test.ndim == 2 else probs_raw_test[idx])
+        mp_cal = probs_cal_b.max(axis=1) if probs_cal_b.ndim == 2 else probs_cal_b
+        benefits[b] = float(metric(mp_raw, labels_test[idx])) \
+            - float(metric(mp_cal, labels_test[idx]))
+
+    alpha = (1 - confidence) / 2 * 100
+    lo, hi = np.percentile(benefits, [alpha, 100 - alpha])
+
+    mp_raw_full = (probs_raw_test.max(axis=1)
+                   if probs_raw_test.ndim == 2 else probs_raw_test)
+    cal_full = apply_fn(probs_raw_test, t_hat)
+    mp_cal_full = cal_full.max(axis=1) if cal_full.ndim == 2 else cal_full
+    benefit_point = (float(metric(mp_raw_full, labels_test))
+                     - float(metric(mp_cal_full, labels_test)))
+
+    return {
+        't_hat': t_hat,
+        't_std': t_std,
+        'benefit': benefit_point,
+        'benefit_ci': (float(lo), float(hi)),
+        'b_val': b_val,
+        'b_test': b_test,
     }

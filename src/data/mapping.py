@@ -3,7 +3,7 @@
 协议依据（docs/EXPERIMENT_PROTOCOL.md §2, §10-T1）：
 - 单标签优先级规则**固定**并做敏感性分析；多标签sigmoid作第二形式化
 - 映射表逐条给文献依据；对每个歧义映射决策生成替代变体（映射敏感性分析）
-- CPSC2018+2019 无 HYP 类 → 主分析降级 {NORM, CD, STTC} 子空间
+- CPSC2018+2019 HYP 极稀有(n=11) → 主分析降级 {NORM, CD, STTC, MI} 4类子空间
 
 码表来源（均为公开可核对的官方文献码表，真实PTB-XL数据未下载）：
 1. PTB-XL v1.0.3 官方 ``scp_statements.csv``（PhysioNet，逐字核对）——
@@ -77,7 +77,7 @@ SUPERCLASSES = ("NORM", "MI", "STTC", "CD", "HYP")
 DEFAULT_PRIORITY = ("MI", "STTC", "CD", "HYP", "NORM")
 
 # CPSC 降级子空间（协议§2：无HYP类，主分析两侧对称降级）
-SUBSPACE_CPSC = ("NORM", "CD", "STTC")
+SUBSPACE_CPSC = ("NORM", "CD", "STTC", "MI")
 
 # ---------------------------------------------------------------------------
 # 第1层：PTB-XL官方 diagnostic statements（scp_statements.csv, v1.0.3, 逐字核对）
@@ -108,11 +108,26 @@ _PTBXL_OFFICIAL = {
 # 第2层：节律语句扩展（官方表中节律语句无diagnostic_class；跨库单标签化
 # 需要为纯节律记录赋予超类，此处按"节律/异位/起搏以外的节律异常→STTC、
 # 窦性节律→NORM"的公开惯例扩展，列为敏感性分析对象）
+#
+# 窦性家族修正（R13, 2026-09-02，真实PTB-XL scp_statements.csv 逐字复核）：
+#   PTB-XL 官方 SBRAD/STACH/SARRH 均为 rhythm=1.0 的**速率/形态描述语句**，
+#   diagnostic_class=NaN（PTB-XL官方体系明确**不**将其判为ST-T改变）。
+#   原 SBRAD/STACH/SARRH→STTC 是误标：(a) 窦性心动过缓/窦性心律不齐在临床
+#   上不是复极异常（ST-T），归STTC缺依据；(b) 因STTC在优先级中高于CD/HYP，
+#   窦率描述语句会**遮蔽真实传导/肥厚诊断**（实测PTB-XL上251条 STTC→CD、
+#   58条 STTC→HYP 的翻转正是此类1AVB/LVH被SBRAD压制）；(c) 与Chapman侧
+#   R12覆写（426177001/427084000→NORM，窦缓/窦速=正常窦性速率变体）语义
+#   不一致，破坏跨库校准迁移测量的可比性。
+#   修正：窦性家族(SR/SBRAD/STACH/SARRH)→NORM，与Chapman覆写对齐。
+#   该决策登记协议R13，并作为映射敏感性分析对象复核（generate_mapping_variants）。
 # ---------------------------------------------------------------------------
 _RHYTHM_EXTENSION = {
-    "SR": "NORM",        # 窦性节律→NORM（敏感性对象）
-    "AFIB": "STTC", "AFLT": "STTC", "SBRAD": "STTC", "STACH": "STTC",
-    "SARRH": "STTC", "SVARR": "STTC", "SVTAC": "STTC", "PSVT": "STTC",
+    "SR": "NORM",        # 窦性节律→NORM
+    "SBRAD": "NORM",     # 窦性心动过缓：速率描述，非ST-T（R13自STTC改判）
+    "STACH": "NORM",     # 窦性心动过速：同上（R13自STTC改判）
+    "SARRH": "NORM",     # 窦性心律不齐：速率/形态描述，非ST-T（R13自STTC改判）
+    "AFIB": "STTC", "AFLT": "STTC",
+    "SVARR": "STTC", "SVTAC": "STTC", "PSVT": "STTC",
     "PAC": "STTC", "PVC": "STTC", "PRC(S)": "STTC",
     "BIGU": "STTC", "TRIGU": "STTC",
     "LPR": "CD",         # PR间期延长归传导（敏感性对象；官方列为节律类）
@@ -264,6 +279,16 @@ _SNOMED_DIAGNOSTIC = {
     "266257000": None,     # transient ischemic attack（临床诊断非ECG所见）
     "251268003": None,     # atrial pacing pattern（起搏图形官方无类）
     "251266004": None,     # ventricular pacing pattern（同上）
+    # --- Chapman-Shaoxing (ecg-arrhythmia 1.0.0) 接入补充（2026-09-02，
+    #     ConditionNames_SNOMED-CT.csv 覆盖率预检发现的缺口；均按同族先例
+    #     归类，敏感性分析对象已在对应族登记） ---
+    "28189009": "CD",      # 2AVB2 二度II型房室阻滞（AVB家族；与195042002(2AVB)→
+    #                        CD、27885002(3AVB)→CD 同族）
+    "233896004": "STTC",   # AVNRT 房室结折返性心动过速（室上速家族；与
+    #                        233897008(AVRT)→STTC、426761007(SVT)→STTC 同族）
+    "251148003": None,     # low voltage QRS chest lead（官方LVOLT 251146004
+    #                        无类的分导联变体，同样无类）
+    "251147008": None,     # low voltage QRS limb lead（同上）
 }
 
 # 汇总映射表（字母缩写 + SNOMED数值码 双键超集；覆盖PTB-XL与CINC/CPSC两种键样式）
@@ -302,8 +327,8 @@ CHAPMAN_TO_SUPERCLASS: dict[str, Optional[str]] = {
 
 # ---------------------------------------------------------------------------
 # CPSC2018(2019) 映射（9个2018官方类名 + 2019扩展常见名）
-# CPSC 无 HYP 对应类——按协议§2主分析降级 SUBSPACE_CPSC={NORM, CD, STTC}；
-# 无法映射的类名标记 None（如CPSC2019个别扩展类无公认5超类对应）。
+# CPSC HYP 极稀有(n=11, 全来自CPSC2019单标签LVH/RVH)——按协议§2主分析降级
+# SUBSPACE_CPSC={NORM, CD, STTC, MI}（4类）；HYP 记数后剔除（不支持可靠估计）。
 # ---------------------------------------------------------------------------
 CPSC_TO_SUPERCLASS: dict[str, Optional[str]] = {
     "Normal": "NORM",
@@ -417,6 +442,20 @@ def generate_mapping_variants():
         "probe_codes": {"10370003": 100.0},
         "expected_label": "STTC",
     }
+    # 变体4：窦性速率/形态语句改归STTC（R13修正前的旧约定）——检验R13
+    # 决策（SBRAD/STACH/SARRH→NORM）对主检验结论的稳健性。PTB-XL官方
+    # scp_statements.csv 判 SBRAD/STACH/SARRH 为 rhythm 语句(diagnostic_class=
+    # NaN)，本变体反映旧版_ RHYTHM_EXTENSION 的"节律异常→STTC"惯例。
+    yield {
+        "name": "sinus_rhythm_abnormality_to_sttc",
+        "priority": DEFAULT_PRIORITY,
+        "code_overrides": {"SBRAD": "STTC", "STACH": "STTC", "SARRH": "STTC"},
+        "rationale": "R13敏感性对象：窦性速率/形态语句(SBRAD/STACH/SARRH)按"
+                     "旧'节律异常→STTC'惯例改判，检验窦性家族→NORM是否改变"
+                     "跨库校准迁移主检验结论（与Chapman R12覆写形成对照臂）",
+        "probe_codes": {"SBRAD": 100.0, "1AVB": 100.0},
+        "expected_label": "STTC",
+    }
 
 
 def filter_subspace(
@@ -430,7 +469,7 @@ def filter_subspace(
     labels : 序列
         每条记录的超类标签（None=不可映射，计入dropped并单列"None"）。
     allowed : 容器
-        允许保留的超类集合（默认 CPSC 子空间 {NORM, CD, STTC}）。
+        允许保留的超类集合（默认 CPSC 子空间 {NORM, CD, STTC, MI}）。
 
     返回
     ----
@@ -470,8 +509,29 @@ if __name__ == "__main__":
     assert MAP_TO_5SUPERCLASS({"1AVB": 100, "ISC_": 100}) == "STTC"
     assert MAP_TO_5SUPERCLASS({"NORM": 100, "LVH": 100}) == "HYP"
     assert MAP_TO_5SUPERCLASS({"SR": 100, "NORM": 100}) == "NORM"
+    # R13：窦性速率/形态语句→NORM，不遮蔽真实传导/肥厚诊断
+    assert MAP_TO_5SUPERCLASS({"SBRAD": 100}) == "NORM", "R13窦缓→NORM"
+    assert MAP_TO_5SUPERCLASS({"STACH": 100}) == "NORM", "R13窦速→NORM"
+    assert MAP_TO_5SUPERCLASS({"SARRH": 100}) == "NORM", "R13窦性心律不齐→NORM"
+    assert MAP_TO_5SUPERCLASS({"SBRAD": 100, "1AVB": 100}) == "CD", "窦缓不得遮蔽1AVB(传导)"
+    assert MAP_TO_5SUPERCLASS({"STACH": 100, "LVH": 100}) == "HYP", "窦速不得遮蔽LVH"
     assert MAP_TO_5SUPERCLASS({"AFIB": 100}) == "STTC"
     assert MAP_TO_5SUPERCLASS({"未知码xyz": 100}) is None
+    # 跨编码一致性已知矛盾登记（R12/R13）：同一诊断用字母缩写→NORM，
+    # 用SNOMED码→STTC（全局表为CINC2021定制）。Chapman侧靠 preprocess_chapman.py
+    # 的 code_overrides 覆写为NORM对齐。PTB-XL侧用字母缩写键不触发。
+    # TODO: CINC2021语境核实后统一全局表。登记为协议§10-T1敏感性对象。
+    _cross_code_conflicts = {
+        "窦缓": ("SBRAD", "426177001"),   # SBRAD→NORM vs 426177001→STTC
+        "窦速": ("STACH", "427084000"),   # STACH→NORM vs 427084000→STTC
+        "窦性心律不齐": ("SARRH", "427393009"),  # SARRH→NORM vs 427393009→STTC
+    }
+    for dx, (abbr, snomed) in _cross_code_conflicts.items():
+        v_abbr = SCP_TO_SUPERCLASS[abbr]
+        v_snomed = SCP_TO_SUPERCLASS[snomed]
+        if v_abbr != v_snomed:
+            print(f"[已知矛盾] {dx}: {abbr}→{v_abbr} vs {snomed}→{v_snomed} "
+                  f"(Chapman侧覆写对齐；登记§10-T1敏感性对象)")
     assert MAP_TO_5SUPERCLASS({}) is None
     variants = list(generate_mapping_variants())
     assert len(variants) >= 3
@@ -481,7 +541,7 @@ if __name__ == "__main__":
         assert got == v["expected_label"], f"变体{v['name']}探针不符: {got}"
     labels = ["NORM", "CD", "STTC", "HYP", "MI", None]
     rep = filter_subspace(labels)
-    assert rep["n_kept"] == 3 and rep["kept_counts"] == {"NORM": 1, "CD": 1, "STTC": 1}
+    assert rep["n_kept"] == 4 and rep["kept_counts"] == {"NORM": 1, "CD": 1, "STTC": 1, "MI": 1}
     assert len(SCP_TO_SUPERCLASS) >= 60, f"码表过少: {len(SCP_TO_SUPERCLASS)}"
     print(f"[自检] 映射模块通过：共{len(SCP_TO_SUPERCLASS)}个码 "
           f"（其中显式不可映射{sum(1 for v in SCP_TO_SUPERCLASS.values() if v is None)}个）")

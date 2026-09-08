@@ -1,0 +1,49 @@
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2188r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Epoch 1/50 | train_loss=0.9597 train_acc=65.01% | val_loss=0.8549 val_acc=70.02% ECE=0.0221
+Epoch 2/50 | train_loss=0.8371 train_acc=70.11% | val_loss=0.8098 val_acc=71.98% ECE=0.0706
+Epoch 3/50 | train_loss=0.7852 train_acc=72.29% | val_loss=0.8238 val_acc=68.65% ECE=0.0204
+Epoch 4/50 | train_loss=0.7540 train_acc=73.10% | val_loss=0.7085 val_acc=74.73% ECE=0.0346
+Epoch 5/50 | train_loss=0.7339 train_acc=73.53% | val_loss=0.6711 val_acc=76.65% ECE=0.0146
+Epoch 6/50 | train_loss=0.7119 train_acc=75.03% | val_loss=0.6568 val_acc=76.51% ECE=0.0274
+Epoch 7/50 | train_loss=0.6932 train_acc=75.24% | val_loss=0.6585 val_acc=76.55% ECE=0.0274
+Epoch 8/50 | train_loss=0.6746 train_acc=75.54% | val_loss=0.6598 val_acc=76.42% ECE=0.0355
+Epoch 9/50 | train_loss=0.6629 train_acc=76.37% | val_loss=0.6450 val_acc=76.87% ECE=0.0456
+Epoch 10/50 | train_loss=0.6572 train_acc=76.61% | val_loss=0.6556 val_acc=76.51% ECE=0.0185
+Epoch 11/50 | train_loss=0.6412 train_acc=77.12% | val_loss=0.6091 val_acc=78.43% ECE=0.0207
+Epoch 12/50 | train_loss=0.6324 train_acc=77.36% | val_loss=0.6225 val_acc=77.15% ECE=0.0279
+Epoch 13/50 | train_loss=0.6261 train_acc=77.85% | val_loss=0.5983 val_acc=79.16% ECE=0.0260
+Epoch 14/50 | train_loss=0.6178 train_acc=77.97% | val_loss=0.5798 val_acc=78.88% ECE=0.0181
+Epoch 15/50 | train_loss=0.6099 train_acc=78.08% | val_loss=0.5808 val_acc=79.71% ECE=0.0275
+Early stopping at epoch 15
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0228 [+0.0115,+0.0266] | OOD ΔECE=+0.0262 [+0.0231,+0.0279] | decay=+0.0035
+  [platt] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0211 [+0.0123,+0.0243] | OOD ΔECE=+0.0291 [+0.0270,+0.0308] | decay=+0.0080
+  [isotonic] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0189 [+0.0037,+0.0262] | OOD ΔECE=+0.0202 [+0.0180,+0.0224] | decay=+0.0013
+  [vector] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0208 [+0.0123,+0.0244] | OOD ΔECE=+0.0399 [+0.0335,+0.0446] | decay=+0.0191
+  [matrix] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0135 [+0.0066,+0.0191] | OOD ΔECE=+0.0267 [+0.0196,+0.0333] | decay=+0.0132
+  [dirichlet] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0135 [+0.0067,+0.0191] | OOD ΔECE=+0.0266 [+0.0194,+0.0334] | decay=+0.0132
+  [em_prior] π̂_target=[0.189 0.183 0.591 0.037 0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [em_prior] w=π̂/π_train=[0.47 0.73 2.7  0.36 0.  ]
+  [em_prior] [sanity] π̂_ID=[0.399 0.258 0.218 0.125 0.   ] w_ID=[1.   1.03 0.99 1.21 0.  ] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=+0.0022 [-0.0071,+0.0111] | OOD ΔECE=+0.0560 [+0.0419,+0.0694] | decay=+0.0538
+  [bbse_prior] π̂_target=[0.156 0.16  0.664 0.019 0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [bbse_prior] w=π̂/π_train=[0.39 0.64 3.03 0.19 0.  ]
+  [bbse_prior] cond(C)=525.2 rank=5/5
+  [bbse_prior] [sanity] π̂_ID=[0.324 0.241 0.205 0.112 0.117] w_ID=[0.81 0.96 0.94 1.07 4.29] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=10000, method=percentile, metric=gpu)

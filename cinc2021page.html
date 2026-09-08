@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021 v1.0.0</title>
+    
+  <!-- wfdb-python: <p>Version: 1.0.0</p> -->
+  
+    <meta name="description" content="Will Two Do? Varying Dimensions in Electrocardiography: the PhysioNet/Computing in Cardiology Challenge 2021">
+  
+
+    
+<link rel="stylesheet" type="text/css" href="/static/bootstrap/css/bootstrap.css"/>
+<link rel="stylesheet" type="text/css" href="/static/font-awesome/css/all.css"/>
+<link rel="stylesheet" type="text/css" href="/static/custom/css/physionet.css"/>
+    
+  <link rel="stylesheet" type="text/css" href="/static/project/css/project-content.css"/>
+  <link rel="stylesheet" type="text/css" href="/static/highlight/css/default.min.css"/>
+
+    
+<script src="/static/jquery/jquery.min.js"></script>
+<script src="/static/popper/popper.min.js"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-87592301-7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-87592301-7');
+</script>
+    
+  <script src="/static/mathjax/MathJax.js?config=MML_HTMLorMML"></script>
+  <script src="/static/highlight/js/highlight.min.js"></script>
+  <script src="/static/custom/js/copy-to-clipboard.js"></script>
+
+    <link rel="shortcut icon" type="image/png" href="/static/favicon.ico"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/static/bootstrap/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" href="/static/fonts/inter-local.css">
+    <link rel="stylesheet" type="text/css" href="/static/custom/css/style.css?v=2">
+  </head>
+
+  
+  <body class="flexbody">
+    
+
+
+
+
+<div class="modern-ui nav-wrapper">
+  <nav class="nav">
+    <div class="container my-0 h-100 d-flex justify-content-between align-items-center">
+      <button type="button" class="nav__hamburger circle-button mr-2"
+              popovertarget="nav__hamburger_popup"
+              title="Menu">
+        <i class="nav__hamburger__list bi bi-list"></i>
+        <i class="nav__hamburger__x bi bi-x"></i>
+        <span class="visually-hidden">Menu</span>
+      </button>
+      <a href="/">
+        
+          <img src="/static/images/physionet-logo.svg" width="200px" alt="PhysioNet">
+        
+      </a>
+      <div class="nav__links align-items-center">
+        
+          
+            <a href="/about/publish/" class="nav-link">Share</a>
+          
+        
+          
+            <a href="/about/" class="nav-link">About</a>
+          
+        
+          
+        
+          
+        
+          
+        
+          
+            <a href="/about/faqs/" class="nav-link">FAQs</a>
+          
+        
+          
+        
+
+        <div>
+          <button type="button" class="nav-link nav-link--expandable"
+                  popovertarget="nav__explore_popup">
+            Explore <i class="bi bi-chevron-down ml-2"></i>
+          </button>
+          <dialog class="nav-link__popup" id="nav__explore_popup" popover
+                  aria-label="Explore">
+            <div class="nav-sublinks">
+              
+                <a class="nav-sublink" href="/about/database/">
+                  <div class="nav-sublink__icon">
+                    
+                      <img src="/static/images/icons/data.png" alt="" height="32px">
+                    
+                  </div>
+                  <div class="nav-sublink__text">
+                    <span class="nav-sublink__title">Data</span>
+                    <span class="nav-sublink__description">View datasets</span>
+                  </div>
+                </a>
+              
+                <a class="nav-sublink" href="/about/software/">
+                  <div class="nav-sublink__icon">
+                    
+                      <img src="/static/images/icons/software.png" alt="" height="32px">
+                    
+                  </div>
+                  <div class="nav-sublink__text">
+                    <span class="nav-sublink__title">Software</span>
+                    <span class="nav-sublink__description">View software</span>
+                  </div>
+                </a>
+              
+                <a class="nav-sublink" href="/about/challenge/">
+                  <div class="nav-sublink__icon">
+                    
+                      <img src="/static/images/icons/challenges.png" alt="" height="32px">
+                    
+                  </div>
+                  <div class="nav-sublink__text">
+                    <span class="nav-sublink__title">Challenges</span>
+                    <span class="nav-sublink__description">View challenges</span>
+                  </div>
+                </a>
+              
+                <a class="nav-sublink" href="/about/tutorial/">
+                  <div class="nav-sublink__icon">
+                    
+                      <img src="/static/images/icons/tutorials.png" alt="" height="32px">
+                    
+                  </div>
+                  <div class="nav-sublink__text">
+                    <span class="nav-sublink__title">Tutorials</span>
+                    <span class="nav-sublink__description">View tutorials</span>
+                  </div>
+                </a>
+              
+              </div>
+          </dialog>
+        </div>
+      </div>
+      <div class="nav__actions d-flex ml-md-4">
+        <form action="/content/" class="mr-2">
+          <div class="nav__search">
+            <input type="text" name="topic" placeholder="Search for anything...">
+            <div class="nav__search__actions">
+              <button type="button" class="nav__search__close mr-2"
+                      title="Cancel">
+                <i class="bi bi-x"></i>
+                <span class="visually-hidden">Cancel</span>
+              </button>
+              <button type="submit" class="circle-button">Search</button>
+            </div>
+          </div>
+        </form>
+        <button type="button" class="nav__search__open circle-button mr-md-2"
+                title="Search PhysioNet">
+          <i class="bi bi-search"></i>
+          <span class="visually-hidden">Search PhysioNet</span>
+        </button>
+        
+          <a class="nav__user" href="/login/"
+             title="Log in">
+            <i class="bi bi-person"></i>
+            <span class="visually-hidden">Log in</span>
+          </a>
+        
+      </div>
+    </div>
+
+    <dialog class="nav__mobile" id="nav__hamburger_popup" popover
+            aria-label="Menu">
+      
+        
+          <a href="/about/publish/" class="nav-link">Share</a>
+        
+      
+        
+          <a href="/about/" class="nav-link">About</a>
+        
+      
+        
+      
+        
+      
+        
+      
+        
+          <a href="/about/faqs/" class="nav-link">FAQs</a>
+        
+      
+        
+      
+      <hr>
+      <div class="nav-sublinks">
+        
+          <a class="nav-sublink" href="/about/database/">
+            <div class="nav-sublink__icon">
+              
+                <img src="/static/images/icons/data.png" alt="" height="32px">
+              
+              </div>
+            <div class="nav-sublink__text">
+              <span class="nav-sublink__title">Data</span>
+              <span class="nav-sublink__description">View datasets</span>
+            </div>
+          </a>
+        
+          <a class="nav-sublink" href="/about/software/">
+            <div class="nav-sublink__icon">
+              
+                <img src="/static/images/icons/software.png" alt="" height="32px">
+              
+              </div>
+            <div class="nav-sublink__text">
+              <span class="nav-sublink__title">Software</span>
+              <span class="nav-sublink__description">View software</span>
+            </div>
+          </a>
+        
+          <a class="nav-sublink" href="/about/challenge/">
+            <div class="nav-sublink__icon">
+              
+                <img src="/static/images/icons/challenges.png" alt="" height="32px">
+              
+              </div>
+            <div class="nav-sublink__text">
+              <span class="nav-sublink__title">Challenges</span>
+              <span class="nav-sublink__description">View challenges</span>
+            </div>
+          </a>
+        
+          <a class="nav-sublink" href="/about/tutorial/">
+            <div class="nav-sublink__icon">
+              
+                <img src="/static/images/icons/tutorials.png" alt="" height="32px">
+              
+              </div>
+            <div class="nav-sublink__text">
+              <span class="nav-sublink__title">Tutorials</span>
+              <span class="nav-sublink__description">View tutorials</span>
+            </div>
+          </a>
+        
+      </div>
+    </dialog>
+  </nav>
+</div>
+
+    <div class="nav-spacer"></div>
+
+    <main>
+  <div class="container">
+    
+
+    <p>
+      <span class="badge badge-dark"><i class="fa fa-bullseye"></i> Challenge</span>
+      <span class="badge badge-success"><i class="fas fa-lock-open"></i> Open Access</span>
+    </p>
+    <h1 class="form-signin-heading">Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021</h1>
+    <p>
+      <strong>
+      
+        <a class="author">Matthew Reyna</a> <i class="fas fa-info-circle" data-toggle="popover" data-original-title="<strong>Author Info</strong>" data-placement="bottom" data-content="&lt;b&gt;Affiliations&lt;/b&gt;&lt;p&gt;Department of Biomedical Informatics, Emory University&lt;/p&gt;<p><b>Profile</b><br><a href=/users/mareyna target=_blank>mareyna</a></p>" data-html="true" style="cursor: pointer;"></i>
+        ,&nbsp;
+      
+        <a class="author">Nadi Sadr</a> <i class="fas fa-info-circle" data-toggle="popover" data-original-title="<strong>Author Info</strong>" data-placement="bottom" data-content="&lt;b&gt;Affiliations&lt;/b&gt;&lt;p&gt;Department of Biomedical Informatics, Emory University&lt;/p&gt;<p><b>Profile</b><br><a href=/users/nadi-sadr target=_blank>nadi-sadr</a></p>" data-html="true" style="cursor: pointer;"></i>
+        ,&nbsp;
+      
+        <a class="author">Erick Andres Perez Alday</a> <i class="fas fa-info-circle" data-toggle="popover" data-original-title="<strong>Author Info</strong>" data-placement="bottom" data-content="&lt;b&gt;Affiliations&lt;/b&gt;&lt;p&gt;Department of Biomedical Informatics, Emory University&lt;/p&gt;<p><b>Profile</b><br><a href=/users/perezald target=_blank>perezald</a></p>" data-html="true" style="cursor: pointer;"></i>
+        ,&nbsp;
+      
+        <a class="author">Chengyu Liu</a> <i class="fas fa-info-circle" data-toggle="popover" data-original-title="<strong>Author Info</strong>" data-placement="bottom" data-content="&lt;b&gt;Affiliations&lt;/b&gt;&lt;p&gt;The State Key Laboratory of Bioelectronics, School of Instrument Science and Engineering, Southeast University&lt;/p&gt;<p><b>Profile</b><br><a href=/users/bestlcy target=_blank>bestlcy</a></p>" data-html="true" style="cursor: pointer;"></i>
+        ,&nbsp;
+      
+        <a class="author">Salman Seyedi</a> <i class="fas fa-info-circle" data-toggle="popover" data-original-title="<strong>Author Info</strong>" data-placement="bottom" data-content="&lt;b&gt;Affiliations&lt;/b&gt;&lt;p&gt;Department of Biomedical Informatics, Emory University&lt;/p&gt;<p><b>Profile</b><br><a href=/users/sseyedi target=_blank>sseyedi</a></p>" data-html="true" style="cursor: pointer;"></i>
+        ,&nbsp;
+      
+        <a class="author">Gari D Clifford</a> <i class="fas fa-info-circle" data-toggle="popover" data-original-title="<strong>Author Info</strong>" data-placement="bottom" data-content="&lt;b&gt;Affiliations&lt;/b&gt;&lt;p&gt;Department of Biomedical Informatics, Emory University Department of Biomedical Engineering, Georgia Institute of Technology, Emory University&lt;/p&gt;<p><b>Profile</b><br><a href=/users/gari target=_blank>gari</a></p>" data-html="true" style="cursor: pointer;"></i>
+        
+      
+      </strong>
+    </p>
+
+    <p>Published: Dec. 24, 2020. Version:
+      1.0.0
+      <a href="/content/challenge-2021/">&lt;View latest version&gt;</a>
+    </p>
+
+    
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+      This is <strong>not</strong> the latest version. Click <a
+        href="/content/challenge-2021/">here</a> for the latest version.
+      <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    
+    <hr>
+
+    <!-- Latest news and announcements -->
+    
+      <div class="alert alert-primary" role="alert">
+        
+        
+        
+          
+          <p>
+            <strong>2020 and 2021 Challenges are complete</strong>
+            <em>(Jan. 26, 2022, midnight)</em>
+            <p><strong>January 26, 2022:</strong> Both the <a href="/content/challenge-2020">2020 Challenge</a> and the 2021 Challenge, which extended the 2020 Challenge, are now complete. The CinC articles for both Challenges are available on the CinC website <a href="https://cinc.org/archives/2020/">here</a> and <a href="https://cinc.org/archives/2021/">here</a>. The final scores can be found <a href="https://moody-challenge.physionet.org/2021/results/">here</a>. Please cite <a href="https://iopscience.iop.org/article/10.1088/1361-6579/abc960">Perez Alday EA, Gu A, J Shah A, Robichaux C, Ian Wong AK, Liu C, Liu F, Bahrami Rad A, Elola A, Seyedi S, Li Q, Sharma A, Clifford GD<sup>*</sup> Reyna MA<sup>*</sup>. Classification of 12-lead ECGs: The PhysioNet/Computing in Cardiology Challenge 2020. Physiol. Meas. 2021 Jan 1;41(12):124003. doi: 10.1088/1361-6579/abc960</a> to refer to the 2020 Challenge. Please also cite <a href="/content/challenge-2021/1.02/papers/CinC2021-134.pdf">Reyna MA, Sadr N, Perez Alday EA, Gu A, Shah AJ, Robichaux C, Rad AB, Elola A, Seyedi S, Ansari S, Ghanbari H, Li Q, Sharma A, Clifford GD. Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021. Computing in Cardiology 2021; 48: 1-4</a> and <a href="/content/challenge-2021/1.02/papers/2021ChallengePaperPMEA.pdf">Reyna MA, Sadr N, Perez Alday EA, Gu Annie, Shah AJ, Robichaux C, Rad AB, Elola A, Seyedi S, Ansari S, Ghanbari H, Li Q, Sharma A, Clifford GD. Issues in the automated classification of multilead ECGs using heterogeneous labels and populations. Preprint. 2022</a> to refer to the 2021 Challenge. Finally, please also cite the standard <a href="https://archive.physionet.org/citations.shtml">PhysioNet citation</a>. You can find followup articles to the <a href="/content/challenge-2020">2020 Challenge</a> and the 2021 Challenge in the <a href="https://iopscience.iop.org/journal/0967-3334/page/Classification_Multilead_ECGs">Journal of Physiological Measurement Focus Issue on Classification of Multilead ECGs</a>.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>The PhysioNet/Computing in Cardiology Challenge entries are being evaluated</strong>
+            <em>(Oct. 25, 2021, 1 a.m.)</em>
+            <p><strong>October 25, 2021:</strong> We are currently evaluating entries on the 2021 Challenge test data in support of the Physiological Measurement <a href="https://iopscience.iop.org/journal/0967-3334/page/Classification_Multilead_ECGs">focus issue</a> on multilead ECG classification. The deadline to submit your code and a preprint is 1 December 2021, and the deadline to submit your article is 11 January 2022. See this <a href="https://groups.google.com/g/physionet-challenges/c/9X3N8FLEGE4">forum announcement</a> for details.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+        <details>
+          <summary>More news</summary>
+          
+          
+          <p>
+            <strong>Winners of the PhysioNet/Computing in Cardiology Challenge 2021 announced</strong>
+            <em>(Sept. 20, 2021, 1 a.m.)</em>
+            <p><strong>September 20, 2021:</strong> The winners of the 2021 Challenge were announced on 15 September 2021 at CinC in Brno, Czech Republic. Congratulations, teams! See this <a href="https://moody-challenge.physionet.org/2021/results/">page</a> for the results and the <a href="https://groups.google.com/g/physionet-challenges/c/klq1R7QsC00">full announcement</a> for the final steps in this year&rsquo;s Challenge, including details about the <a href="https://iopscience.iop.org/journal/0967-3334/page/Classification_Multilead_ECGs">focus issue</a> (deadline: 11 January 2022).</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>The challenges have been renamed to the George B. Moody PhysioNet Challenge in honor of George Moody</strong>
+            <em>(Sept. 15, 2021, 1 a.m.)</em>
+            <p><strong>September 15, 2021:</strong> In honor of the contributions of <a href="/news/post/355">George Moody</a> to PhysioNet and Computing in Cardiology, the Board of CinC voted to rename the Challenges to the George B. Moody PhysioNet Challenge.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>Preparing CinC papers for the PhysioNet/Computing in Cardiology Challenge 2021</strong>
+            <em>(July 21, 2021, 1 a.m.)</em>
+            <p><strong>July 21, 2021:</strong> As you prepare your CinC papers, please follow the <a href="https://www.cinc.org/instructions-for-preparing-and-submitting-full-papers/">CinC preparation and submission instructions</a> and use either our LaTeX (<a href="https://www.overleaf.com/read/qqsvqvyrqkzr">Overleaf</a> or <a href="https://moody-challenge.physionet.org/2021/cinc_template.zip">download</a>) or <a href="https://moody-challenge.physionet.org/2021/cinc_template.docx">Word</a> templates, which include important instructions, advice, and references. Please see <a href="https://moody-challenge.physionet.org/2021/papers/">here</a> for more information, including our draft paper and important citation information.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>PhysioNet/Computing in Cardiology Challenge 2021 accepted abstracts</strong>
+            <em>(June 23, 2021, 1 a.m.)</em>
+            <p><strong>June 23, 2021:</strong> CinC has <a href="https://groups.google.com/g/physionet-challenges/c/qvYNaJvCaBw">released</a> its abstract decisions for the Challenge track of the conference. Congratulations to those with accepted abstracts. Those without an accepted abstract can still compete for a wildcard entry as outlined <a href="/content/challenge-2021/1.02/#wild-card">here</a>.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>The official phase of the PhysioNet/Computing in Cardiology Challenge 2021 has reopened</strong>
+            <em>(May 1, 2021, 1 a.m.)</em>
+            <p><strong>May 1, 2021:</strong> The official phase of the Challenge reopens today. Due to your engagement, we have enormously expanded the training data, modified the lead combination, and modified the example code and scoring function. Please see <a href="https://groups.google.com/u/4/g/physionet-challenges/c/ICEtUoEFppM">our announcement</a> on the <a href="https://groups.google.com/g/physionet-challenges">Challenge forum</a> for more details. We will update and clarify these changes in response to your questions in the coming days.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>CinC deadline for the PhysioNet/Computing in Cardiology Challenge 2021 extended</strong>
+            <em>(April 19, 2021, 1 a.m.)</em>
+            <p><strong>April 19, 2021:</strong> CinC has extended its abstract submission deadline to April 24, 2021. Please <a href="https://www.softconf.com/l/cinc2021/">submit your abstract</a> if you have not done so already. Like last year, CinC will host a hybrid conference with both in-person and remote attendance. Please see our <a href="https://groups.google.com/g/physionet-challenges/c/3dNhVvor5Lg">announcement</a> on the <a href="https://groups.google.com/g/physionet-challenges">Challenge forum</a> for more details.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>PhysioNet/Computing in Cardiology Challenge 2021 submissions are due soon</strong>
+            <em>(April 13, 2021, 1 a.m.)</em>
+            <p><strong>April 13, 2021:</strong> Only two days left to <a href="http://www.cinc.org/information-for-computing-in-cardiology-authors/">submit an abstract to CinC</a>! Please find the <a href="https://groups.google.com/g/physionet-challenges/c/gchqYjCv5Kk">abstract submission announcement</a> and the <a href="https://groups.google.com/g/physionet-challenges/c/wnCAoqZxFAI">instructions announcement</a> on the <a href="https://groups.google.com/g/physionet-challenges">Challenge forum</a>. Please see the <a href="https://moody-challenge.physionet.org/2021/leaderboard/">leaderboard</a> for the final scores of the unofficial phase, and please submit your abstract today!</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>Leaderboard for the PhysioNet/Computing in Cardiology Challenge 2021 is available</strong>
+            <em>(Feb. 24, 2021, midnight)</em>
+            <p><strong>February 24, 2021:</strong> The <a href="https://moody-challenge.physionet.org/2021/leaderboard/">leaderboard</a> is now live! Please see the <a href="https://groups.google.com/g/physionet-challenges/c/LPstJNLo-NQ">announcement</a> on the <a href="https://groups.google.com/g/physionet-challenges">Challenge forum</a>. Please see the timing and priority of entries section <a href="/content/challenge-2021/1.02/#timing">here</a> regarding the number of submissions allowed per day, so please submit early!</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>Accepting submissions for the PhysioNet/Computing in Cardiology Challenge 2021</strong>
+            <em>(Jan. 30, 2021, midnight)</em>
+            <p><strong>January 30, 2021:</strong> We are now accepting submissions for the 2021 Challenge! See below for <a href="https://groups.google.com/g/physionet-challenges/c/7i-rTHFSSV4">details</a>. Please <a href="https://docs.google.com/forms/d/e/1FAIpQLSc52DgT5dy_rqZioxbEdRF5Dd2sTx-MesnK8viJP457bYiWrw/viewform?usp=sf_link">register</a> your team (even if you registered last year), check the <a href="https://moody-challenge.physionet.org/2021/submissions/">submission instructions</a>, and <a href="https://docs.google.com/forms/d/e/1FAIpQLSciBaEzZn04pY_8_uT3zUDmcjnfnWJALYmdqGmb43vZxIOUUA/viewform?usp=sf_link">submit your code</a> when ready. As always, please join the <a href="https://groups.google.com/g/physionet-challenges/">Challenge forum</a> to discuss this year&rsquo;s Challenge.</p>
+            
+            
+            
+          </p>
+          
+        
+        
+          
+          <p>
+            <strong>The PhysioNet/Computing in Cardiology Challenge 2021 is now open</strong>
+            <em>(Dec. 24, 2020, midnight)</em>
+            <p><strong>December 24, 2020:</strong> The NIH-funded 2021 Challenge is now open! See below for <a href="https://groups.google.com/g/physionet-challenges/c/isPy636jOMg">details</a>. Please read this website for details and share questions and comments on <a href="https://groups.google.com/g/physionet-challenges/">Challenge forum</a>. This year&rsquo;s Challenge is generously co-sponsored by Google, MathWorks, and the Gordon and Betty Moore Foundation.</p>
+            
+            </span>
+            
+          </p>
+          
+          
+        </details>
+        
+      </div>
+    
+
+    <div class="row">
+      <!-- Main column -->
+      <div class="col-md-8">
+        
+          <div class="alert alert-secondary">
+
+  
+    
+      <strong>When using this resource, please cite the original publication:</strong>
+      
+        <p>Perez Alday EA, Gu A, Shah AJ, Robichaux C, Wong AI, Liu C, Liu F, Rad AB, Elola A, Seyedi S, Li Q, Sharma A, Clifford GD, Reyna MA. Classification of 12-lead ECGs: the PhysioNet/Computing in Cardiology Challenge 2020. Physiol Meas. 2020 Nov 11. http://doi.org/10.1088/1361-6579/abc960.</p>
+      
+    
+
+    
+      <p>
+        <strong>Additionally, when using this resource, please cite: </strong>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#citationModal" title="View citation formats"><i class="bi bi-quote"></i> Cite</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary ml-1" title="Copy BibTeX" onclick="copyToClipboard(document.getElementById('bibtex-data').value); this.innerHTML='<i class=\'bi bi-check\'></i> Copied'; var btn=this; setTimeout(function(){ btn.innerHTML='<i class=\'bi bi-clipboard\'></i> Copy BibTeX'; }, 2000);"><i class="bi bi-clipboard"></i> Copy BibTeX</button>
+        <br><span>Reyna, M., Sadr, N., Perez Alday, E. A., Liu, C., Seyedi, S., &amp; Clifford, G. D. (2020). Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021 (version 1.0.0). <i>PhysioNet</i>. RRID:SCR_007345. <a href="https://doi.org/10.13026/g9wd-3j66" rel="nofollow">https://doi.org/10.13026/g9wd-3j66</a></span>
+      </p>
+      <textarea id="bibtex-data" style="display:none;">@article{PhysioNet-challenge-2021-1.0.0,
+  author = {Reyna, Matthew and Sadr, Nadi and {Perez Alday}, Erick Andres and Liu, Chengyu and Seyedi, Salman and Clifford, Gari D},
+  title = {{Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021}},
+  journal = {{PhysioNet}},
+  year = {2020},
+  month = dec,
+  note = {Version 1.0.0},
+  doi = {10.13026/g9wd-3j66},
+  url = {https://doi.org/10.13026/g9wd-3j66}
+}</textarea>
+
+      <div class="modal fade" id="citationModal">
+  <div class="modal-dialog citation" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+      <table><tbody>
+        
+          
+          <tr>
+            <th>MLA</th>
+            <td>Reyna, Matthew, et al. "Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021" (version 1.0.0). <i>PhysioNet</i> (2020). RRID:SCR_007345. <a href="https://doi.org/10.13026/g9wd-3j66" rel="nofollow">https://doi.org/10.13026/g9wd-3j66</a></td>
+          </tr>
+          
+        
+          
+          <tr>
+            <th>APA</th>
+            <td>Reyna, M., Sadr, N., Perez Alday, E. A., Liu, C., Seyedi, S., &amp; Clifford, G. D. (2020). Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021 (version 1.0.0). <i>PhysioNet</i>. RRID:SCR_007345. <a href="https://doi.org/10.13026/g9wd-3j66" rel="nofollow">https://doi.org/10.13026/g9wd-3j66</a></td>
+          </tr>
+          
+        
+          
+          <tr>
+            <th>Chicago</th>
+            <td>Reyna, Matthew, Sadr, Nadi, Perez Alday, Erick Andres, Liu, Chengyu, Seyedi, Salman, and Gari D Clifford. "Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021" (version 1.0.0). <i>PhysioNet</i> (2020). RRID:SCR_007345. <a href="https://doi.org/10.13026/g9wd-3j66" rel="nofollow">https://doi.org/10.13026/g9wd-3j66</a></td>
+          </tr>
+          
+        
+          
+          <tr>
+            <th>Harvard</th>
+            <td>Reyna, M., Sadr, N., Perez Alday, E. A., Liu, C., Seyedi, S., and Clifford, G. D. (2020) 'Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021' (version 1.0.0), <i>PhysioNet</i>. RRID:SCR_007345. Available at: <a href="https://doi.org/10.13026/g9wd-3j66" rel="nofollow">https://doi.org/10.13026/g9wd-3j66</a></td>
+          </tr>
+          
+        
+          
+          <tr>
+            <th>Vancouver</th>
+            <td>Reyna M, Sadr N, Perez Alday E A, Liu C, Seyedi S, Clifford G D. Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021 (version 1.0.0). PhysioNet. 2020. RRID:SCR_007345. Available from: <a href="https://doi.org/10.13026/g9wd-3j66" rel="nofollow">https://doi.org/10.13026/g9wd-3j66</a></td>
+          </tr>
+          
+        
+          
+        
+      </tbody></table>
+      
+      <div class="mt-3">
+        <strong>BibTeX</strong>
+        <button class="btn btn-sm btn-outline-secondary ml-2" onclick="copyToClipboard(document.getElementById('bibtex-data').value); var btn=this; btn.textContent='Copied!'; setTimeout(function(){ btn.textContent='Copy'; }, 2000)">Copy</button>
+        <pre id="bibtex-citation" class="mt-2 p-2 border rounded" style="white-space: pre-wrap; background-color: #f8f9fa;">@article{PhysioNet-challenge-2021-1.0.0,
+  author = {Reyna, Matthew and Sadr, Nadi and {Perez Alday}, Erick Andres and Liu, Chengyu and Seyedi, Salman and Clifford, Gari D},
+  title = {{Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021}},
+  journal = {{PhysioNet}},
+  year = {2020},
+  month = dec,
+  note = {Version 1.0.0},
+  doi = {10.13026/g9wd-3j66},
+  url = {https://doi.org/10.13026/g9wd-3j66}
+}</pre>
+      </div>
+      
+            </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+  
+    
+      <p>
+        <strong>Please include the standard citation for PhysioNet: </strong>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-toggle="modal" data-target="#citationModalPlatform" title="View citation formats"><i class="bi bi-quote"></i> Cite</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary ml-1" title="Copy BibTeX" onclick="copyToClipboard(document.getElementById('bibtex-data-platform').value); this.innerHTML='<i class=\'bi bi-check\'></i> Copied'; var btn=this; setTimeout(function(){ btn.innerHTML='<i class=\'bi bi-clipboard\'></i> Copy BibTeX'; }, 2000);"><i class="bi bi-clipboard"></i> Copy BibTeX</button>
+        <br><span>Pollard, T., Moody, B. E., Lehman, L., Gow, B., Fernandes, C., Xie, C., Johnson, A., Mark, R. G., &amp; Heldt, T. (2026). PhysioNet as a global platform for biomedical research. Nature Health. <a href="https://doi.org/10.1038/s44360-026-00096-z" rel="nofollow">https://doi.org/10.1038/s44360-026-00096-z</a>. Available from: <a href="https://rdcu.be/faatM" rel="nofollow">https://rdcu.be/faatM</a></span>
+      </p>
+      <textarea id="bibtex-data-platform" style="display:none;">@article{pollard_physionet_2026, title = {{PhysioNet} as a global platform for biomedical research}, volume = {1}, issn = {3005-0693}, url = {https://doi.org/10.1038/s44360-026-00096-z}, doi = {10.1038/s44360-026-00096-z}, abstract = {Twenty-five years after its first public repository was established, the PhysioNet resource for biomedical and clinical data has enabled tens of thousands of research papers. Further efforts are ongoing to advance secure data sharing, community engagement and scalable research infrastructure.}, number = {8}, journal = {Nature Health}, author = {Pollard, Tom and Moody, Benjamin E. and Lehman, Li-wei H. and Gow, Brian J. and Fernandes, Chrystinne and Xie, Chen and Johnson, Alistair and Mark, Roger G. and Heldt, Thomas}, month = aug, year = {2026}, pages = {792--795},}</textarea>
+    
+
+  <div class="modal fade" id="citationModalPlatform">
+  <div class="modal-dialog citation" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+
+  <table><tbody>
+    
+        
+          <tr>
+            <th>APA</th>
+            <td>Pollard, T., Moody, B. E., Lehman, L., Gow, B., Fernandes, C., Xie, C., Johnson, A., Mark, R. G., &amp; Heldt, T. (2026). PhysioNet as a global platform for biomedical research. Nature Health. <a href="https://doi.org/10.1038/s44360-026-00096-z" rel="nofollow">https://doi.org/10.1038/s44360-026-00096-z</a>. Available from: <a href="https://rdcu.be/faatM" rel="nofollow">https://rdcu.be/faatM</a></td>
+          </tr>
+        
+    
+        
+          <tr>
+            <th>MLA</th>
+            <td>Pollard, Tom, et al. “PhysioNet as a Global Platform for Biomedical Research.” Nature Health, 2026, <a href="https://doi.org/10.1038/s44360-026-00096-z" rel="nofollow">https://doi.org/10.1038/s44360-026-00096-z</a>. Available from: <a href="https://rdcu.be/faatM" rel="nofollow">https://rdcu.be/faatM</a></td>
+          </tr>
+        
+    
+        
+          <tr>
+            <th>CHICAGO</th>
+            <td>Pollard, Tom, Benjamin E. Moody, Li-wei Lehman, Brian Gow, Chrystinne Fernandes, Chen Xie, Alistair Johnson, Roger G. Mark, and Thomas Heldt. “PhysioNet as a Global Platform for Biomedical Research.” Nature Health (2026). <a href="https://doi.org/10.1038/s44360-026-00096-z.i" rel="nofollow">https://doi.org/10.1038/s44360-026-00096-z.i</a> Available from: <a href="https://rdcu.be/faatM" rel="nofollow">https://rdcu.be/faatM</a></td>
+          </tr>
+        
+    
+        
+          <tr>
+            <th>HARVARD</th>
+            <td>Pollard, T., Moody, B.E., Lehman, L., Gow, B., Fernandes, C., Xie, C., Johnson, A., Mark, R.G. and Heldt, T., 2026. PhysioNet as a global platform for biomedical research. Nature Health. Available at: <a href="https://doi.org/10.1038/s44360-026-00096-z" rel="nofollow">https://doi.org/10.1038/s44360-026-00096-z</a>. Available from: <a href="https://rdcu.be/faatM" rel="nofollow">https://rdcu.be/faatM</a></td>
+          </tr>
+        
+    
+        
+          <tr>
+            <th>VANCOUVER</th>
+            <td>Pollard T, Moody BE, Lehman L, Gow B, Fernandes C, Xie C, et al. PhysioNet as a global platform for biomedical research. Nature Health. 2026. doi:10.1038/s44360-026-00096-z. Available from: <a href="https://rdcu.be/faatM" rel="nofollow">https://rdcu.be/faatM</a></td>
+          </tr>
+        
+    
+        
+    
+  </tbody></table>
+  
+  <div class="mt-3">
+    <strong>BibTeX</strong>
+    <button class="btn btn-sm btn-outline-secondary ml-2" onclick="copyToClipboard(document.getElementById('bibtex-data-platform').value); var btn=this; btn.textContent='Copied!'; setTimeout(function(){ btn.textContent='Copy'; }, 2000)">Copy</button>
+    <pre class="mt-2 p-2 border rounded" style="white-space: pre-wrap; background-color: #f8f9fa;">@article{pollard_physionet_2026, title = {{PhysioNet} as a global platform for biomedical research}, volume = {1}, issn = {3005-0693}, url = {https://doi.org/10.1038/s44360-026-00096-z}, doi = {10.1038/s44360-026-00096-z}, abstract = {Twenty-five years after its first public repository was established, the PhysioNet resource for biomedical and clinical data has enabled tens of thousands of research papers. Further efforts are ongoing to advance secure data sharing, community engagement and scalable research infrastructure.}, number = {8}, journal = {Nature Health}, author = {Pollard, Tom and Moody, Benjamin E. and Lehman, Li-wei H. and Gow, Brian J. and Fernandes, Chrystinne and Xie, Chen and Johnson, Alistair and Mark, Roger G. and Heldt, Thomas}, month = aug, year = {2026}, pages = {792--795},}</pre>
+  </div>
+  
+        </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+        
+
+        
+          
+  
+    <h2 id="abstract">Abstract</h2>
+    <p>The electrocardiogram (ECG) is a non-invasive representation of the electrical activity of the heart. Although the twelve-lead ECG is the standard diagnostic screening system for many cardiological issues, the limited accessibility of twelve-lead ECG devices provides a rationale for smaller, lower-cost, and easier to use devices. While single-lead ECGs are limiting, reduced-lead ECG systems hold promise, with evidence that subsets of the standard twelve leads can capture useful information and can even be comparable to twelve-lead ECGs in some limited contexts. In 2017 we challenged the public to classify AF from a single-lead ECG, and in 2020 we challenged the public to diagnose a much larger number of cardiac problems using twelve-lead recordings. However, there is limited evidence to demonstrate the utility of reduced-lead ECGs for capturing a wide range of diagnostic information.</p>
+
+<p>In this year&#39;s Challenge, we ask the following question: &#39;Will two do?&#39; This year&#39;s Challenge builds on last year&#39;s Challenge, which asked participants to classify cardiac abnormalities from twelve-lead ECGs. We are asking you to build an algorithm that can classify cardiac abnormalities from either twelve-lead, six-lead, and two-lead ECGs. We will test each algorithm on databases of twelve-lead, six-lead and two-lead ECGs, and the differences in performances of the algorithms on these databases will reveal the utility of two-lead or six-lead ECGs in comparison to standard twelve-lead EGCs.</p>
+    <hr>
+  
+
+  
+    <h2 id="background">Background</h2>
+    <p>The goal of the 2021 Challenge is to identify clinical diagnoses from twelve-lead, six-lead (I, II, III, aVL, aVR, and aVF), and two-lead (II and V5) ECG recordings.</p>
+
+<p>We ask participants to design and implement a working, open-source algorithm that, based only on the provided twelve-lead ECG recordings and routine demographic data, can automatically identify any cardiac abnormalities present in the recording. We will award prizes for the top performing twelve-lead algorithm and the top performing two-lead and six-lead algorithms.</p>
+
+<p>For more details and updates about the objectives of this year&rsquo;s Challenge, please see <a href="https://physionetchallenges.org/2021/">https://physionetchallenges.org/2021/</a>.&nbsp;This webpage will be updated after the end of the Challenge.</p>
+    <hr>
+  
+
+  
+    <h2 id="participation">Participation</h2>
+    <p>We invite participants from academia, industry, and elsewhere to participate in the Challenge. Like previous years, the Challenge has both an unofficial phase and an official phase than run over the course of several months, culminating with Computing in Cardiology on 12-15 September 2021. For more details and updates about participating in this year&rsquo;s Challenge, including important rules and deadlines, please see <a href="https://physionetchallenges.org/2021/">https://physionetchallenges.org/2021/</a>.</p>
+    <hr>
+  
+
+  
+    <h2 id="description">Data Description</h2>
+    <p>We have obtained 12-lead ECG recordings and labels from diverse sources for the public training and hidden test sets for the Challenge. We have posted multiple databases of 12-lead ECG recordings and labels as public training sets and sequester databases of 12-lead, 6-lead, and 2-lead ECG recordings as private test sets. For more details about the data for this year&rsquo;s Challenge, please see <a href="https://physionetchallenges.org/2021/">https://physionetchallenges.org/2021/</a>.</p>
+    <hr>
+  
+
+  
+    <h2 id="evaluation">Evaluation</h2>
+    <p>To better capture the importance of correctly identifying cardiac abnormalities, we defined an evaluation metric to score participant algorithms by assigning different weights to different classes and classification errors. For more details about the evaluation metric for this year&rsquo;s Challenge, please see <a href="https://physionetchallenges.org/2021/">https://physionetchallenges.org/2021/</a>.</p>
+    <hr>
+  
+
+  
+
+  
+
+  
+
+  
+    <h2 id="conflicts-of-interest">Conflicts of Interest</h2>
+    <p>The authors have no conflicts of interest to declare.</p>
+    <hr>
+  
+
+
+
+
+        
+      </div>
+      <!-- /.main column -->
+
+      <!-- Sidebar Column -->
+      <div class="col-md-4">
+        
+        
+        <div class="card" style="border: 0">
+          <button class="btn btn-secondary dropdown-toggle btn-rsp btn-right" type="button"
+            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Contents
+          </button>
+          <div class="dropdown-menu">
+            
+              
+                <a class="dropdown-item" href="#abstract">Abstract</a>
+              
+            
+              
+                <a class="dropdown-item" href="#background">Background</a>
+              
+            
+              
+                <a class="dropdown-item" href="#participation">Participation</a>
+              
+            
+              
+                <a class="dropdown-item" href="#description">Data Description</a>
+              
+            
+              
+                <a class="dropdown-item" href="#evaluation">Evaluation</a>
+              
+            
+              
+            
+              
+            
+              
+            
+              
+                <a class="dropdown-item" href="#conflicts-of-interest">Conflicts of Interest</a>
+              
+            
+            
+            <a class="dropdown-item" href="#files">Files</a>
+          </div>
+        </div>
+        
+
+        
+
+        <div class="card my-4">
+          <h5 class="card-header">Share</h5>
+          <div class="card-body">
+            <a class="btn btn-sm share-email sharebtn"
+              href="mailto:?subject=Will%20Two%20Do%3F%20Varying%20Dimensions%20in%20Electrocardiography%3A%20The%20PhysioNet/Computing%20in%20Cardiology%20Challenge%202021&body=https://physionet.org/content/challenge-2021/1.0.0/"
+              role="button" title="Share with email"><i class="far fa-envelope"></i></a>
+            <a class="btn btn-sm facebook sharebtn"
+              href="http://www.facebook.com/sharer.php?u=https://physionet.org/content/challenge-2021/1.0.0/" role="button"
+              title="Share on Facebook"><i class="fab fa-facebook"></i></a>
+            <a class="btn btn-sm linkedin sharebtn"
+              href="https://www.linkedin.com/shareArticle?url=https://physionet.org/content/challenge-2021/1.0.0/"
+              role="button" title="Share on LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a class="btn btn-sm reddit sharebtn"
+              href="https://www.reddit.com/submit?url=https://physionet.org/content/challenge-2021/1.0.0/&title=Will%20Two%20Do%3F%20Varying%20Dimensions%20in%20Electrocardiography%3A%20The%20PhysioNet/Computing%20in%20Cardiology%20Challenge%202021"
+              role="button" title="Share on Reddit"><i class="fab fa-reddit"></i></a>
+            <a class="btn btn-sm twitter sharebtn"
+              href="https://twitter.com/intent/tweet?text=Will%20Two%20Do%3F%20Varying%20Dimensions%20in%20Electrocardiography%3A%20The%20PhysioNet/Computing%20in%20Cardiology%20Challenge%202021. https://physionet.org/content/challenge-2021/1.0.0/"
+              role="button" title="Share on Twitter"><i class="fab fa-twitter"></i></a>
+          </div>
+        </div>
+
+        <div class="card my-4">
+          <h5 class="card-header">Access</h5>
+          <div class="card-body">
+            <p>
+              <strong>Access Policy:</strong>
+              <br>
+              Anyone can access the files, as long as they conform to the terms of the specified license.
+            </p>
+            <p>
+              <strong>License (for files):</strong>
+              <br>
+              <a href="/content/challenge-2021/view-license/1.0.0/">Creative Commons Attribution 4.0 International Public License</a>
+            </p>
+            
+
+            
+          </div>
+        </div>
+        <div class="card my-4">
+          <h5 class="card-header">Discovery</h5>
+          <div class="card-body">
+            
+              <p><strong>DOI (version 1.0.0):</strong>
+                <br>
+                <a href="https://doi.org/10.13026/g9wd-3j66">https://doi.org/10.13026/g9wd-3j66</a>
+              </p>
+            
+
+            
+              <p><strong>DOI (latest version):</strong>
+                <br>
+                <a href="https://doi.org/10.13026/gt86-a263">https://doi.org/10.13026/gt86-a263</a>
+              </p>
+            
+
+            
+
+            
+              <p><strong>Topics:</strong>
+                <br>
+                
+                  <a href="/content/?topic=challenge"><span class="badge badge-pn">challenge</span></a>
+                
+                  <a href="/content/?topic=cardiac+abnormalities"><span class="badge badge-pn">cardiac abnormalities</span></a>
+                
+                  <a href="/content/?topic=multilead+ecgs"><span class="badge badge-pn">multilead ecgs</span></a>
+                
+                  <a href="/content/?topic=classification"><span class="badge badge-pn">classification</span></a>
+                
+                  <a href="/content/?topic=competition"><span class="badge badge-pn">competition</span></a>
+                
+              </p>
+            
+
+            
+              <p><strong>Project Website:</strong>
+                <br>
+                <a href="https://physionetchallenges.org/2021/"><i
+                  class="fas fa-external-link-alt"></i> https://physionetchallenges.org/2021/</a>
+              </p>
+            
+          </div>
+        </div>
+
+        <div class="card my-4">
+          <h5 class="card-header">Project Views</h5>
+          <div class="card-body text-center">
+            <div class="d-flex justify-content-around mb-2">
+              <div>
+                <h3 class="mb-0">140</h3>
+                <small class="text-muted">Current Version</small>
+              </div>
+              <div>
+                <h3 class="mb-0">1123</h3>
+                <small class="text-muted">All Versions</small>
+              </div>
+            </div>
+            <small class="text-muted mb-0"><em>Project Views by Unique Registered Users</em></small>
+            <div class="mt-2">
+              <a href="/content/challenge-2021/metrics/1.0.0/" class="btn btn-sm btn-outline-secondary">View Details</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card my-4">
+          <h5 class="card-header">Corresponding Author</h5>
+          <div class="card-body">
+            
+              <em>You must be logged in to view the contact information.</em>
+            
+          </div>
+        </div>
+
+        <div class="card my-4">
+  <h5 class="card-header">Versions</h5>
+  <ul class="list-group list-group-flush project-version-list">
+    
+      <li class="list-group-item">
+        <a href="/content/challenge-2021/1.0.0/">
+          <span class="project-version">1.0.0</span>
+          <time datetime="2020-12-24">
+            Dec. 24, 2020
+          </time>
+        </a>
+      </li>
+    
+      <li class="list-group-item">
+        <a href="/content/challenge-2021/1.0.1/">
+          <span class="project-version">1.0.1</span>
+          <time datetime="2021-01-31">
+            Jan. 31, 2021
+          </time>
+        </a>
+      </li>
+    
+      <li class="list-group-item">
+        <a href="/content/challenge-2021/1.0.2/">
+          <span class="project-version">1.0.2</span>
+          <time datetime="2021-02-25">
+            Feb. 25, 2021
+          </time>
+        </a>
+      </li>
+    
+      <li class="list-group-item">
+        <a href="/content/challenge-2021/1.0.3/">
+          <span class="project-version">1.0.3</span>
+          <time datetime="2022-07-29">
+            July 29, 2022
+          </time>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+      </div>
+      <!-- /.sidebar -->
+    </div>
+    <h2 id="files">Files</h2>
+    
+      
+        <div class="alert alert-danger col-md-8" role="alert">
+  
+    <p><strong>Data Not Available</strong></p>
+    <p>Data is not available in your region due to legal or policy restrictions.</p>
+  
+</div>
+
+      
+    
+    <br>
+    
+</div>
+
+
+
+</main>
+
+    
+<link rel="stylesheet" type="text/css" href="/static/custom/css/footer.css"/>
+
+<div class="modern-ui">
+  <footer class="footer w-100 secondary-bg py-5">
+    <div class="container my-0 py-0 py-md-5">
+      
+        <img src="/static/images/physionet-logo-white.svg" width="180px" alt="PhysioNet" class="pb-2" />
+      
+      <div class="footer__columns light-text">
+        <div>
+          
+            <p class="dark-light-text mb-2">Maintained by the MIT Laboratory for Computational Physiology</p>
+          
+          
+            <p class="dark-light-text mb-2">Supported by the National Institute of Biomedical Imaging and Bioengineering (NIBIB), National Heart Lung and Blood Institute (NHLBI), and NIH Office of the Director under NIH grant numbers U24EB037545 and R01EB030362</p>
+          
+        </div>
+        <div class="d-flex flex-column pl-0 pl-md-5 pt-4 pt-md-0">
+          <h2 class="text-white font-weight-bold">Navigation</h2>
+          <a href="/content" class="pb-3 dark-light-text">Discover Data</a>
+          <a href="/about/publish" class="pb-3 dark-light-text">Share Data</a>
+          <a href="/about" class="pb-3 dark-light-text">About</a>
+          <a href="/news" class="pb-3 dark-light-text">News</a>
+        </div>
+        <div class="d-flex flex-column pt-4 pt-md-0">
+          <h2 class="text-white font-weight-bold">Explore</h2>
+          
+            <a href="/about/database/" class="pb-3 dark-light-text">Data</a>
+          
+            <a href="/about/software/" class="pb-3 dark-light-text">Software</a>
+          
+            <a href="/about/challenge/" class="pb-3 dark-light-text">Challenges</a>
+          
+            <a href="/about/tutorial/" class="pb-3 dark-light-text">Tutorials</a>
+          
+        </div>
+        <!-- <div class="d-flex flex-column flex-grow">
+          <h2 class="text-white font-weight-bold">Subscribe to our Newsletter</h2>
+          <input type="email" class="form-control mb-2" placeholder="Your email">
+          <button type="button" class="primary-button">Subscribe Now</button>
+        </div> -->
+      </div>
+      <hr >
+      <div class="d-flex flex-column align-items-center justify-content-between flex-md-row">
+        <div class="d-flex pt-2 pt-md-0">
+          
+            <a class="mr-3" href="https://github.com/MIT-LCP/physionet-build/"><img src="/static/images/icons/github.png" height="18px"></a>
+          
+          
+          
+            <a class="mr-3" href="http://linkedin.com/company/physionet"><img src="/static/images/icons/linkedin.png" height="18px"></a>
+          
+          
+        </div>
+        <div class="pt-4 pt-md-0">
+          
+          
+          
+             <a class="dark-light-text" href="https://accessibility.mit.edu/">Accessibility</a>
+          
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+
+    
+<script src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script src="/static/bootstrap/js/ie10-viewport-bug-workaround.js"></script>
+<script src="/static/custom/js/navbar.js"></script>
+
+    
+  <script src="/static/project/js/dynamic-files-panel.js"></script>
+  <script src="/static/custom/js/enable-popover.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+    
+  <!-- https://schema.org/ metadata for discovery -->
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Dataset",
+  "name": "Will Two Do? Varying Dimensions in Electrocardiography: The PhysioNet/Computing in Cardiology Challenge 2021",
+  "description": "The electrocardiogram (ECG) is a non\u002Dinvasive representation of the electrical activity of the heart. Although the twelve\u002Dlead ECG is the standard diagnostic screening system for many cardiological issues, the limited accessibility of twelve\u002Dlead ECG devices provides a rationale for smaller, lower\u002Dcost, and easier to use devices. While single\u002Dlead ECGs are limiting, reduced\u002Dlead ECG systems hold promise, with evidence that subsets of the standard twelve leads can capture useful information and can even be comparable to twelve\u002Dlead ECGs in some limited contexts. In 2017 we challenged the public to classify AF from a single\u002Dlead ECG, and in 2020 we challenged the public to diagnose a much larger number of cardiac problems using twelve\u002Dlead recordings. However, there is limited evidence to demonstrate the utility of reduced\u002Dlead ECGs for capturing a wide range of diagnostic information.\u000A\u000AIn this year\u0026#39\u003Bs Challenge, we ask the following question: \u0026#39\u003BWill two do?\u0026#39\u003B This year\u0026#39\u003Bs Challenge builds on last year\u0026#39\u003Bs Challenge, which asked participants to classify cardiac abnormalities from twelve\u002Dlead ECGs. We are asking you to build an algorithm that can classify cardiac abnormalities from either twelve\u002Dlead, six\u002Dlead, and two\u002Dlead ECGs. We will test each algorithm on databases of twelve\u002Dlead, six\u002Dlead and two\u002Dlead ECGs, and the differences in performances of the algorithms on these databases will reveal the utility of two\u002Dlead or six\u002Dlead ECGs in comparison to standard twelve\u002Dlead EGCs.",
+  "version": "1.0.0",
+  "license": "https://creativecommons.org/licenses/by/4.0/legalcode",
+  "datePublished" : "Dec. 24, 2020",
+  "url": "https://physionet.org/content/challenge-2021/1.0.0/",
+  
+  "identifier": "https://doi.org/10.13026/g9wd\u002D3j66",
+  
+  "creator": [
+  
+    {
+      "@type": "Person",
+      "givenName": "Matthew",
+      "familyName": "Reyna",
+      "name": "Matthew Reyna"
+    },
+  
+    {
+      "@type": "Person",
+      "givenName": "Nadi",
+      "familyName": "Sadr",
+      "name": "Nadi Sadr"
+    },
+  
+    {
+      "@type": "Person",
+      "givenName": "Erick Andres",
+      "familyName": "Perez Alday",
+      "name": "Erick Andres Perez Alday"
+    },
+  
+    {
+      "@type": "Person",
+      "givenName": "Chengyu",
+      "familyName": "Liu",
+      "name": "Chengyu Liu"
+    },
+  
+    {
+      "@type": "Person",
+      "givenName": "Salman",
+      "familyName": "Seyedi",
+      "name": "Salman Seyedi"
+    },
+  
+    {
+      "@type": "Person",
+      "givenName": "Gari D",
+      "familyName": "Clifford",
+      "name": "Gari D Clifford"
+    }
+  
+    ],
+  "includedInDataCatalog":{
+     "@type": "DataCatalog",
+     "name": "physionet.org"
+  },
+  "distribution": [
+    {
+      "@type": "DataDownload",
+      "contentUrl": "https://physionet.org/content/challenge-2021/1.0.0/#files"
+    }
+  ]
+}
+</script>
+
+  </body>
+  
+</html>

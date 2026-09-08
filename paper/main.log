@@ -1,0 +1,970 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.6)  8 SEP 2026 21:21
+entering extended mode
+ restricted \write18 enabled.
+ %&-line parsing enabled.
+**./main.tex
+(main.tex
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-07-20>
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/elsarticle\elsa
+rticle.cls
+Document Class: elsarticle 2026/01/09, 3.5: Elsevier Ltd
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.st
+y
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/l3kernel\expl3.
+sty
+Package: expl3 2026-07-20 L3 programming layer (loader) 
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3bac
+kend-pdftex.def
+File: l3backend-pdftex.def 2026-07-20 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count276
+))
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/l3packages/xpar
+se\xparse.sty
+Package: xparse 2025-10-09 L3 Experimental document command parser
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/etoolbox\etoolb
+ox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count277
+)
+\@bls=\dimen150
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cl
+s
+Document Class: article 2025/01/22 v1.4n Standard LaTeX document class
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/base\size12.clo
+File: size12.clo 2025/01/22 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count278
+\c@section=\count279
+\c@subsection=\count280
+\c@subsubsection=\count281
+\c@paragraph=\count282
+\c@subparagraph=\count283
+\c@figure=\count284
+\c@table=\count285
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen151
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphi
+cx.sty
+Package: graphicx 2026-05-17 v1.2e Enhanced LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval
+.sty
+Package: keyval 2026-05-17 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/graphics\graphi
+cs.sty
+Package: graphics 2026-05-17 v1.4h Standard LaTeX Graphics (DPC,SPQR)
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/graphics\trig.s
+ty
+Package: trig 2023/12/02 v1.11 sin cos tan (DPC)
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/graphics-cfg\gr
+aphics.cfg
+File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
+)
+Package graphics Info: Driver file: pdftex.def on input line 106.
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pd
+ftex.def
+File: pdftex.def 2025/09/29 v1.2d Graphics/color driver for pdftex
+))
+\Gin@req@height=\dimen152
+\Gin@req@width=\dimen153
+)
+\c@tnote=\count286
+\c@fnote=\count287
+\c@cnote=\count288
+\c@ead=\count289
+\c@elsarticle@author=\count290
+\@eadauthor=\toks18
+\c@affn=\count291
+\absbox=\box53
+\elsarticlehighlightsbox=\box54
+\elsarticlegrabsbox=\box55
+\keybox=\box56
+\Columnwidth=\dimen154
+\space@left=\dimen155
+\els@boxa=\box57
+\els@boxb=\box58
+\leftMargin=\dimen156
+\@enLab=\toks19
+\@sep=\skip51
+\@@sep=\skip52
+ (main.spl)
+\splwrite=\write3
+\openout3 = `main.spl'.
+
+\appnamewidth=\dimen157
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath
+.sty
+Package: amsmath 2026/05/19 v2.18d AMS math features
+\@mathmargin=\skip53
+
+For additional information on amsmath, use the `?' option.
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext
+.sty
+Package: amstext 2024/11/17 v2.01 AMS text
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.
+sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks20
+\ex@=\dimen158
+))
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.
+sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen159
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.
+sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count292
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count293
+\leftroot@=\count294
+LaTeX Info: Redefining \overline on input line 398.
+LaTeX Info: Redefining \colon on input line 409.
+\classnum@=\count295
+\DOTSCASE@=\count296
+LaTeX Info: Redefining \ldots on input line 495.
+LaTeX Info: Redefining \dots on input line 498.
+LaTeX Info: Redefining \cdots on input line 619.
+\Mathstrutbox@=\box59
+\strutbox@=\box60
+LaTeX Info: Redefining \big on input line 721.
+LaTeX Info: Redefining \Big on input line 722.
+LaTeX Info: Redefining \bigg on input line 723.
+LaTeX Info: Redefining \Bigg on input line 724.
+\big@size=\dimen160
+LaTeX Font Info:    Redeclaring font encoding OML on input line 742.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 743.
+\macc@depth=\count297
+LaTeX Info: Redefining \bmod on input line 904.
+LaTeX Info: Redefining \pmod on input line 909.
+LaTeX Info: Redefining \smash on input line 939.
+LaTeX Info: Redefining \relbar on input line 969.
+LaTeX Info: Redefining \Relbar on input line 970.
+\c@MaxMatrixCols=\count298
+\dotsspace@=\muskip17
+\c@parentequation=\count299
+\dspbrk@lvl=\count300
+\tag@help=\toks21
+\row@=\count301
+\column@=\count302
+\maxfields@=\count303
+\andhelp@=\toks22
+\eqnshift@=\dimen161
+\alignsep@=\dimen162
+\tagshift@=\dimen163
+\tagwidth@=\dimen164
+\totwidth@=\dimen165
+\lineht@=\dimen166
+\@envbody=\toks23
+\multlinegap=\skip54
+\multlinetaggap=\skip55
+\mathdisplay@stack=\toks24
+LaTeX Info: Redefining \[ on input line 2965.
+LaTeX Info: Redefining \] on input line 2966.
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amssym
+b.sty
+Package: amssymb 2013/01/14 v3.01 AMS font symbols
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\amsfon
+ts.sty
+Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
+\symAMSa=\mathgroup4
+\symAMSb=\mathgroup5
+LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
+LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
+(Font)                  U/euf/m/n --> U/euf/b/n on input line 106.
+))
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\bookta
+bs.sty
+Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
+\heavyrulewidth=\dimen167
+\lightrulewidth=\dimen168
+\cmidrulewidth=\dimen169
+\belowrulesep=\dimen170
+\belowbottomsep=\dimen171
+\aboverulesep=\dimen172
+\abovetopsep=\dimen173
+\cmidrulesep=\dimen174
+\cmidrulekern=\dimen175
+\defaultaddspace=\dimen176
+\@cmidla=\count304
+\@cmidlb=\count305
+\@aboverulesep=\dimen177
+\@belowrulesep=\dimen178
+\@thisruleclass=\count306
+\@lastruleclass=\count307
+\@thisrulewidth=\dimen179
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multir
+ow.sty
+Package: multirow 2024/11/12 v2.9 Span multiple rows of a table
+\multirow@colwidth=\skip56
+\multirow@cntb=\count308
+\multirow@dima=\skip57
+\bigstrutjot=\dimen180
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
+Package: array 2026/02/24 v2.7b Tabular extension package (FMi)
+\col@sep=\dimen181
+\ar@mcellbox=\box61
+\extrarowheight=\dimen182
+\NC@list=\toks25
+\extratabsurround=\skip58
+\backup@length=\skip59
+\ar@cellbox=\box62
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.s
+ty
+Package: inputenc 2024/02/08 v1.3d Input encoding file
+\inpenc@prehook=\toks26
+\inpenc@posthook=\toks27
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/base\fontenc.st
+y
+Package: fontenc 2025/07/18 v2.1d Standard LaTeX package
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\pifont.s
+ty
+Package: pifont 2020/03/25 PSNFSS-v9.3 Pi font support (SPQR) 
+LaTeX Font Info:    Trying to load font information for U+pzd on input line 63.
+
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upzd.fd
+File: upzd.fd 2001/06/04 font definitions for U/pzd.
+)
+LaTeX Font Info:    Trying to load font information for U+psy on input line 64.
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\upsy.fd
+File: upsy.fd 2001/06/04 font definitions for U/psy.
+))
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/lineno\lineno.s
+ty
+Package: lineno 2026/03/08 line numbers on paragraphs v5.9
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/kvoptions\kvopt
+ions.sty
+Package: kvoptions 2022-06-15 v3.15 Key value format for package options (HO)
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/ltxcmds\ltxcm
+ds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/kvsetkeys\kvset
+keys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+))
+\linenopenalty=\count309
+\output=\toks28
+\linenoprevgraf=\count310
+\linenumbersep=\dimen183
+\linenumberwidth=\dimen184
+\c@linenumber=\count311
+\c@pagewiselinenumber=\count312
+\c@LN@truepage=\count313
+\c@internallinenumber=\count314
+\c@internallinenumbers=\count315
+\quotelinenumbersep=\dimen185
+\bframerule=\dimen186
+\bframesep=\dimen187
+\bframebox=\box63
+\@LN@amsmath@ams@eqpen=\count316
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hyperr
+ef.sty
+Package: hyperref 2026-06-17 v7.01r Hypertext links for LaTeX
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.s
+ty
+Package: iftex 2024/12/12 v1.0g TeX engine tests
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/kvdefinekeys\
+kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/pdfescape\pdf
+escape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/pdftexcmds\pd
+ftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/infwarerr\inf
+warerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+))
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/hycolor\hycolor
+.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\namere
+f.sty
+Package: nameref 2026-01-29 v2.58 Cross-referencing by name of section
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/refcount\refcou
+nt.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/gettitlestrin
+g\gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count317
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/stringenc\str
+ingenc.sty
+Package: stringenc 2019/11/29 v1.12 Convert strings between diff. encodings (HO
+)
+)
+\@linkdim=\dimen188
+\Hy@linkcounter=\count318
+\Hy@pagecounter=\count319
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\pd1enc
+.def
+File: pd1enc.def 2026-06-17 v7.01r Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/intcalc\intca
+lc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+)
+\Hy@SavedSpaceFactor=\count320
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\puenc.
+def
+File: puenc.def 2026-06-17 v7.01r Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4199.
+Package hyperref Info: Link nesting OFF on input line 4204.
+Package hyperref Info: Hyper index ON on input line 4207.
+Package hyperref Info: Plain pages OFF on input line 4214.
+Package hyperref Info: Backreferencing OFF on input line 4219.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4466.
+\c@Hy@tempcnt=\count321
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/url\url.sty
+\Urlmuskip=\muskip18
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4805.
+\XeTeXLinkMargin=\dimen189
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/bitset\bitset
+.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/bigintcalc\bi
+gintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count322
+\Field@Width=\dimen190
+\Fld@charsize=\dimen191
+Package hyperref Info: Hyper figures OFF on input line 6091.
+Package hyperref Info: Link nesting OFF on input line 6096.
+Package hyperref Info: Hyper index ON on input line 6099.
+Package hyperref Info: backreferencing OFF on input line 6106.
+Package hyperref Info: Link coloring OFF on input line 6111.
+Package hyperref Info: Link coloring with OCG OFF on input line 6116.
+Package hyperref Info: PDF/A mode OFF on input line 6121.
+\Hy@abspage=\count323
+\c@Item=\count324
+\c@Hfootnote=\count325
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/hyperref\hpdfte
+x.def
+File: hpdftex.def 2026-06-17 v7.01r Hyperref driver for pdfTeX
+\Fld@listcount=\count326
+\c@bookmark@seq@number=\count327
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/rerunfilecheck\
+rerunfilecheck.sty
+Package: rerunfilecheck 2025-06-21 v1.11 Rerun checks for auxiliary files (HO)
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/generic/uniquecounter
+\uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+84.
+)
+\Hy@SectionHShift=\skip60
+)
+Package hyperref Info: Option `colorlinks' set `false' on input line 25.
+
+\emailauthor{email@example.com}{Zero Token Lab\corref {cor1}}
+(main.aux)
+\openout1 = `main.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 37.
+LaTeX Font Info:    ... okay on input line 37.
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\sup
+p-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count328
+\scratchdimen=\dimen192
+\scratchbox=\box64
+\nofMPsegments=\count329
+\nofMParguments=\count330
+\everyMPshowfont=\toks29
+\MPscratchCnt=\count331
+\MPscratchDim=\dimen193
+\MPnumerator=\count332
+\makeMPintoPDFobject=\count333
+\everyMPtoPDFconversion=\toks30
+)
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\ep
+stopdf-base.sty
+Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
+Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
+85.
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/00miktex\epstop
+df-sys.cfg
+File: epstopdf-sys.cfg 2021/03/18 v2.0 Configuration of epstopdf for MiKTeX
+))
+Package hyperref Info: Link coloring OFF on input line 37.
+ (main.out) (main.out)
+\@outlinefile=\write4
+\openout4 = `main.out'.
+
+LaTeX Font Info:    Trying to load font information for U+msa on input line 49.
+
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsa.f
+d
+File: umsa.fd 2013/01/14 v3.01 AMS symbols A
+)
+LaTeX Font Info:    Trying to load font information for U+msb on input line 49.
+
+
+(C:\Users\Administrator\AppData\Local\Programs\MiKTeX\tex/latex/amsfonts\umsb.f
+d
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+)
+Overfull \hbox (7.27388pt too wide) in paragraph at lines 40--72
+\T1/cmr/m/n/12 fiers, yet whether its in-distribution (ID) ben-e-fit trans-fers
+ to out-of-distribution
+ []
+
+
+Overfull \hbox (9.85919pt too wide) in paragraph at lines 40--72
+\T1/cmr/m/n/12 ary study on six di-rected cross-corpus trans-fer pairs among Ch
+apman-Shaoxing,
+ []
+
+[1
+
+
+{C:/Users/Administrator/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+LaTeX Font Info:    Calculating math sizes for size <> on input line 79.
+
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <0.7> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OT1/cmr/m/n' in size <0.5> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <0.7> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OML/cmm/m/it' in size <0.5> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <0.7> not available
+(Font)              size <5> substituted on input line 79.
+
+
+LaTeX Font Warning: Font shape `OMS/cmsy/m/n' in size <0.5> not available
+(Font)              size <5> substituted on input line 79.
+
+
+Overfull \hbox (5.08269pt too wide) in paragraph at lines 94--103
+[]\T1/cmr/bx/n/12 Why this ques-tion mat-ters for ECG. \T1/cmr/m/n/12 PTB-XL [[
+]], Chapman-Shaoxing
+ []
+
+[2] [3]
+Overfull \hbox (9.31194pt too wide) in paragraph at lines 148--165
+[]\T1/cmr/m/n/12 Across all
+ []
+
+[4]
+Overfull \hbox (14.36653pt too wide) in paragraph at lines 166--171
+[]\T1/cmr/m/n/12 A 27-cell full-
+ []
+
+
+Overfull \hbox (14.42195pt too wide) in paragraph at lines 171--179
+[]\T1/cmr/m/n/12 Across 8 re-cal-i-bra-tion meth-
+ []
+
+[5]
+<figures/fig_design_overview.pdf, id=184, 518.53723pt x 348.34142pt>
+File: figures/fig_design_overview.pdf Graphic file (type pdf)
+<use figures/fig_design_overview.pdf>
+Package pdftex.def Info: figures/fig_design_overview.pdf  used on input line 20
+2.
+(pdftex.def)             Requested size: 370.49881pt x 248.89214pt.
+ [6 <./figures/fig_design_overview.pdf>] [7]
+Overfull \hbox (56.41397pt too wide) in paragraph at lines 257--265
+\T1/cmr/m/n/12 and sensitivity-analyzed [[], []]. Si-nus rate/form state-ments 
+(SBRAD/STACH/SARRH)
+ []
+
+
+Overfull \hbox (25.48676pt too wide) in paragraph at lines 272--280
+\T1/cmr/m/n/12 Chapman$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 PTB-XL, CPSC$\OMS/cmsy
+/m/n/12 !$\T1/cmr/m/n/12 Chapman, CPSC$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 PTB-XL
+, PTB-XL$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 Chapman,
+ []
+
+
+Overfull \hbox (0.44363pt too wide) in paragraph at lines 282--294
+\T1/cmr/m/n/12 ram-e-ters) and ResNet1D (1D-ResNet-34) (sec-ondary, with full m
+ain-endpoint
+ []
+
+[8] [9] [10]
+Overfull \hbox (18.47272pt too wide) in paragraph at lines 383--387
+[]\T1/cmr/bx/n/12 Secondary end-points\T1/cmr/m/n/12 : $\OML/cmm/m/it/12 G$ \T1
+/cmr/m/n/12 (re-cov-er-able loss vs. or-a-cle), de-cay $\OT1/cmr/m/n/12 = ^^A[]
+[] \OMS/cmsy/m/n/12 ^^@
+ []
+
+[11]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 436.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\Delta' on input line 436.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 436.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 436.
+
+
+Overfull \hbox (9.86812pt too wide) in paragraph at lines 439--446
+[]\T1/cmr/m/n/12 Figure []2[] vi-su-al-izes the shift-dose re-sponse; Ta-ble []
+1[] re-ports the pre-registered
+ []
+
+[12]
+<figures/fig_main_results.pdf, id=291, 631.44342pt x 381.4092pt>
+File: figures/fig_main_results.pdf Graphic file (type pdf)
+<use figures/fig_main_results.pdf>
+Package pdftex.def Info: figures/fig_main_results.pdf  used on input line 449.
+(pdftex.def)             Requested size: 370.49881pt x 223.78984pt.
+
+Overfull \hbox (24.66432pt too wide) in paragraph at lines 460--465
+[]\T1/cmr/bx/n/12 InceptionTime \T1/cmr/m/n/12 (27/30 sup-ported, 90.0%): CPSC$
+\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 Chapman, CPSC$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/
+12 PTB-
+ []
+
+[13 <./figures/fig_main_results.pdf>]
+Overfull \hbox (14.2147pt too wide) in paragraph at lines 466--473
+\T1/cmr/m/n/12 XL$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 CPSC achieve 5/5 full sup-p
+ort (zero counter-examples); Chapman$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 CPSC
+ []
+
+
+Overfull \hbox (54.70769pt too wide) in paragraph at lines 466--473
+\T1/cmr/m/n/12 and Chapman$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 PTB-XL achieve 4/5
+ with one counter-example each; CPSC$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 Chapman
+ []
+
+
+LaTeX Warning: Float too large for page by 613.51305pt on input line 579.
+
+
+Overfull \hbox (54.75305pt too wide) in paragraph at lines 599--605
+\T1/cmr/m/n/12 (Chapman$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 CPSC, Chapman$\OMS/cm
+sy/m/n/12 !$\T1/cmr/m/n/12 PTB-XL), 2 di-rec-tions at 3/5 (CPSC$\OMS/cmsy/m/n/1
+2 !$\T1/cmr/m/n/12 Chapman,
+ []
+
+[14]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 618.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\Delta' on input line 618.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `subscript' on input line 618.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 618.
+
+[15]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 682.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\times' on input line 682.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 682.
+
+<figures/fig_method_boundary.pdf, id=349, 860.14813pt x 371.96846pt>
+File: figures/fig_method_boundary.pdf Graphic file (type pdf)
+<use figures/fig_method_boundary.pdf>
+Package pdftex.def Info: figures/fig_method_boundary.pdf  used on input line 69
+9.
+(pdftex.def)             Requested size: 370.49881pt x 160.22142pt.
+
+Overfull \hbox (111.2092pt too wide) in paragraph at lines 750--768
+ [][] 
+ []
+
+<figures/fig_arch_comparison.pdf, id=350, 787.86809pt x 371.94785pt>
+File: figures/fig_arch_comparison.pdf Graphic file (type pdf)
+<use figures/fig_arch_comparison.pdf>
+Package pdftex.def Info: figures/fig_arch_comparison.pdf  used on input line 77
+2.
+(pdftex.def)             Requested size: 370.49881pt x 174.91199pt.
+[16] [17 <./figures/fig_method_boundary.pdf>] [18 <./figures/fig_arch_compariso
+n.pdf>]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 814.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 814.
+
+
+Overfull \hbox (6.89241pt too wide) in paragraph at lines 817--830
+[]\T1/cmr/m/n/12 The 27-cell full-factorial syn-thetic val-i-da-tion (slope$\OM
+S/cmsy/m/n/12 2 f\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 5\OML/cmm/m
+/it/12 ; \OT1/cmr/m/n/12 1\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 2\OMS/cmsy/m/n/12 
+g^^B$\T1/cmr/m/n/12 intercept$\OMS/cmsy/m/n/12 2
+ []
+
+
+Overfull \hbox (103.1239pt too wide) in paragraph at lines 817--830
+\OMS/cmsy/m/n/12 f^^@\OT1/cmr/m/n/12 1\OML/cmm/m/it/12 ; \OT1/cmr/m/n/12 0\OML/
+cmm/m/it/12 ; \OT1/cmr/m/n/12 1\OMS/cmsy/m/n/12 g^^B$ \T1/cmr/m/n/12 prevalence
+$\OMS/cmsy/m/n/12 2 f\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 15\OML/
+cmm/m/it/12 ; \OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 3\OML/cmm/m/it
+/12 ; \OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 6\OMS/cmsy/m/n/12 g$\T
+1/cmr/m/n/12 , $\OML/cmm/m/it/12 n \OT1/cmr/m/n/12 = 20[]000$\T1/cmr/m/n/12 ) c
+on-firms that the slope/intercept/prevalence
+ []
+
+[19] [20] [21] [22]
+Overfull \hbox (5.17429pt too wide) in paragraph at lines 992--999
+[]\T1/cmr/bx/n/12 Trivial strat-egy com-par-i-son \T1/cmr/m/n/12 (Ta-ble []7[])
+: the lookup-table strat-egy (mean
+ []
+
+
+Overfull \hbox (25.8573pt too wide) in paragraph at lines 1030--1040
+\T1/cmr/m/n/12 the 6 trans-fer pairs and both ar-chi-tec-tures (Chapman$\OMS/cm
+sy/m/n/12 !$\T1/cmr/m/n/12 CPSC 2, Chapman$\OMS/cmsy/m/n/12 !$\T1/cmr/m/n/12 PT
+B-
+ []
+
+
+Overfull \hbox (5.9435pt too wide) in paragraph at lines 1030--1040
+\T1/cmr/m/n/12 counter-example has an iden-ti-fi-able post-hoc mech-a-nis-tic i
+n-ter-pre-ta-tion, which
+ []
+
+<figures/fig_counterexamples.pdf, id=466, 637.26233pt x 376.98152pt>
+File: figures/fig_counterexamples.pdf Graphic file (type pdf)
+<use figures/fig_counterexamples.pdf>
+Package pdftex.def Info: figures/fig_counterexamples.pdf  used on input line 10
+43.
+(pdftex.def)             Requested size: 370.49881pt x 219.17288pt.
+[23] [24 <./figures/fig_counterexamples.pdf>]
+Overfull \hbox (3.59369pt too wide) in paragraph at lines 1068--1075
+\T1/cmr/m/n/12 TS yields $\OT1/cmr/m/n/12 ^^A[][] = \OMS/cmsy/m/n/12 ^^@\OT1/cm
+r/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 0006$ \T1/cmr/m/n/12 (CI $\OT1/cmr/
+m/n/12 [\OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 
+0006\OML/cmm/m/it/12 ; \OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\
+OT1/cmr/m/n/12 0006]$\T1/cmr/m/n/12 ). A marginal counter-
+ []
+
+
+Overfull \hbox (3.60516pt too wide) in paragraph at lines 1076--1082
+[]\T1/cmr/bx/n/12 Counter-example 3: Chapman$\OMS/cmsy/m/n/12 !$\T1/cmr/bx/n/12
+ PTB-XL / In-cep-tion-Time / seed
+ []
+
+
+Overfull \hbox (3.59369pt too wide) in paragraph at lines 1090--1095
+\T1/cmr/m/n/12 TS yields $\OT1/cmr/m/n/12 ^^A[][] = \OMS/cmsy/m/n/12 ^^@\OT1/cm
+r/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 0010$ \T1/cmr/m/n/12 (CI $\OT1/cmr/
+m/n/12 [\OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 
+0012\OML/cmm/m/it/12 ; \OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\
+OT1/cmr/m/n/12 0008]$\T1/cmr/m/n/12 ). A marginal counter-
+ []
+
+[25]
+Overfull \hbox (17.36942pt too wide) in paragraph at lines 1096--1109
+\T1/cmr/m/n/12 TS yields $\OT1/cmr/m/n/12 ^^A[][] = \OMS/cmsy/m/n/12 ^^@\OT1/cm
+r/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 0168$ \T1/cmr/m/n/12 (CI $\OT1/cmr/
+m/n/12 [\OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 
+0170\OML/cmm/m/it/12 ; \OMS/cmsy/m/n/12 ^^@\OT1/cmr/m/n/12 0\OML/cmm/m/it/12 :\
+OT1/cmr/m/n/12 0165]$\T1/cmr/m/n/12 ). The largest-magnitude
+ []
+
+
+Overfull \hbox (3.60666pt too wide) in paragraph at lines 1123--1129
+[]\T1/cmr/bx/n/12 Counter-example 9: PTB-XL$\OMS/cmsy/m/n/12 !$\T1/cmr/bx/n/12 
+Chapman / In-cep-tion-Time / seed
+ []
+
+[26]
+Overfull \hbox (45.97603pt too wide) in paragraph at lines 1157--1171
+\T1/cmr/m/n/12 pair (EM $\OT1/cmr/m/n/12 +0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 04
+49$\T1/cmr/m/n/12 , BBSE $\OT1/cmr/m/n/12 +0\OML/cmm/m/it/12 :\OT1/cmr/m/n/12 0
+777$\T1/cmr/m/n/12 ) but much higher vari-ance on the Chapman$\OMS/cmsy/m/n/12 
+!$\T1/cmr/m/n/12 CPSC
+ []
+
+[27] [28] [29]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1228.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\not' on input line 1228.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `math shift' on input line 1228.
+
+[30]
+Overfull \hbox (1.56548pt too wide) in paragraph at lines 1259--1273
+[]\T1/cmr/m/n/12 The pre-registration re-vi-sion A1 (pri-mary end-point re-loca
+tion from \T1/cmtt/m/n/12 decay
+ []
+
+[31] [32] [33] [34] [35] [36]
+Overfull \hbox (60.9315pt too wide) in paragraph at lines 1468--1473
+[]\T1/cmr/m/n/12 The repos-i-tory's \T1/cmtt/m/n/12 scripts/preprocess_cinc2021
+.py\T1/cmr/m/n/12 , \T1/cmtt/m/n/12 run_paper_benchmarks.py\T1/cmr/m/n/12 ,
+ []
+
+
+Overfull \hbox (80.91693pt too wide) in paragraph at lines 1477--1486
+\T1/cmr/m/n/12 The pre-registered pro-to-col v2.1-A1, its hash man-i-fest (\T1/
+cmtt/m/n/12 docs/osf_archive_manifest.json\T1/cmr/m/n/12 ),
+ []
+
+
+Overfull \hbox (217.85854pt too wide) in paragraph at lines 1477--1486
+\T1/cmr/m/n/12 the re-vi-sion A1 doc-u-ment, and the full per-experiment re-sul
+t files (\T1/cmtt/m/n/12 checkpoints/transfer/**/transfer_result.json\T1/cmr/m/
+n/12 ,
+ []
+
+[37] [38]
+Underfull \hbox (badness 1028) in paragraph at lines 1538--1542
+[]\T1/cmr/m/n/12 M. Reyna, N. Strodthoff, P. Wag-ner, et al., ``Is-sues in the 
+au-
+ []
+
+
+Underfull \hbox (badness 1248) in paragraph at lines 1538--1542
+\T1/cmr/m/n/12 to-mated clas-si-fi-ca-tion of mul-ti-lead ECGs us-ing het-ero-g
+e-neous la-
+ []
+
+
+Underfull \hbox (badness 5711) in paragraph at lines 1542--1545
+[]\T1/cmr/m/n/12 B. Efron, ``Bet-ter boot-strap con-fi-dence in-ter-vals,'' \T1
+/cmr/m/it/12 Jour-nal of
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1542--1545
+\T1/cmr/m/it/12 the Amer-i-can Sta-tis-ti-cal As-so-ci-a-tion\T1/cmr/m/n/12 , 8
+2(397):171--185, 1987.
+ []
+
+[39]
+Underfull \hbox (badness 1584) in paragraph at lines 1566--1570
+[]\T1/cmr/m/n/12 K. Pa-tel, P. Beedala, ``Cal-i-bra-tion drift un-der cross-ins
+titutional
+ []
+
+[40]
+Underfull \hbox (badness 10000) in paragraph at lines 1583--1589
+[]\T1/cmr/m/n/12 [Unpublished pre-registered pro-to-col] ``ECG cal-i-bra-tion b
+ound-
+ []
+
+
+Underfull \hbox (badness 2903) in paragraph at lines 1583--1589
+\T1/cmr/m/n/12 ary study -- pre-registered ex-per-i-ment pro-to-col v2.1-A1,'' 
+2026.
+ []
+
+
+Underfull \hbox (badness 4660) in paragraph at lines 1583--1589
+\T1/cmr/m/n/12 Hash man-i-fest: \T1/cmtt/m/n/12 docs/osf_archive_manifest.json 
+\T1/cmr/m/n/12 (lo-cal snap-
+ []
+
+
+Underfull \hbox (badness 3088) in paragraph at lines 1583--1589
+\T1/cmr/m/n/12 shot; pub-lic OSF archival pend-ing); re-vi-sion A1 full text in
+
+ []
+
+
+Underfull \hbox (badness 4981) in paragraph at lines 1589--1592
+[]\T1/cmr/m/n/12 B. Nosek, C. Eber-sole, A. De-Haven, D. Mel-lor, ``The pre-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 1589--1592
+\T1/cmr/m/n/12 reg-is-tra-tion rev-o-lu-tion,'' \T1/cmr/m/it/12 PNAS\T1/cmr/m/n
+/12 , 115(11):2600--2606, 2018.
+ []
+
+[41] [42] [43] [44] [45] [46] [47] (main.aux)
+ ***********
+LaTeX2e <2026-06-01>
+L3 programming layer <2026-07-20>
+ ***********
+
+
+LaTeX Font Warning: Size substitutions with differences
+(Font)              up to 4.5pt have occurred.
+
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 4BDFFE23F1EE7AEEE2D340BFA3853C50;6822.
+ ) 
+Here is how much of TeX's memory you used:
+ 11237 strings out of 467501
+ 174731 string characters out of 5404663
+ 648492 words of memory out of 5000000
+ 40186 multiletter control sequences out of 15000+600000
+ 651453 words of font info for 102 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 72i,12n,79p,787b,684s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ <C:\Users\Administrator\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi
+600\ecbx1000.pk> <C:\Users\Administrator\AppData\Local\MiKTeX\fonts/pk/ljfour/j
+knappen/ec/dpi600\ecrm0700.pk> <C:\Users\Administrator\AppData\Local\MiKTeX\fon
+ts/pk/ljfour/jknappen/ec/dpi600\ecti0800.pk> <C:\Users\Administrator\AppData\Lo
+cal\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcrm1200.pk> <C:\Users\Administra
+tor\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ectt1200.pk> <C:\Us
+ers\Administrator\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1
+200.pk> <C:\Users\Administrator\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/e
+c/dpi600\ecrm1000.pk> <C:\Users\Administrator\AppData\Local\MiKTeX\fonts/pk/ljf
+our/jknappen/ec/dpi600\ecbx1200.pk> <C:\Users\Administrator\AppData\Local\MiKTe
+X\fonts/pk/ljfour/jknappen/ec/dpi600\ecti1000.pk> <C:\Users\Administrator\AppDa
+ta\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecti0700.pk> <C:\Users\Admin
+istrator\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\ecrm0800.pk> <
+C:\Users\Administrator\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\
+ecrm1200.pk> <C:\Users\Administrator\AppData\Local\MiKTeX\fonts/pk/ljfour/jknap
+pen/ec/dpi600\ecrm1728.pk><C:/Users/Administrator/AppData/Local/Programs/MiKTeX
+/fonts/type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Administrator/AppData/Loca
+l/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi10.pfb><C:/Users/Administr
+ator/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmmi12.pfb><C
+:/Users/Administrator/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts
+/cm/cmmi8.pfb><C:/Users/Administrator/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/amsfonts/cm/cmr10.pfb><C:/Users/Administrator/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/amsfonts/cm/cmr12.pfb><C:/Users/Administrator/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Administ
+rator/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:
+/Users/Administrator/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/
+cm/cmsy10.pfb><C:/Users/Administrator/AppData/Local/Programs/MiKTeX/fonts/type1
+/public/amsfonts/cm/cmsy7.pfb><C:/Users/Administrator/AppData/Local/Programs/Mi
+KTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Administrator/AppData/L
+ocal/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/A
+dministrator/AppData/Local/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
+Output written on main.pdf (47 pages, 772736 bytes).
+PDF statistics:
+ 1182 PDF objects out of 1200 (max. 8388607)
+ 130 named destinations out of 1000 (max. 500000)
+ 258 words of extra memory for PDF output out of 10000 (max. 10000000)
+

@@ -106,11 +106,26 @@ class TestMapping:
         assert DEFAULT_PRIORITY != v2["priority"]
         assert MAP_TO_5SUPERCLASS(v3["probe_codes"]) == "CD"
 
+    def test_sinus_rhythm_abnormality_variant_r13(self):
+        """R13敏感性变体4：窦性速率语句(SBRAD/STACH/SARRH)→STTC（旧约定）
+        应能复现"窦率遮蔽真实传导诊断"的缺陷，作为对照臂区分R13默认(NORM)。"""
+        variants = {v["name"]: v for v in generate_mapping_variants()}
+        v4 = variants["sinus_rhythm_abnormality_to_sttc"]
+        # 默认(R13)基线：SBRAD→NORM；SBRAD+1AVB→CD（窦缓不遮蔽传导）
+        assert MAP_TO_5SUPERCLASS({"SBRAD": 100.0}) == "NORM"
+        assert MAP_TO_5SUPERCLASS({"SBRAD": 100.0, "1AVB": 100.0}) == "CD"
+        # 变体4：SBRAD→STTC；SBRAD+1AVB→STTC（窦率遮蔽1AVB的CD，缺陷复现）
+        assert MAP_TO_5SUPERCLASS(v4["probe_codes"], v4["priority"],
+                                  code_overrides=v4["code_overrides"]) == v4["expected_label"]
+        assert v4["expected_label"] == "STTC"
+        assert MAP_TO_5SUPERCLASS({"SBRAD": 100.0, "1AVB": 100.0},
+                                  code_overrides=v4["code_overrides"]) == "STTC"
+
     def test_chapman_mapping(self):
         assert CHAPMAN_TO_SUPERCLASS["NSR"] == "NORM"
         assert CHAPMAN_TO_SUPERCLASS["AFIB"] == "STTC"
         assert CHAPMAN_TO_SUPERCLASS["AFLT"] == "STTC"
-        assert CHAPMAN_TO_SUPERCLASS["SB"] == "STTC"
+        assert CHAPMAN_TO_SUPERCLASS["SB"] == "STTC"  # 全局表；R12覆写(426177001→NORM)在preprocess_chapman.py的code_overrides，不改全局表
         assert CHAPMAN_TO_SUPERCLASS["1AVB"] == "CD"
         assert CHAPMAN_TO_SUPERCLASS["RBBB"] == "CD"
 
@@ -122,18 +137,18 @@ class TestMapping:
         assert CPSC_TO_SUPERCLASS["RBBB"] == "CD"
         assert CPSC_TO_SUPERCLASS["STD"] == "STTC"
         assert CPSC_TO_SUPERCLASS["STE"] == "STTC"
-        # CPSC无HYP：子空间{NORM, CD, STTC}与协议§2一致
-        assert set(SUBSPACE_CPSC) == {"NORM", "CD", "STTC"}
+        # CPSC HYP 极稀有(n=11)：子空间{NORM, CD, STTC, MI}与协议§2一致
+        assert set(SUBSPACE_CPSC) == {"NORM", "CD", "STTC", "MI"}
         assert "HYP" not in CPSC_TO_SUPERCLASS.values()
 
     def test_filter_subspace(self):
         labels = ["NORM", "CD", "STTC", "HYP", "MI", None]
         rep = filter_subspace(labels, SUBSPACE_CPSC)
-        assert rep["kept_indices"] == [0, 1, 2]
-        assert rep["dropped_indices"] == [3, 4, 5]
-        assert rep["n_kept"] == 3 and rep["n_dropped"] == 3
-        assert rep["kept_counts"] == {"NORM": 1, "CD": 1, "STTC": 1}
-        assert rep["dropped_counts"] == {"HYP": 1, "MI": 1, "None": 1}
+        assert rep["kept_indices"] == [0, 1, 2, 4]
+        assert rep["dropped_indices"] == [3, 5]
+        assert rep["n_kept"] == 4 and rep["n_dropped"] == 2
+        assert rep["kept_counts"] == {"NORM": 1, "CD": 1, "STTC": 1, "MI": 1}
+        assert rep["dropped_counts"] == {"HYP": 1, "None": 1}
 
 
 # ===========================================================================

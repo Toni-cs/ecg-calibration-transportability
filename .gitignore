@@ -5,3 +5,4 @@ checkpoints/
 results/
 
 tmp_preprocess_smoke_*/
+tmp_audit_*/

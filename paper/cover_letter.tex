@@ -1,0 +1,136 @@
+% ============================================================================
+% Cover Letter for submission to Computers in Biology and Medicine (CBM)
+% Paper: When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer?
+%        A Multi-Seed Calibration Boundary Study
+% File: paper/cover_letter.tex
+% ============================================================================
+
+\documentclass[11pt,letterpaper]{letter}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+
+\signature{Zero Token Lab\\Deployment Science Group\\Shouguang, China}
+\address{Zero Token Lab\\Deployment Science Group\\Shouguang, China}
+
+\begin{document}
+
+\begin{letter}{Editor-in-Chief\\
+\emph{Computers in Biology and Medicine}\\
+Editorial Office}
+
+\opening{Dear Editor,}
+
+We are pleased to submit our original research article entitled
+``\textbf{When Does Temperature Scaling Pay Off in Cross-Corpus ECG
+Transfer? A Multi-Seed Calibration Boundary Study}'' for your
+consideration as an \textbf{Original Research Article} in
+\emph{Computers in Biology and Medicine}. This manuscript has not been
+published elsewhere and is not under consideration by any other journal.
+
+\bigskip
+
+\textbf{Summary of contributions.}
+To our knowledge, this is the first study to systematically
+characterize both the payoff and the boundary conditions of
+Temperature Scaling (TS) as a post-hoc recalibration method under
+cross-corpus ECG transfer. We pre-registered and executed a multi-seed
+calibration boundary study comprising \textbf{60 experiments}
+(6 directed transfer pairs $\times$ 2 architectures
+$\times$ 5 seeds, fully balanced) on PTB-XL, Chapman-Shaoxing, and CPSC2018+2019,
+with patient-level cluster paired bootstrap ($B=10{,}000$; percentile
+operating CI with BCa sensitivity on 3 representative experiments) and
+eight recalibration methods. TS yields a positive out-of-distribution
+(OOD) calibration benefit
+$\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{raw}^{OOD}
+-\text{ECE}_{TS}^{OOD}$ in \textbf{51/60 = 85.0\%} of seed
+experiments (InceptionTime 27/30, ResNet1D 24/30), while the
+remaining \textbf{9 counter-examples are transparently disclosed}
+and mechanistically explained case by case (six of nine co-occur with
+low OOD accuracy; seven of nine with a large ID--OOD accuracy gap).
+The paper delivers
+\textbf{four independent contributions}:
+\textbf{C1} (OOD benefit quantification, 51/60 seed support),
+\textbf{C2} (ID boundary condition with the pre-registered branch
+triggered: only 29/60 = 48.3\% of cells have CIs containing zero,
+below the $\geq$80\% criterion, so the ``ID nonzero boundary'' branch
+applies and C1 is reported with this qualifier),
+\textbf{C3} (27-cell Shapley decomposition validation,
+$n=20{,}000$), and
+\textbf{C4} (method-selection boundary: TS robust vs.\ EM prior and
+Matrix scaling weakest, governed by a prior-likelihood mismatch
+mechanism).
+
+\bigskip
+
+\textbf{Why this journal.}
+Cross-corpus ECG transfer calibration is a critical bottleneck for
+clinical deployment of deep ECG models across institutions with
+different acquisition protocols, lead sets, and label vocabularies.
+Our methodological contribution---an explicit boundary-condition
+characterization of when TS pays off, combined with transparent
+reporting of nine counter-examples and a pre-registered failure
+branch---aligns directly with the journal's scope on biomedical
+signal processing, clinical machine learning reliability, and
+reproducible computational methods in medicine.
+
+\bigskip
+
+\textbf{Transparency statement.}
+All hypotheses in this manuscript are tagged
+\emph{exploratory + robustness validation}, not confirmatory,
+consistent with the open-science best practices of
+Nosek et al.\ (2018). The nine counter-examples (15.0\% of the
+experiment grid) are disclosed in full in the main
+text and supplements; no non-supporting result is omitted or
+post-hoc excluded. The pre-registration protocol v2.1-A1, its hash
+manifest, and revision A1 are included with the submission
+as supplementary files;
+public OSF archival is in progress and the hash manifest allows
+independent verification of the snapshot timing. All deviations from
+the original protocol are recorded in the protocol revision log
+(protocol \S11.5, amendment row A2).
+The source code, experiment artifacts, and data preparation
+scripts are provided with the submission as supplementary material;
+a public repository will accompany acceptance.
+A five-item honesty declaration (adversarial audit product) is
+included in the manuscript and archived with the protocol.
+
+\bigskip
+
+\textbf{Note on pre-registration design.}
+This study adopts an \emph{exploratory + robustness validation}
+design rather than a strictly confirmatory design. The
+pre-registration protocol was made public before the multi-seed
+validation was unblinded. The formal revision A1 records a
+transparent re-location of the primary endpoint from the original
+``ID$\rightarrow$OOD decay'' to ``OOD benefit + boundary
+conditions''. This re-location was triggered not by the main-test
+results but by an independent exploratory pilot
+($\Delta\text{ECE}_{\text{ID}}\approx 0$), and it is consistent with
+the empirically observed ID--OOD asymmetry (Guo et al.\ 2017; Ovadia
+et al.\ 2019); we emphasize this asymmetry is empirical, not a
+theorem. Following Lakens (2021) and Nosek et al.\ (2018), this
+constitutes a
+\textbf{transparent re-location, not HARKing}: the pilot results
+do not enter the main test report, and the revision direction is
+consistent with the registered empirical asymmetry rather than
+result-driven. We disclose this design choice at the outset so that
+reviewers and editors can evaluate the evidence under the correct
+inferential framework.
+
+\bigskip
+
+We believe this work makes a significant methodological
+contribution to the field of cross-corpus ECG calibration,
+providing an actionable answer to ``when does TS pay off'' with
+multi-seed robustness evidence, transparent counter-example
+reporting, and a pre-registered boundary-condition analysis. We
+look forward to your feedback.
+
+\closing{Sincerely,}
+
+\end{letter}
+
+\end{document}

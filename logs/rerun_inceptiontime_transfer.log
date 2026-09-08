@@ -1,0 +1,594 @@
+
+============================================================
+rerun inceptiontime: ptbxl -> chapman
+============================================================
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\inceptiontime\seed42\best_model.pt (epoch 13, val_ece=0.0125, d_model=32, n_layers=2)
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0239 [+0.0148,+0.0280] | OOD ΔECE=+0.0308 [+0.0275,+0.0335] | decay=+0.0069
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0255 [+0.0142,+0.0325] | OOD ΔECE=+0.0355 [+0.0276,+0.0409] | decay=+0.0100
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0144 [+0.0015,+0.0250] | OOD ΔECE=+0.0351 [+0.0306,+0.0387] | decay=+0.0207
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0308 [+0.0189,+0.0369] | OOD ΔECE=+0.0314 [+0.0236,+0.0370] | decay=+0.0006
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0353 [+0.0257,+0.0414] | OOD ΔECE=+0.0325 [+0.0261,+0.0378] | decay=-0.0028
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0353 [+0.0245,+0.0409] | OOD ΔECE=+0.0321 [+0.0242,+0.0379] | decay=-0.0031
+  [em_prior] π̂_target=[0.195 0.072 0.71  0.023 0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [em_prior] w=π̂/π_train=[0.49 0.29 3.24 0.22 0.  ]
+  [em_prior] [sanity] π̂_ID=[0.403 0.145 0.314 0.139 0.   ] w_ID=[1.01 0.58 1.43 1.34 0.  ] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0276 [-0.0371,-0.0177] | OOD ΔECE=+0.0315 [+0.0165,+0.0459] | decay=+0.0591
+  [bbse_prior] π̂_target=[0.175 0.155 0.67  0.    0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [bbse_prior] w=π̂/π_train=[0.44 0.62 3.06 0.   0.  ]
+  [bbse_prior] cond(C)=69.0 rank=5/5
+  [bbse_prior] [sanity] π̂_ID=[0.428 0.242 0.229 0.1   0.   ] w_ID=[1.07 0.97 1.05 0.97 0.  ] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=-0.0416 [-0.0505,-0.0320] | OOD ΔECE=+0.0237 [+0.0089,+0.0381] | decay=+0.0653
+
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed42\transfer_result.json
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+Loaded checkpoint checkpoints\transfer\ptbxl_chapman\inceptiontime\seed43\best_model.pt (epoch 8, val_ece=0.0186, d_model=32, n_layers=2)
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0245 [+0.0102,+0.0297] | OOD ΔECE=+0.0254 [+0.0219,+0.0276] | decay=+0.0009
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0255 [+0.0115,+0.0302] | OOD ΔECE=+0.0208 [+0.0119,+0.0275] | decay=-0.0047
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0198 [+0.0033,+0.0307] | OOD ΔECE=+0.0282 [+0.0221,+0.0327] | decay=+0.0084
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0262 [+0.0089,+0.0313] | OOD ΔECE=+0.0217 [+0.0117,+0.0285] | decay=-0.0045
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0232 [+0.0129,+0.0288] | OOD ΔECE=+0.0322 [+0.0237,+0.0367] | decay=+0.0090
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0232 [+0.0122,+0.0285] | OOD ΔECE=+0.0323 [+0.0249,+0.0360] | decay=+0.0091
+  [em_prior] π̂_target=[0.23  0.184 0.586 0.    0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [em_prior] w=π̂/π_train=[0.57 0.74 2.67 0.   0.  ]
+  [em_prior] [sanity] π̂_ID=[0.467 0.221 0.241 0.071 0.   ] w_ID=[1.17 0.88 1.1  0.69 0.  ] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0339 [-0.0415,-0.0257] | OOD ΔECE=+0.0564 [+0.0440,+0.0703] | decay=+0.0902
+  [bbse_prior] π̂_target=[0.152 0.212 0.613 0.023 0.   ] (π_train=[0.399 0.25  0.219 0.104 0.027])
+  [bbse_prior] w=π̂/π_train=[0.38 0.85 2.8  0.22 0.  ]
+  [bbse_prior] cond(C)=220.7 rank=5/5
+  [bbse_prior] [sanity] π̂_ID=[0.323 0.25  0.192 0.112 0.123] w_ID=[0.81 1.   0.88 1.08 4.5 ] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0031 [-0.0068,+0.0120] | OOD ΔECE=+0.0678 [+0.0553,+0.0808] | decay=+0.0647
+
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)
+============================================================
+  ts        decay均值=+0.0039 sd=0.0030 (n=2 seed)
+  platt     decay均值=+0.0027 sd=0.0073 (n=2 seed)
+  isotonic  decay均值=+0.0145 sd=0.0062 (n=2 seed)
+  vector    decay均值=-0.0020 sd=0.0026 (n=2 seed)
+  matrix    decay均值=+0.0031 sd=0.0059 (n=2 seed)
+  dirichlet decay均值=+0.0030 sd=0.0061 (n=2 seed)
+  em_prior  decay均值=+0.0746 sd=0.0156 (n=2 seed)
+  bbse_prior decay均值=+0.0650 sd=0.0003 (n=2 seed)
+Aggregate -> checkpoints\transfer\ptbxl_chapman\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->chapman 完成
+
+============================================================
+rerun inceptiontime: ptbxl -> cpsc
+============================================================
+[ptbxl] 子空间降级: 保留21048条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除474条 (分布{'HYP': 474})
+[ptbxl] 患者级四分割: train(12724p/16829r) val(1818p/2103r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed42\best_model.pt (epoch 12, val_ece=0.0093, d_model=64, n_layers=2)
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0196 [+0.0100,+0.0235] | OOD ΔECE=+0.0271 [+0.0246,+0.0289] | decay=+0.0075
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0209 [+0.0105,+0.0244] | OOD ΔECE=+0.0282 [+0.0249,+0.0313] | decay=+0.0073
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0153 [+0.0084,+0.0205] | OOD ΔECE=+0.0253 [+0.0217,+0.0288] | decay=+0.0100
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0232 [+0.0115,+0.0282] | OOD ΔECE=+0.0259 [+0.0216,+0.0304] | decay=+0.0027
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0194 [+0.0098,+0.0282] | OOD ΔECE=+0.0332 [+0.0264,+0.0391] | decay=+0.0138
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0194 [+0.0104,+0.0264] | OOD ΔECE=+0.0333 [+0.0272,+0.0383] | decay=+0.0139
+  [em_prior] π̂_target=[0.186 0.226 0.311 0.277] (π_train=[0.411 0.107 0.225 0.257])
+  [em_prior] w=π̂/π_train=[0.45 2.12 1.38 1.08]
+  [em_prior] [sanity] π̂_ID=[0.429 0.151 0.161 0.259] w_ID=[1.04 1.42 0.71 1.01] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=+0.0405 [+0.0270,+0.0511] | OOD ΔECE=+0.0549 [+0.0431,+0.0681] | decay=+0.0145
+  [bbse_prior] π̂_target=[0.134 0.2   0.419 0.247] (π_train=[0.411 0.107 0.225 0.257])
+  [bbse_prior] w=π̂/π_train=[0.33 1.88 1.86 0.96]
+  [bbse_prior] cond(C)=3.0 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.426 0.097 0.226 0.252] w_ID=[1.04 0.91 1.   0.98] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0615 [+0.0449,+0.0721] | OOD ΔECE=+0.0822 [+0.0669,+0.1006] | decay=+0.0207
+
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed42\transfer_result.json
+[ptbxl] 子空间降级: 保留21048条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除474条 (分布{'HYP': 474})
+[ptbxl] 患者级四分割: train(12724p/16829r) val(1818p/2073r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+Loaded checkpoint checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed43\best_model.pt (epoch 18, val_ece=0.0122, d_model=64, n_layers=2)
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0166 [+0.0043,+0.0220] | OOD ΔECE=+0.0245 [+0.0220,+0.0262] | decay=+0.0080
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0200 [+0.0020,+0.0251] | OOD ΔECE=+0.0299 [+0.0262,+0.0337] | decay=+0.0099
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0119 [-0.0044,+0.0220] | OOD ΔECE=+0.0323 [+0.0275,+0.0368] | decay=+0.0204
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0199 [+0.0080,+0.0255] | OOD ΔECE=+0.0230 [+0.0162,+0.0315] | decay=+0.0030
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0156 [+0.0053,+0.0231] | OOD ΔECE=+0.0228 [+0.0169,+0.0294] | decay=+0.0072
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0156 [+0.0041,+0.0233] | OOD ΔECE=+0.0228 [+0.0165,+0.0291] | decay=+0.0072
+  [em_prior] π̂_target=[0.2   0.182 0.388 0.231] (π_train=[0.411 0.107 0.225 0.257])
+  [em_prior] w=π̂/π_train=[0.49 1.7  1.72 0.9 ]
+  [em_prior] [sanity] π̂_ID=[0.482 0.084 0.189 0.245] w_ID=[1.17 0.79 0.84 0.95] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=+0.0271 [+0.0061,+0.0388] | OOD ΔECE=+0.0598 [+0.0443,+0.0752] | decay=+0.0326
+  [bbse_prior] π̂_target=[0.103 0.214 0.454 0.228] (π_train=[0.411 0.107 0.225 0.257])
+  [bbse_prior] w=π̂/π_train=[0.25 2.01 2.02 0.89]
+  [bbse_prior] cond(C)=2.8 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.417 0.095 0.236 0.252] w_ID=[1.01 0.89 1.05 0.98] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0261 [+0.0000,+0.0502] | OOD ΔECE=+0.0729 [+0.0557,+0.0906] | decay=+0.0468
+
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)
+============================================================
+  ts        decay均值=+0.0078 sd=0.0002 (n=2 seed)
+  platt     decay均值=+0.0086 sd=0.0013 (n=2 seed)
+  isotonic  decay均值=+0.0152 sd=0.0052 (n=2 seed)
+  vector    decay均值=+0.0029 sd=0.0002 (n=2 seed)
+  matrix    decay均值=+0.0105 sd=0.0033 (n=2 seed)
+  dirichlet decay均值=+0.0106 sd=0.0033 (n=2 seed)
+  em_prior  decay均值=+0.0236 sd=0.0091 (n=2 seed)
+  bbse_prior decay均值=+0.0337 sd=0.0130 (n=2 seed)
+Aggregate -> checkpoints\transfer\ptbxl_cpsc\inceptiontime\aggregate.json
+
+[ret=0] ptbxl->cpsc 完成
+
+============================================================
+rerun inceptiontime: chapman -> ptbxl
+============================================================
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\inceptiontime\seed42\best_model.pt (epoch 2, val_ece=0.0183, d_model=32, n_layers=2)
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0004 [-0.0010,+0.0015] | OOD ΔECE=-0.0025 [-0.0034,-0.0016] | decay=-0.0028
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0059 [+0.0020,+0.0089] | OOD ΔECE=+0.0164 [+0.0077,+0.0231] | decay=+0.0105
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0070 [+0.0023,+0.0110] | OOD ΔECE=-0.0080 [-0.0106,+0.0040] | decay=-0.0149
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0069 [+0.0032,+0.0084] | OOD ΔECE=+0.0306 [+0.0210,+0.0384] | decay=+0.0237
+D:\A1\ecg-lab-v2\src\utils\calibration_methods.py:171: UserWarning: fit_matrix_scaling: 优化未收敛(status=1)，返回None
+  warnings.warn(f"fit_matrix_scaling: 优化未收敛(status={res.status})，返回None")
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0000 [+0.0000,+0.0000] | OOD ΔECE=+0.0000 [+0.0000,+0.0000] | decay=+0.0000
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0069 [+0.0014,+0.0110] | OOD ΔECE=+0.0204 [+0.0098,+0.0290] | decay=+0.0135
+  [em_prior] π̂_target=[0.    0.478 0.    0.    0.522] (π_train=[0.236 0.005 0.696 0.04  0.023])
+  [em_prior] w=π̂/π_train=[ 0.   88.07  0.    0.   22.96]
+D:\A1\ecg-lab-v2\src\utils\prior_shift.py:184: UserWarning: fit_em: 1000次迭代未收敛(tol=1e-08)
+  warnings.warn(f"fit_em: {max_iter}次迭代未收敛(tol={tol})")
+  [em_prior] [sanity] π̂_ID=[0.    0.679 0.    0.    0.321] w_ID=[  0.   125.05   0.     0.    14.12] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0994 [-0.1043,-0.0940] | OOD ΔECE=-0.1451 [-0.1542,-0.1362] | decay=-0.0457
+  [bbse_prior] π̂_target=[0.001 0.001 0.355 0.492 0.15 ] (π_train=[0.236 0.005 0.696 0.04  0.023])
+  [bbse_prior] w=π̂/π_train=[ 0.    0.22  0.51 12.29  6.62]
+  [bbse_prior] cond(C)=2340.3 rank=5/5
+  [bbse_prior] [sanity] π̂_ID=[0.169 0.096 0.593 0.021 0.121] w_ID=[ 0.72 17.67  0.85  0.52  5.31] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0576 [+0.0515,+0.0639] | OOD ΔECE=+0.0669 [+0.0569,+0.0756] | decay=+0.0092
+
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed42\transfer_result.json
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_ptbxl\inceptiontime\seed43\best_model.pt (epoch 3, val_ece=0.0115, d_model=32, n_layers=2)
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0005 [-0.0031,+0.0039] | OOD ΔECE=+0.0095 [+0.0066,+0.0108] | decay=+0.0090
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0032 [-0.0014,+0.0063] | OOD ΔECE=+0.0169 [+0.0128,+0.0213] | decay=+0.0137
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0038 [-0.0020,+0.0082] | OOD ΔECE=+0.0208 [+0.0149,+0.0290] | decay=+0.0170
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0029 [-0.0054,+0.0083] | OOD ΔECE=+0.0312 [+0.0242,+0.0374] | decay=+0.0283
+D:\A1\ecg-lab-v2\src\utils\calibration_methods.py:171: UserWarning: fit_matrix_scaling: 优化未收敛(status=1)，返回None
+  warnings.warn(f"fit_matrix_scaling: 优化未收敛(status={res.status})，返回None")
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0000 [+0.0000,+0.0000] | OOD ΔECE=+0.0000 [+0.0000,+0.0000] | decay=+0.0000
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0025 [-0.0050,+0.0073] | OOD ΔECE=+0.0179 [+0.0100,+0.0297] | decay=+0.0155
+  [em_prior] π̂_target=[0.    0.391 0.    0.    0.609] (π_train=[0.236 0.005 0.696 0.04  0.023])
+  [em_prior] w=π̂/π_train=[ 0.   72.01  0.    0.   26.8 ]
+  [em_prior] [sanity] π̂_ID=[0.056 0.512 0.17  0.    0.262] w_ID=[ 0.24 94.27  0.24  0.   11.53] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0766 [-0.0825,-0.0712] | OOD ΔECE=-0.1340 [-0.1431,-0.1235] | decay=-0.0574
+  [bbse_prior] π̂_target=[0.35  0.    0.375 0.275 0.   ] (π_train=[0.236 0.005 0.696 0.04  0.023])
+  [bbse_prior] w=π̂/π_train=[1.49 0.   0.54 6.87 0.  ]
+  [bbse_prior] cond(C)=776.6 rank=5/5
+  [bbse_prior] [sanity] π̂_ID=[0.249 0.022 0.67  0.053 0.005] w_ID=[1.06 4.04 0.96 1.34 0.23] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0138 [+0.0037,+0.0247] | OOD ΔECE=+0.0996 [+0.0933,+0.1045] | decay=+0.0857
+
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)
+============================================================
+  ts        decay均值=+0.0031 sd=0.0059 (n=2 seed)
+  platt     decay均值=+0.0121 sd=0.0016 (n=2 seed)
+  isotonic  decay均值=+0.0011 sd=0.0160 (n=2 seed)
+  vector    decay均值=+0.0260 sd=0.0023 (n=2 seed)
+  matrix    decay均值=+0.0000 sd=0.0000 (n=2 seed)
+  dirichlet decay均值=+0.0145 sd=0.0010 (n=2 seed)
+  em_prior  decay均值=-0.0516 sd=0.0058 (n=2 seed)
+  bbse_prior decay均值=+0.0475 sd=0.0382 (n=2 seed)
+Aggregate -> checkpoints\transfer\chapman_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] chapman->ptbxl 完成
+
+============================================================
+rerun inceptiontime: chapman -> cpsc
+============================================================
+[chapman] 子空间降级: 保留19785条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除458条 (分布{'HYP': 458})
+[chapman] 患者级四分割: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\inceptiontime\seed42\best_model.pt (epoch 5, val_ece=0.0106, d_model=64, n_layers=2)
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0075 [-0.0022,+0.0103] | OOD ΔECE=+0.0139 [+0.0136,+0.0142] | decay=+0.0064
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0015 [-0.0099,+0.0123] | OOD ΔECE=+0.0261 [+0.0238,+0.0285] | decay=+0.0246
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0024 [-0.0064,+0.0123] | OOD ΔECE=+0.0199 [+0.0172,+0.0232] | decay=+0.0175
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0013 [-0.0115,+0.0113] | OOD ΔECE=+0.0288 [+0.0261,+0.0312] | decay=+0.0275
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0026 [-0.0103,+0.0124] | OOD ΔECE=+0.0241 [+0.0198,+0.0284] | decay=+0.0215
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0023 [-0.0101,+0.0118] | OOD ΔECE=+0.0242 [+0.0210,+0.0279] | decay=+0.0219
+  [em_prior] π̂_target=[0.    0.634 0.366 0.   ] (π_train=[0.241 0.041 0.712 0.006])
+  [em_prior] w=π̂/π_train=[ 0.   15.48  0.51  0.  ]
+  [em_prior] [sanity] π̂_ID=[0.217 0.107 0.677 0.   ] w_ID=[0.9  2.61 0.95 0.  ] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0177 [-0.0247,-0.0109] | OOD ΔECE=-0.0667 [-0.0763,-0.0586] | decay=-0.0490
+  [bbse_prior] π̂_target=[0.002 0.651 0.002 0.344] (π_train=[0.241 0.041 0.712 0.006])
+  [bbse_prior] w=π̂/π_train=[1.000e-02 1.590e+01 0.000e+00 6.197e+01]
+  [bbse_prior] cond(C)=574.8 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.229 0.032 0.739 0.   ] w_ID=[0.95 0.77 1.04 0.  ] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=-0.0008 [-0.0080,+0.0061] | OOD ΔECE=-0.0633 [-0.0720,-0.0530] | decay=-0.0625
+
+Saved to checkpoints\transfer\chapman_cpsc\inceptiontime\seed42\transfer_result.json
+[chapman] 子空间降级: 保留19785条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除458条 (分布{'HYP': 458})
+[chapman] 患者级四分割: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+Loaded checkpoint checkpoints\transfer\chapman_cpsc\inceptiontime\seed43\best_model.pt (epoch 3, val_ece=0.0188, d_model=64, n_layers=2)
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0012 [-0.0018,+0.0033] | OOD ΔECE=+0.0101 [+0.0099,+0.0103] | decay=+0.0089
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0159 [+0.0083,+0.0190] | OOD ΔECE=+0.0053 [+0.0017,+0.0090] | decay=-0.0106
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=+0.0191 [+0.0105,+0.0248] | OOD ΔECE=+0.0103 [+0.0060,+0.0150] | decay=-0.0088
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0179 [+0.0104,+0.0236] | OOD ΔECE=+0.0187 [+0.0153,+0.0227] | decay=+0.0009
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0227 [+0.0133,+0.0267] | OOD ΔECE=+0.0194 [+0.0143,+0.0246] | decay=-0.0033
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0224 [+0.0121,+0.0262] | OOD ΔECE=+0.0196 [+0.0145,+0.0240] | decay=-0.0028
+  [em_prior] π̂_target=[0.    0.488 0.    0.512] (π_train=[0.241 0.041 0.712 0.006])
+  [em_prior] w=π̂/π_train=[ 0.   11.93  0.   92.06]
+  [em_prior] [sanity] π̂_ID=[0.    0.38  0.115 0.506] w_ID=[ 0.    9.28  0.16 90.96] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0207 [-0.0277,-0.0146] | OOD ΔECE=-0.0246 [-0.0341,-0.0165] | decay=-0.0039
+  [bbse_prior] π̂_target=[0.063 0.423 0.502 0.012] (π_train=[0.241 0.041 0.712 0.006])
+  [bbse_prior] w=π̂/π_train=[ 0.26 10.32  0.71  2.19]
+  [bbse_prior] cond(C)=114.3 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.235 0.052 0.7   0.012] w_ID=[0.97 1.28 0.98 2.24] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0601 [+0.0550,+0.0670] | OOD ΔECE=+0.0573 [+0.0486,+0.0668] | decay=-0.0028
+
+Saved to checkpoints\transfer\chapman_cpsc\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)
+============================================================
+  ts        decay均值=+0.0077 sd=0.0012 (n=2 seed)
+  platt     decay均值=+0.0070 sd=0.0176 (n=2 seed)
+  isotonic  decay均值=+0.0043 sd=0.0131 (n=2 seed)
+  vector    decay均值=+0.0142 sd=0.0133 (n=2 seed)
+  matrix    decay均值=+0.0091 sd=0.0124 (n=2 seed)
+  dirichlet decay均值=+0.0096 sd=0.0124 (n=2 seed)
+  em_prior  decay均值=-0.0265 sd=0.0226 (n=2 seed)
+  bbse_prior decay均值=-0.0326 sd=0.0299 (n=2 seed)
+Aggregate -> checkpoints\transfer\chapman_cpsc\inceptiontime\aggregate.json
+
+[ret=0] chapman->cpsc 完成
+
+============================================================
+rerun inceptiontime: cpsc -> ptbxl
+============================================================
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed42\best_model.pt (epoch 7, val_ece=0.0177, d_model=64, n_layers=2)
+[ptbxl] 子空间降级: 保留21048条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除474条 (分布{'HYP': 474})
+[ptbxl] 患者级四分割: train(12724p/16829r) val(1818p/2103r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0029 [-0.0039,+0.0038] | OOD ΔECE=+0.0068 [+0.0066,+0.0069] | decay=+0.0038
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=-0.0001 [-0.0056,+0.0033] | OOD ΔECE=+0.0196 [+0.0151,+0.0235] | decay=+0.0197
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=-0.0051 [-0.0131,+0.0037] | OOD ΔECE=-0.0198 [-0.0224,-0.0158] | decay=-0.0147
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=-0.0022 [-0.0064,+0.0020] | OOD ΔECE=+0.0161 [+0.0117,+0.0208] | decay=+0.0182
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0070 [-0.0001,+0.0122] | OOD ΔECE=-0.0135 [-0.0164,-0.0110] | decay=-0.0205
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0069 [+0.0005,+0.0116] | OOD ΔECE=-0.0134 [-0.0167,-0.0104] | decay=-0.0204
+  [em_prior] π̂_target=[0.257 0.108 0.48  0.155] (π_train=[0.089 0.236 0.529 0.147])
+  [em_prior] w=π̂/π_train=[2.9  0.46 0.91 1.05]
+  [em_prior] [sanity] π̂_ID=[0.077 0.239 0.58  0.104] w_ID=[0.87 1.02 1.1  0.7 ] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0070 [-0.0155,+0.0012] | OOD ΔECE=+0.0721 [+0.0535,+0.0905] | decay=+0.0791
+  [bbse_prior] π̂_target=[0.222 0.185 0.401 0.192] (π_train=[0.089 0.236 0.529 0.147])
+  [bbse_prior] w=π̂/π_train=[2.51 0.79 0.76 1.31]
+  [bbse_prior] cond(C)=4.7 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.102 0.267 0.496 0.134] w_ID=[1.16 1.14 0.94 0.91] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0023 [-0.0067,+0.0106] | OOD ΔECE=+0.1032 [+0.0843,+0.1192] | decay=+0.1009
+
+Saved to checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed42\transfer_result.json
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed43\best_model.pt (epoch 12, val_ece=0.0203, d_model=64, n_layers=2)
+[ptbxl] 子空间降级: 保留21048条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除474条 (分布{'HYP': 474})
+[ptbxl] 患者级四分割: train(12724p/16829r) val(1818p/2073r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=-0.0012 [-0.0191,+0.0154] | OOD ΔECE=+0.0203 [+0.0198,+0.0207] | decay=+0.0215
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0087 [-0.0008,+0.0193] | OOD ΔECE=-0.0002 [-0.0040,+0.0035] | decay=-0.0089
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=-0.0020 [-0.0114,+0.0107] | OOD ΔECE=-0.0110 [-0.0163,-0.0062] | decay=-0.0089
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0097 [-0.0028,+0.0221] | OOD ΔECE=-0.0037 [-0.0082,+0.0011] | decay=-0.0134
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0058 [-0.0072,+0.0238] | OOD ΔECE=-0.0204 [-0.0255,-0.0152] | decay=-0.0262
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0055 [-0.0073,+0.0223] | OOD ΔECE=-0.0206 [-0.0262,-0.0157] | decay=-0.0262
+  [em_prior] π̂_target=[0.    0.    0.171 0.829] (π_train=[0.089 0.236 0.529 0.147])
+  [em_prior] w=π̂/π_train=[0.   0.   0.32 5.64]
+  [em_prior] [sanity] π̂_ID=[0.    0.105 0.473 0.422] w_ID=[0.   0.45 0.89 2.87] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0328 [-0.0461,-0.0184] | OOD ΔECE=-0.1639 [-0.1756,-0.1518] | decay=-0.1311
+  [bbse_prior] π̂_target=[0.084 0.089 0.5   0.327] (π_train=[0.089 0.236 0.529 0.147])
+  [bbse_prior] w=π̂/π_train=[0.94 0.38 0.95 2.23]
+  [bbse_prior] cond(C)=6.9 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.099 0.226 0.501 0.174] w_ID=[1.12 0.96 0.95 1.18] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=+0.0197 [+0.0074,+0.0296] | OOD ΔECE=-0.0041 [-0.0107,+0.0038] | decay=-0.0238
+
+Saved to checkpoints\transfer\cpsc_ptbxl\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)
+============================================================
+  ts        decay均值=+0.0127 sd=0.0088 (n=2 seed)
+  platt     decay均值=+0.0054 sd=0.0143 (n=2 seed)
+  isotonic  decay均值=-0.0118 sd=0.0029 (n=2 seed)
+  vector    decay均值=+0.0024 sd=0.0158 (n=2 seed)
+  matrix    decay均值=-0.0234 sd=0.0028 (n=2 seed)
+  dirichlet decay均值=-0.0233 sd=0.0029 (n=2 seed)
+  em_prior  decay均值=-0.0260 sd=0.1051 (n=2 seed)
+  bbse_prior decay均值=+0.0385 sd=0.0624 (n=2 seed)
+Aggregate -> checkpoints\transfer\cpsc_ptbxl\inceptiontime\aggregate.json
+
+[ret=0] cpsc->ptbxl 完成
+
+============================================================
+rerun inceptiontime: cpsc -> chapman
+============================================================
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\inceptiontime\seed42\best_model.pt (epoch 7, val_ece=0.0177, d_model=64, n_layers=2)
+[chapman] 子空间降级: 保留19785条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除458条 (分布{'HYP': 458})
+[chapman] 患者级四分割: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=+0.0029 [-0.0051,+0.0042] | OOD ΔECE=+0.0065 [+0.0062,+0.0067] | decay=+0.0036
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=-0.0001 [-0.0051,+0.0035] | OOD ΔECE=+0.0138 [+0.0095,+0.0154] | decay=+0.0139
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=-0.0051 [-0.0129,+0.0024] | OOD ΔECE=-0.0057 [-0.0073,-0.0041] | decay=-0.0006
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=-0.0022 [-0.0060,+0.0028] | OOD ΔECE=+0.0136 [+0.0114,+0.0149] | decay=+0.0158
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0070 [-0.0002,+0.0122] | OOD ΔECE=-0.0007 [-0.0030,+0.0010] | decay=-0.0077
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0069 [-0.0008,+0.0122] | OOD ΔECE=-0.0007 [-0.0029,+0.0012] | decay=-0.0076
+  [em_prior] π̂_target=[0.015 0.022 0.963 0.   ] (π_train=[0.089 0.236 0.529 0.147])
+  [em_prior] w=π̂/π_train=[0.17 0.09 1.82 0.  ]
+  [em_prior] [sanity] π̂_ID=[0.077 0.239 0.58  0.104] w_ID=[0.87 1.02 1.1  0.7 ] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.2011 [-0.2104,-0.1906] | OOD ΔECE=-0.2348 [-0.2470,-0.2098] | decay=-0.0337
+  [bbse_prior] π̂_target=[0.048 0.1   0.794 0.058] (π_train=[0.089 0.236 0.529 0.147])
+  [bbse_prior] w=π̂/π_train=[0.54 0.43 1.5  0.39]
+  [bbse_prior] cond(C)=4.7 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.102 0.267 0.496 0.134] w_ID=[1.16 1.14 0.94 0.91] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=-0.0679 [-0.0733,-0.0603] | OOD ΔECE=-0.1159 [-0.1268,-0.0972] | decay=-0.0480
+
+Saved to checkpoints\transfer\cpsc_chapman\inceptiontime\seed42\transfer_result.json
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Loaded checkpoint checkpoints\transfer\cpsc_chapman\inceptiontime\seed43\best_model.pt (epoch 12, val_ece=0.0203, d_model=64, n_layers=2)
+[chapman] 子空间降级: 保留19785条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除458条 (分布{'HYP': 458})
+[chapman] 患者级四分割: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [ts] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [ts] ID bootstrap推断中...
+[ts       ] ID ΔECE=-0.0012 [-0.0176,+0.0160] | OOD ΔECE=+0.0209 [+0.0200,+0.0212] | decay=+0.0221
+  [platt] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [platt] ID bootstrap推断中...
+[platt    ] ID ΔECE=+0.0087 [-0.0016,+0.0190] | OOD ΔECE=-0.0113 [-0.0152,-0.0078] | decay=-0.0200
+  [isotonic] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [isotonic] ID bootstrap推断中...
+[isotonic ] ID ΔECE=-0.0020 [-0.0120,+0.0155] | OOD ΔECE=-0.0157 [-0.0192,-0.0119] | decay=-0.0136
+  [vector] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [vector] ID bootstrap推断中...
+[vector   ] ID ΔECE=+0.0097 [-0.0024,+0.0211] | OOD ΔECE=-0.0228 [-0.0262,-0.0159] | decay=-0.0324
+  [matrix] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [matrix] ID bootstrap推断中...
+[matrix   ] ID ΔECE=+0.0058 [-0.0085,+0.0219] | OOD ΔECE=-0.0268 [-0.0309,-0.0212] | decay=-0.0326
+  [dirichlet] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [dirichlet] ID bootstrap推断中...
+[dirichlet] ID ΔECE=+0.0055 [-0.0074,+0.0220] | OOD ΔECE=-0.0273 [-0.0309,-0.0225] | decay=-0.0329
+  [em_prior] π̂_target=[0.    0.    0.688 0.312] (π_train=[0.089 0.236 0.529 0.147])
+  [em_prior] w=π̂/π_train=[0.   0.   1.3  2.13]
+  [em_prior] [sanity] π̂_ID=[0.    0.105 0.473 0.422] w_ID=[0.   0.45 0.89 2.87] (≈1 if no shift)
+  [em_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [em_prior] ID bootstrap推断中...
+[em_prior ] ID ΔECE=-0.0575 [-0.0631,-0.0512] | OOD ΔECE=-0.0493 [-0.0528,-0.0449] | decay=+0.0083
+  [bbse_prior] π̂_target=[0.    0.133 0.784 0.083] (π_train=[0.089 0.236 0.529 0.147])
+  [bbse_prior] w=π̂/π_train=[0.   0.56 1.48 0.57]
+  [bbse_prior] cond(C)=6.9 rank=4/4
+  [bbse_prior] [sanity] π̂_ID=[0.099 0.226 0.501 0.174] w_ID=[1.12 0.96 0.95 1.18] (≈1 if no shift)
+  [bbse_prior] OOD bootstrap推断中... (B=200, method=percentile, metric=gpu)
+  [bbse_prior] ID bootstrap推断中...
+[bbse_prior] ID ΔECE=-0.0554 [-0.0651,-0.0476] | OOD ΔECE=-0.0130 [-0.0258,-0.0004] | decay=+0.0423
+
+Saved to checkpoints\transfer\cpsc_chapman\inceptiontime\seed43\transfer_result.json
+
+============================================================
+S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)
+============================================================
+  ts        decay均值=+0.0128 sd=0.0093 (n=2 seed)
+  platt     decay均值=-0.0031 sd=0.0169 (n=2 seed)
+  isotonic  decay均值=-0.0071 sd=0.0065 (n=2 seed)
+  vector    decay均值=-0.0083 sd=0.0241 (n=2 seed)
+  matrix    decay均值=-0.0201 sd=0.0124 (n=2 seed)
+  dirichlet decay均值=-0.0202 sd=0.0126 (n=2 seed)
+  em_prior  decay均值=-0.0127 sd=0.0210 (n=2 seed)
+  bbse_prior decay均值=-0.0028 sd=0.0451 (n=2 seed)
+Aggregate -> checkpoints\transfer\cpsc_chapman\inceptiontime\aggregate.json
+
+[ret=0] cpsc->chapman 完成
+
+inceptiontime transfer 重跑完成。

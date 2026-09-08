@@ -1,0 +1,93 @@
+
+============================================================
+L2 shift: ptbxl -> chapman (seeds [42, 43])
+============================================================
+Loaded best_model.pt (epoch 13, d_model=32, n_layers=2)
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [fs250] raw=0.1397 ts=-0.0342 platt=-0.0174 isotonic=-0.0082 vector=+0.0077 matrix=+0.0347 dirichlet=+0.0347 em_prior=+0.1383 bbse_prior=+0.1338
+  [fs125] raw=0.3322 ts=-0.0256 platt=+0.0498 isotonic=+0.0730 vector=+0.0810 matrix=+0.1315 dirichlet=+0.1316 em_prior=-0.0726 bbse_prior=+0.0453
+  [leads6] raw=0.1187 ts=-0.0319 platt=-0.0159 isotonic=-0.0053 vector=-0.0036 matrix=+0.0069 dirichlet=+0.0069 em_prior=+0.1145 bbse_prior=+0.1580
+  [leads3] raw=0.5192 ts=-0.0231 platt=+0.0713 isotonic=+0.0877 vector=+0.1013 matrix=+0.1607 dirichlet=+0.1608 em_prior=+0.2371 bbse_prior=+0.3779
+  [leads2] raw=0.8789 ts=-0.0232 platt=+0.0171 isotonic=+0.0313 vector=+0.0406 matrix=+0.0538 dirichlet=+0.0537 em_prior=+0.1156 bbse_prior=+0.1156
+  [leads1] raw=0.9078 ts=-0.0272 platt=+0.0066 isotonic=+0.0154 vector=+0.0311 matrix=+0.0295 dirichlet=+0.0292 em_prior=+0.0868 bbse_prior=+0.0868
+  [gain0.5] raw=0.2210 ts=-0.0312 platt=-0.0370 isotonic=-0.0323 vector=-0.0221 matrix=-0.0080 dirichlet=-0.0082 em_prior=+0.0637 bbse_prior=+0.0827
+  [gain2.0] raw=0.1870 ts=-0.0316 platt=+0.0189 isotonic=+0.0320 vector=+0.0239 matrix=+0.0235 dirichlet=+0.0229 em_prior=+0.6399 bbse_prior=+0.3677
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed42\l2_shift_results.json
+Loaded best_model.pt (epoch 8, d_model=32, n_layers=2)
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+  [fs250] raw=0.2150 ts=-0.0253 platt=-0.0168 isotonic=-0.0116 vector=-0.0125 matrix=-0.0108 dirichlet=-0.0107 em_prior=+0.1071 bbse_prior=+0.1206
+  [fs125] raw=0.4556 ts=-0.0197 platt=+0.0002 isotonic=+0.0042 vector=+0.0050 matrix=+0.0027 dirichlet=+0.0030 em_prior=+0.0585 bbse_prior=+0.0835
+  [leads6] raw=0.1636 ts=-0.0210 platt=-0.0032 isotonic=+0.0069 vector=+0.0048 matrix=+0.0078 dirichlet=+0.0079 em_prior=+0.0338 bbse_prior=+0.0996
+  [leads3] raw=0.3912 ts=-0.0222 platt=-0.0079 isotonic=-0.0028 vector=-0.0021 matrix=+0.0013 dirichlet=+0.0014 em_prior=-0.0132 bbse_prior=+0.0145
+  [leads2] raw=0.6494 ts=-0.0188 platt=+0.0114 isotonic=-0.0006 vector=+0.0175 matrix=+0.0070 dirichlet=+0.0075 em_prior=+0.3452 bbse_prior=+0.3284
+  [leads1] raw=0.8987 ts=-0.0233 platt=-0.0176 isotonic=-0.0366 vector=-0.0064 matrix=-0.0144 dirichlet=-0.0144 em_prior=+0.0959 bbse_prior=+0.0959
+  [gain0.5] raw=0.2512 ts=-0.0252 platt=-0.0260 isotonic=-0.0209 vector=-0.0202 matrix=-0.0170 dirichlet=-0.0169 em_prior=+0.0670 bbse_prior=+0.0604
+  [gain2.0] raw=0.2124 ts=-0.0284 platt=-0.0040 isotonic=+0.0070 vector=+0.0051 matrix=+0.0052 dirichlet=+0.0052 em_prior=+0.1570 bbse_prior=+0.0914
+Saved to checkpoints\transfer\ptbxl_chapman\inceptiontime\seed43\l2_shift_results.json
+
+============================================================
+L2 shift: ptbxl -> cpsc (seeds [42, 43])
+============================================================
+Loaded best_model.pt (epoch 12, d_model=64, n_layers=2)
+[ptbxl] 子空间降级: 保留21048条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除474条 (分布{'HYP': 474})
+[ptbxl] 患者级四分割: train(12724p/16829r) val(1818p/2103r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [fs250] raw=0.3157 ts=-0.0253 platt=-0.0375 isotonic=-0.0198 vector=-0.0298 matrix=-0.0454 dirichlet=-0.0453 em_prior=+0.2995 bbse_prior=+0.1615
+  [fs125] raw=0.6541 ts=-0.0217 platt=-0.0493 isotonic=-0.0575 vector=-0.0419 matrix=-0.0312 dirichlet=-0.0323 em_prior=+0.1986 bbse_prior=+0.1986
+  [leads6] raw=0.2006 ts=-0.0266 platt=-0.0344 isotonic=-0.0292 vector=-0.0276 matrix=-0.0491 dirichlet=-0.0491 em_prior=-0.0504 bbse_prior=-0.0595
+  [leads3] raw=0.3097 ts=-0.0245 platt=-0.0247 isotonic=-0.0274 vector=-0.0053 matrix=-0.0076 dirichlet=-0.0075 em_prior=+0.0914 bbse_prior=+0.1624
+  [leads2] raw=0.2972 ts=-0.0227 platt=-0.0267 isotonic=-0.0251 vector=-0.0089 matrix=-0.0062 dirichlet=-0.0059 em_prior=+0.0589 bbse_prior=+0.0755
+  [leads1] raw=0.6131 ts=-0.0267 platt=-0.0569 isotonic=-0.0904 vector=-0.0497 matrix=-0.0474 dirichlet=-0.0475 em_prior=+0.2396 bbse_prior=+0.2396
+  [gain0.5] raw=0.2338 ts=-0.0258 platt=-0.0245 isotonic=-0.0270 vector=-0.0079 matrix=-0.0124 dirichlet=-0.0121 em_prior=+0.1086 bbse_prior=+0.1584
+  [gain2.0] raw=0.2138 ts=-0.0293 platt=-0.0453 isotonic=-0.0188 vector=-0.0423 matrix=-0.0758 dirichlet=-0.0757 em_prior=+0.3035 bbse_prior=+0.1906
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed42\l2_shift_results.json
+Loaded best_model.pt (epoch 18, d_model=64, n_layers=2)
+[ptbxl] 子空间降级: 保留21048条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除474条 (分布{'HYP': 474})
+[ptbxl] 患者级四分割: train(12724p/16829r) val(1818p/2073r) cal(1873p/2099r) test(1839p/2120r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225}
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+  [fs250] raw=0.2101 ts=-0.0227 platt=-0.0283 isotonic=-0.0037 vector=-0.0028 matrix=+0.0107 dirichlet=+0.0107 em_prior=+0.0979 bbse_prior=+0.0908
+  [fs125] raw=0.4991 ts=-0.0200 platt=-0.0352 isotonic=-0.0194 vector=-0.0139 matrix=+0.0475 dirichlet=+0.0476 em_prior=+0.3536 bbse_prior=+0.3424
+  [leads6] raw=0.1831 ts=-0.0250 platt=-0.0371 isotonic=-0.0397 vector=-0.0327 matrix=-0.0365 dirichlet=-0.0366 em_prior=-0.0688 bbse_prior=-0.0961
+  [leads3] raw=0.2439 ts=-0.0253 platt=-0.0174 isotonic=-0.0088 vector=+0.0036 matrix=+0.0062 dirichlet=+0.0062 em_prior=+0.1640 bbse_prior=+0.1887
+  [leads2] raw=0.4431 ts=-0.0165 platt=-0.0315 isotonic=-0.0255 vector=-0.0212 matrix=+0.0112 dirichlet=+0.0113 em_prior=+0.4096 bbse_prior=+0.2258
+  [leads1] raw=0.7106 ts=-0.0214 platt=-0.0215 isotonic=-0.0194 vector=+0.0022 matrix=+0.0084 dirichlet=+0.0084 em_prior=+0.1421 bbse_prior=+0.1421
+  [gain0.5] raw=0.2208 ts=-0.0231 platt=-0.0168 isotonic=-0.0178 vector=+0.0053 matrix=+0.0064 dirichlet=+0.0064 em_prior=+0.1157 bbse_prior=+0.1537
+  [gain2.0] raw=0.1190 ts=-0.0220 platt=-0.0310 isotonic=-0.0332 vector=-0.0266 matrix=-0.0347 dirichlet=-0.0348 em_prior=+0.2046 bbse_prior=+0.0807
+Saved to checkpoints\transfer\ptbxl_cpsc\inceptiontime\seed43\l2_shift_results.json
+
+============================================================
+L2 shift: chapman -> ptbxl (seeds [42, 43])
+============================================================
+Loaded best_model.pt (epoch 2, d_model=32, n_layers=2)
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2141r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [fs250] raw=0.6979 ts=+0.0022 platt=-0.0087 isotonic=-0.0057 vector=-0.0161 matrix=+0.0000 dirichlet=-0.0096 em_prior=+0.0816 bbse_prior=-0.2493
+  [fs125] raw=0.7572 ts=+0.0010 platt=-0.0014 isotonic=+0.0011 vector=-0.0020 matrix=+0.0000 dirichlet=-0.0025 em_prior=+0.0223 bbse_prior=-0.0104
+  [leads6] raw=0.3328 ts=+0.0031 platt=-0.0194 isotonic=-0.0004 vector=-0.0332 matrix=+0.0000 dirichlet=+0.0164 em_prior=+0.2977 bbse_prior=+0.1612
+  [leads3] raw=0.2832 ts=+0.0042 platt=-0.0104 isotonic=+0.0137 vector=-0.0230 matrix=+0.0000 dirichlet=+0.1195 em_prior=+0.1386 bbse_prior=+0.0623
+  [leads2] raw=0.2044 ts=+0.0050 platt=+0.0264 isotonic=+0.0379 vector=+0.0356 matrix=+0.0000 dirichlet=-0.0616 em_prior=+0.7717 bbse_prior=+0.3969
+  [leads1] raw=0.1866 ts=+0.0044 platt=+0.0288 isotonic=+0.0432 vector=+0.0405 matrix=+0.0000 dirichlet=+0.0451 em_prior=+0.7894 bbse_prior=+0.4147
+  [gain0.5] raw=0.5293 ts=+0.0035 platt=-0.0206 isotonic=-0.0133 vector=-0.0386 matrix=+0.0000 dirichlet=+0.0506 em_prior=+0.1236 bbse_prior=+0.1357
+  [gain2.0] raw=0.5565 ts=+0.0046 platt=-0.0134 isotonic=-0.0179 vector=-0.0313 matrix=+0.0000 dirichlet=-0.1586 em_prior=+0.1889 bbse_prior=+0.0305
+Saved to checkpoints\transfer\chapman_ptbxl\inceptiontime\seed42\l2_shift_results.json
+Loaded best_model.pt (epoch 3, d_model=32, n_layers=2)
+[chapman] 患者级四分割: train(12143p/12143r) val(2025p/2025r) cal(2025p/2025r) test(4050p/4050r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'HYP': 92, 'MI': 22}
+[ptbxl] 患者级四分割: train(13006p/17192r) val(1859p/2144r) cal(1921p/2158r) test(1885p/2172r)
+[ptbxl] 标签分布(test): {'NORM': 866, 'MI': 550, 'STTC': 479, 'CD': 225, 'HYP': 52}
+  [fs250] raw=0.5566 ts=-0.0068 platt=-0.0189 isotonic=-0.0252 vector=-0.0356 matrix=+0.0000 dirichlet=-0.0351 em_prior=+0.1587 bbse_prior=-0.0009
+  [fs125] raw=0.5911 ts=-0.0062 platt=-0.0148 isotonic=-0.0156 vector=-0.0272 matrix=+0.0000 dirichlet=+0.0324 em_prior=+0.1083 bbse_prior=+0.0051
