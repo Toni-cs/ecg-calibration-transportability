@@ -1,0 +1,3 @@
+@echo off
+cd /d D:\A1\ecg-lab-v2
+python scripts/eval_transfer.py --source ptbxl --source-dir data/ptbxl_processed --target cpsc --target-dir data/cpsc_processed --arch inceptiontime --methods ts platt isotonic vector matrix dirichlet em_prior bbse_prior --seeds 44 45 46 --epochs 50 --batch-size 16 --d-model 64 --gpu-inference --bootstrap 10000 --bci-method percentile --save-dir checkpoints/transfer > transfer_ptbxl_cpsc_seed444546.log 2>&1

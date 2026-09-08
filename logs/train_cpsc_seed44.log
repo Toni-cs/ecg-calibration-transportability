@@ -1,0 +1,36 @@
+Using device: cuda, seed=44
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Model arch=inceptiontime: d_model=64, n_layers=2, params=192,581
+Epoch 1/50 | train_loss=1.0136 train_acc=57.52% | val_loss=0.8685 val_acc=63.27% ECE=0.0541
+Epoch 2/50 | train_loss=0.8882 train_acc=63.90% | val_loss=0.8271 val_acc=65.21% ECE=0.0489
+Epoch 3/50 | train_loss=0.8385 train_acc=65.94% | val_loss=0.7854 val_acc=69.97% ECE=0.0369
+Epoch 4/50 | train_loss=0.8065 train_acc=68.07% | val_loss=0.7546 val_acc=69.58% ECE=0.0147
+Epoch 5/50 | train_loss=0.7802 train_acc=68.93% | val_loss=0.8167 val_acc=66.67% ECE=0.0632
+Epoch 6/50 | train_loss=0.7486 train_acc=70.16% | val_loss=0.8183 val_acc=68.51% ECE=0.0887
+Epoch 7/50 | train_loss=0.7287 train_acc=71.14% | val_loss=0.7068 val_acc=71.04% ECE=0.0408
+Epoch 8/50 | train_loss=0.6992 train_acc=72.05% | val_loss=0.6960 val_acc=72.21% ECE=0.0233
+Epoch 9/50 | train_loss=0.6757 train_acc=73.56% | val_loss=0.6648 val_acc=74.73% ECE=0.0331
+Epoch 10/50 | train_loss=0.6632 train_acc=73.81% | val_loss=0.6699 val_acc=73.86% ECE=0.0313
+Epoch 11/50 | train_loss=0.6431 train_acc=75.32% | val_loss=0.6588 val_acc=74.05% ECE=0.0269
+Epoch 12/50 | train_loss=0.6360 train_acc=74.69% | val_loss=0.6752 val_acc=73.86% ECE=0.0309
+Epoch 13/50 | train_loss=0.6198 train_acc=75.32% | val_loss=0.6445 val_acc=74.15% ECE=0.0224
+Epoch 14/50 | train_loss=0.6091 train_acc=76.57% | val_loss=0.6541 val_acc=73.66% ECE=0.0550
+Early stopping at epoch 14
+
+============================================================
+Final Evaluation (temperature fitted on cal, reported on test)
+============================================================
+Fitted temperature (on cal, cal labels): 0.9766
+
+[主终点] SmoothECE raw=0.0261 -> cal=0.0286
+[主终点] ΔECE=-0.0026 [95% CI: -0.0046, 0.0007] (配对bootstrap, bca)
+[次要] 比值R=0.91 [0.81, 1.03]
+
+Test (raw):  acc=68.64%  ECE=0.0141 [0.0118, 0.0369]  Brier(raw)=0.1854
+Test (TS):   ECE=0.0176 [0.0131, 0.0407]  Brier(TS)=0.1855
+
+Reliability diagram saved to checkpoints\cpsc_base_seed44\cpsc\inceptiontime\seed44/reliability_diagram.png
+
+Training complete!

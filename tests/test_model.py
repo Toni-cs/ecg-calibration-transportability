@@ -11,6 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.models.s4_backbone import ECGMambaBackbone, BiMambaBlock
 from src.models.ecg_classifier import ECGClassifier, AttentionPooling
+from src.models.baselines import ECGResNet1D, ECGInceptionTime, build_backbone
 from src.utils.calibration import ece, bootstrap_ece, compute_all_metrics, fit_temperature, apply_temperature
 
 
@@ -104,6 +105,71 @@ class TestECGClassifier:
         assert unc.shape == (2,)
         assert std.shape == (2, 5)
         assert (unc >= 0).all()
+
+
+class TestBaselineArchitectures:
+    """协议§4三架构基线的 CNN 主干（ResNet1D/InceptionTime）"""
+
+    def _model(self, name, dm=64, layers=2):
+        return ECGClassifier(in_channels=12, d_model=dm, n_layers=layers,
+                             num_classes=5, dropout=0.1, backbone_type=name)
+
+    def test_forward_all_archs(self):
+        x = torch.randn(2, 12, 300)
+        for name in ("mamba", "resnet1d", "inceptiontime"):
+            clf = self._model(name)
+            logits, probs = clf(x)
+            assert logits.shape == (2, 5), f"{name} logits"
+            assert probs.shape == (2, 5), f"{name} probs"
+            assert torch.isfinite(logits).all()
+            assert torch.allclose(probs.sum(-1), torch.ones(2), atol=1e-5)
+
+    def test_shared_head_constant(self):
+        """三架构分类头必须恒等（AttentionPooling + 同构MLP），保证校准公平对比"""
+        head1 = ECGClassifier(in_channels=12, d_model=64, num_classes=5,
+                              backbone_type="resnet1d").classifier
+        head2 = ECGClassifier(in_channels=12, d_model=64, num_classes=5,
+                              backbone_type="inceptiontime").classifier
+        for p1, p2 in zip(head1.parameters(), head2.parameters()):
+            assert p1.shape == p2.shape, "共享头参数形状不一致"
+
+    def test_backbone_output_resolution(self):
+        """ResNet1D可降采样(seq_out<seq)；Mamba/Inception保留全分辨率；
+        AttentionPooling对任意seq_out生效。"""
+        x = torch.randn(2, 12, 500)
+        dm = 32
+        for name, expect_full in (("resnet1d", False), ("inceptiontime", True)):
+            clf = ECGClassifier(in_channels=12, d_model=dm, num_classes=5,
+                                backbone_type=name)
+            feat = clf.backbone(x)
+            assert feat.shape[-1] == dm
+            assert feat.ndim == 3
+            if expect_full:
+                assert feat.shape[1] == 500, f"{name} 应保留时序"
+            logits, _ = clf(x)
+            assert logits.shape == (2, 5)
+
+    def test_comparable_capacity(self):
+        """同d_model下三架构参数量同量级（公平对比，防过度容量失衡）"""
+        x = torch.randn(1, 12, 200)
+        params = {}
+        for name in ("mamba", "resnet1d", "inceptiontime"):
+            params[name] = sum(p.numel() for p in
+                               self._model(name, dm=64).parameters())
+        mx, mn = max(params.values()), min(params.values())
+        assert mx / mn < 10, f"架构容量失衡: {params}"
+
+    def test_backward_no_nan(self):
+        x = torch.randn(2, 12, 300)
+        y = torch.randint(0, 5, (2,))
+        for name in ("resnet1d", "inceptiontime"):
+            clf = self._model(name)
+            logits, _ = clf(x)
+            loss = torch.nn.functional.cross_entropy(logits, y)
+            loss.backward()
+            for n, p in clf.named_parameters():
+                if p.grad is not None:
+                    assert not torch.isnan(p.grad).any(), f"NaN grad {name}.{n}"
 
 
 class TestCalibration:

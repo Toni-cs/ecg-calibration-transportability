@@ -1,0 +1,45 @@
+Using device: cuda, seed=43
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Model arch=inceptiontime: d_model=64, n_layers=2, params=192,581
+Epoch 1/50 | train_loss=1.0015 train_acc=59.20% | val_loss=0.9536 val_acc=62.00% ECE=0.0627
+Epoch 2/50 | train_loss=0.8746 train_acc=64.33% | val_loss=0.8857 val_acc=63.75% ECE=0.0329
+Epoch 3/50 | train_loss=0.8096 train_acc=67.13% | val_loss=0.9356 val_acc=61.52% ECE=0.0706
+Epoch 4/50 | train_loss=0.7837 train_acc=68.64% | val_loss=0.7961 val_acc=67.44% ECE=0.0620
+Epoch 5/50 | train_loss=0.7661 train_acc=69.04% | val_loss=0.7617 val_acc=69.10% ECE=0.0204
+Epoch 6/50 | train_loss=0.7519 train_acc=70.13% | val_loss=0.7351 val_acc=69.97% ECE=0.0245
+Epoch 7/50 | train_loss=0.7306 train_acc=71.04% | val_loss=0.7306 val_acc=69.19% ECE=0.0275
+Epoch 8/50 | train_loss=0.7136 train_acc=70.89% | val_loss=0.7633 val_acc=69.97% ECE=0.0808
+Epoch 9/50 | train_loss=0.7037 train_acc=71.40% | val_loss=0.6740 val_acc=72.79% ECE=0.0460
+Epoch 10/50 | train_loss=0.6605 train_acc=73.77% | val_loss=0.6949 val_acc=72.50% ECE=0.0209
+Epoch 11/50 | train_loss=0.6556 train_acc=73.93% | val_loss=0.6865 val_acc=71.23% ECE=0.0443
+Epoch 12/50 | train_loss=0.6396 train_acc=74.59% | val_loss=0.6633 val_acc=74.05% ECE=0.0503
+Epoch 13/50 | train_loss=0.6359 train_acc=74.90% | val_loss=0.7381 val_acc=71.72% ECE=0.0203
+Epoch 14/50 | train_loss=0.6206 train_acc=75.76% | val_loss=0.6605 val_acc=71.43% ECE=0.0447
+Epoch 15/50 | train_loss=0.6126 train_acc=76.51% | val_loss=0.6230 val_acc=74.25% ECE=0.0414
+Epoch 16/50 | train_loss=0.6017 train_acc=76.14% | val_loss=0.6736 val_acc=72.69% ECE=0.0592
+Epoch 17/50 | train_loss=0.5888 train_acc=76.74% | val_loss=0.6531 val_acc=73.76% ECE=0.0253
+Epoch 18/50 | train_loss=0.5867 train_acc=76.70% | val_loss=0.6842 val_acc=72.98% ECE=0.0805
+Epoch 19/50 | train_loss=0.5919 train_acc=76.41% | val_loss=0.6259 val_acc=74.54% ECE=0.0315
+Epoch 20/50 | train_loss=0.5690 train_acc=77.56% | val_loss=0.6596 val_acc=75.12% ECE=0.0721
+Epoch 21/50 | train_loss=0.5557 train_acc=78.20% | val_loss=0.6266 val_acc=75.41% ECE=0.0283
+Epoch 22/50 | train_loss=0.5554 train_acc=78.34% | val_loss=0.6174 val_acc=75.80% ECE=0.0413
+Epoch 23/50 | train_loss=0.5423 train_acc=78.99% | val_loss=0.6435 val_acc=74.83% ECE=0.0491
+Early stopping at epoch 23
+
+============================================================
+Final Evaluation (temperature fitted on cal, reported on test)
+============================================================
+Fitted temperature (on cal, cal labels): 1.0908
+
+[主终点] SmoothECE raw=0.0149 -> cal=0.0161
+[主终点] ΔECE=-0.0012 [95% CI: -0.0179, 0.0162] (配对bootstrap, bca)
+[次要] 比值R=0.93 [0.38, 2.49]
+
+Test (raw):  acc=72.48%  ECE=0.0226 [0.0147, 0.0425]  Brier(raw)=0.1707
+Test (TS):   ECE=0.0243 [0.0175, 0.0453]  Brier(TS)=0.1710
+
+Reliability diagram saved to checkpoints\cpsc_base_seed43\cpsc\inceptiontime\seed43/reliability_diagram.png
+
+Training complete!

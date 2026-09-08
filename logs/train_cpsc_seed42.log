@@ -1,0 +1,40 @@
+Using device: cuda, seed=42
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+Model arch=inceptiontime: d_model=64, n_layers=2, params=192,581
+Epoch 1/50 | train_loss=1.0057 train_acc=58.67% | val_loss=0.9611 val_acc=59.96% ECE=0.0683
+Epoch 2/50 | train_loss=0.8720 train_acc=64.58% | val_loss=0.7993 val_acc=68.32% ECE=0.0354
+Epoch 3/50 | train_loss=0.8253 train_acc=67.34% | val_loss=0.7759 val_acc=68.80% ECE=0.0241
+Epoch 4/50 | train_loss=0.7964 train_acc=68.43% | val_loss=0.7911 val_acc=68.12% ECE=0.0539
+Epoch 5/50 | train_loss=0.7626 train_acc=69.61% | val_loss=0.7448 val_acc=70.65% ECE=0.0548
+Epoch 6/50 | train_loss=0.7461 train_acc=70.65% | val_loss=0.7064 val_acc=71.53% ECE=0.0503
+Epoch 7/50 | train_loss=0.7339 train_acc=70.75% | val_loss=0.7099 val_acc=71.91% ECE=0.0441
+Epoch 8/50 | train_loss=0.7267 train_acc=71.92% | val_loss=0.7092 val_acc=71.14% ECE=0.0177
+Epoch 9/50 | train_loss=0.7098 train_acc=71.70% | val_loss=0.6937 val_acc=71.14% ECE=0.0388
+Epoch 10/50 | train_loss=0.6984 train_acc=72.37% | val_loss=0.6965 val_acc=71.23% ECE=0.0500
+Epoch 11/50 | train_loss=0.6609 train_acc=73.59% | val_loss=0.6679 val_acc=73.18% ECE=0.0594
+Epoch 12/50 | train_loss=0.6370 train_acc=75.97% | val_loss=0.6472 val_acc=74.93% ECE=0.0260
+Epoch 13/50 | train_loss=0.6253 train_acc=75.78% | val_loss=0.6340 val_acc=74.15% ECE=0.0435
+Epoch 14/50 | train_loss=0.6046 train_acc=76.35% | val_loss=0.6124 val_acc=75.22% ECE=0.0271
+Epoch 15/50 | train_loss=0.6062 train_acc=76.70% | val_loss=0.6360 val_acc=75.32% ECE=0.0579
+Epoch 16/50 | train_loss=0.5956 train_acc=77.05% | val_loss=0.6578 val_acc=73.96% ECE=0.0532
+Epoch 17/50 | train_loss=0.5831 train_acc=77.37% | val_loss=0.6546 val_acc=74.05% ECE=0.0735
+Epoch 18/50 | train_loss=0.5694 train_acc=77.87% | val_loss=0.6133 val_acc=75.80% ECE=0.0528
+Early stopping at epoch 18
+
+============================================================
+Final Evaluation (temperature fitted on cal, reported on test)
+============================================================
+Fitted temperature (on cal, cal labels): 1.0297
+
+[主终点] SmoothECE raw=0.0283 -> cal=0.0254
+[主终点] ΔECE=0.0029 [95% CI: 0.0005, 0.0051] (配对bootstrap, bca)
+[次要] 比值R=1.12 [0.87, 1.17]
+
+Test (raw):  acc=72.78%  ECE=0.0217 [0.0156, 0.0420]  Brier(raw)=0.1701
+Test (TS):   ECE=0.0304 [0.0194, 0.0491]  Brier(TS)=0.1702
+
+Reliability diagram saved to checkpoints\cpsc_base\cpsc\inceptiontime\seed42/reliability_diagram.png
+
+Training complete!

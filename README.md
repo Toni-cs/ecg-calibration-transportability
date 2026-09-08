@@ -1,199 +1,75 @@
-<h1 align="center">SafeECGMatch: Calibration-Aware Joint Frequency and Time
-Space Semi-Supervised Learning for Open-Set ECG Classification</h1>
+# ECG 校准修复边界研究
 
-<p align="center">
-  <strong>Hongkyu Koh</strong>
-  &nbsp;&nbsp;
-  <a href="https://scholar.google.com/citations?user=1rBh9xkAAAAJ">
-    <strong>Ikbeom Jang</strong>
-  </a><sup>†</sup>
-  <br>
-  <span style="font-size: 12px;">
-    <sup>†</sup> Corresponding author
-  </span>
-</p>
+预注册协议驱动的 ECG 分类"校准修复收益 ID→OOD 衰减"研究：
+把修复收益的衰减分解为 **slope / intercept / prevalence** 三个可干预成分，
+量化其贡献占比，并输出"移位类型 × 主导成分 × 推荐再校准策略"的部署判据。
 
-<p align="center">
-  <img src="./assets/main_figure.png" width="900">
-</p>
+- 预注册协议：`docs/EXPERIMENT_PROTOCOL.md`（v2.0，含修订记录与对抗审查轮次记录）
+- 目标叙事与 claim 边界：协议 §0（novelty 三步链的安全表述）
+- 状态：**真实数据已预处理（PTB-XL 21522条 + Chapman 20243条），主架构S1冒烟跑通，正式pilot进行中**
 
-Official repository for the paper
-
-**SafeECGMatch: Calibration-Aware Joint Frequency and Time
-Space Semi-Supervised Learning for Open-Set ECG Classification**
-
-
-
-## Abstract
-
-<p><em>
-Electrocardiogram (ECG) classification models often suffer from
-severe label scarcity, making semi-supervised learning (SSL) an at-
-tractive strategy for reducing annotation costs. In clinical settings,
-however, unlabeled pools frequently contain out-of-distribution
-(OOD) anomalies or diagnostic groups absent from the labeled
-set. Standard SSL forces incorrect pseudo-labels onto these unseen
-classes, producing overconfident predictions. To address this, we
-propose SafeECGMatch, a calibration-aware safe SSL framework
-for single-label ECG classification under label distribution mis-
-match. Methodologically, SafeECGMatch employs a dual-branch
-architecture extracting time-frequency latent representations via
-ECG-specific augmentations. Crucially, it dynamically aligns confi-
-dence with empirical accuracy through adaptive label smoothing
-and temperature scaling, calibrating both the multiclass classifier
-and the OOD detector across temporal and spectral domains. This
-joint optimization allows trustworthy OOD rejection and reliable
-pseudo-labeling. Evaluated on the PTB-XL and PhysioNet/CinC
-Challenge benchmarks, SafeECGMatch achieves state-of-the-art
-accuracy and calibration, advancing reliable knowledge discovery
-in physiological time-series.
-</em></p>
-
-
-## What Is Here
-
-- `scripts/run_paper_benchmarks.py`: main entrypoint for the benchmark suites
-- `scripts/preprocess_cinc2021.py`: CINC2021 preprocessing into the release-ready format
-- `scripts/run_safeecgmatch_sensitivity.py`: SafeECGMatch branch-weight sensitivity runner
-- `configs.py`, `datasets/`, `main/`, `models/`, `tasks/`, `utils/`: ECG runtime code used by the release
-- `resources/cinc_labels/*.txt`: superclass label mappings used for CINC2021 preprocessing
-
-The supported release surface is limited to ECG datasets (`PTB-XL`, `Chapman`, `Georgia`, `Ningbo`, `CINC2021`) with the `resnet1d` backbone.
-
-## Dataset Download and Storage
-
-Both PTB-XL and CINC2021 should be downloaded from their official PhysioNet releases.
-
-- PTB-XL: download the official PTB-XL release and extract it locally.
-- CINC2021: download the PhysioNet Challenge 2021 training data and keep the raw training directory locally.
-
-Recommended local layout:
+## 目录结构
 
 ```text
-/path/to/ecg-data/
-  ptb-xl/
-    1.0.3/
-  challenge-2021/
-    1.0.3/
-      training/
-  cinc2021_single_label_processed/
+docs/
+  EXPERIMENT_PROTOCOL.md     预注册协议（主文档，先读这个）
+  vendor_safeecgmatch.md     第三方论文 SafeECGMatch 的原 README（本仓库复用其运行时代码）
+src/
+  data/                      数据加载与患者级划分（190码表/泄漏断言/四分割）
+  models/                    BiMamba 主干 + ECG 分类头（T≡1 冻结训练）
+  utils/
+    calibration.py           校准原语：TS/Platt/ECE/SmoothECE/BCa benefit_inference/两层bootstrap
+    calibration_methods.py   9 方法注册表（isotonic/dirichlet/saerens/oracle/...）
+    decomposition.py         三成分分解估计器 v3（KZ校正/析因/Shapley/bootstrap CI/纠缠演示）
+scripts/
+  train.py                   端到端训练 + 主终点（ΔECE 配对 BCa bootstrap，B=10,000）
+  validate_decomposition.py  27 格合成验证（结果治理见下）
+  preprocess_cinc2021.py     [vendor] CINC2021 预处理
+  run_paper_benchmarks.py    [vendor] SafeECGMatch 基准入口（与本协议网格无关）
+results/                     产物（gitignore；命名规范见下）
 ```
 
-Path rules used by this release:
-
-- `--ptbxl-root` should point to the extracted PTB-XL root, for example `/path/to/ecg-data/ptb-xl/1.0.3`.
-- `--cinc2021-root` should point to the processed directory created by `scripts/preprocess_cinc2021.py`, not the raw Challenge directory.
-- The exact storage location is up to the user. These paths do not need to match our server.
-
-The smoke tests used during release preparation succeeded because these datasets were already available on this server. On another machine, the same commands will work as long as the user passes their own local dataset paths.
-
-## Quick Start
-
-### 1. Install
+## 快速开始
 
 ```bash
 pip install -r requirements.txt
+
+# 27 格合成验证（含 bootstrap CI 与纠缠区演示，约 4 分钟）
+python scripts/validate_decomposition.py --boot 500
+
+# 真实校准集量级（信息模式：FAIL → exit 2）
+python scripts/validate_decomposition.py --n 500 --boot 0
+
+# 端到端训练 + 主终点推断（合成 smoke）
+python scripts/train.py --epochs 5 --two-layer
+
+# 全量测试（输出写 tmp，不触碰 results/）
+python -m pytest tests/ -q
 ```
 
-Extra preprocessing dependencies are already included in `requirements.txt`.
+## 结果治理规范（R 轮修复后生效）
 
-### 2. Choose Your Entry Point
+- 产物文件名**必须含样本量**：`decomposition_validation_n{n}.csv`、
+  `decomposition_error_map_n{n}.png`——不同 n 的运行互不覆盖
+- CSV 自述（含 `n`/`seed` 列）；`decomposition_validation.csv`（无 n 后缀）是
+  2026-08 覆盖事故的遗留物，内容为 n=500 运行，**勿引用**
+- `*_rerun_*` / `*_postfix_*` 为事故期间的手工存档（两者哈希相同，v2 版本结果）
+- 测试通过 `--output tmp` 隔离，pytest 不再覆盖 `results/`
 
-- Use `scripts/run_paper_benchmarks.py` for the main paper benchmarks.
-- Use `scripts/run_safeecgmatch_sensitivity.py` for the SafeECGMatch sensitivity study.
-- Use `scripts/preprocess_cinc2021.py` only when you need to build the processed CINC2021 release dataset.
+## 诚实性声明（对抗审查产物，投稿前须维持）
 
-### 3. Run PTB-XL Benchmarks
+0. **R8 独立对抗审计（2026-09-07）**：三轮对抗审计（6 路攻击→交叉对质→端到端重演封口）确认底层数据真实（最难反例全栈重演一致至 ~1e-17）、主终点计量链合规，但发现预注册"写死"条款兑现率低（percentile 替代 BCa、TOST/G/两层 bootstrap 缺席、边界判据 48.3% 未通过却宣称 robust 等）与论文叙事失实若干处——21 处论文修复已执行（main.tex 重编译通过），偏离已登记协议 §11.5-A2 行，遗留事项与命令见 `docs/ROUND8_AUDIT_AND_FIXES.md`。
 
-```bash
-python scripts/run_paper_benchmarks.py \
-  --benchmarks ptbxl_30_ood ptbxl_60_ood \
-  --ptbxl-root /path/to/ptb-xl/1.0.3
-```
+1. `MAPE_π` 是**设计校验**（重采样常量回读），非估计量能力检验；π 的独立恢复
+   （BBSE/EM）为遗留项（协议 §13）
+2. Shapley 占比在 `share_reliable=False` 格**不可作占比解读**；排序判定用绝对值 CI
+3. 门槛 `gate(n)` 是启发式缩放，**不是 3σ 容差**；n=500 实测违率约 22%（信息模式）
+4. "机制"措辞以 §8 三条腿全部兑现为条件：腿 1/2 已兑现，腿 3 的合成部分
+   （bootstrap CI + 纠缠演示）已兑现，**cross-fitting 待真实数据**（§13 已登记）
+5. 本仓库 `scripts/preprocess_cinc2021.py`、`run_paper_benchmarks.py`、
+   `resources/`、`assets/` 来自第三方 SafeECGMatch 发布（原 README 见
+   `docs/vendor_safeecgmatch.md`），与本协议实验网格无关
 
-### 4. Run CINC2021 Benchmarks
+## 引用与相关
 
-Preprocess once:
-
-```bash
-python scripts/preprocess_cinc2021.py \
-  --source-root /path/to/cinc2021/raw \
-  --output-root /path/to/cinc2021_single_label_processed
-```
-
-Then run the benchmark suites:
-
-```bash
-python scripts/run_paper_benchmarks.py \
-  --benchmarks cinc2021_30_ood cinc2021_60_ood \
-  --cinc2021-root /path/to/cinc2021_single_label_processed
-```
-
-### 5. Run SafeECGMatch Sensitivity
-
-```bash
-python scripts/run_safeecgmatch_sensitivity.py \
-  --variants freqheavy timeheavy \
-  --ptbxl-root /path/to/ptb-xl/1.0.3
-```
-
-## Datasets
-
-### PTB-XL
-
-Pass the official raw PTB-XL root directly through `--ptbxl-root`.
-
-Example root:
-
-```text
-/path/to/ecg-data/ptb-xl/1.0.3
-```
-
-### CINC2021
-
-The release expects a processed CINC2021 directory produced by `scripts/preprocess_cinc2021.py`.
-
-Workflow:
-
-1. Download the raw Challenge 2021 training data.
-2. Store it anywhere locally, for example `/path/to/ecg-data/challenge-2021/1.0.3/training`.
-3. Run `scripts/preprocess_cinc2021.py` once.
-4. Pass the resulting processed directory through `--cinc2021-root`.
-
-Expected output structure:
-
-- `metadata_single_label.csv`
-- `data/{id}.npy`
-- `preprocess_summary.json`
-
-The preprocessing follows the ECGMatch superclass mapping and keeps only single-group samples. The special case `426783006` is treated as `Normal` only when it is the sole diagnosis code.
-
-## Benchmark Suites
-
-- `ptbxl_30_ood`: PTB-XL, 500 Hz, 30% OOD, full method suite
-- `cinc2021_30_ood`: CINC2021, 500 Hz, 30% OOD, `TS_TFC` and `CompleMatch`
-- `ptbxl_60_ood`: PTB-XL, 500 Hz, 60% OOD, `TS_TFC` and `CompleMatch`
-- `cinc2021_60_ood`: CINC2021, 500 Hz, 60% OOD, `TS_TFC` and `CompleMatch`, with `cinc-id-classes = [Rhythm, CD, Other]` and `cinc-ood-classes = [Normal, ST]`
-
-Legacy numeric aliases `05`, `06`, `07`, and `08` are still accepted, but the descriptive names above are the supported release interface.
-
-Common options:
-
-- `--seeds 1 2 3`: override the default seeds
-- `--gpus 0`: choose GPU ids passed through to the training scripts
-- `--dry-run`: print commands without executing them
-- `--collect-only`: skip execution and only aggregate metrics from completed runs
-
-Results are written under `checkpoints/` and aggregated summaries are written under `results/`.
-
-## Sensitivity Variants
-
-- `freqheavy`: `lambda-time-branch = 0.5`, `lambda-freq-branch = 1.5`
-- `timeheavy`: `lambda-time-branch = 1.5`, `lambda-freq-branch = 0.5`
-
-Both variants also use `lambda-ova-cali = 0.1` and `lambda-ova = 0.1` on top of the `ptbxl_60_ood` benchmark settings.
-
-## Notes
-
-- The release scripts do not require NAS-specific paths. Dataset roots are passed explicitly with CLI flags.
-- The GitHub-facing entrypoints are the scripts under `scripts/`; most users should not need to call files under `main/` directly.
+协议强制引用锚点与最近邻对比清单见 `docs/EXPERIMENT_PROTOCOL.md` §0。

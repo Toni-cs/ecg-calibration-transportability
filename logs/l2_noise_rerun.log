@@ -1,0 +1,56 @@
+
+[skip] inceptiontime ptbxl->chapman 噪声档已完成
+
+[skip] inceptiontime ptbxl->cpsc 噪声档已完成
+
+[skip] inceptiontime chapman->ptbxl 噪声档已完成
+
+[skip] inceptiontime chapman->cpsc 噪声档已完成
+
+[skip] inceptiontime cpsc->ptbxl 噪声档已完成
+
+[skip] inceptiontime cpsc->chapman 噪声档已完成
+
+[skip] resnet1d ptbxl->chapman 噪声档已完成
+
+[skip] resnet1d ptbxl->cpsc 噪声档已完成
+
+[skip] resnet1d chapman->ptbxl 噪声档已完成
+
+[skip] resnet1d chapman->cpsc 噪声档已完成
+
+[skip] resnet1d cpsc->ptbxl 噪声档已完成
+
+============================================================
+resnet1d noise rerun: cpsc -> chapman
+============================================================
+Loaded best_model.pt (epoch 0, d_model=64, n_layers=2)
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+[chapman] 子空间降级: 保留19785条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除458条 (分布{'HYP': 458})
+[chapman] 患者级四分割: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [noise24] raw=0.0662 ts=+0.0010 platt=+0.0105 isotonic=+0.0134 vector=+0.0154 matrix=+0.0152 dirichlet=+0.0151 em_prior=-0.0279 bbse_prior=-0.0287
+  [noise12] raw=0.0849 ts=+0.0013 platt=+0.0105 isotonic=+0.0167 vector=+0.0166 matrix=+0.0228 dirichlet=+0.0226 em_prior=-0.0197 bbse_prior=+0.0130
+  [noise6] raw=0.1677 ts=+0.0018 platt=+0.0339 isotonic=+0.0449 vector=+0.0355 matrix=+0.0454 dirichlet=+0.0455 em_prior=+0.2219 bbse_prior=+0.2142
+  [noise0] raw=0.6697 ts=+0.0023 platt=+0.0454 isotonic=+0.0604 vector=+0.0386 matrix=+0.0722 dirichlet=+0.0721 em_prior=+0.2892 bbse_prior=+0.2892
+  [noise-6] raw=0.7734 ts=+0.0025 platt=+0.0317 isotonic=+0.0368 vector=+0.0121 matrix=+0.0539 dirichlet=+0.0537 em_prior=+0.1855 bbse_prior=+0.1855
+Saved to checkpoints\transfer\cpsc_chapman\resnet1d\seed42\l2_shift_results.json
+Loaded best_model.pt (epoch 6, d_model=64, n_layers=2)
+[cpsc] 子空间降级: 保留10285条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除11条 (分布{'HYP': 11})
+[cpsc] 患者级四分割: train(6172p/6172r) val(1029p/1029r) cal(1027p/1027r) test(2057p/2057r)
+[cpsc] 标签分布(test): {'STTC': 1086, 'CD': 485, 'MI': 303, 'NORM': 183}
+[chapman] 子空间降级: 保留19785条 (子空间('CD', 'MI', 'NORM', 'STTC'))，剔除458条 (分布{'HYP': 458})
+[chapman] 患者级四分割: train(11869p/11869r) val(1979p/1979r) cal(1979p/1979r) test(3958p/3958r)
+[chapman] 标签分布(test): {'STTC': 2820, 'NORM': 953, 'CD': 163, 'MI': 22}
+  [noise24] raw=0.1298 ts=-0.0096 platt=-0.0187 isotonic=-0.0207 vector=-0.0282 matrix=-0.0303 dirichlet=-0.0304 em_prior=+0.1539 bbse_prior=+0.0708
+  [noise12] raw=0.1358 ts=-0.0097 platt=-0.0131 isotonic=-0.0181 vector=-0.0222 matrix=-0.0244 dirichlet=-0.0245 em_prior=+0.1507 bbse_prior=+0.0733
+  [noise6] raw=0.1470 ts=-0.0096 platt=+0.0020 isotonic=-0.0067 vector=-0.0045 matrix=-0.0097 dirichlet=-0.0098 em_prior=+0.1405 bbse_prior=+0.0766
+  [noise0] raw=0.1499 ts=-0.0013 platt=-0.0088 isotonic=-0.0308 vector=-0.0098 matrix=-0.0079 dirichlet=-0.0079 em_prior=+0.1376 bbse_prior=+0.0806
+  [noise-6] raw=0.0718 ts=+0.0035 platt=+0.0245 isotonic=-0.0063 vector=+0.0209 matrix=-0.0037 dirichlet=-0.0037 em_prior=-0.0009 bbse_prior=+0.0018
+Saved to checkpoints\transfer\cpsc_chapman\resnet1d\seed43\l2_shift_results.json
+
+[ret=0] resnet1d cpsc->chapman 完成
+
+噪声 5 档重跑完成。
