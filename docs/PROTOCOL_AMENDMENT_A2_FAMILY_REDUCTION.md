@@ -1,73 +1,73 @@
-# 预注册修订案 A2 — Confirmatory 家族缩减：156 → 12
+# Preregistration Amendment A2: Confirmatory Family Reduction, 156 → 12
 
-> **修订案编号**：A2
-> **修订日期**：2026-09-10
-> **触发轮次**：加强方案对抗审查（步骤 4）
-> **修订类型**：预注册修订（Preregistration Revision，Nosek et al. 2018 分类）
-> **修订前协议哈希**：见 OSF 存档（EXPERIMENT_PROTOCOL.md v2.1-A1 修订前快照）
-> **状态**：预注册修订草案，待 OSF 时间戳存档
+> **Amendment number**: A2
+> **Amendment date**: 2026-09-10
+> **Triggering round**: intensified protocol adversarial review (step 4)
+> **Amendment type**: preregistration revision (Preregistration Revision, per Nosek et al. 2018)
+> **Pre-amendment protocol hash**: see OSF archive (EXPERIMENT_PROTOCOL.md v2.1-A1 pre-amendment snapshot)
+> **Status**: preregistration revision draft, pending OSF timestamp archiving
 
 ---
 
-## A2.1 修订前（as-registered）
+## A2.1 As-registered
 
-- **Confirmatory 家族**：156 检验 = 6 迁移对 × 2 主架构 × 13 移位级（协议 §6:91）
-- **主检验**：H₀: ΔECE_OOD = 0 vs H₁: ΔECE_OOD > 0，逐格 BH-FDR q=0.05
-- **L2 移位级**：13 档（采样率 500→250→125 Hz、导联 12→6→3→2→1、噪声 SNR {24,12,6,0,−6} dB、增益 ×0.5/×2）
+- **Confirmatory family**: 156 tests = 6 transfer pairs × 2 primary architectures × 13 shift levels (protocol §6:91)
+- **Primary test**: H₀: ΔECE_OOD = 0 vs H₁: ΔECE_OOD > 0, per-cell BH-FDR q=0.05
+- **L2 shift levels**: 13 tiers (sampling rate 500→250→125 Hz, leads 12→6→3→2→1, noise SNR {24,12,6,0,−6} dB, gain ×0.5/×2)
 
-## A2.2 修订后（as-revised）
+## A2.2 As-revised
 
-- **Confirmatory 家族**：12 检验 = 6 迁移对 × 2 主架构 × **1 移位级（L0/L1 主网格）**
-- **主检验**：H₀: ΔECE_OOD = 0 vs H₁: ΔECE_OOD > 0，12 格 BH-FDR q=0.05
-- **L2 移位级**：13 档定位为 **exploratory 剂量反应曲线**，不进 confirmatory 家族，报告逐档 CI 不报告 confirmatory p 值
-- **60 seed experiments**：定位为 **robustness evidence**（每 confirmatory 格 5 种子重复），不进 confirmatory 家族
+- **Confirmatory family**: 12 tests = 6 transfer pairs × 2 primary architectures × **1 shift level (L0/L1 primary grid)**
+- **Primary test**: H₀: ΔECE_OOD = 0 vs H₁: ΔECE_OOD > 0, 12-cell BH-FDR q=0.05
+- **L2 shift levels**: 13 tiers positioned as exploratory dose-response curve, excluded from confirmatory family, report per-tier CI without confirmatory p-value
+- **60 seed experiments**: positioned as robustness evidence (5 seed repeats per confirmatory cell), excluded from confirmatory family
 
-## A2.3 修订理由
+## A2.3 Rationale
 
-1. **L2 是 eval-time 变换非 confirmatory**：L2 移位级（降采样/丢导联/加噪/增益）是 eval-time 概率变换，不重训练模型，本质是**剂量反应探索**而非确认性检验。将其纳入 confirmatory 家族混淆了"确认主终点"与"探索移位剂量"两个科学目标。
-2. **156 家族未跑全**：confirmatory 家族 156 需 13 档全部跑完，实际 L2 覆盖 157/390（40%），双种子单架构，ResNet L2 13 格被排除。未跑全的家族做 BH 校正是空中楼阁。
-3. **12 格 confirmatory 可做实**：6 对×2 架构×5 种子 = 60 实验全部完成，12 格每格 5 种子聚合（meta-analytic pooled ΔECE），BH-12 可严格执行。
-4. **与 A1 一致**：A1 重新定位主终点（decay→ΔECE_OOD），A2 缩家族，两者独立。A2 不改变主终点定义，只缩 confirmatory 家族规模。
+1. **L2 is eval-time transform, not confirmatory**: the L2 shift levels (downsampling, lead dropping, noise addition, gain) are eval-time probability transforms that do not retrain the model, and are essentially dose-response exploration rather than confirmatory testing. Including them in the confirmatory family conflates the two scientific goals of "confirming the primary endpoint" and "exploring shift dose".
+2. **156 family not run in full**: the confirmatory family of 156 requires all 13 tiers to be run; actual L2 coverage is 157/390 (40%), dual-seed single-architecture, with ResNet L2 13 cells excluded. Applying BH correction to a family not run in full is building on sand.
+3. **12-cell confirmatory can be realized**: 6 pairs × 2 architectures × 5 seeds = 60 experiments all completed, 12 cells each aggregated over 5 seeds (meta-analytic pooled ΔECE), BH-12 can be strictly enforced.
+4. **Consistent with A1**: A1 relocated the primary endpoint (decay→ΔECE_OOD), A2 reduced the family; the two are independent. A2 does not change the primary endpoint definition, only reduces the confirmatory family size.
 
-## A2.4 透明性声明（非 HARKing）
+## A2.4 Transparency Statement (Not HARKing)
 
-- **修订方向先验**：L2 eval-only 是 exploratory 剂量反应的判断由**实验设计**（eval-time 变换不重训练）先验确定，非由结果方向驱动。
-- **修订前 156 家族的探索性结果不进入主报告**：L2 剂量反应曲线作为 exploratory 补充，不作为 confirmatory 结论证据。
-- **Nosek et al. 2018 预注册修订**：在主网格数据收集完成后、投稿前登记修订前/后协议哈希、修订理由、修订日期。
+- **Revision direction prior**: the judgment that L2 eval-only is an exploratory dose response is determined a priori by experimental design (eval-time transform does not retrain), not driven by result direction.
+- **Exploratory results of the pre-amendment 156 family do not enter the primary report**: the L2 dose-response curve serves as exploratory supplement, not as evidence for confirmatory conclusions.
+- **Nosek et al. 2018 preregistration revision**: register the pre- and post-amendment protocol hashes, rationale, and date after main-grid data collection completes and before submission.
 
-## A2.5 修订前/后对照表
+## A2.5 As-registered vs As-revised Comparison Table
 
-| 项 | 修订前 | 修订后 |
+| Item | As-registered | As-revised |
 |---|---|---|
-| Confirmatory 家族大小 | 156 | 12 |
-| L2 角色 | confirmatory 家族成员 | exploratory 剂量反应 |
-| 60 seed experiments | 家族成员 | robustness evidence（每格 5 种子重复） |
-| BH-FDR | BH-156（未跑全） | BH-12（可严格执行） |
-| 主结论 | 51/60（BH-60 robustness） | 9/12（BH-12 confirmatory）+ 51/60 robustness |
+| Confirmatory family size | 156 | 12 |
+| L2 role | confirmatory family member | exploratory dose response |
+| 60 seed experiments | family member | robustness evidence (5 seed repeats per cell) |
+| BH-FDR | BH-156 (not run in full) | BH-12 (strictly enforceable) |
+| Primary conclusion | 51/60 (BH-60 robustness) | 9/12 (BH-12 confirmatory) + 51/60 robustness |
 
-## A2.6 BH-12 结果（confirmatory）
+## A2.6 BH-12 Results (Confirmatory)
 
-- **12 格聚合**：每格 5 种子 meta-analytic pooled ΔECE（DerSimonian-Laird 随机效应）
-- **BH-12 q=0.05**：9/12 显6/6），3/12 不显著（cpsc_chapman/RN, cpsc_ptbxl/RN, chapman_cpsc/IT 边界）
-- **Bonferroni-12**：2/12 显著（cpsc_chapman/IT, ptbxl_chapman/RN）
-- **Robustness evidence**：51/60 seed experiments 支持（BH-60 51/60，与 confirmatory 不冲突）
+- **12-cell aggregation**: per-cell 5-seed meta-analytic pooled ΔECE (DerSimonian-Laird random effects)
+- **BH-12 q=0.05**: 9/12 significant (6/6 for InceptionTime), 3/12 not significant (boundary cases: cpsc_chapman/RN, cpsc_ptbxl/RN, chapman_cpsc/IT)
+- **Bonferroni-12**: 2/12 significant (cpsc_chapman/IT, ptbxl_chapman/RN)
+- **Robustness evidence**: 51/60 seed experiments support (BH-60 51/60, no conflict with confirmatory)
 
-## A2.7 对主结论的影响
+## A2.7 Impact on Primary Conclusion
 
-主结论从"51/60 seed experiments 支持"重组为：
-1. **Confirmatory**：9/12 方向×架构格 BH-12 显著（75%）
-2. **Robustness**：51/60 seed experiments 支持（85%），作为每 confirmatory 格的 5 种子稳健性证据
-3. **Exploratory**：L2 13 档剂量反应曲线（157/390 覆盖，双种子单架构）
+The primary conclusion is reorganized from "51/60 seed experiments support" into:
+1. **Confirmatory**: 9/12 direction × architecture cells BH-12 significant (75%)
+2. **Robustness**: 51/60 seed experiments support (85%), as 5-seed robustness evidence per confirmatory cell
+3. **Exploratory**: L2 13-tier dose-response curve (157/390 coverage, dual-seed single-architecture)
 
-这一重组**不削弱**主结论的"TS 在跨库 ECG 迁移下有正向 OOD 校准收益"叙事，反而**强化**了 confirmatory 严格性（12 格可做实 vs 156 未跑全）。
+This reorganization does not weaken the primary-conclusion narrative that "TS yields positive OOD calibration gain under cross-corpus ECG transfer"; rather it strengthens confirmatory rigor (12 cells realizable vs 156 not run in full).
 
 ---
 
-## 附录：与步骤 2 判别力门控的协同
+## Appendix: Synergy with Step 2 Discrimination-Power Gating
 
-A2 缩家族到 12 格 confirmatory 后，步骤 2 的判别力门控在 12 格上操作：
-- 7/12 格通过门控（acc > 目标多数类基线）→ 可部署
-- 5/12 格拒绝门控（判别力不足）→ 校准有效但不可部署
-- Confirmatory 可部署格：BH-12 显著 & 门控通过 = 7/12（待实测聚合后确认）
+A2 reduces the family to 12 confirmatory cells, after which step 2's discrimination-power gating operates on the 12 cells:
+- 7/12 cells pass the gate (acc > target majority-class baseline) → deployable
+- 5/12 cells fail the gate (insufficient discrimination power) → calibration valid but not deployable
+- Confirmatory deployable cells: BH-12 significant & gate passed = 7/12 (to be confirmed after actual aggregation)
 
-C5 贡献：discrimination-aware calibration gate，在 confirmatory 12 格上验证门控的敏感度/特异度。
+C5 contribution: discrimination-aware calibration gate, validating the gate's sensitivity/specificity on the confirmatory 12 cells.

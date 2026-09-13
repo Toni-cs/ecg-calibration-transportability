@@ -5,8 +5,8 @@ scipy>=1.12.0
 scikit-learn>=1.4.0
 
 # SSM backbone dependencies
-# mambapy: 纯PyTorch Mamba实现（Windows兼容，无需CUDA编译）
-# 注意：Linux环境下如需官方CUDA kernel可另装 mamba-ssm + causal-conv1d
+# mambapy: pure-PyTorch Mamba implementation (Windows-compatible, no CUDA build required)
+# On Linux, the official CUDA kernels can be added via mamba-ssm + causal-conv1d
 mambapy==1.2.0
 # mamba-ssm>=2.0.0      # Linux only, optional
 # causal-conv1d>=1.4.0  # Linux only, optional
