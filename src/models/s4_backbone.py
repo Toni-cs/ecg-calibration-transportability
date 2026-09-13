@@ -6,7 +6,7 @@ Architecture (full rewrite, no legacy code):
 - Pointwise-conv Stem (no downsampling, preserves full temporal resolution).
 - Residual connections + LayerNorm.
 
-Output (batch, seq_len, d_model) -- no internal pooling; the classifier's AttentionPooling handles it.
+Output (batch, seq_len, d_model) with no internal pooling; the classifier's AttentionPooling handles it.
 
 References:
 - Mamba: Linear-Time Sequence Modeling with Selective State Spaces (Gu & Dao, 2023)
@@ -58,7 +58,7 @@ class ECGMambaBackbone(nn.Module):
     """ECG bidirectional Mamba backbone network (2026 SOTA).
 
     Pipeline:
-    1. Pointwise Stem: Conv1d(k=1) + BN + GELU -- 12 leads -> d_model, no downsampling.
+    1. Pointwise Stem: Conv1d(k=1) + BN + GELU; 12 leads -> d_model, no downsampling.
     2. n_layers BiMambaBlocks (bidirectional scan + residual fusion).
     3. Output full temporal features (batch, seq_len, d_model); pooling is delegated to
        the downstream AttentionPooling.

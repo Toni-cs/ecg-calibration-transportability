@@ -807,7 +807,6 @@ def write_csv(
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, "w", newline="", encoding="utf-8") as f:
-        # Header comment
         # Header comment uses dynamic arch_display reflecting the actual architecture
         # (including any OOM-fallback ResNet1D tag) rather than the hardcoded ARCH_NAME.
         f.write(f"# E5 {arch_display} experiment (3 blocks, ~310K params)\n")

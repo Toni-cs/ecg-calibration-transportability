@@ -32,7 +32,7 @@ import pandas as pd
 
 
 def scan_nonfinite_ids(data_dir: Path) -> list[str]:
-    """Scan data/*.npy and return the list of npy stems whose records contain non-finite values (reproducible)"""
+    """Scan data/*.npy and return the npy stems whose records contain non-finite values."""
     bad = []
     for p in sorted(data_dir.glob("*.npy")):
         try:

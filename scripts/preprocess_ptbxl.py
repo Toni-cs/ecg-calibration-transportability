@@ -46,8 +46,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_PROJECT_ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-# Reuse the vendor preprocessing's signal loading / resample-and-fix-length logic
-# (identical implementation, to keep both libraries' formats consistent)
+# Reuse the CINC2021 signal loading / resample-and-fix-length logic verbatim so all
+# datasets share the same format.
 from preprocess_cinc2021 import load_signal, resample_and_fix_length  # noqa: E402
 from src.data.mapping import MAP_TO_5SUPERCLASS  # noqa: E402
 

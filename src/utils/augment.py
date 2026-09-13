@@ -1,7 +1,7 @@
 """ECG-specific data augmentation module.
 
 Design principles:
-    1. Apply randomly during training only; validation/test sets stay untouched -- evaluation
+    1. Apply randomly during training only; validation/test sets stay untouched: evaluation
        must reflect the real distribution.
     2. Augmentation must not destroy diagnostic features (the key difference from image
        augmentation):

@@ -267,6 +267,3 @@ __all__ = [
 
 # E5 experiment: expose InceptionTime-Lite in the baselines namespace (used by ECGClassifier by name)
 from .inceptiontime_lite import ECGInceptionTimeLite  # noqa: E402,F401
-
-# E5 experiment: expose InceptionTime-Lite in the baselines namespace (used by ECGClassifier by name)
-from .inceptiontime_lite import ECGInceptionTimeLite  # noqa: E402,F401

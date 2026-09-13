@@ -65,7 +65,7 @@ def fit_isotonic(val_probs: np.ndarray, val_labels: np.ndarray,
     val_labels = np.asarray(val_labels)
     n, K = val_probs.shape
     _assert_labels_valid(val_labels, K)
-    if n <= min_per_class * K:  # guard uses <= to prevent off-by-one
+    if n <= min_per_class * K:
         warnings.warn(f"fit_isotonic: n_cal={n} <= 10*K={min_per_class*K}, "
                       f"isotonic overfitting risk (preregistered failure region), returning None")
         return None
@@ -81,7 +81,7 @@ def fit_isotonic(val_probs: np.ndarray, val_labels: np.ndarray,
 
 
 def apply_isotonic(probs: np.ndarray, params: dict) -> np.ndarray:
-    """apply: map per class then renormalize (note: breaks rank invariance, declared in docstring).
+    """Map per class then renormalize (note: this breaks rank invariance).
 
     Fall back to raw probs when the renormalized row sum is 0 (prevents an all-zero row from
     silently being assigned the wrong class).
@@ -192,7 +192,7 @@ def apply_matrix_scaling(probs: np.ndarray, params: dict) -> np.ndarray:
 # =====================================================================
 
 def _assert_labels_valid(labels: np.ndarray, K: int):
-    """Label validity assertion (guards against silent garbage such as label wraparound)."""
+    """Reject labels outside [0, K) (guards against silent label-wraparound corruption)."""
     labels = np.asarray(labels)
     if labels.size and (labels.min() < 0 or labels.max() >= K):
         raise ValueError(f"label out of range: valid range [0,{K}), "

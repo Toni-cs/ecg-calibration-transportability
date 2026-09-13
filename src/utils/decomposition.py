@@ -103,7 +103,7 @@ def recover_slope_intercept(probs_injected: np.ndarray, labels: np.ndarray,
     case-control offset (empirically verified): resampling makes b_hat_raw carry
         -(logit(pi_resampled) - logit(pi_injected)) / a,
     correction: b_hat = b_hat_raw + (logit(pi_resampled) - logit(pi_injected)) / a  [as implemented].
-    When recovery degenerates (slope ~= 0, data uninformative) raise ValueError -- the
+    When recovery degenerates (slope ~= 0, data uninformative) raise ValueError; the
     caller decides how to handle it (decompose_benefit catches it and flags recovery_failed).
     """
     probs_injected, labels = _validate_binary(probs_injected, labels)
@@ -138,7 +138,7 @@ def fisher_information_det(probs_injected: np.ndarray,
 
     Recovery problem: y|x' ~ Bern(sigma((x'-b)/s)), x'=logit(p_injected),
     x_base=logit(p_baseline). Design matrix [1, x'], weights
-    w_i = sigma(x_base_i)(1-sigma(x_base_i)) (baseline Bernoulli variance -- injection is a
+    w_i = sigma(x_base_i)(1-sigma(x_base_i)) (baseline Bernoulli variance; injection is a
     deterministic reparameterization of covariates, the conditional y distribution is unchanged,
     so this weight is exactly the true Fisher weight). det is independent of b and scales with
     the x' design as ~ s^2 (single-dimension scaling of a 2x2 information matrix, verified).
@@ -164,7 +164,7 @@ def identifiability_gate(n: int) -> float:
     Honest semantics: MAPE_REF is a single-seed single-run point observation (not a standard
     deviation); the "3x" factor is a heuristic amplification, not a 3-sigma tolerance.
     Calibration (archived results/decomposition_validation_n500_*.csv): at n=500, mape_s
-    p50=13.2%, p95=33.2%, max=42.1%, violation rate 6/27 ~ 22% -- gate(500)=23.3% sits around
+    p50=13.2%, p95=33.2%, max=42.1%, violation rate 6/27 ~ 22%; gate(500)=23.3% sits around
     mape_s p74, not p99.87. The gate should be used as a hard decision only at the preregistered
     n=20000; at small sample sizes it is reported as information only.
     """
@@ -381,7 +381,7 @@ def bootstrap_decomposition(probs_base: np.ndarray, labels_base: np.ndarray,
     (logistic) is excluded from the bootstrap; the CI supports attribution ranking validity.
 
     Returns percentile CI (absolute scale): delta_total, the three chain components, the three
-    absolute Shapley values, I_sb. Shares (ratios) carry no CI -- the denominator can cross
+    absolute Shapley values, I_sb. Shares (ratios) carry no CI: the denominator can cross
     zero, making percentile meaningless; ranking decisions should use the CI of absolute Shapley
     values.
     """

@@ -37,7 +37,7 @@ Metering and boundary guards:
   column is unreliable -> None.
 - BBSE solution goes through non-negative least squares + simplex projection, then renormalized.
 - reports identifiability diagnostics: confusion condition number, rank, BBSE-vs-EM pi_hat distance.
-- does not modify any existing training/inference path -- a pure incremental module, to be called
+- does not modify any existing training/inference path; it is a pure addition, to be called
   by decompose's MAPE_pi upgrade.
 """
 

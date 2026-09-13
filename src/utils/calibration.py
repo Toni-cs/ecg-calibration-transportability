@@ -1,5 +1,4 @@
-"""Calibration primitives: temperature scaling / Platt scaling / ECE / Brier Score
-
+"""Calibration primitives: temperature scaling / Platt scaling / ECE / Brier Score.
 
 1. Temperature fitting uses L-BFGS-B (gradient method) instead of Nelder-Mead.
 2. Multiclass calibration support (single global temperature).
@@ -14,8 +13,8 @@ from scipy.optimize import minimize, minimize_scalar
 from typing import Tuple, List, Optional
 
 EPS = 1e-7
-T_MIN = 0.01  # Lower temperature bound (wider range)
-T_MAX = 100.0  # Upper temperature bound
+T_MIN = 0.01
+T_MAX = 100.0
 
 
 def _validate_n_bins(n_bins, upper_bound=10**4):
@@ -24,12 +23,6 @@ def _validate_n_bins(n_bins, upper_bound=10**4):
     Called by 6 guards inside calibration.py and 4 n_bins functions in scripts/ so
     the guard logic is not duplicated. The upper bound is 10**4 (down from 10**6) to
     match the O(n_bins) Python-loop implementation (a single ece call stays under ~50ms).
-    
-    
-    
-    
-    
-    
 
     Args:
         n_bins: number of bins to validate
@@ -67,44 +60,38 @@ def nll(a: float, b: float, lg: np.ndarray, y: np.ndarray) -> float:
 
 def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
     """Fit temperature-scaling parameter T on a validation set.
-    
-    
+
     1. Uses L-BFGS-B (gradient method) by default, not Nelder-Mead.
     2. Temperature range [0.01, 100.0].
     3. Single global temperature for multiclass (standard practice; Guo et al., 2017).
-    
+
     Args:
         val_p: validation probabilities, shape (n_samples,) or (n_samples, n_classes)
         val_y: validation labels, shape (n_samples,) or one-hot (n_samples, n_classes)
         method: optimizer ('L-BFGS-B', 'Brent', 'Nelder-Mead')
-    
+
     Returns:
         optimal temperature T
     """
     val_p = np.asarray(val_p)
     val_y = np.asarray(val_y)
-    
+
     # Multiclass: single global temperature (standard practice).
     # Reference: Guo et al., 2017 "On Calibration of Modern Neural Networks"
     if val_p.ndim == 2:
-        # Compute logits from probabilities.
         # log-sum-exp trick for numerical stability
         logits = np.log(np.clip(val_p, EPS, 1 - EPS))
-        
-        # Optimize a single temperature (global NLL).
+
         def objective(T_arr):
             T = T_arr[0]
             if T < T_MIN or T > T_MAX:
                 return 1e10
-            # Multiclass NLL
             scaled_logits = logits / T
-            # log-sum-exp
             log_sum_exp = np.max(scaled_logits, axis=1, keepdims=True)
             log_probs = scaled_logits - log_sum_exp - np.log(np.sum(np.exp(scaled_logits - log_sum_exp), axis=1, keepdims=True))
-            # NLL
             nll_val = -np.mean(np.sum(val_y * log_probs, axis=1))
             return nll_val
-        
+
         res = minimize(
             objective,
             x0=np.array([1.0]),
@@ -113,18 +100,16 @@ def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
             options={"maxiter": 100}
         )
         return float(np.clip(res.x[0], T_MIN, T_MAX))
-    
-    # Binary
+
     lg = to_logit(val_p)
-    
+
     if method == "L-BFGS-B":
-        # L-BFGS-B (replaces Nelder-Mead)
         def objective(T_arr):
             T = T_arr[0]
             if T < T_MIN or T > T_MAX:
                 return 1e10
             return nll(1.0 / T, 0.0, lg, val_y)
-        
+
         res = minimize(
             objective,
             x0=np.array([1.0]),
@@ -133,27 +118,25 @@ def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
             options={"maxiter": 100}
         )
         T = float(np.clip(res.x[0], T_MIN, T_MAX))
-        
+
     elif method == "Brent":
-        # Brent's method (1-D optimization).
         def objective(T):
             return nll(1.0 / T, 0.0, lg, val_y)
-        
+
         res = minimize_scalar(
             objective,
             bounds=(T_MIN, T_MAX),
             method='bounded'
         )
         T = float(np.clip(res.x, T_MIN, T_MAX))
-        
+
     else:
-        # Nelder-Mead (legacy compatibility).
         def objective(T_arr):
             T = T_arr[0]
             if T < T_MIN or T > T_MAX:
                 return 1e10
             return nll(1.0 / T, 0.0, lg, val_y)
-        
+
         res = minimize(
             objective,
             x0=np.array([1.0]),
@@ -161,41 +144,41 @@ def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
             options={"xatol": 1e-4, "fatol": 1e-8, "maxiter": 100}
         )
         T = float(np.clip(res.x[0], T_MIN, T_MAX))
-    
+
     if not res.success:
         warnings.warn(f"Temperature optimization failed: {res.message}")
-    
+
     return T
 
 
 def fit_platt(val_p, val_y):
     """Fit Platt scaling parameters (a, b) on a validation set.
-    
+
     Platt scaling: p' = sigmoid(a * logit(p) + b)
-    
+
     Args:
         val_p: validation probabilities, shape (n_samples,)
         val_y: validation labels, shape (n_samples,)
-    
+
     Returns:
         (a, b) parameter pair
     """
     val_p = np.asarray(val_p)
     val_y = np.asarray(val_y)
     lg = to_logit(val_p)
-    
+
     def objective(ab):
         a, b = ab
         if a < 0.05 or a > 20.0 or b < -10.0 or b > 10.0:
             return 1e10
         return nll(a, b, lg, val_y)  # No regularization term
-    
+
     res = minimize(objective, x0=np.array([1.0, 0.0]), method="L-BFGS-B",
                    bounds=[(0.05, 20.0), (-10.0, 10.0)])
-    
+
     if not res.success:
         warnings.warn(f"Platt optimization failed: {res.message}")
-    
+
     return float(res.x[0]), float(res.x[1])
 
 
@@ -226,20 +209,20 @@ def apply_temperature(p, T) -> np.ndarray:
 
 def ece(probs, labels, n_bins: int = 10, adaptive: bool = False) -> float:
     """Expected Calibration Error
-    
-    
+
+
     1. Supports adaptive (equal-mass) binning.
     2. Corrects the last-bin boundary.
-    
+
     Args:
         probs: predicted probabilities
         labels: ground-truth labels
         n_bins: number of bins
         adaptive: whether to use adaptive binning
-    
+
     Returns:
         ECE value (lower is better)
-    
+
     Raises:
         ValueError: raised by _validate_n_bins for invalid n_bins. Callers should let
             it propagate rather than swallow it, to surface programming errors.
@@ -256,23 +239,23 @@ def ece(probs, labels, n_bins: int = 10, adaptive: bool = False) -> float:
         bin_boundaries[-1] = 1.0
     else:
         bin_boundaries = np.linspace(0, 1, n_bins + 1)
-    
+
     ece_val = 0.0
-    
+
     for i in range(n_bins):
         # Boundary fix: all bins are left-closed/right-open; the last bin includes 1.0.
         if i == n_bins - 1:
             mask = (probs >= bin_boundaries[i]) & (probs <= bin_boundaries[i + 1])
         else:
             mask = (probs >= bin_boundaries[i]) & (probs < bin_boundaries[i + 1])
-        
+
         if mask.sum() == 0:
             continue
-        
+
         avg_prob = probs[mask].mean()
         avg_label = labels[mask].mean()
         ece_val += mask.sum() / len(probs) * abs(avg_prob - avg_label)
-    
+
     return float(ece_val)
 
 
@@ -289,8 +272,8 @@ def smooth_ece(probs, labels, bandwidth: Optional[float] = None) -> float:
 
     - A logit-space kernel avoids endpoint saturation in probability space
       (resolution of p is far higher near p=1).
-    - Bandwidth default h = 0.45*(n/2000)^(-0.2) (aligns with the preregistered protocol §11 "bandwidth n^(-0.2)").
-    the calibration floor for perfectly calibrated data is roughly
+    - Bandwidth default h = 0.45*(n/2000)^(-0.2) (aligns with the preregistered protocol §11 "bandwidth n^(-0.2)"),
+    and the calibration floor for perfectly calibrated data is roughly
     ECE ~ 0.028 at n=500, ~0.027 at n=2000, ~0.019 at n=20000,
     ~0.049 at n=200 (information limit).
     Corresponding bandwidths: n=500 -> h~0.594, n=2000 -> h=0.45, n=20000 -> h~0.284, n=200 -> h~0.713.
@@ -586,7 +569,6 @@ def bootstrap_ece(
     if rng is None:
         rng = np.random.default_rng(0)
 
-    # Full-sample point estimate
     point = ece(probs, labels, n_bins)
 
     # n_bootstrap=0: skip CI (early-stop fast path)
@@ -639,7 +621,6 @@ def brier_parts(probs, labels, n_bins: int = 10):
     labels = np.asarray(labels, dtype=float)
     n = len(probs)
 
-    # Binning
     bins = np.linspace(0, 1, n_bins + 1)
     reliability = 0.0
     resolution = 0.0
@@ -675,17 +656,17 @@ def brier_raw(probs, labels) -> float:
 
 def mce(probs, labels, n_bins: int = 10) -> float:
     """Maximum Calibration Error
-    
+
     Metric: calibration error of the worst bin.
-    
+
     Args:
         probs: predicted probabilities
         labels: ground-truth labels
         n_bins: number of bins
-    
+
     Returns:
         MCE value (lower is better)
-    
+
     Raises:
         ValueError: raised by _validate_n_bins for invalid n_bins. Callers should let
             it propagate rather than swallow it, to surface programming errors.
@@ -696,21 +677,21 @@ def mce(probs, labels, n_bins: int = 10) -> float:
 
     bin_boundaries = np.linspace(0, 1, n_bins + 1)
     max_error = 0.0
-    
+
     for i in range(n_bins):
         if i == n_bins - 1:
             mask = (probs >= bin_boundaries[i]) & (probs <= bin_boundaries[i + 1])
         else:
             mask = (probs >= bin_boundaries[i]) & (probs < bin_boundaries[i + 1])
-        
+
         if mask.sum() == 0:
             continue
-        
+
         avg_prob = probs[mask].mean()
         avg_label = labels[mask].mean()
         error = abs(avg_prob - avg_label)
         max_error = max(max_error, error)
-    
+
     return float(max_error)
 
 
@@ -722,9 +703,7 @@ def plot_reliability_diagram(
     save_path: Optional[str] = None
 ):
     """Plot the calibration (reliability) curve.
-    
-    Visualizes calibration quality.
-    
+
     Args:
         probs: predicted probabilities
         labels: ground-truth labels
@@ -734,49 +713,46 @@ def plot_reliability_diagram(
     """
     n_bins = _validate_n_bins(n_bins)
     import matplotlib.pyplot as plt
-    
+
     probs = np.asarray(probs)
     labels = np.asarray(labels)
-    
+
     bin_boundaries = np.linspace(0, 1, n_bins + 1)
     bin_centers = []
     bin_means = []
     bin_counts = []
-    
+
     for i in range(n_bins):
         if i == n_bins - 1:
             mask = (probs >= bin_boundaries[i]) & (probs <= bin_boundaries[i + 1])
         else:
             mask = (probs >= bin_boundaries[i]) & (probs < bin_boundaries[i + 1])
-        
+
         if mask.sum() > 0:
             bin_centers.append((bin_boundaries[i] + bin_boundaries[i + 1]) / 2)
             bin_means.append(labels[mask].mean())
             bin_counts.append(mask.sum())
-    
+
     fig, ax = plt.subplots(1, 1, figsize=(6, 6))
-    
-    # Perfect calibration line
+
     ax.plot([0, 1], [0, 1], 'k--', label='Perfect calibration')
-    
-    # Actual calibration curve
+
     ax.plot(bin_centers, bin_means, 's-', label='Model', color='blue')
-    
-    # Sample-count bar chart
+
     ax2 = ax.twinx()
     ax2.bar(bin_centers, bin_counts, width=0.05, alpha=0.3, color='gray', label='Sample count')
     ax2.set_ylabel('Sample count')
-    
+
     ax.set_xlabel('Mean predicted probability')
     ax.set_ylabel('Fraction of positives')
     ax.set_title(title)
     ax.legend(loc='upper left')
-    
+
     plt.tight_layout()
-    
+
     if save_path:
         plt.savefig(save_path, dpi=150, bbox_inches='tight')
-    
+
     return fig
 
 
@@ -787,29 +763,24 @@ def compute_all_metrics(
     n_bootstrap: int = 1000
 ) -> dict:
     """Compute all calibration metrics.
-    
-    One-stop evaluation.
-    
+
     Args:
         probs: predicted probabilities
         labels: ground-truth labels
         n_bins: number of bins
         n_bootstrap: number of bootstrap samples
-    
+
     Returns:
         dict containing all metrics
     """
     n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs)
     labels = np.asarray(labels)
-    
-    # ECE with confidence interval
+
     ece_mean, ece_lower, ece_upper = bootstrap_ece(probs, labels, n_bins, n_bootstrap)
 
-    # Brier Score decomposition (Murphy, exact identity) + raw empirical Brier
     brier, reliability, resolution, uncertainty = brier_parts(probs, labels, n_bins=n_bins)
 
-    # MCE
     max_ce = mce(probs, labels, n_bins)
 
     return {

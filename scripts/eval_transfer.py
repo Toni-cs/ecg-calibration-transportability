@@ -192,7 +192,7 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
             # S1 (target-domain unsupervised prior adaptation; Saerens 2002 / BBSE, Lipton 2018):
             # estimate the target prior pi_hat from source-cal (labeled) + target-test (unlabeled) -> rescale probabilities.
             # Note: applying the same pi_hat to the ID domain deliberately introduces a prior mismatch (ID true prior = source prior),
-            # and its ID degradation is part of the method's paradigm -- for prior methods the decay is interpreted as
+            # and its ID degradation is part of the method's paradigm; for prior methods the decay is interpreted as
             # "target-specific benefit"; the paper must state this explicitly (to preempt reviewer challenges on pairing fairness).
             from src.utils.prior_shift import fit_em, fit_bbse
             fit_fn = fit_em if mname == "em_prior" else fit_bbse

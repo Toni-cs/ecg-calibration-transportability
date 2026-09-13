@@ -27,7 +27,7 @@ Parameter derivation (n_filters=48, bottleneck=48, 3 blocks, d_model=64, in_ch=1
 OOM fallback (RTX 5060 8GB constraint, 4-level degradation chain):
   Level 1: n_filters 64->48->32 (this file defaults to 48; if OOM, use 32, params drop to ~136K).
   Level 2: gradient_checkpointing (wrap forward, trade time for memory).
-  Level 3: ResNet1D with different hyperparameter variants (depth 3/5/7, width 32/64/128) -- degrades to a ResNet1D subfamily.
+  Level 3: ResNet1D with different hyperparameter variants (depth 3/5/7, width 32/64/128); degrades to a ResNet1D subfamily.
   Level 4: honestly report "2 architecture families + BiMamba toy" (worst case, paper downgrade statement).
 
 References:

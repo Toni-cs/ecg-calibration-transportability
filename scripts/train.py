@@ -364,7 +364,6 @@ def build_ptbxl_datasets(data_dir: str, seed: int, limit: Optional[int] = None,
     cal_patients = sorted(set(np.asarray(splits['cal']['patients'], dtype=object).tolist()))
     test_patients = sorted(set(np.asarray(splits['test']['patients'], dtype=object).tolist()))
 
-    # Hard assertion: the four splits are pairwise patient-disjoint (preregistered protocol §2).
     assert_no_leakage({
         'train': train_patients, 'val': sorted(val_patients),
         'cal': cal_patients, 'test': test_patients,
@@ -611,14 +610,14 @@ def main():
         'test':  create_dataloader(datasets['test'], args.batch_size, shuffle=False),
     }
 
-    # ============ Model: learnable_temp=False (T frozen at 1 in training; temperature used only for posterior TS) ============
+    # T frozen at 1 during training; temperature applied only as posterior TS
     model = ECGClassifier(
         in_channels=12,
         d_model=args.d_model,
         n_layers=args.n_layers,
         num_classes=args.num_classes,
         dropout=0.1,
-        learnable_temp=False,  # T frozen at 1 during training; temperature applied only as posterior TS
+        learnable_temp=False,
         backbone_type=args.arch,
     ).to(device)
 

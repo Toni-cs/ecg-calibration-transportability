@@ -151,7 +151,7 @@ def main() -> None:
             continue
 
         # QC (protocol §13 data integrity): source signals containing NaN/Inf (bad-lead segments /
-        # artifact sampling) must be dropped here -- otherwise non-finite values would silently
+        # artifact sampling) must be dropped here; otherwise non-finite values would silently
         # propagate into calibration error and training/evaluation (ECGNPZDataset._load_signal's
         # fail-fast guard would crash at runtime). Dropping ~0.1% contaminated records is standard
         # ECG QC (artifacts); interpolation would introduce systematic bias.

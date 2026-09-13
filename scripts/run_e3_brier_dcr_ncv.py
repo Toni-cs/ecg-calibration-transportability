@@ -334,14 +334,10 @@ def cohen_d_paired(before: np.ndarray, after: np.ndarray,
                    improvement_direction: str = "decrease") -> Dict:
     """Paired Cohen's d + 95% bootstrap CI + paired t-test.
 
-    Args:
-        before, after: metric values before/after TS (60 pairs)
-        improvement_direction: "decrease" (smaller is better, e.g. Reliability/ECE)
-                               or "increase" (larger is better, e.g. DCR/NCV)
-
-    Returns:
-        dict(mean_before, mean_after, mean_diff, std_diff, cohen_d,
-             cohen_d_ci_lo, cohen_d_ci_hi, t_stat, p_value, n)
+    improvement_direction: "decrease" (smaller is better, e.g. Reliability/ECE) or
+    "increase" (larger is better, e.g. DCR/NCV); it fixes which sign of the diff
+    counts as improvement. Returns a dict of mean/std/diff, cohen_d with CI,
+    t_stat, p_value, n.
     """
     from scipy.stats import ttest_rel
 

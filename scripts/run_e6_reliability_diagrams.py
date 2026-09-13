@@ -540,7 +540,6 @@ def _load_model_and_extract(args, source: str, target: str,
     num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
     subspace = SUBSPACE_CPSC if num_classes == 4 else None
 
-    # Load checkpoint
     ckpt = torch.load(ckpt_path, weights_only=False, map_location=device)
     sd = ckpt["model_state_dict"]
 
@@ -856,7 +855,6 @@ def main():
 
     if args.plot or args.all:
         n_main, n_supp = generate_figures(args)
-        # Result summary
         print("\n" + "=" * 70)
         print("E6 reliability diagram generation complete")
         print("=" * 70)

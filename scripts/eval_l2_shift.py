@@ -184,12 +184,10 @@ def main():
                   " ".join(f"{m}={method_results[m]['delta_ece']:+.4f}" for m in args.methods if m in method_results))
 
         all_results[f"seed{seed}"] = seed_results
-        # Unconditionally write the per-seed seed_strategy version marker,
-        # consistent with run_e1a_l2_shift_full.py L433, so that
-        # is_checkpoint_complete can validate it and silently mixing old/new
-        # seed-strategy results during resume is avoided. (The marker must not
-        # be placed inside the if out_path.exists() block, otherwise it would
-        # never be written on the first run when the file does not yet exist.)
+        # Always write the per-seed seed-strategy version marker (consistent with
+        # run_e1a_l2_shift_full.py L433) so is_checkpoint_complete can validate it and
+        # old/new seed-strategy results never mix silently on resume. Must stay outside
+        # the if out_path.exists() block, or it would never be written on the first run.
         all_results[f"seed{seed}"]["__seed_strategy__"] = SEED_STRATEGY_VERSION
         out_path = run_dir / "l2_shift_results.json"
         if out_path.exists():

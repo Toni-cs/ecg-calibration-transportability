@@ -514,7 +514,6 @@ def process_one(
     # ---------- 2. Binned T evaluation ----------
     T_per_bin, bin_edges, bin_records = fit_binned_T(cal_probs, cal_labels, n_bins=N_BINS)
 
-    # apply binned-T to ID and OOD
     id_probs_binned = apply_binned_T(id_probs, T_per_bin, bin_edges)
     ood_probs_binned = apply_binned_T(ood_probs, T_per_bin, bin_edges)
 
@@ -532,7 +531,6 @@ def process_one(
     binned_records = []
     for rec in bin_records:
         b = rec["bin_idx"]
-        # samples of this bin on test
         id_ent = predictive_entropy(id_probs)
         ood_ent = predictive_entropy(ood_probs)
         id_bin_mask = assign_bins(id_ent, bin_edges) == b

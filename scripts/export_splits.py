@@ -57,7 +57,7 @@ def _carve_val_patients(pat_label: dict, frac: float, seed: int) -> set:
     """Line-by-line mirror of train.py _carve_val_patients (lockstep: keep in sync)
 
     Note: must use rng.permutation then take the first n_val members (identical to the builder);
-    do not use rng.choice -- the RNG consumption sequence differs and would select different patient members.
+    do not use rng.choice: the RNG consumption sequence differs and would select different patient members.
     """
     rng = np.random.default_rng(seed)
     val_patients: set = set()
