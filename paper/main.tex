@@ -107,137 +107,104 @@ dataset shift \sep cross-corpus transfer \sep distribution mismatch
 \label{sec:intro}
 % ============================================================================
 Modern ECG deep models achieve strong in-distribution (ID) accuracy and
-calibration, but their reliability under distribution shift remains the
-central open question for deployment
+calibration, but their reliability under distribution shift remains open
 \cite{ovadia2019calibration,guo2017calibration,wagner2020ptbxl}.
-Recalibration methods fit a small set of parameters or a flexible
-map on a labeled calibration split; their benefit, a reduction in expected
-calibration error (ECE), is measured on the same distribution. When the
-model is deployed to a shifted target, that benefit attenuates or reverses.
+Recalibration fits a small parameter set on a labeled calibration split;
+its benefit, a reduction in expected calibration error (ECE), is measured
+on that same distribution and reverses on a shifted target.
 
-\textbf{Why this question matters for ECG.} PTB-XL \cite{wagner2020ptbxl},
-Chapman-Shaoxing \cite{zheng2022ecgarrhythmia}, and CPSC present genuinely
-different acquisition protocols, lead sets, and label vocabularies. A model
-trained and calibrated on one institution's data encounters covariate,
-prior-probability, and label-concept shift at the next
-\cite{morenotorres2012}. Clinicians and
+\textbf{Why this matters for ECG.} PTB-XL \cite{wagner2020ptbxl},
+Chapman-Shaoxing \cite{zheng2022ecgarrhythmia}, and CPSC differ in
+acquisition protocols, lead sets, and label vocabularies. A model
+calibrated at one institution meets covariate, prior-probability, and
+label-concept shift at the next \cite{morenotorres2012}. Clinicians and
 regulators need a decision rule: \emph{given my local data budget and the
-shift I can measure, should I deploy the recalibrated model, buy labels and
-recalibrate, or refuse deployment?}
+measurable shift, should I deploy the recalibrated model, buy labels, or
+refuse?}
 
-\textbf{Temperature scaling: ID vs.\ OOD empirical expectation.}
+\textbf{Temperature scaling and pre-registration.}
 Temperature scaling (TS) is a monotone post-hoc softmax temperature
-transform \cite{guo2017calibration}. Fitted on a labeled calibration
-split under a convex loss, TS minimizes NLL there; on that same
-distribution its calibration benefit is empirically small, while on a
-shifted target the source-fit temperature is mismatched to the target
-logit distribution and a non-trivial calibration benefit can be
-retained. We stress that this asymmetry is \emph{empirical}, not a
-theorem: ECE is not invariant under confidence-shifting monotone maps,
-and TS applied to a target where the model is under-confident can
-\emph{increase} ECE (our own data contain nine such
-negative cells). This ID-vs-OOD asymmetry
-motivates our pre-registered primary endpoint
-$\Delta\text{ECE}_{\text{OOD}}$ rather than the decay
-$\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$ originally
-planned (revision A1, see Sec.~\ref{sec:prereg}).
-
-\textbf{Pre-registration + multi-seed validation design.} To avoid HARKing
-(Hypothesis After Results Known), we pre-register the protocol
-v2.1-A1 \cite{protocolv21a1} with a written primary endpoint, primary test,
-family structure, and failure branches before the multi-seed validation
-is unblinded. The revision A1 re-locates the primary endpoint from
-\texttt{decay} to $\Delta\text{ECE}_{\text{OOD}}$ triggered by an
-independent exploratory pilot consistent with the empirical asymmetry;
-the revision is archived as a pre-registration revision
-\cite{nosek2019prereg,lakens2019prereg} with before/after protocol
-hashes. Multi-seed validation
-(5 seeds $\times$ 6 transfer pairs $\times$ 2 architectures) provides the
+transform \cite{guo2017calibration}. Fitted under a convex loss, it
+minimizes NLL on the calibration split, so its calibration benefit there
+is empirically small; on a shifted target the source-fit temperature is
+mismatched to the target logits and a non-trivial benefit can remain.
+This asymmetry is \emph{empirical}, not a theorem: ECE is not invariant
+under confidence-shifting monotone maps, and TS can \emph{increase} ECE
+where the model is under-confident (nine negative cells in our data). It
+motivates the pre-registered primary endpoint
+$\Delta\text{ECE}_{\text{OOD}}$ over the originally planned decay
+$\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$ (revision A1,
+Sec.~\ref{sec:prereg}). To avoid HARKing, protocol v2.1-A1
+\cite{protocolv21a1} fixes the primary endpoint, test, family structure,
+and failure branches before unblinding; revision A1 re-locates the
+endpoint from \texttt{decay} to $\Delta\text{ECE}_{\text{OOD}}$, triggered
+by an independent pilot, and is archived with before/after protocol hashes
+\cite{nosek2019prereg,lakens2019prereg}. Multi-seed validation
+(5 seeds $\times$ 6 transfer pairs $\times$ 2 architectures) supplies the
 robustness evidence; all 60 seed results, including nine counter-examples,
-are reported transparently.
+are reported.
 
-\textbf{Contributions.} We make five independent contributions:
+\textbf{Contributions.} Five independent contributions:
 \begin{description}
-    \item[\textbf{C1} (Primary, OOD benefit quantification):] On the
-    pre-registered primary endpoint $\Delta\text{ECE}_{\text{OOD}}$,
-    TS yields a statistically significant positive OOD calibration
-    benefit in 51/60 seed experiments across 6 transfer pairs $\times$
-    2 architectures (InceptionTime 27/30, ResNet1D 24/30), with nine
-    counter-examples transparently disclosed and mechanistically
-    explained. Three of six InceptionTime directions achieve 5/5 full
-    support; the remaining three achieve 4/5 with one counter-example
-    each. Two of six ResNet1D directions achieve 5/5 full support;
-    two achieve 4/5; two achieve 3/5.
-    \item[\textbf{C2} (Boundary condition, pre-registered branch triggered):]
-    Across all 12 pair$\times$architecture strata, 23/60 cells (38.3\%;
+    \item[\textbf{C1} (Primary OOD benefit):] On the pre-registered
+    endpoint $\Delta\text{ECE}_{\text{OOD}}$, TS yields a statistically
+    significant positive OOD benefit in 51/60 seed experiments (6 transfer
+    pairs $\times$ 2 architectures; InceptionTime 27/30, ResNet1D 24/30),
+    with nine counter-examples disclosed and mechanistically explained.
+    InceptionTime: three of six directions achieve 5/5, three achieve 4/5.
+    ResNet1D: two of six achieve 5/5, two 4/5, two 3/5.
+    \item[\textbf{C2} (Boundary condition, branch triggered):]
+    Across 12 pair$\times$architecture strata, 23/60 cells (38.3\%;
     BCa operating CI) have 95\% CIs containing zero and 34/60 have CI
-    lower bound $>0$
-    (stratum means range $-0.0008$ to $+0.0232$; overall ID mean
-    $+0.0083$ vs.\ OOD mean $+0.0159$). The pre-registered boundary
-    criterion ($\geq$80\% of cells with CI containing zero) is
-    \emph{not} met, so the pre-registered ``ID nonzero boundary''
-    branch (protocol A1.4.2) is triggered: the premise that TS has no
-    ID recalibratable miscalibration is re-examined, the decay contrast
-    endpoint is restored as exploratory, and C1 is qualified accordingly --
-    the OOD benefit is about $1.9\times$ the ID benefit on average, but is
-    \emph{not} exclusively attributable to OOD-specific mismatch.
-    $47/60 = 78.3\%$ of ID point estimates are positive and
-    $2/60 = 3.3\%$ have
-    $\Delta\text{ECE}_{\text{ID}} < -0.01$: the over-correction
-    case (counter-example 6, $-0.0152$) and one marginal case
-    ($-0.0128$).
-    \item[\textbf{C3} (Methodological, Shapley decomposition validation):]
+    lower bound $>0$ (stratum means $-0.0008$ to $+0.0232$; ID mean
+    $+0.0083$ vs.\ OOD mean $+0.0159$). The pre-registered criterion
+    ($\geq$80\% of cells with CI containing zero) is \emph{not} met,
+    triggering the ``ID nonzero boundary'' branch (protocol A1.4.2):
+    the premise that TS has no ID recalibratable miscalibration is
+    re-examined, the decay contrast restored as exploratory, and C1
+    qualified, since the OOD benefit is about $1.9\times$ the ID benefit
+    but is \emph{not} exclusively OOD-specific. $47/60 = 78.3\%$ of ID
+    point estimates are positive and $2/60 = 3.3\%$ have
+    $\Delta\text{ECE}_{\text{ID}} < -0.01$ (counter-example 6, $-0.0152$;
+    one marginal case, $-0.0128$).
+    \item[\textbf{C3} (Shapley validation):]
     A 27-cell full-factorial synthetic validation
-    (slope$\times$intercept$\times$prevalence, $n=20{,}000$) largely
-    confirms that the slope/intercept/prevalence decomposition recovers
-    ground truth within the identifiable regime (27/27 pass at
-    $n=20{,}000$; 21/27 at $n=500$) and flags entangled regions
-    without a threshold, with bootstrap CIs on absolute Shapley values.
-    \item[\textbf{C4} (Practical, method-selection boundary):] Across
-    8 recalibration methods $\times$ 6 transfer pairs $\times$ 5 seeds
-    $\times$ 2 architectures, TS is robust (51/60 supported) while EM
-    prior adaptation is fragile when ill-conditioned cells
-    ($w_{\text{ID}}>10$) are included (InceptionTime 15/30 supported);
-    after their exclusion the EM OOD finding attenuates. The
-    mechanism is a prior-likelihood mismatch: EM fits a target prior
-    that amplifies rather than corrects the shift-induced
-    miscalibration when the source-estimated confusion matrix is
+    (slope$\times$intercept$\times$prevalence, $n=20{,}000$) recovers
+    ground truth in the identifiable regime (27/27 at $n=20{,}000$;
+    21/27 at $n=500$), flags entangled regions without a threshold,
+    and reports bootstrap CIs on absolute Shapley values.
+    \item[\textbf{C4} (Method selection):] Across
+    8 methods $\times$ 6 pairs $\times$ 5 seeds $\times$ 2 architectures,
+    TS is robust (51/60) while EM prior adaptation is fragile when
+    ill-conditioned cells ($w_{\text{ID}}>10$) are included (InceptionTime
+    15/30); after exclusion the EM OOD finding attenuates. The mechanism
+    is prior-likelihood mismatch: EM fits a target prior that amplifies
+    shift-induced miscalibration when the source confusion matrix is
     ill-conditioned.
-    \item[\textbf{C5} (Clinical, discrimination-aware calibration gate):]
-    A two-layer deployment gate decouples calibration effectiveness (C1:
+    \item[\textbf{C5} (Calibration gate):]
+    A two-layer gate decouples calibration effectiveness (C1:
     $\Delta\text{ECE}_{\text{OOD}}>0$) from clinical viability
     (accuracy $\geq$ source-domain baseline). Across 14
-    pair$\times$architecture strata, 7/14 pass both layers and are
-    deployable; 7/14 fail the discrimination layer and are correctly
-    rejected, including directions with positive $\Delta\text{ECE}_{\text{OOD}}$
-    but accuracy below the source baseline (e.g., PTB-XL$\rightarrow$Chapman
-    ResNet1D: $\Delta\text{ECE}=+0.029$ but $\text{acc}=0.657 < 0.713$).
-    This gate reframes the 9/60 counter-examples: 4/9 are calibration
-    failures (C1 rejects), 5/9 are discrimination failures (C5 rejects
-    despite C1 passing), providing a two-layer deployment criterion
-    that separates calibration effectiveness from clinical viability.
+    pair$\times$architecture strata, 7/14 pass both layers; 7/14 fail
+    the discrimination layer, including directions with positive
+    $\Delta\text{ECE}_{\text{OOD}}$ but accuracy below baseline (e.g.,
+    PTB-XL$\rightarrow$Chapman ResNet1D: $\Delta\text{ECE}=+0.029$,
+    $\text{acc}=0.657 < 0.713$). The gate reframes the 9/60
+    counter-examples: 4/9 calibration failures (C1 rejects) and
+    5/9 discrimination failures (C5 rejects despite C1 passing).
 \end{description}
 
-This framing addresses a gap: prior ECG calibration studies report
-the phenomenon \cite{barandas2023,zhang2022,physiolmeas2026,medrxiv2026}
-but not an actionable \emph{when does TS pay off} answer with multi-seed
-robustness evidence. The novelty of this paper is \emph{not} ``doing
-multi-seed validation on ECG'' (multi-seed validation is a methodological
-choice, not a scientific contribution); the novelty is the
-\textbf{first systematic characterization of the boundary conditions
-under which TS yields a positive OOD calibration benefit in
-cross-corpus ECG transfer}, comprising (i) the OOD benefit
-quantification with pre-registered endpoint and multi-seed robustness
-evidence, (ii) the ID boundary-condition analysis with the
-pre-registered branch triggered (38.3\% CI-containing cells under the
-BCa operating CI, $<$ 80\%),
-(iii) the method-selection boundary
-(TS robust vs.\ EM prior and Matrix scaling weakest), (iv) the honest reporting of the
-predictability failure branch, and (v) the discrimination-aware
-calibration gate that decouples calibration effectiveness from clinical
-deployability. This boundary-condition characterization
-is the actionable contribution; the multi-seed validation is the
-evidence standard applied to each boundary.
+Prior ECG calibration studies report the phenomenon
+\cite{barandas2023,zhang2022,physiolmeas2026,medrxiv2026} but not an
+actionable \emph{when does TS pay off} answer with multi-seed robustness
+evidence. The novelty is \emph{not} multi-seed validation on ECG (a
+methodological choice) but the \textbf{first systematic characterization
+of the boundary conditions under which TS yields a positive OOD
+calibration benefit in cross-corpus ECG transfer}: the pre-registered OOD
+quantification, the ID boundary condition, the method-selection boundary
+(TS robust; EM prior and Matrix scaling weakest), the predictability
+failure, and the discrimination-aware gate. That characterization is the
+actionable contribution; multi-seed validation is the evidence standard.
 
 \begin{figure}[htbp]
 \centering
@@ -309,34 +276,30 @@ when TS helps (ID) versus when it hurts (OOD).
 
 \subsection{ECG Foundation Models and Transfer Learning (2024--2026)}
 Recent work has introduced ECG foundation models trained on millions
-of recordings. ECGFounder \cite{ecgfounder2024,song2024ecgfm} was
-trained on over 10 million ECGs from the Harvard--Emory database,
-achieving expert-level performance on 80 diagnoses and demonstrating
-cross-domain transfer via fine-tuning. ECG-FM \cite{ecgfm2024} is an
-open-weight transformer-based foundation model pretrained on 1.4
-million ECG segments using hybrid contrastive and generative
-self-supervised learning, showing strong cross-dataset generalizability
-and label efficiency. HeartLang \cite{heartlang2025} treats heartbeats
-as words and rhythms as sentences, using a QRS-Tokenizer and masked
-ECG sentence pre-training to learn form- and rhythm-level
-representations. Tan et al.\ \cite{transferecg2025} conducted the
-first extensive empirical study on transfer learning effectiveness in
-multi-label ECG classification, finding that fine-tuning benefits
-diminish as the downstream dataset grows and that CNNs transfer more
-effectively than RNNs. For OOD adaptation, ADAPTOOD
-\cite{adaptood2026} quantifies distribution-shift severity via
-uncertainty estimation and uses it to guide selective layer unfreezing
-with LoRA, while BeatRhythm-TTA \cite{beatrhythm2026} performs
-test-time adaptation with SQI-gated self-training and beat-rhythm
-consistency. Costa et al.\ \cite{star2025} introduced STAR
-(Sinusoidal Time--Amplitude Resampling), a morphology-preserving
-beat-wise augmentation for cross-source ECG generalization. Chen et
-al.\ \cite{peace2026} proposed PEACE for adult-to-pediatric ECG
-transfer via label-conditioned contrastive alignment. These works
-advance ECG transfer and adaptation but do not address the
-\emph{calibration} of transferred models; the gap our study fills by
-systematically quantifying how recalibration methods behave under
-cross-corpus shift with pre-registered endpoints.
+of recordings. ECGFounder \cite{ecgfounder2024,song2024ecgfm}
+(10 million ECGs, Harvard--Emory) reaches expert-level performance on
+80 diagnoses and transfers cross-domain via fine-tuning. ECG-FM
+\cite{ecgfm2024} is an open-weight transformer pretrained on 1.4
+million ECG segments with hybrid contrastive and generative
+self-supervision, showing strong cross-dataset generalizability and
+label efficiency. HeartLang \cite{heartlang2025} treats heartbeats as
+words and rhythms as sentences via a QRS-Tokenizer and masked
+sentence pre-training. Tan et al.\ \cite{transferecg2025} found that
+fine-tuning benefits diminish as the downstream dataset grows and
+that CNNs transfer more effectively than RNNs in multi-label ECG
+classification. For OOD adaptation, ADAPTOOD \cite{adaptood2026}
+quantifies distribution-shift severity via uncertainty estimation to
+guide selective LoRA layer unfreezing, and BeatRhythm-TTA
+\cite{beatrhythm2026} performs test-time adaptation with SQI-gated
+self-training and beat-rhythm consistency. Costa et al.\
+\cite{star2025} introduced STAR (Sinusoidal Time--Amplitude
+Resampling), a morphology-preserving beat-wise augmentation for
+cross-source generalization, and Chen et al.\ \cite{peace2026}
+proposed PEACE for adult-to-pediatric ECG transfer via
+label-conditioned contrastive alignment. These works advance ECG
+transfer but not the \emph{calibration} of transferred models, the
+gap our study fills via pre-registered cross-corpus evaluation of
+recalibration methods.
 
 % ============================================================================
 \section{Data and Pre-registered Protocol}
@@ -434,47 +397,34 @@ scaling. SmoothECE bandwidth: $0.45\cdot(n/2000)^{-0.2}$.
     \quad\text{vs}\quad
     H_1: \Delta\text{ECE}_{\text{OOD}} > 0
 \end{equation}
-Direction prior (registered, empirical): TS fitted on a labeled source
-calibration split yields, empirically, little calibration change on
-ID-like data and a non-trivial benefit on shifted targets
-\cite{guo2017calibration,ovadia2019calibration}; this asymmetry is an
-empirical regularity, not a theorem.
 \textbf{One-sided vs.\ two-sided choice.} The one-sided alternative
-$H_1: \Delta\text{ECE}_{\text{OOD}} > 0$ is selected based on the
-empirical asymmetry registered at revision A1 (on ID-like data the
-source-fit temperature yields, empirically, little calibration
-change; on a shifted target the source-fit temperature is mismatched
-and a non-trivial calibration benefit is often retained),
-\emph{not} based on the pilot results. We stress that this direction
-prior is empirical, not a theorem: TS applied to an under-confident
-target can increase ECE, and our own data contain nine
-negative cells. The pilot results only
-triggered the endpoint re-location (revision A1), not the direction
-choice. A two-sided alternative would halve the effective sample
-size and discard the registered empirical direction; the one-sided test is
-the pre-registered choice, archived in the protocol before
+$H_1: \Delta\text{ECE}_{\text{OOD}} > 0$ follows the empirical
+asymmetry registered at revision A1: on ID-like data the source-fit
+temperature yields, empirically, little calibration change, whereas
+on a shifted target it is mismatched and a non-trivial benefit is
+often retained \cite{guo2017calibration,ovadia2019calibration}. This
+direction prior is empirical, \emph{not} a theorem: TS applied to an
+under-confident target can increase ECE, and our own data contain
+nine negative cells. The choice was made before the pilot results,
+which only triggered the endpoint re-location (revision A1). The
+one-sided test is the pre-registered choice, archived before
 multi-seed unblinding.
 Patient-level cluster paired bootstrap, $B=10{,}000$ (BCa
 operating CI) \cite{efron1987bca}; stratified pooling: strata $=$ transfer pair
 $\times$ architecture.
 
 \textbf{CI method note (BCa vs.\ percentile).} The pre-registered
-CI method is BCa (bias-corrected and accelerated)
-\cite{efron1987bca}. In the reported multi-seed validation, the
-operating CI method is BCa at $B=10{,}000$, fully re-run on the
-entire 60-experiment grid (60/60 successful, metadata stored in
-\texttt{methods.ts.meta}). The percentile bootstrap is the large-sample
-limit of BCa when the bias-correction $z_0\to 0$ and acceleration
-$a\to 0$; for the paired-cluster design with $B=10{,}000$ and
-per-patient clusters, the percentile-BCa discrepancy is $O(n^{-1/2})$.
-In the 3 representative seed experiments where both CI methods were
-run ($B=10{,}000$ percentile re-runs for sensitivity analysis), the
-BCa and percentile CIs agree in sign and in magnitude. Earlier
-percentile CI results from $B=200$ in 21/60 experiments are retained
-as historical provenance (5 experiments lack log provenance, see
-Limitations). The BCa operating CI is the reported CI throughout this
-paper; the percentile CIs are reported only as a sensitivity
-cross-check where both were computed.
+CI method is BCa \cite{efron1987bca}, at $B=10{,}000$,
+re-run on the entire 60-experiment grid (60/60 successful, metadata
+in \texttt{methods.ts.meta}). The percentile bootstrap is the
+large-sample limit of BCa when $z_0\to 0$ and $a\to 0$; for the
+paired-cluster design with $B=10{,}000$ and per-patient clusters,
+the discrepancy is $O(n^{-1/2})$. In the 3 representative seed
+experiments where both were run ($B=10{,}000$ percentile re-runs),
+BCa and percentile CIs agree in sign and magnitude. Earlier
+percentile results from $B=200$ in 21/60 experiments remain as
+historical provenance (5 lack log provenance, see Limitations);
+percentile CIs serve only as a sensitivity cross-check.
 
 \textbf{Boundary-condition endpoint}:
 \begin{equation}
@@ -482,22 +432,19 @@ cross-check where both were computed.
     = \text{ECE}_{\mathrm{raw}}^{\mathrm{ID}} - \text{ECE}_{\mathrm{TS}}^{\mathrm{ID}}
 \end{equation}
 The pre-registered expectation is that $H_0: \Delta\text{ECE}_{\text{ID}} = 0$ is \emph{not rejected};
-the robustness criterion is that $\geq 80\%$ of cells have 95\% CIs containing zero.
-\emph{Observed (BCa operating CI, full-grid re-run): 23/60 = 38.3\%; the
-criterion is not met and the pre-registered branch A1.4.2 is triggered
-(the percentile CIs gave 29/60 = 48.3\%, same conclusion; reported in
-Sec.~\ref{sec:boundary}).}
+the criterion is that $\geq 80\%$ of cells have 95\% CIs containing zero.
+\emph{Observed (BCa, full-grid re-run): 23/60 = 38.3\%; the criterion is
+not met and branch A1.4.2 is triggered (percentile CIs gave 29/60 =
+48.3\%, same conclusion; Sec.~\ref{sec:boundary}).}
 
 \textbf{Secondary endpoints}: $G$ (recoverable loss vs.\ oracle),
 decay $=\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$
 (downgraded to descriptive), NLL, classwise-ECE, Brier Murphy
 decomposition, Cox slope/intercept, predicted/true prior $L_1$.
 
-\textbf{Family structure}: BH-FDR $q=0.05$ over the family of
-$6\text{ pairs}\times 2\text{ arch}\times 13\text{ shift levels}=156$
-primary comparisons; the multi-seed validation is reported as
-robustness evidence (60 seed experiments), not as a confirmatory
-family.
+\textbf{Family structure}: BH-FDR $q=0.05$ over $6\text{ pairs}\times 2\text{ arch}\times 13\text{ shift levels}=156$
+primary comparisons; the multi-seed validation is robustness evidence
+(60 seed experiments), not a confirmatory family.
 
 \subsection{Pre-registration revision A1 (transparency statement)}
 The primary endpoint was re-located from \texttt{decay} to
@@ -547,25 +494,18 @@ $\rightarrow$ test-set resampling $\rightarrow$ joint $\Delta\text{ECE}$ CI
 
 \subsection{Net Clinical Value (NCV)}
 \label{sec:ncv_methods}
-A Net Clinical Value (NCV) analysis is pre-registered as a secondary
-endpoint to quantify the clinical decision impact of TS recalibration
-beyond calibration error reduction. For each (sample, class) pair, we
-compare the binary decision (threshold $\tau=0.5$) before and after
-calibration: TP\_improved (raw negative $\to$ calibrated positive,
-true positive), TN\_improved (raw positive $\to$ calibrated negative,
-true negative), FP\_worsened (raw negative $\to$ calibrated positive,
-true negative), and FN\_worsened (raw positive $\to$ calibrated
-negative, true positive). The NCV is defined as
+Net Clinical Value (NCV), a pre-registered secondary endpoint, measures
+the clinical decision impact of TS. For each (sample, class)
+pair we compare the binary decision (threshold $\tau=0.5$) before and
+after calibration, counting TP\_improved, TN\_improved, FP\_worsened, and
+FN\_worsened over the raw-to-calibrated transitions. NCV is
 $(\text{TP\_improved} + \text{TN\_improved} - \text{FP\_worsened}
-- \text{FN\_worsened}) / N_{\text{total}}$, where
-$N_{\text{total}} = N_{\text{samples}} \times N_{\text{classes}}$,
-with the same patient-level cluster paired bootstrap ($B=10{,}000$,
-BCa operating CI) as the main endpoint. The NCV is reported alongside
-the main endpoint as a secondary endpoint with BH-FDR correction
-($q=0.05$): a significantly positive NCV indicates that TS improves
-clinical decisions beyond calibration error reduction. The NCV is
-computed on both ID and OOD splits (\texttt{ncv\_id} and
-\texttt{ncv\_ood} columns in the E3 experiment CSV).
+- \text{FN\_worsened}) / N_{\text{total}}$, with
+$N_{\text{total}} = N_{\text{samples}} \times N_{\text{classes}}$, using
+the main endpoint's patient-level cluster paired bootstrap ($B=10{,}000$,
+BCa operating CI) and BH-FDR correction ($q=0.05$); a significantly
+positive NCV means that TS improves clinical decisions. It is computed on
+ID and OOD splits (\texttt{ncv\_id}, \texttt{ncv\_ood}; E3 CSV).
 
 % ============================================================================
 \section{Results}
@@ -577,12 +517,12 @@ computed on both ID and OOD splits (\texttt{ncv\_id} and
 \label{sec:primary}
 % ----------------------------------------------------------------------------
 Figure~\ref{fig:main_results} visualizes the shift-dose response;
-Table~\ref{tab:primary_60seed} reports the pre-registered primary
-endpoint $\Delta\text{ECE}_{\text{OOD}}$ for TS across 60 seed experiments
-(6 transfer pairs $\times$ 2 architectures $\times$ 5 seeds, full
-balanced coverage). The primary test
-$H_0:\Delta\text{ECE}_{\text{OOD}}=0$ vs $H_1:\Delta\text{ECE}_{\text{OOD}}>0$
-is supported in 51/60 seed experiments (85.0\%) at the 95\% CI level.
+Table~\ref{tab:primary_60seed} reports the primary endpoint
+$\Delta\text{ECE}_{\text{OOD}}$ for TS across 60 seed experiments
+(6 pairs $\times$ 2 architectures $\times$ 5 seeds, balanced). The
+primary test $H_0:\Delta\text{ECE}_{\text{OOD}}=0$ vs
+$H_1:\Delta\text{ECE}_{\text{OOD}}>0$ is supported in 51/60 (85.0\%)
+at the 95\% CI level.
 
 \begin{figure}[htbp]
 \centering
@@ -596,20 +536,6 @@ seed results. The dashed line marks zero OOD benefit. Support counts
 ResNet1D achieves 24/30 (80\%).}
 \label{fig:main_results}
 \end{figure}
-
-\textbf{InceptionTime} (27/30 supported, 90.0\%):
-CPSC$\rightarrow$Chapman, CPSC$\rightarrow$PTB-XL, and
-PTB-XL$\rightarrow$CPSC achieve 5/5 full support (zero counter-examples);
-Chapman$\rightarrow$CPSC, Chapman$\rightarrow$PTB-XL, and
-PTB-XL$\rightarrow$Chapman achieve 4/5 with one counter-example each.
-
-\textbf{ResNet1D} (24/30 supported, 80.0\%):
-PTB-XL$\rightarrow$Chapman and PTB-XL$\rightarrow$CPSC achieve 5/5 full
-support (zero counter-examples);
-Chapman$\rightarrow$CPSC and Chapman$\rightarrow$PTB-XL achieve 4/5
-with one counter-example each;
-CPSC$\rightarrow$Chapman and CPSC$\rightarrow$PTB-XL achieve 3/5 with
-two counter-examples each.
 
 \begin{table}[t]
 \centering
@@ -718,52 +644,42 @@ Transfer pair & Arch & Seed & $\Delta\text{ECE}_{\text{ID}}$ & $\Delta\text{ECE}
 \end{tabular}
 \end{table}
 
-\textbf{Aggregate}: 51/60 supported $=$ 85.0\% robustness rate
-(InceptionTime 27/30 $=$ 90.0\%, ResNet1D 24/30 $=$ 80.0\%). The
-PTB-XL$\rightarrow$CPSC pair is the strongest evidence (10/10 across
-both architectures, zero counter-examples, CI lower bound
-$> +0.0014$, attained at ResNet1D seed 45). The nine counter-examples
-are mechanistically explained in Sec.~\ref{sec:counter}.
+\textbf{Aggregate}: 51/60 supported (85.0\%; InceptionTime 27/30 $=$
+90.0\%, ResNet1D 24/30 $=$ 80.0\%). PTB-XL$\rightarrow$CPSC is the
+strongest evidence (10/10, zero counter-examples, CI lower bound
+$> +0.0014$ at ResNet1D seed 45). The nine counter-examples are
+explained in Sec.~\ref{sec:counter}.
 
-\textbf{Stratified report by architecture.} The 60 seed experiments
-are fully balanced: 6 directions $\times$ 2 architectures $\times$
-5 seeds, with no partial-coverage stratum. Both architectures have
-complete 5-seed coverage on all 6 directions, enabling direct
-architecture comparison without seed-coverage confounding:
+\textbf{Stratified report by architecture.} The 60 experiments are
+balanced (6 directions $\times$ 2 architectures $\times$ 5 seeds, no
+partial-coverage stratum), enabling direct architecture comparison:
 \begin{itemize}
     \item \emph{InceptionTime} (30 experiments, 27/30 $=$ 90.0\%):
-    3 directions at 5/5 full support (CPSC$\rightarrow$Chapman,
-    CPSC$\rightarrow$PTB-XL, PTB-XL$\rightarrow$CPSC), 3 directions
-    at 4/5 (Chapman$\rightarrow$CPSC, Chapman$\rightarrow$PTB-XL,
+    3 directions at 5/5 (CPSC$\rightarrow$Chapman,
+    CPSC$\rightarrow$PTB-XL, PTB-XL$\rightarrow$CPSC), 3 at 4/5
+    (Chapman$\rightarrow$CPSC, Chapman$\rightarrow$PTB-XL,
     PTB-XL$\rightarrow$Chapman).
     \item \emph{ResNet1D} (30 experiments, 24/30 $=$ 80.0\%):
-    2 directions at 5/5 full support (PTB-XL$\rightarrow$Chapman,
-    PTB-XL$\rightarrow$CPSC), 2 directions at 4/5
-    (Chapman$\rightarrow$CPSC, Chapman$\rightarrow$PTB-XL), 2
-    directions at 3/5 (CPSC$\rightarrow$Chapman,
+    2 directions at 5/5 (PTB-XL$\rightarrow$Chapman,
+    PTB-XL$\rightarrow$CPSC), 2 at 4/5 (Chapman$\rightarrow$CPSC,
+    Chapman$\rightarrow$PTB-XL), 2 at 3/5 (CPSC$\rightarrow$Chapman,
     CPSC$\rightarrow$PTB-XL).
 \end{itemize}
-The stratified report confirms architecture robustness on both
-architectures with full 5-seed coverage. ResNet1D shows slightly
-lower support rate (80\% vs.\ 90\%) concentrated on the
-CPSC$\rightarrow$Chapman and CPSC$\rightarrow$PTB-XL directions,
-indicating a direction-specific architecture interaction rather than
-a global architecture deficit. Only the PTB-XL$\rightarrow$CPSC
-direction achieves 5/5 full support on both architectures (10/10),
-providing the strongest cross-architecture robustness evidence;
-PTB-XL$\rightarrow$Chapman reaches 9/10 (InceptionTime 4/5, ResNet1D
-5/5).
+ResNet1D shows the slightly lower rate (80\% vs.\ 90\%), concentrated
+on CPSC$\rightarrow$Chapman and CPSC$\rightarrow$PTB-XL, a
+direction-specific architecture interaction rather than a global
+deficit. Only PTB-XL$\rightarrow$CPSC achieves 5/5 on both
+architectures (10/10).
 
 % ----------------------------------------------------------------------------
 \subsection{ID boundary condition: $\Delta\text{ECE}_{\text{ID}}$}
 \label{sec:boundary}
 % ----------------------------------------------------------------------------
 Table~\ref{tab:boundary} reports the boundary-condition endpoint
-$\Delta\text{ECE}_{\text{ID}}$ for TS. The pre-registered expectation is
-that $H_0:\Delta\text{ECE}_{\text{ID}}=0$ is \emph{not rejected};
-the source-fit temperature is expected to be well-tuned to the source
-distribution, although this is an empirical expectation rather than a
-theorem.
+$\Delta\text{ECE}_{\text{ID}}$ for TS; the pre-registered expectation is
+that $H_0:\Delta\text{ECE}_{\text{ID}}=0$ is \emph{not rejected}, since
+the source-fit temperature should be well-tuned to the source
+distribution (an empirical expectation, not a theorem).
 
 \begin{table}[t]
 \centering
@@ -798,41 +714,36 @@ CPSC$\rightarrow$PTB-XL   & RN & $+0.0104$ & $-0.0042$ & $+0.0294$ & 0/5 \\
 \end{tabular}
 \end{table}
 
-The ID benefit is small on average but \emph{not} zero: aggregating all
-60 TS experiments, $\Delta\text{ECE}_{\text{ID}}$ has mean $+0.0083$
-(vs.\ an OOD mean of $+0.0159$, a $1.9\times$ OOD/ID ratio); $47/60
-= 78.3\%$ of point estimates are positive, $34/60$ cells have 95\%
-CI lower bounds $>0$ (BCa operating CI), and only $23/60 = 38.3\%$
-contain zero, far below the pre-registered $\geq$80\% criterion
-(the percentile CIs gave 29/60 = 48.3\%, same conclusion). We
-therefore \emph{trigger} the pre-registered ``ID nonzero boundary''
-branch (protocol A1.4.2): (i) the ``ID has no repairable calibration
-gap'' premise is re-examined: TS, fitted on the source calibration
-split, also improves ID calibration in many cells; (ii) the decay
-$=\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$ contrast
-endpoint is restored as an exploratory contrast; and (iii) the main
-claim (C1) is qualified: the OOD benefit is about $1.9\times$ the ID
-benefit on average, but is \emph{not} exclusively attributable to
-OOD-specific mismatch. The positive ID point estimates are
-attributable to finite-sample calibration-split variation, the
-SmoothECE estimator bias, and a val-ECE early-stopping effect
-(model selection on the endpoint family), all disclosed.
+The ID benefit is small but \emph{not} zero: across 60 TS experiments,
+$\Delta\text{ECE}_{\text{ID}}$ has mean $+0.0083$ (vs.\ OOD mean
+$+0.0159$, a $1.9\times$ ratio); $47/60 = 78.3\%$ of point estimates
+are positive, $34/60$ have 95\% CI lower bounds $>0$ (BCa), and only
+$23/60 = 38.3\%$ contain zero, far below the pre-registered
+$\geq$80\% criterion (percentile CIs: 29/60 = 48.3\%, same
+conclusion). We therefore \emph{trigger} the pre-registered ``ID
+nonzero boundary'' branch (protocol A1.4.2): TS, fitted on the source
+calibration split, also improves ID calibration in many cells; the
+decay $=\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$
+contrast is restored as an exploratory endpoint; and C1 is qualified,
+the OOD benefit being about $1.9\times$ the ID benefit rather than an
+exclusively OOD effect. The positive ID estimates reflect
+finite-sample calibration-split variation, SmoothECE estimator bias,
+and a val-ECE early-stopping effect (model selection on the endpoint
+family), all disclosed.
 
 % ----------------------------------------------------------------------------
 \subsection{Method-selection boundary: 8 methods $\times$ 6 pairs}
 \label{sec:method_boundary}
 % ----------------------------------------------------------------------------
-Table~\ref{tab:methods} reports the 8-method $\times$ 6-pair aggregate
-support rate over 5 seeds on InceptionTime. TS achieves 27/30 (90.0\%)
-with 3/6 directions at 5/5 full support; BBSE achieves 22/30 (73.3\%)
-with 3/6 directions at 5/5 full support. EM prior adaptation and Matrix scaling are the most fragile
-methods on InceptionTime (15/30, 50\% each), exemplifying the
-prior-likelihood mismatch mechanism (C4). Across 2 architectures
-(Table~\ref{tab:arch_robust}), TS achieves 51/60 (85.0\%) with
-InceptionTime (27/30, 90.0\%) and ResNet1D (24/30, 80.0\%) both showing
-strong OOD benefit; architecture robustness is supported on both
-architectures with full 5-seed coverage on all 6 directions
-(Figure~\ref{fig:arch_comparison}).
+Table~\ref{tab:methods} reports the 8-method $\times$ 6-pair support
+rate over 5 seeds on InceptionTime. TS achieves 27/30 (90.0\%) with
+3/6 directions at 5/5; BBSE achieves 22/30 (73.3\%) with 3/6 at 5/5.
+EM prior adaptation and Matrix scaling are the most fragile on
+InceptionTime (15/30, 50\% each), exemplifying the prior-likelihood
+mismatch mechanism (C4). Across 2 architectures
+(Table~\ref{tab:arch_robust}), TS achieves 51/60 (85.0\%)
+(InceptionTime 27/30, 90.0\%; ResNet1D 24/30, 80.0\%), with full
+5-seed coverage on all 6 directions (Figure~\ref{fig:arch_comparison}).
 
 \begin{figure}[htbp]
 \centering
@@ -928,33 +839,27 @@ direction-specific deficit rather than a global architecture deficit.}
 \label{fig:arch_comparison}
 \end{figure}
 
-\textbf{Architecture variability.} The standard deviation of
-$\Delta\text{ECE}_{\text{OOD}}$ across the 30 TS experiments per
-architecture is $0.0098$ for InceptionTime and $0.0180$ for ResNet1D,
-i.e.\ ResNet1D variability is $1.84\times$ InceptionTime. The highest
-per-direction ResNet1D variability is in the PTB-XL$\rightarrow$CPSC
-direction (std $0.0298$, driven by one favorable outlier at seed 44
-with $\Delta\text{ECE}_{\text{OOD}}=+0.0826$, which is not excluded),
-followed by CPSC$\rightarrow$PTB-XL; the support deficits are
-concentrated in CPSC$\rightarrow$Chapman and CPSC$\rightarrow$PTB-XL
-(3/5 each), consistent with a direction-specific deficit
-rather than a global architecture deficit. Fisher's exact test on the
-$2\times2$ contingency table (InceptionTime 27/30 supported vs.\
-ResNet1D 24/30 supported) yields $p = 0.47$, indicating no
-statistically significant architecture bias. The numerical difference
-in counter-example rates (ResNet1D 20.0\% vs.\ InceptionTime 10.0\%)
-is not statistically significant at $\alpha = 0.05$.
+\textbf{Architecture variability.} Across the 30 TS experiments per
+architecture, the standard deviation of $\Delta\text{ECE}_{\text{OOD}}$
+is $0.0098$ (InceptionTime) and $0.0180$ (ResNet1D), a $1.84\times$
+ratio, with ResNet1D's highest per-direction variability in
+PTB-XL$\rightarrow$CPSC (std $0.0298$, including an unexcluded
+favorable outlier at seed 44, $\Delta\text{ECE}_{\text{OOD}}=+0.0826$).
+Support deficits concentrate in CPSC$\rightarrow$Chapman and
+CPSC$\rightarrow$PTB-XL (3/5 each), a direction-specific deficit.
+Fisher's exact test on the $2\times2$ contingency table yields
+$p = 0.47$; the counter-example gap (ResNet1D 20.0\% vs.\
+InceptionTime 10.0\%) is not significant at $\alpha = 0.05$.
 
 \textbf{Prior-likelihood mismatch mechanism (C4).} EM prior adaptation
 fits a target prior $\hat\pi_{\text{target}}$ from the predicted-label
-marginal on the target corpus, then re-weights the source posterior by
+marginal, then re-weights the source posterior by
 $\hat\pi_{\text{target}}/\hat\pi_{\text{source}}$. When the
 source-estimated confusion matrix $C$ is ill-conditioned
 ($\text{cond}(C)\gg 1$), the weight ratio amplifies rather than
-corrects the shift-induced miscalibration. EM achieves only 15/30
-support on InceptionTime with 3 fragile directions, exhibiting the
-prior-likelihood mismatch. The failure is pair-specific
-(i.e., shift-signature-specific), not method-intrinsic.
+corrects the shift-induced miscalibration. EM reaches only 15/30
+support on InceptionTime with 3 fragile directions. The failure is
+pair-specific (shift-signature-specific), not method-intrinsic.
 
 % ----------------------------------------------------------------------------
 \subsection{Shapley decomposition validation (27 cells, $n=20{,}000$)}
@@ -962,32 +867,31 @@ prior-likelihood mismatch. The failure is pair-specific
 % ----------------------------------------------------------------------------
 The 27-cell full-factorial synthetic validation
 (slope$\in\{0.5,1,2\}\times$intercept$\in\{-1,0,1\}\times$
-prevalence$\in\{0.15,0.3,0.6\}$, $n=20{,}000$) confirms that the
-slope/intercept/prevalence decomposition recovers ground truth within
-the pre-registered identifiable regime (Fisher information determinant
-$>\tau=10^{-6}$). At the pre-registered sample size $n=20{,}000$,
-all 27 cells pass the recovery threshold (MAPE $<10\%$ on
-identifiable cells); at the realistic calibration-set size $n=500$,
-21 of 27 cells pass, with 6 failures exhibiting MAPE\_s up to
-42.13\%, concentrated in extreme intercept ($\pm 1$) and slope
-($0.5, 2.0$) regions where calibration shift is most clinically
-significant (see \texttt{decomposition\_validation.csv}; the
-$n=20{,}000$ CSV \texttt{decomposition\_validation\_}\allowbreak\texttt{n20000.csv}
-shows 27/27 passed under the same gate). Three entangled demonstration
-cases (narrow\_band, tiny\_slope, deep\_intercept) with
+prevalence$\in\{0.15,0.3,0.6\}$, $n=20{,}000$) confirms the
+decomposition recovers ground truth within the pre-registered
+identifiable regime (Fisher information determinant $>\tau=10^{-6}$).
+At $n=20{,}000$, all 27 cells pass the recovery threshold (MAPE
+$<10\%$ on identifiable cells); at $n=500$, 21 of 27 pass, with 6
+failures reaching MAPE\_s up to 42.13\%, concentrated in extreme
+intercept ($\pm 1$) and slope ($0.5, 2.0$) regions where calibration
+shift is most clinically significant (see
+\texttt{decomposition\_validation.csv}; the $n=20{,}000$ CSV
+\texttt{decomposition\_validation\_}\allowbreak\texttt{n20000.csv}
+shows 27/27 passing). Three entangled cases (narrow\_band,
+tiny\_slope, deep\_intercept) with
 $\det\in\{2.4\times10^{-7}, 3.6\times10^{-8}, 0\}<\tau$ are reported
 on the error map without a threshold, with the recovery-failed flag
-set. Bootstrap CIs on absolute Shapley values are reported; share-
-reliable flags mark uninterpretable shares
-($|\Delta_{\text{total}}|<3/\sqrt{n}$).
+set. Bootstrap CIs on absolute Shapley values and share-reliable
+flags for uninterpretable shares ($|\Delta_{\text{total}}|<3/\sqrt{n}$)
+are reported.
 
 \textbf{Honesty caveat (protocol \S8).} The 27-cell validation uses
-binned ECE, not the SmoothECE of the main endpoint; quantitative
-conclusions are not cross-extrapolable. The cross-fitting step
-(OOD-fold validation of decomposition explanatory power) remains
-to be run on real data; per the protocol self-binding clause, the
-``mechanism'' wording is limited to ``mechanism decomposition
-(synthetic validation part)'' until cross-fitting completes.
+binned ECE, not the main-endpoint SmoothECE; its conclusions are not
+cross-extrapolable. Cross-fitting (OOD-fold validation of
+decomposition explanatory power) remains to be run on real data; per
+the protocol self-binding clause, ``mechanism'' wording is limited to
+``mechanism decomposition (synthetic validation part)'' until
+cross-fitting completes.
 
 % ----------------------------------------------------------------------------
 \subsection{Predictability experiment (failure branch triggered)}
@@ -995,41 +899,35 @@ to be run on real data; per the protocol self-binding clause, the
 % ----------------------------------------------------------------------------
 The predictability experiment (protocol \S8.5) tests whether an
 unsupervised target-domain statistic (predicted-prior $L_1$ distance,
-logit moments) predicts the benefit retention rate via leave-one-fold-out $R^2$ with bootstrap CI
-(Table~\ref{tab:predictability}). The implemented fold unit is
-(architecture, transfer pair) (12 folds), whereas the protocol registered
-pair-only folds (6), a registered deviation under which the pair-only
-recomputation retains the failure branch ($R^2=-0.1424$). We run 2 architectures
-(InceptionTime + 1D-ResNet-34); the BiMamba architecture is a toy
-experiment ($n=60$) deferred to the supplement and does not enter
-the predictability regression.
+logit moments) predicts benefit retention via leave-one-fold-out
+$R^2$ with bootstrap CI (Table~\ref{tab:predictability}). The
+implemented fold unit is (architecture, transfer pair) (12 folds),
+versus the registered pair-only folds (6); under that registered
+deviation the pair-only recomputation retains the failure branch
+($R^2=-0.1424$). We run 2 architectures (InceptionTime + 1D-ResNet-34);
+the BiMamba toy experiment ($n=60$) is deferred to the supplement.
 
-\textbf{Result}: the multi-architecture merged LOO $R^2$ for TS is
-$-0.096$ with 95\% CI $[-0.720, +0.104]$. The CI upper bound $+0.104$
-is strictly below the pre-registered threshold $0.5$, triggering the
-\textbf{failure branch}: the three-step chain (decomposition +
-predictability + deployment) is downgraded to a \textbf{two-step chain}
-(decomposition + deployment), and the deployment criterion is renamed
-``empirical lookup table'' rather than ``predictive criterion''.
-Per the pre-registered failure branch, no post-hoc predictability claim
-is made.
+\textbf{Result}: the merged LOO $R^2$ for TS is $-0.096$ with 95\% CI
+$[-0.720, +0.104]$. The upper bound $+0.104$ is strictly below the
+pre-registered threshold $0.5$, triggering the \textbf{failure
+branch}: the three-step chain (decomposition + predictability +
+deployment) is downgraded to a \textbf{two-step chain} (decomposition
++ deployment), and the deployment criterion is renamed ``empirical
+lookup table'' rather than ``predictive criterion''. No post-hoc
+predictability claim is made.
 
-\textbf{Sensitivity analysis with new features.} We re-run the LOO
-$R^2$ with three additional label-free features: the fitted temperature
-$T$, the Wasserstein-1 distance between source and target logit
-distributions, and the class-wise entropy difference. Using the
-pre-registered $\Delta\text{ECE}_{\text{OOD}}$ as the target, all
-features fail: $T$ alone yields $R^2=-0.13$,
-Wasserstein alone yields $R^2=-0.06$, entropy alone yields
-$R^2=-0.02$, and all three combined yield $R^2=-0.11$.
-The predictability boundary is \emph{robust}: no label-free
-feature, including the fitted temperature $T$, can predict
-$\Delta\text{ECE}_{\text{OOD}}$ above the pre-registered $R^2=0.5$
-threshold. This strengthens the failure branch: the three-step chain
-remains downgraded to a two-step chain regardless of feature choice,
-and the deployment criterion in \S\ref{sec:gate}, based on the
-empirical sign of $\Delta\text{ECE}_{\text{OOD}}$ and the
-discrimination criterion, is the appropriate actionable criterion.
+\textbf{Sensitivity analysis with new features.} Re-running the LOO
+$R^2$ with three label-free features (fitted temperature $T$,
+Wasserstein-1 distance between source and target logit distributions,
+class-wise entropy difference), all fail against
+$\Delta\text{ECE}_{\text{OOD}}$: $T$ yields $R^2=-0.13$,
+Wasserstein $R^2=-0.06$, entropy $R^2=-0.02$, all three combined
+$R^2=-0.11$. The predictability boundary is \emph{robust}: no
+label-free feature, including $T$, predicts
+$\Delta\text{ECE}_{\text{OOD}}$ above $R^2=0.5$. This strengthens the
+failure branch, and the gate in \S\ref{sec:gate}, based on the sign
+of $\Delta\text{ECE}_{\text{OOD}}$ and the discrimination criterion,
+remains the appropriate actionable criterion.
 
 \begin{table}[t]
 \centering
@@ -1059,55 +957,42 @@ BBSE prior & $+0.136$ & $-0.354$ & $+0.201$ & Failure branch \\
 \label{sec:deployment}
 % ----------------------------------------------------------------------------
 We evaluate the deployment criterion (protocol \S9) on the L2 shift
-matrix: predict ``deploy TS'' when the raw ECE exceeds the threshold;
+matrix: predict ``deploy TS'' when raw ECE exceeds a threshold, and
 report sensitivity, specificity, decision-curve analysis (DCA), and the
-safety criterion (post-TS SmoothECE $\leq 0.05$ and
-$\Delta\text{ECE}$ CI lower bound $>0$, in the primary-endpoint benefit
-convention).
-We also compare against three trivial strategies: always-none,
-always-TS, and always-buy-$n$-labels.
+safety criterion (post-TS SmoothECE $\leq 0.05$ and $\Delta\text{ECE}$ CI
+lower bound $>0$, primary-endpoint convention). Comparators: always-none,
+always-TS, always-buy-$n$-labels.
 
-\textbf{Sensitivity / specificity} (Table~\ref{tab:deploy_sens}): the
-optimal threshold by Youden's $J$ is raw ECE $=0.127$, yielding
-sensitivity $0.923$, specificity $0.201$, Youden $J=0.124$. The
-criterion has high sensitivity (catching 92\% of beneficial cases) but
-low specificity (only 20\% of non-beneficial cases are correctly
-excluded; the remaining 80\% are falsely flagged),
-reflecting the asymmetric cost structure of clinical
-deployment: missing a beneficial recalibration is more costly than an
+\textbf{Sensitivity / specificity} (Table~\ref{tab:deploy_sens}):
+Youden's $J$ is maximized at raw ECE $=0.127$, yielding sensitivity
+$0.923$, specificity $0.201$, $J=0.124$. Sensitivity is high (92\% of
+beneficial cases caught) but specificity low (20\% of non-beneficial
+cases excluded; 80\% falsely flagged), reflecting the asymmetric cost
+structure: missing a beneficial recalibration costs more than an
 unnecessary one.
-\emph{Caveat:} the Youden threshold is searched on the same 1230-cell
-pool on which sensitivity/specificity are reported (in-sample). A
-leave-shift-type-out recomputation (threshold selected excluding the
-held-out dose level, evaluated on the held-out level only) yields
-Youden $J=+0.17$ (downsampling), $J=-0.03$ (lead drop), $J=+0.04$
+\emph{Caveat:} the threshold is searched on the same 1230-cell pool used
+for reporting (in-sample). A leave-shift-type-out recomputation (threshold
+selected excluding the held-out dose level, evaluated on it) yields
+$J=+0.17$ (downsampling), $J=-0.03$ (lead drop), $J=+0.04$
 (noise), and $J=-0.14$ (gain); the frozen threshold $0.127$ achieves
 $J\approx 0.003\approx 0$ (chance level; sensitivity $0.853$,
 specificity $0.150$) on the four held-out dose levels
-(\texttt{results/deployment\_holdout\_recompute.csv}). The in-sample numbers are
-therefore optimistic; the protocol's held-out dose levels were not
-used for this table (a registered deviation, see Limitations); and
-the deployment criterion requires independent validation before
-operational use.
+(\texttt{results/deployment\_holdout\_recompute.csv}). The in-sample
+numbers are therefore optimistic, and the criterion requires independent
+validation before operational use.
 
-\textbf{Deployment-time measurability.} Every input of the lookup
-table is an \emph{audit-time} quantity: the raw ECE, the ID--OOD
-accuracy gap, and the per-cell benefit labels all require ground-truth
-labels from the target corpus. In the unlabeled target stream that
-defines the deployment scenario, none of these quantities is directly
-computable. The only deployment-time (label-free) proxies examined in
-this study are the unsupervised target statistics of the
-predictability experiment (predicted-prior $L_1$ distance, logit
-moments), and that experiment triggered its pre-registered failure
-branch (LOO $R^2$ CI upper bound $0.104 < 0.5$,
-Table~\ref{tab:predictability}), so we cannot claim a label-free
-deployable version of the criterion. The lookup table is therefore an
-\emph{analysis- and audit-time decision aid} (for the model owner who
-can afford a labeled evaluation sample), and the actionable deployment
-path is the small-sample recalibration route: buy $n$ labeled target
-records and recalibrate locally (protocol \S5~S2). Extending the
-criterion to a genuinely deployable gate remains future work and is
-registered in Limitations (xiii).
+\textbf{Deployment-time measurability.} Every lookup-table input is
+\emph{audit-time} (raw ECE, ID--OOD accuracy gap, per-cell labels),
+requiring target ground-truth labels unavailable in the unlabeled stream. The only label-free proxies examined are the predictability
+experiment's target statistics (predicted-prior $L_1$ distance, logit
+moments); that experiment triggered its pre-registered failure branch
+(LOO $R^2$ CI upper bound $0.104 < 0.5$, Table~\ref{tab:predictability}),
+so no label-free deployable criterion can be claimed. The lookup table is
+an \emph{analysis- and audit-time decision aid} for a model owner with
+labeled evaluation data; the actionable deployment path is small-sample
+recalibration: buy $n$ labeled target records and recalibrate locally
+(protocol \S5~S2). A deployable gate remains future work
+(Limitations xiii).
 
 \begin{table}[t]
 \centering
@@ -1129,42 +1014,31 @@ $0.277$ & $0.499$ & $0.508$ & 227 & 381 \\
 \end{table}
 
 \textbf{Safety criterion}: across 157 (pair, seed, shift) cells, TS
-yields 1 cell satisfying the operating safety criterion (post-TS
-SmoothECE $\leq 0.05$ and improvement $>0.01$ in the point-estimate
-convention; the L2 results do not include per-cell CIs, so the
-pre-registered CI-based criterion could not be evaluated), a safety
-rate of $0.0064$. The safety-analysis sign convention is the
-deployment-metrics one ($\Delta\text{ECE}$ $=$ post-recalibration ECE $-$
-raw ECE, so negative values mean improvement); it is the opposite of
-the primary-endpoint convention, in which positive
-$\Delta\text{ECE}_{\text{OOD}}$ means benefit.
-\emph{Coverage note:} the L2 shift matrix evaluated here covers 157 of
-the 390 planned (pair, seed, shift) combinations (12 complete
-pair--seed combinations $\times$ 13 levels, plus one partial seed-44
-cell at the fs250 level), seeds 42--43 are
-complete for all 6 pairs on InceptionTime, seeds 44--46 are pending,
-and the ResNet1D L2 results are excluded from this
-analysis, so the deployment/safety numbers rest on 2-seed,
-single-architecture coverage.
-The
-stringent safety criterion is rarely satisfied on the full L2 shift
-matrix, indicating that TS is a useful default but not a universally
-safe recalibrator; the deployment criterion should be combined with
-local validation.
+yields 1 cell satisfying the operating criterion (post-TS SmoothECE
+$\leq 0.05$, improvement $>0.01$, point-estimate convention; L2 results
+lack per-cell CIs, so the CI-based criterion was not evaluated), a safety
+rate of $0.0064$. Sign convention:
+$\Delta\text{ECE}$ $=$ post-recalibration ECE $-$ raw ECE (negative means
+improvement), opposite to the primary-endpoint convention.
+\emph{Coverage note:} the L2 shift matrix covers 157 of the 390 planned
+(pair, seed, shift) combinations (12 complete pair--seed combinations
+$\times$ 13 levels, plus one partial seed-44 cell at fs250); seeds 42--43
+cover all 6 InceptionTime pairs, 44--46 are pending, and ResNet1D L2 is
+excluded, so these numbers rest on 2-seed, single-architecture coverage. The criterion is rarely satisfied, so TS is a useful default but
+not a universally safe recalibrator, and should be combined with local
+validation.
 
-\textbf{Decision-curve analysis.} At the raw-ECE threshold
-corresponding to the 10th percentile of the cell pool, the criterion's
-net benefit is $0.1209$ versus $0.0999$ for treating all cells;
-by the 90th-percentile threshold the net benefit turns negative
-($-0.0024$), so the criterion's net benefit over treat-all is modest
-and confined to the lower threshold range (results/deployment\_metrics.csv).
+\textbf{Decision-curve analysis.} At the 10th-percentile raw-ECE
+threshold, net benefit is $0.1209$ versus $0.0999$ for treating all cells;
+by the 90th percentile it turns negative ($-0.0024$). Net benefit over
+treat-all is modest, confined to low thresholds
+(results/deployment\_metrics.csv).
 
 \textbf{Trivial strategy comparison} (Table~\ref{tab:trivial}): the
 lookup-table strategy (mean $\Delta\text{ECE}$ $-0.0160$) outperforms
-always-none ($0.000$) and matches always-TS ($-0.0145$) on the
-beneficial subset, but is dominated by always-buy-$n$-labels
-($-0.2905$) which uses target labels--the upper bound. The lookup
-table is a practical compromise: no target labels needed, and it
+always-none ($0.000$) and matches always-TS ($-0.0145$) on the beneficial
+subset, but is dominated by always-buy-$n$-labels ($-0.2905$), the
+target-label upper bound. The lookup table needs no target labels and
 captures most of the TS benefit.
 
 \begin{table}[t]
@@ -1193,78 +1067,68 @@ lookup-table           & $-0.0160$            & $0.0289$ & 155  \\
 \label{sec:noise_floor}
 % ----------------------------------------------------------------------------
 A reviewer concern is whether the primary endpoint
-$\Delta\text{ECE}_{\text{OOD}}$ could be an artifact of the SmoothECE
-metric's sensitivity to temperature scaling $T$ under perfect calibration
-(i.e., $\text{ECE}_{\text{raw}} = 0$ and the observed $\Delta\text{ECE}$
-is purely metric noise). We test this directly: for perfectly calibrated
-predictions ($T_{\text{true}}=1$), we apply $T \in \{1.0, 1.25, 1.5\}$
-and compute the SmoothECE differential
+$\Delta\text{ECE}_{\text{OOD}}$ is an artifact of SmoothECE's
+sensitivity to temperature scaling $T$ under perfect calibration
+($\text{ECE}_{\text{raw}} = 0$, observed $\Delta\text{ECE}$ purely
+metric noise). For perfectly calibrated predictions
+($T_{\text{true}}=1$), we apply $T \in \{1.0, 1.25, 1.5\}$ and compute
 $\Delta\text{ECE}_{\text{noise}} = \text{SmoothECE}(\text{TS}) - \text{SmoothECE}(\text{raw})$
-across three confidence distributions (uniform, normal-skewed, and
+across three confidence distributions (uniform, normal-skewed,
 bimodal) at $n=2{,}000$.
 
-The noise floor is distribution-dependent and grows with $T$:
-$T=1.0$ yields $\Delta\text{ECE}_{\text{noise}} = 0$ (exact cancellation),
-$T=1.25$ yields $+0.014$--$+0.035$, $T=1.5$ yields $+0.030$--$+0.061$,
-$T=3.0$ yields $+0.095$--$+0.136$, and $T=4.5$ yields $+0.126$--$+0.164$
-depending on the confidence distribution. In
-contrast, the observed raw ECE in our 60 seed experiments ranges from
-$0.06$ to $0.35$ (mean $0.15$), which is $4$--$13\times$ the raw ECE
-under perfect calibration ($\approx 0.017$). The nine counter-examples
-also exhibit large raw ECE
-($0.08$--$0.24$), confirming that the negative $\Delta\text{ECE}$ in
-these cases reflects genuine TS-induced harm, not metric noise. For
-experiments with large $T > 3$ (where the noise floor reaches
-$0.10$--$0.16$), the noise floor is comparable to the observed
-$|\Delta\text{ECE}|$ in some seeds, so we cannot fully exclude a
-metric-noise contribution for these specific cases; however, the
-\emph{direction} of the noise floor (TS increases ECE under perfect
-calibration) is opposite to the positive $\Delta\text{ECE}_{\text{OOD}}$
-in 51/60 experiments, so the noise floor cannot explain the positive
-findings. We
-therefore conclude that the primary endpoint is a real effect, not a
-SmoothECE artifact, with the caveat that for large-$T$ experiments
-the noise floor is non-negligible.
+The noise floor grows with $T$ and is distribution-dependent: $T=1.0$
+gives $\Delta\text{ECE}_{\text{noise}} = 0$ (exact cancellation),
+$T=1.25$ gives $+0.014$--$+0.035$, $T=1.5$ gives $+0.030$--$+0.061$,
+$T=3.0$ gives $+0.095$--$+0.136$, and $T=4.5$ gives
+$+0.126$--$+0.164$. Observed raw ECE across our 60 seed experiments
+ranges $0.06$ to $0.35$ (mean $0.15$), $4$--$13\times$ the raw ECE
+under perfect calibration ($\approx 0.017$); the nine counter-examples
+also show large raw ECE ($0.08$--$0.24$), confirming the negative
+$\Delta\text{ECE}$ reflects genuine TS-induced harm, not metric noise.
+For large $T > 3$ (noise floor $0.10$--$0.16$) the floor is
+comparable to the observed $|\Delta\text{ECE}|$ in some seeds, so a
+metric-noise contribution cannot be excluded there; however, its
+\emph{direction} (TS increases ECE under perfect calibration) is
+opposite to the positive $\Delta\text{ECE}_{\text{OOD}}$ in 51/60
+experiments, so it cannot explain the positive findings. The primary
+endpoint is therefore a real effect, not a SmoothECE artifact, with
+the caveat that for large-$T$ experiments the noise floor is
+non-negligible.
 
 % ============================================================================
 \subsection{Discrimination-aware calibration gate (C5)}
 \label{sec:gate}
 % ----------------------------------------------------------------------------
 Calibration improvement ($\Delta\text{ECE}_{\text{OOD}} > 0$) is
-necessary but not sufficient for clinical deployment: a model whose
-discrimination has collapsed under distribution shift may be
-recalibrable but clinically useless. We define a two-layer
-deployment gate:
+necessary but not sufficient for deployment: a model whose
+discrimination has collapsed under shift may be recalibrable but
+clinically useless. We define a two-layer gate:
 \begin{enumerate}
     \item \textbf{Layer 1 (Calibration):} $\Delta\text{ECE}_{\text{OOD}} > 0$
     (C1 criterion).
     \item \textbf{Layer 2 (Discrimination):} $\text{acc}_{\text{OOD}} \geq
-    \text{acc}_{\text{source baseline}}$, where the source baseline is
-    the majority-class accuracy in the source domain.
+    \text{acc}_{\text{source baseline}}$, the source majority-class
+    accuracy.
 \end{enumerate}
 
 Across 14 pair$\times$architecture strata (6 pairs $\times$ 2
-architectures, with PTB-XL$\rightarrow$Chapman having 3 architectures
-including Mamba), 7/14 pass both layers and are deployable:
-CPSC$\rightarrow$PTB-XL (both architectures), PTB-XL$\rightarrow$CPSC
-(both), CPSC$\rightarrow$Chapman (both), and Chapman$\rightarrow$CPSC
-(both, InceptionTime only). The remaining 7/14 fail Layer 2:
-Chapman$\rightarrow$PTB-XL, PTB-XL$\rightarrow$Chapman, and
-Chapman$\rightarrow$CPSC ResNet1D, where OOD accuracy falls below the
-source baseline despite positive $\Delta\text{ECE}_{\text{OOD}}$ in
-some seeds. The strongest rejection is PTB-XL$\rightarrow$Chapman
-ResNet1D ($\Delta\text{ECE}=+0.029$ but $\text{acc}=0.657 < 0.713$):
-TS improves calibration but the model's discrimination has degraded
-too far for the recalibrated predictions to be clinically actionable.
+architectures, PTB-XL$\rightarrow$Chapman having 3 including Mamba),
+7/14 pass both layers and are deployable: CPSC$\rightarrow$PTB-XL,
+PTB-XL$\rightarrow$CPSC, CPSC$\rightarrow$Chapman (both architectures
+each), and Chapman$\rightarrow$CPSC (InceptionTime only). The other
+7/14 fail Layer 2: Chapman$\rightarrow$PTB-XL,
+PTB-XL$\rightarrow$Chapman, and Chapman$\rightarrow$CPSC ResNet1D,
+where OOD accuracy falls below the source baseline despite positive
+$\Delta\text{ECE}_{\text{OOD}}$ in some seeds. The strongest rejection
+is PTB-XL$\rightarrow$Chapman ResNet1D ($\Delta\text{ECE}=+0.029$ but
+$\text{acc}=0.657 < 0.713$): TS improves calibration but
+discrimination has degraded too far to be clinically actionable.
 
 This gate reframes the 9/60 counter-examples: 4 are calibration
 failures (Layer 1 rejects, $\Delta\text{ECE} \leq 0$) and 5 are
-discrimination failures (Layer 1 passes but Layer 2 rejects).
-The gate provides an actionable deployment criterion that supplements
-the statistical evidence in C1: rather than asking only ``does TS
-improve calibration?'' (C1), it also asks ``is the model's
-discrimination sufficient for the recalibrated predictions to be
-clinically useful?''
+discrimination failures (Layer 1 passes, Layer 2 rejects). It
+supplements C1 by also asking whether discrimination is sufficient
+for the recalibrated predictions to be clinically useful.
 
 % ============================================================================
 \subsection{Real-data Shapley cross-fitting and predictability boundary}
@@ -1274,34 +1138,30 @@ The synthetic Shapley validation (C3) confirms decomposition recovery
 in the identifiable regime but does not test whether the linear
 approximation $\Delta\text{ECE} \approx \hat{s} \cdot \text{slope} +
 \hat{b} \cdot \text{intercept} + \hat{\pi} \cdot \text{prevalence}$
-generalizes to real OOD data. We perform cross-fitting on all 60
-seed experiments: for each experiment, we estimate $(\hat{s}, \hat{b})$ on
-the source-domain calibration split and predict
-$\Delta\text{ECE}_{\text{OOD}}$ on the target-domain test split.
+generalizes to real OOD data. We cross-fit all 60 seed experiments:
+for each, we estimate $(\hat{s}, \hat{b})$ on the source calibration
+split and predict $\Delta\text{ECE}_{\text{OOD}}$ on the target test
+split.
 
 The linear model predicts the \emph{direction} correctly in 51/60
-(85\%) of experiments, but systematically \emph{overestimates} the
-magnitude (mean prediction error $+0.29$, median $+0.29$). This is
-consistent with a predictability boundary: the first-order Shapley
-decomposition captures the qualitative direction of the TS benefit
-but not its quantitative magnitude under real distribution shift.
-The 9/60 direction errors cluster in the CPSC$\rightarrow$Chapman
-and Chapman$\rightarrow$PTB-XL directions, where the Wasserstein-1
-distance between source and target logit distributions is largest
-(mean $0.75$ vs.\ $0.53$ for correctly predicted directions),
-suggesting that the linear approximation breaks down when the
-distribution shift is large enough to invalidate the local Taylor
-expansion underlying the decomposition.
+(85\%) but systematically \emph{overestimates} the magnitude (mean
+prediction error $+0.29$, median $+0.29$). This is consistent with a
+predictability boundary: the decomposition captures the qualitative
+direction of the TS benefit but not its quantitative magnitude under
+real shift. The 9/60 direction errors cluster in
+CPSC$\rightarrow$Chapman and Chapman$\rightarrow$PTB-XL, where the
+Wasserstein-1 distance between source and target logit distributions
+is largest (mean $0.75$ vs.\ $0.53$ for correctly predicted
+directions), suggesting the linear approximation breaks down once the
+shift invalidates its underlying local Taylor expansion.
 
-This finding strengthens the predictability failure branch (C3/C4):
-the Shapley decomposition is a valid \emph{diagnostic} (it identifies
-\emph{whether} TS will help) but not a valid \emph{predictor} (it
-cannot reliably estimate \emph{how much} TS will help). The
-implication for clinical translation is that the gate in
-\S\ref{sec:gate}, which uses only the sign of
-$\Delta\text{ECE}_{\text{OOD}}$ and the discrimination
-criterion, is the appropriate deployment criterion, not the
-Shapley-predicted magnitude.
+This strengthens the predictability failure branch (C3/C4): the
+Shapley decomposition is a valid \emph{diagnostic} (\emph{whether} TS
+will help) but not a valid \emph{predictor} (\emph{how much}). For
+clinical translation, the gate in \S\ref{sec:gate}, using only the
+sign of $\Delta\text{ECE}_{\text{OOD}}$ and the discrimination
+criterion, is the appropriate criterion, not the Shapley-predicted
+magnitude.
 
 % ============================================================================
 \subsection{Net benefit decision curve summary}
@@ -1325,31 +1185,20 @@ decision benefit in the directions where the gate permits deployment.
 \subsection{Net Clinical Value (NCV) results}
 \label{sec:ncv_results}
 % ----------------------------------------------------------------------------
-The pre-registered Net Clinical Value
-(Sec.~\ref{sec:ncv_methods}) quantifies the clinical decision impact
-of TS recalibration on both ID and OOD splits, with BH-FDR correction
-($q=0.05$) applied across the two secondary endpoints (DCR and NCV).
+The pre-registered NCV (Sec.~\ref{sec:ncv_methods}) is BH-FDR corrected
+($q=0.05$) across the two secondary endpoints (DCR, NCV).
 
-\textbf{Result}: the OOD NCV point estimate is $+0.008125$ with
+\textbf{Result}: the OOD NCV is $+0.008125$ with
 95\% CI $[+0.0014, +0.0148]$ (paired $t$-test, $n=60$,
-$p=0.019$, BH-FDR adjusted $p=0.019$); the OOD NCV is
-\emph{significant} at the 95\% level, indicating that TS recalibration
-yields a net improvement in clinical decisions (TP and TN gains
-outweigh FP and FN losses) on the OOD split. The ID NCV point
-estimate is $-0.006292$ with 95\% CI $[-0.0114, -0.0012]$
-($p=0.016$); the ID NCV is significantly \emph{negative}, indicating
-that TS slightly worsens clinical decisions on the ID split; a
-directional finding consistent with the ID boundary condition (TS
-compresses confidence toward the base rate, which can flip borderline
-decisions). The OOD NCV Cohen's $d = +0.31$ (small-to-medium effect)
-and ID NCV Cohen's $d = -0.32$ are comparable in magnitude but opposite
-in sign, mirroring the main-endpoint pattern where OOD benefit exceeds
-ID benefit. The per-experiment NCV ranges across the 60 seed
-experiments are disclosed in the E3 CSV
-(\texttt{c1\_dcr\_ncv\_multiclass.csv}). The NCV is disclosed as a
-secondary endpoint supporting the main-endpoint finding that TS
-provides OOD clinical decision benefit, while noting the ID decision
-cost as a qualification.
+$p=0.019$, BH-FDR adjusted $p=0.019$), \emph{significant}: TS yields a
+net improvement in OOD clinical decisions. The ID NCV is $-0.006292$ with
+95\% CI $[-0.0114, -0.0012]$ ($p=0.016$), significantly \emph{negative}:
+TS slightly worsens ID decisions, consistent with the ID boundary
+condition (TS compresses confidence toward the base rate). OOD NCV
+Cohen's $d = +0.31$ and ID NCV Cohen's $d = -0.32$ are comparable in
+magnitude but opposite in sign, mirroring the main endpoint.
+Per-experiment NCV ranges over the 60 seeds are in the E3 CSV
+(\texttt{c1\_dcr\_ncv\_multiclass.csv}).
 
 % ----------------------------------------------------------------------------
 \subsection{Reliability Diagrams}
@@ -1423,12 +1272,9 @@ The 51/60 robustness rate is driven by nine counter-examples across
 5 of the 6 transfer pairs and both architectures (Chapman$\rightarrow$CPSC 2,
 Chapman$\rightarrow$PTB-XL 2, CPSC$\rightarrow$Chapman 2,
 CPSC$\rightarrow$PTB-XL 2, PTB-XL$\rightarrow$Chapman 1; only
-PTB-XL$\rightarrow$CPSC has zero counter-examples). We transparently
-disclose all nine counter-examples rather than excluding them, because
-(i) the pre-registration protocol requires all seed results to be
-reported, and (ii) each counter-example has an identifiable post-hoc
-mechanistic interpretation, which supports the qualified overall claim
-rather than undermining it.
+PTB-XL$\rightarrow$CPSC has zero). We disclose all nine: the protocol
+requires all seed results, and each has an identifiable post-hoc mechanism
+supporting the qualified claim.
 
 \begin{figure}[htbp]
 \centering
@@ -1448,99 +1294,83 @@ not refutations of the OOD benefit.}
 \end{figure}
 
 \textbf{Counter-example 1: Chapman$\rightarrow$CPSC / InceptionTime / seed 45}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0057$ (CI $[-0.0058, -0.0055]$).
-Three co-occurring conditions: (a) lowest OOD accuracy across the 5 seeds
-($0.4711$ vs.\ $0.4842$--$0.5051$ for seeds 42--44, 46), indicating the
-seed-45 backbone generalizes worst to CPSC; (b) the lowest OOD raw ECE
-across the 5 seeds ($0.3160$, still large in absolute terms)--the
-failure is therefore not a room shortage but temperature mismatch; and (c) negative decay ($-0.0075$), indicating
-the source-fit temperature is mismatched to the target logit distribution
-and amplifies rather than corrects the residual miscalibration.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0057$ (CI $[-0.0058, -0.0055]$). Three
+conditions co-occur: lowest OOD accuracy across the 5 seeds ($0.4711$
+vs.\ $0.4842$--$0.5051$, seeds 42--44, 46); lowest OOD raw ECE
+($0.3160$, still large, so the failure is temperature mismatch, not room
+shortage); and negative decay ($-0.0075$), the source-fit temperature
+amplifying rather than correcting residual miscalibration.
 
 \textbf{Counter-example 2: Chapman$\rightarrow$CPSC / ResNet1D / seed 43}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0006$ (CI $[-0.0006, -0.0006]$).
-A marginal counter-example with $|\Delta\text{ECE}_{\text{OOD}}|<0.001$,
-attributable to finite-sample variation in the calibration split. The
-OOD raw ECE is $0.3144$ (the value $0.4779$ reported in earlier drafts
-is the OOD \emph{accuracy}); the mechanism is marginal seed-level
-variation, not room shortage.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0006$ (CI $[-0.0006, -0.0006]$), marginal
+($|\Delta\text{ECE}_{\text{OOD}}|<0.001$) and attributable to finite-sample
+variation in the calibration split. The OOD raw ECE is $0.3144$ (the
+$0.4779$ in earlier drafts is the OOD \emph{accuracy}); the mechanism is
+seed-level variation, not room shortage.
 
 \textbf{Counter-example 3: Chapman$\rightarrow$PTB-XL / InceptionTime / seed 42}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0025$ (CI $[-0.0035, -0.0016]$).
-The OOD accuracy is the lowest across the 5 seeds ($0.4655$), and
-$\Delta\text{ECE}_{\text{ID}}=+0.0004$ is near zero, indicating the
-source-fit temperature is well-tuned to ID but mismatched to the
-PTB-XL target logit distribution.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0025$ (CI $[-0.0035, -0.0016]$); OOD
+accuracy is the lowest across the 5 seeds ($0.4655$) and
+$\Delta\text{ECE}_{\text{ID}}=+0.0004$ is near zero, so the temperature is
+well-tuned to ID but mismatched to the PTB-XL target.
 
 \textbf{Counter-example 4: Chapman$\rightarrow$PTB-XL / ResNet1D / seed 45}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0036$ (CI $[-0.0036, -0.0035]$).
-The OOD accuracy is $0.5041$, and
-$\Delta\text{ECE}_{\text{ID}}=-0.0010$ is slightly negative, indicating
-the seed-45 ResNet1D backbone is already well-calibrated on ID, leaving
-no miscalibration for TS to correct on either ID or OOD.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0036$ (CI $[-0.0036, -0.0035]$); OOD
+accuracy is $0.5041$ and $\Delta\text{ECE}_{\text{ID}}=-0.0010$ is slightly
+negative, so the seed-45 backbone is already well-calibrated on ID,
+leaving nothing to correct.
 
 \textbf{Counter-example 5: CPSC$\rightarrow$Chapman / ResNet1D / seed 42}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0010$ (CI $[-0.0012, -0.0008]$).
-A marginal counter-example with $|\Delta\text{ECE}_{\text{OOD}}|<0.002$,
-attributable to ResNet1D seed-42 backbone having OOD accuracy $0.6147$
-with low OOD raw ECE ($0.0649$) and minimal calibration room.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0010$ (CI $[-0.0012, -0.0008]$), marginal
+($|\Delta\text{ECE}_{\text{OOD}}|<0.002$); the seed-42 backbone has OOD
+accuracy $0.6147$, low OOD raw ECE ($0.0649$), and minimal calibration
+room.
 
 \textbf{Counter-example 6: CPSC$\rightarrow$Chapman / ResNet1D / seed 44}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0168$ (CI $[-0.0170, -0.0165]$).
-The largest-magnitude counter-example, with
-$\Delta\text{ECE}_{\text{ID}}=-0.0152$ also negative, indicating the
-seed-44 ResNet1D backbone is already well-calibrated on both ID and
-OOD; TS has no miscalibration to correct and the temperature fit
-introduces a small over-correction. The OOD accuracy ($0.5725$) is
-the lowest across the 5 seeds. Counter-example 6 exhibits a distinct
-\emph{over-correction} mechanism: TS applied to an already-well-
-calibrated logit distribution (low ID raw ECE) over-adjusts the
-temperature, degrading both ID and OOD calibration. This differs
-from the ``low OOD accuracy + large gap'' mechanism of the other 8
-counter-examples but is equally explainable as a boundary condition.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0168$ (CI $[-0.0170, -0.0165]$), the
+largest-magnitude counter-example, with
+$\Delta\text{ECE}_{\text{ID}}=-0.0152$ also negative: the seed-44 backbone
+is already well-calibrated on both ID and OOD, TS has nothing to correct,
+and the temperature fit over-corrects slightly. Its OOD
+accuracy ($0.5725$) is the lowest across the 5 seeds. CE6 exhibits a
+distinct \emph{over-correction} mechanism (TS on an already-well-calibrated
+distribution degrades both ID and OOD calibration), unlike the ``low OOD
+accuracy + large gap'' mechanism of the other 8.
 
 \textbf{Counter-example 7: CPSC$\rightarrow$PTB-XL / ResNet1D / seed 43}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0050$ (CI $[-0.0051, -0.0049]$).
-The OOD accuracy is the lowest across the 5 seeds ($0.3877$),
-and the decay is $-0.0098$, indicating temperature mismatch to the
-PTB-XL target.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0050$ (CI $[-0.0051, -0.0049]$); OOD
+accuracy is the lowest across the 5 seeds ($0.3877$) and decay is
+$-0.0098$ (temperature mismatch to the PTB-XL target).
 
 \textbf{Counter-example 8: CPSC$\rightarrow$PTB-XL / ResNet1D / seed 44}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0049$ (CI $[-0.0049, -0.0048]$).
-The OOD accuracy is $0.3929$ (second-lowest across the 5 seeds), and
-$\Delta\text{ECE}_{\text{ID}}=-0.0032$ is slightly negative, indicating
-the seed-44 backbone is already well-calibrated on ID, leaving no
-miscalibration for TS to correct.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0049$ (CI $[-0.0049, -0.0048]$); OOD
+accuracy is $0.3929$ (second-lowest) and
+$\Delta\text{ECE}_{\text{ID}}=-0.0032$ is slightly negative, leaving
+nothing to correct.
 
 \textbf{Counter-example 9: PTB-XL$\rightarrow$Chapman / InceptionTime / seed 46}.
-TS yields $\Delta\text{ECE}_{\text{OOD}}=-0.0026$ (CI $[-0.0029, -0.0023]$).
-The OOD accuracy drops to $0.4983$ (lowest across the 5 seeds), and
-$\Delta\text{ECE}_{\text{ID}}=-0.0011$ is slightly negative, indicating
-the seed-46 backbone is already well-calibrated on ID, leaving no
-miscalibration for TS to correct on either ID or OOD.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0026$ (CI $[-0.0029, -0.0023]$); OOD
+accuracy drops to $0.4983$ (lowest across the 5 seeds) and
+$\Delta\text{ECE}_{\text{ID}}=-0.0011$ is slightly negative, again leaving
+nothing to correct.
 
-\textbf{Common pattern}: eight of the nine counter-examples co-occur
-with (a) low OOD accuracy (worst or near-worst seed for that pair) and
-(b) non-positive decay indicating temperature mismatch; the ninth
-(CE6) is the over-correction case on an already well-calibrated
-backbone. A low OOD raw ECE is \emph{not} a universal feature; four
-of nine counter-examples have raw ECE above 0.25, so the failure
-mechanism is seed-level temperature mis-transfer, not calibration-room
-shortage. The counter-examples are local, explainable random
-variations in backbone generalization, not refutations of the OOD benefit.
-The remaining 51 experiments support the OOD benefit, including
-PTB-XL$\rightarrow$CPSC which achieves 10/10 across both architectures
-with zero counter-examples.
+\textbf{Common pattern}: eight of nine counter-examples co-occur with
+(a) low OOD accuracy (worst or near-worst seed) and (b) non-positive
+decay, indicating temperature mismatch; the ninth (CE6) is over-correction
+on an already well-calibrated backbone. A low OOD raw ECE is \emph{not}
+universal: four of nine exceed 0.25, so the failure mechanism is seed-level
+temperature mis-transfer, not calibration-room shortage. The
+counter-examples are local, explainable random variation; the other 51
+experiments support the OOD benefit, including PTB-XL$\rightarrow$CPSC at
+10/10.
 
 \textbf{Methodological positioning of the 15.0\% counter-example rate.}
-The 15.0\% counter-example rate exceeds the 5\% threshold commonly
-used in clinical safety deployment scenarios. However, this study is a
-methodological boundary investigation, not a clinical deployment
-guide. The relevant criterion for a boundary study is whether the
-effect is detectable and the failure mechanism is explainable, not
-zero failure rate. All 9 counter-examples have identifiable
-mechanisms (8 ``low OOD accuracy + large gap'' and 1
-``over-correction''), and the expected benefit is positive
+The 15.0\% rate exceeds the 5\% threshold common in clinical safety
+deployment. As a methodological boundary investigation, not a clinical
+deployment guide, the relevant criterion is whether the effect is
+detectable and the mechanism explainable, not a zero failure rate. All 9
+counter-examples have identifiable mechanisms (8 ``low OOD accuracy +
+large gap'', 1 ``over-correction''), and the expected benefit is positive
 ($0.85 \times 0.0195 - 0.15 \times 0.0047 = +0.0159 > 0$).
 
 % ----------------------------------------------------------------------------
@@ -1564,86 +1394,75 @@ lower mean benefit when the prior correction \emph{would} work.
 % ----------------------------------------------------------------------------
 \subsection{Boundary condition: the ID benefit is small but nonzero}
 The ID boundary condition (C2) has a direct interpretation under the
-triggered branch. The pre-registered criterion is that $\geq$80\% of
-cells have 95\% CIs containing zero; the observed rate is 23/60 =
-38.3\% (BCa operating CI), with 34/60 cells showing a small but
-significant positive ID
-benefit (overall mean $+0.0083$, vs.\ an OOD mean of $+0.0159$; the
-stratum means range from $-0.0008$ to $+0.0232$,
-Table~\ref{tab:boundary}). The boundary condition therefore does
-\emph{not} mean that TS is ineffective on ID, nor that the ID benefit
-is zero; it means that the ID benefit is on average about half the
-OOD benefit, and part of the apparent OOD gain is shared with the ID
-domain. A val-ECE early-stopping effect (model selection within the
-endpoint family) plausibly contributes to the positive ID point
-estimates, in the direction opposite to the protocol's val-NLL rule
-(a registered deviation, see Limitations). Under this branch, the
-pre-registration (protocol A1.4.2) restores the decay contrast
+triggered branch. The criterion is $\geq$80\% of cells with 95\% CIs
+containing zero; the observed rate is 23/60 = 38.3\% (BCa), with
+34/60 cells showing a small but significant positive ID benefit
+(mean $+0.0083$ vs.\ OOD $+0.0159$; stratum means $-0.0008$ to
+$+0.0232$, Table~\ref{tab:boundary}). The boundary condition does
+\emph{not} mean TS is ineffective on ID nor that the ID benefit is
+zero: the ID benefit is on average about half the OOD benefit, so
+part of the apparent OOD gain is shared with the ID domain. A val-ECE
+early-stopping effect (model selection within the endpoint family)
+plausibly contributes to the positive ID estimates, opposite to the
+protocol's val-NLL rule (a registered deviation, see Limitations).
+Under this branch, protocol A1.4.2 restores the decay contrast
 $=\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$ as an
 exploratory endpoint, and C1 is qualified: the OOD benefit is about
-$1.9\times$ the ID benefit on average, rather than an exclusively OOD
-effect. The ID-vs-OOD asymmetry we report is therefore a
-\emph{difference in magnitude} between two positive benefits, not a
-presence-versus-absence contrast.
+$1.9\times$ the ID benefit rather than an exclusively OOD effect. The
+ID-vs-OOD asymmetry is therefore a \emph{difference in magnitude}
+between two positive benefits, not presence versus absence.
 
 % ----------------------------------------------------------------------------
 \subsection{Calibration is not discrimination: the clinical viability precondition}
 Temperature scaling is a monotone transform of the softmax
 probabilities; it preserves the argmax by construction (asserted
-bitwise in the released sanity check), and therefore it cannot change
+bitwise in the released sanity check), so it cannot change
 classification accuracy, AUROC, or AUPRC. The primary endpoint
 $\Delta\text{ECE}_{\text{OOD}}$ is thus orthogonal to discrimination:
 calibration makes an already-deployable model \emph{trustworthy}; it
 cannot make a non-discriminative model deployable.
 
-The measured accuracy statistics make this precondition concrete.
-Across the 60 TS experiments, the mean OOD accuracy is 0.540
-(median 0.546; range 0.388--0.701) and the mean ID--OOD accuracy drop
-is 0.236 (maximum 0.412). Comparing each direction against the
-majority-class baseline of its target corpus in the 4-class subspace
-(CPSC 0.528, PTB-XL 0.411, Chapman-Shaoxing 0.713), the mean OOD
-accuracy is \emph{below} the majority-class baseline in 4 of the 6
-directions (Chapman$\rightarrow$CPSC 0.510 vs.\ 0.528;
-CPSC$\rightarrow$PTB-XL 0.424 vs.\ 0.411, essentially at the
-baseline; CPSC$\rightarrow$Chapman 0.619 and
-PTB-XL$\rightarrow$Chapman 0.620, both well below 0.713). In those
-scenarios recalibration is moot: no temperature improves a model that
-should be replaced by a majority-class predictor, and the observed
-counter-example pattern (6/9 with low OOD accuracy) is consistent
-with this viability reading. Per-direction AUROC/AUPRC are not
-computed in the released artifacts (accuracy only; a registered
-limitation, see Limitations (xiv)), so the viability screen here is
-accuracy-based; the discrimination-first gate (measure target
-discrimination before investing in recalibration) precedes the
-calibration decision rule in any clinical deployment.
+The accuracy statistics make this concrete. Across the 60 TS
+experiments, mean OOD accuracy is 0.540 (median 0.546; range
+0.388--0.701) and the mean ID--OOD drop is 0.236 (maximum 0.412).
+Against each target corpus's majority-class baseline (CPSC 0.528,
+PTB-XL 0.411, Chapman-Shaoxing 0.713), mean OOD accuracy is
+\emph{below} baseline in 4 of 6 directions: Chapman$\rightarrow$CPSC
+0.510 vs.\ 0.528; CPSC$\rightarrow$PTB-XL 0.424 vs.\ 0.411
+(essentially at baseline); CPSC$\rightarrow$Chapman 0.619 and
+PTB-XL$\rightarrow$Chapman 0.620 (both well below 0.713). There
+recalibration is moot, since no temperature improves a model that
+should be replaced by a majority-class predictor, consistent with
+the counter-example pattern (6/9 with low OOD accuracy).
+Per-direction AUROC/AUPRC are not computed in the released artifacts
+(accuracy only; a registered limitation, see Limitations (xiv)), so
+the viability screen is accuracy-based; the discrimination-first gate
+precedes the calibration decision rule in deployment.
 
 \subsection{Explainable $\neq$ predictable: post-hoc vs.\ pre-registered}
 % ----------------------------------------------------------------------------
-We draw an explicit distinction between \emph{explainable} and
-\emph{predictable}:
+We distinguish \emph{explainable} from \emph{predictable}:
 \begin{itemize}
     \item \emph{Explainable} (post-hoc, mechanism-level): after
-    observing a counter-example, we can identify the co-occurring
+    observing a counter-example, we identify the co-occurring
     conditions (low OOD accuracy, low OOD raw ECE, non-positive
-    decay) and provide a mechanistic story (Sec.~\ref{sec:counter}).
-    This is a post-hoc explanation, not a pre-registered prediction.
+    decay) and give a mechanistic story (Sec.~\ref{sec:counter}), a
+    post-hoc explanation, not a pre-registered prediction.
     \item \emph{Predictable} (pre-registered, deployment-time): a
     target-domain unsupervised statistic (predicted-prior $L_1$
     distance, logit moments) predicts the benefit retention rate
     \emph{before} deployment, with LOO $R^2$ CI upper bound
     $\geq 0.5$. The predictability experiment
-    (Sec.~\ref{sec:predictability}) tests this and triggers the
-    failure branch (LOO $R^2$ CI upper bound $0.104<0.5$).
+    (Sec.~\ref{sec:predictability}) triggers the failure branch
+    (LOO $R^2$ CI upper bound $0.104<0.5$).
 \end{itemize}
 The counter-examples are explainable but not predictable: the
 unsupervised target-domain statistics available at deployment time
-are not strong enough to flag the counter-examples in advance. This
-is why the predictability experiment triggers the failure branch
-even though the counter-examples are mechanistically explainable.
-The two-step chain (decomposition + deployment lookup table) is the
-honest framing: mechanism decomposition provides post-hoc
-explanation, the deployment lookup table provides actionable
-guidance, but no pre-registered predictability claim is made.
+cannot flag them in advance, which is why the predictability
+experiment triggers the failure branch despite mechanistic
+explainability. The two-step chain (decomposition + deployment
+lookup table) provides post-hoc explanation and actionable guidance
+without a pre-registered predictability claim.
 
 % ----------------------------------------------------------------------------
 \subsection{Transparent re-location vs.\ HARKing}
@@ -1667,283 +1486,133 @@ validation}, not confirmatory, to reflect the post-revision status.
 \subsection{Net clinical value: implications of the directional NCV asymmetry}
 \label{sec:ncv_discussion}
 % ----------------------------------------------------------------------------
-The NCV (Sec.~\ref{sec:ncv_results}) measures the net clinical
-decision impact of recalibration: $(\text{TP}_{\text{improved}} +
-\text{TN}_{\text{improved}} - \text{FP}_{\text{worsened}} -
-\text{FN}_{\text{worsened}}) / N_{\text{total}}$. The results show a
-directional asymmetry: on the OOD split, NCV $= +0.008125$ ($p =
-0.019$), indicating a small but statistically significant positive
-net clinical value: recalibration improves clinical decisions more
-often than it degrades them on unseen target data. On the ID split,
-NCV $= -0.006292$ ($p = 0.016$), indicating a small but statistically
-significant negative net clinical value; recalibration slightly
-degrades clinical decisions on in-distribution data, consistent with
-the expectation that the source model is already better calibrated on
-its training distribution and recalibration introduces a minor
-decision-cost penalty.
+The NCV (Sec.~\ref{sec:ncv_results}) shows a directional asymmetry: OOD
+NCV $= +0.008125$ ($p = 0.019$) is a small but significant positive value
+(recalibration improves decisions on unseen target data more often than it
+degrades them); ID NCV $= -0.006292$ ($p = 0.016$) is a small but
+significant negative value (a minor decision-cost penalty on data the
+source model already calibrates well).
 
-This asymmetry has two implications for the claims: (i) the
-\textbf{Brier reliability main claim} (C1 sign: 51/60 positive) is
-supported by the OOD NCV: the positive OOD NCV confirms that the
-calibration improvement translates into a net positive clinical
-decision impact on unseen data, not merely a metric-level artifact;
-(ii) the \textbf{decision-cost improvement claim} (C5: 7/14 strata
-deployable) is partially qualified by the negative ID NCV: on
-in-distribution data, the recalibration does not yield a net clinical
-decision benefit, which tempers the deployability claim for
-source-domain applications. We therefore frame the NCV as
-\emph{supportive of OOD deployment} and \emph{cautionary for ID
-deployment}. The NCV also informs the meta-analytic pooling
-(Sec.~\ref{sec:conclusion}): the directional asymmetry in NCV
-contributes to CI-width heterogeneity across splits. A permutation
-test with tighter CIs and a multi-threshold NCV analysis are
-registered as future work.
+Two implications follow. (i) The \textbf{Brier reliability main claim}
+(C1: 51/60 positive) is supported: the positive OOD NCV shows the
+calibration gain translates into net clinical decision benefit, not a
+metric artifact. (ii) The \textbf{decision-cost
+improvement claim} (C5: 7/14 strata deployable) is partially qualified:
+the negative ID NCV tempers source-domain deployability. We therefore
+frame the NCV as \emph{supportive of OOD deployment} and \emph{cautionary
+for ID deployment}. It also informs the meta-analytic pooling
+(Sec.~\ref{sec:conclusion}), where the asymmetry contributes to CI-width
+heterogeneity across splits. A permutation test with tighter CIs and a
+multi-threshold NCV analysis remain future work.
 
 % ----------------------------------------------------------------------------
 \subsection{Limitations and future work}
 % ----------------------------------------------------------------------------
-\textbf{Limitations}: (i) the main endpoint is completed for
-InceptionTime and ResNet1D on all 6 directed transfer pairs with full
-5-seed coverage (60 experiments total, fully balanced); the BiMamba
-architecture is included only as a toy experiment ($n=60$, downsampled)
-deferred to the supplement (memory exhaustion on an RTX 5060, 8~GB) and
-does not enter the main-endpoint analysis; (ii) the
-predictability failure branch is triggered, downgrading the
-three-step chain to a two-step chain; the deployment criterion is
-an empirical lookup table, not a predictive criterion; (iii) the
-Shapley decomposition cross-fitting on real data (\S\ref{sec:real_shapley})
-shows 85\% direction accuracy but systematic magnitude overestimation
-(mean error $+0.29$), and a sensitivity analysis with $T$,
-Wasserstein-1, and entropy features confirms the predictability
-boundary is robust (all $R^2 < 0$); (iv) the
-27-cell decomposition validation uses binned ECE, not the
-SmoothECE of the main endpoint; quantitative conclusions cannot be
-extrapolated across ECE definitions; (v) the safety criterion is rarely
-satisfied
-on the full L2 shift matrix (TS safety rate $0.0064$), indicating
-that TS is a useful default but not a universally safe recalibrator;
-(vi) nine counter-examples out of 60 experiments (15.0\%) are
-transparently disclosed, with a frequent post-hoc pattern (most
-counter-examples have low OOD accuracy, non-positive decay, and
-elevated OOD raw ECE) but no post-hoc exclusion; (vii) the
-operating CI is BCa at $B=10{,}000$, fully re-run on the entire
-60-experiment grid (60/60 successful, metadata stored in
-\texttt{methods.ts.meta}); earlier percentile CI results from
-$B=200$ in 21/60 experiments are retained as historical provenance
-(5 experiments lack log provenance); (viii) the Youden deployment
-threshold is fitted in-sample (the protocol's held-out dose levels
-were not used; the leave-shift-type-out recomputation shows the
-in-sample operating characteristic is optimistic); (ix) the L2
-deployment/safety analysis covers 157 of 390 planned (pair, seed,
-shift) cells at 2 seeds on a single architecture, and the L2 noise
-levels are synthetic rather than the pre-registered PTB-XL Noise
-Stress Test Database (unavailable under PhysioNet licensing);
-(x) temperature was fitted once per experiment, so the reported CIs
-do not include temperature-fitting uncertainty (the pre-registered
-two-layer bootstrap is implemented but not enabled on real data);
-(xi) model selection used validation ECE rather than the
-pre-registered validation NLL early-stopping rule, which plausibly
-contributes to the positive ID boundary point estimates; (xii) the
-per-pair decomposition into covariate, prior-probability, and
-concept-shift components is not asserted; each directed pair
-combines all three shift types, and the L2 ladder isolates them only
-in eval-time; (xiii) the deployment lookup table is an audit-time
-tool whose inputs (raw ECE, ID--OOD accuracy gap, per-cell benefit
-labels) require labeled target data, and the label-free proxies
-tested in the predictability experiment failed their pre-registered
-branch, so no deployable label-free gate is claimed; (xiv) TS is
-argmax-invariant by construction and therefore cannot improve
-accuracy, AUROC, or AUPRC; per-direction discrimination metrics are
-not computed in the released artifacts (accuracy only), so the
-clinical viability precondition is screened by accuracy alone, and
-the measured OOD accuracy falls below the target majority-class
-baseline in 4 of 6 directions; (xv) the net clinical value (NCV)
-shows a directional asymmetry: OOD NCV $= +0.008125$ ($p = 0.019$,
-significant positive) but ID NCV $= -0.006292$ ($p = 0.016$,
-significant negative), indicating that recalibration yields a net
-clinical decision benefit on OOD data but a net decision cost on ID
-data; this qualifies the C5 deployability claim for
-source-domain applications while supporting it for target-domain
-deployment; (xvi) the InceptionTime
-architecture was originally designed with $n_{\text{filters}}=48$;
-due to GPU memory constraints (RTX 5060, 8~GB), $n_{\text{filters}}$
-was downgraded to 32, reducing model capacity and potentially
-attenuating the reported OOD benefits; the $n_{\text{filters}}=48$
-configuration is registered as future work; (xvii) this work is from
-a single-author lab (Zero Token Lab), which limits the depth of
-independent code review and statistical audit; the pre-registration
-protocol and public repository are intended to partially mitigate
-this limitation.
-
-\textbf{Future work}: (1) prospective multi-device validation
-of the deployment criterion; (2) extension to continuous shift spaces;
-(3) $\pi$-independent recovery estimators (BBSE/EM-class) to upgrade
-the MAPE$_\pi$ from a design check to a real estimator test;
-(4) investigation of the direction-specific ResNet1D deficit on
-CPSC$\rightarrow$Chapman and CPSC$\rightarrow$PTB-XL (3/5 each) to
-determine whether it reflects a systematic architecture$\times$direction
-interaction or random variation; (5) confirmatory testing under the
-A2 family reduction (12 hypotheses, BH-12 $q=0.05$ with 9/12
-significant, Bonferroni-12
-$=2/12$) to upgrade the exploratory A1 amendment to a confirmatory
-result; (6) re-run the main endpoint with the originally designed
-$n_{\text{filters}}=48$ InceptionTime architecture on a higher-memory
-GPU to assess whether the $n_{\text{filters}}=32$ downgrade
-attenuated the reported OOD benefits; (7) strengthen the NCV with a
-multi-threshold permutation test yielding tighter CIs, to determine
-whether the ID negative NCV persists across decision thresholds and
-to upgrade the OOD NCV from a single-threshold result to a
-threshold-robust clinical decision benefit.
+\textbf{Limitations}: (i) the main endpoint covers InceptionTime and
+ResNet1D on all 6 directed pairs with 5-seed coverage (60 experiments);
+BiMamba is a toy experiment ($n=60$, supplement) after memory exhaustion
+on an RTX 5060 (8~GB); (ii) the predictability failure branch is
+triggered (three-step to two-step); the deployment criterion is an
+empirical lookup table; (iii) real-data Shapley cross-fitting
+(\S\ref{sec:real_shapley}) shows 85\% direction accuracy but magnitude
+overestimation (mean error $+0.29$); $T$, Wasserstein-1, and entropy
+features confirm the boundary (all $R^2 < 0$); (iv) the 27-cell
+decomposition validation uses binned ECE, not the main endpoint's
+SmoothECE, limiting cross-definition use; (v) the safety criterion is
+rarely satisfied on the full L2 shift matrix (TS safety rate $0.0064$);
+TS is a useful default, not universally safe; (vi) nine counter-examples
+of 60 experiments (15.0\%) are disclosed but not excluded; (vii) the
+operating CI is BCa at $B=10{,}000$, re-run on all 60 experiments
+(60/60, \texttt{methods.ts.meta}); percentile CIs from $B=200$ in 21/60
+experiments remain (5 lack logs); (viii) the Youden threshold is fitted
+in-sample, making the operating characteristic optimistic; (ix) the L2
+analysis covers 157 of 390 planned cells at 2 seeds on one architecture,
+with synthetic noise rather than the unavailable pre-registered PTB-XL
+Database; (x) temperature was fitted once per experiment, so CIs omit
+temperature-fitting uncertainty (the two-layer bootstrap is disabled);
+(xi) model selection used validation ECE rather than the pre-registered
+NLL early-stopping rule, plausibly contributing to the positive ID
+boundary estimates; (xii) the per-pair decomposition into covariate,
+prior-probability, and concept-shift components is not asserted, since
+each pair mixes all three, isolated at eval time; (xiii) the deployment
+lookup table requires labeled target data, and the label-free proxies
+failed their pre-registered branch, so no label-free gate is claimed;
+(xiv) TS is argmax-invariant and cannot improve accuracy, AUROC, or
+AUPRC, so the viability precondition is screened by accuracy alone, with
+OOD accuracy below the majority-class baseline in 4 of 6 directions;
+(xv) NCV is directionally asymmetric (OOD $= +0.008125$, $p = 0.019$,
+positive; ID $= -0.006292$, $p = 0.016$, negative), qualifying the C5
+claim for source-domain but supporting target-domain deployment; (xvi)
+InceptionTime was downgraded from $n_{\text{filters}}=48$ to 32 for GPU
+memory (RTX 5060, 8~GB), potentially attenuating OOD benefits, with 48
+as future work; (xvii) this work is from a single-author
+study, limiting independent review and audit, partially mitigated by the
+pre-registration protocol and public repository.  \textbf{Future work}:
+(1) prospective multi-device validation; (2) continuous shift spaces;
+(3) $\pi$-independent recovery estimators (BBSE/EM-class) to upgrade the
+MAPE$_\pi$ to a real estimator test; (4) the ResNet1D deficit on
+CPSC$\rightarrow$Chapman and CPSC$\rightarrow$PTB-XL (3/5 each) to test
+for a systematic interaction; (5) confirmatory testing under the A2
+reduction (12 hypotheses, BH-12 $q=0.05$, 9/12 significant,
+Bonferroni-12 $=2/12$); (6) re-running the endpoint with
+$n_{\text{filters}}=48$ InceptionTime on a higher-memory GPU; (7) a
+multi-threshold permutation test on NCV.
 
 % ============================================================================
 \section{Conclusion}
 \label{sec:conclusion}
 % ============================================================================
-Our five contributions map to the results as follows:
-\textbf{(C1)} OOD benefit quantification: 51/60 seed experiments
-support $\Delta\text{ECE}_{\text{OOD}}>0$ (85.0\%, InceptionTime
-27/30, ResNet1D 24/30);
-\textbf{(C2)} ID boundary condition: 23/60 cells (38.3\%) have CIs
-containing zero, below the $\geq$80\% criterion, triggering the
-pre-registered ``ID nonzero boundary'' branch;
-\textbf{(C3)} Shapley decomposition validation: 27/27 cells pass at
-$n=20{,}000$ (21/27 at $n=500$);
-\textbf{(C4)} Method-selection boundary: TS robust (51/60), EM prior
-and Matrix scaling fragile (15/30 each on InceptionTime);
-\textbf{(C5)} Discrimination-aware calibration gate: 7/14 strata pass
-both calibration and discrimination layers, reframing the 9
-counter-examples as 4 calibration failures and 5 discrimination
-failures.
-
 We pre-registered and validated a multi-seed calibration boundary study
-of temperature scaling in cross-corpus ECG transfer. The pre-registered
-primary endpoint $\Delta\text{ECE}_{\text{OOD}}$ is supported in 51/60
-seed experiments across 6 transfer pairs $\times$ 2 architectures
-(InceptionTime 27/30, ResNet1D 24/30, 85.0\% aggregate), with nine
-counter-examples transparently disclosed and mechanistically explained.
-Architecture robustness is supported on both InceptionTime (27/30, 90.0\%)
-and ResNet1D (24/30, 80.0\%) with full 5-seed coverage on all 6 directions,
-enabling direct architecture comparison without seed-coverage confounding.
-The ID boundary criterion was \emph{not} met (23/60 = 38.3\% of cells
-have 95\% CIs containing zero under the BCa operating CI, below the
-$\geq$80\% threshold; the percentile CIs gave 29/60 = 48.3\%, same
-conclusion), so the
-pre-registered ``ID nonzero boundary'' branch was triggered: the OOD
-benefit is about $1.9\times$ the ID benefit on average and cannot be
-attributed exclusively to OOD-specific mismatch. The
-27-cell Shapley decomposition validation passes the pre-registered
-threshold on all 27 identifiable cells at $n=20{,}000$ (21/27 at
-$n=500$). The method-selection boundary
-(TS robust; EM prior and Matrix scaling weakest when ill-conditioned
-cells are included, InceptionTime 15/30
-each) is governed by a prior-likelihood mismatch
-mechanism. The predictability failure branch is triggered, downgrading
-the three-step chain to a two-step chain. All hypotheses are tagged
-exploratory + robustness validation, not confirmatory; the
-pre-registration protocol v2.1-A1 and five-item honesty declaration
-are archived for transparency. The findings suggest that TS provides a
-positive OOD calibration benefit in most cross-corpus settings but
-requires local validation before deployment (TS safety rate $0.0064$ under the
-operating point-estimate criterion), with two qualifications supported by the nine
-counter-examples: (1) most counter-examples co-occur with low OOD
-accuracy ($\leq 0.50$ in 6/9) and a large ID--OOD accuracy gap
-($\geq 0.18$ in 7/9), a heuristic \emph{tendency}, not a sufficient
-gate (three counter-examples have OOD accuracy $>0.5$, so accuracy
-alone cannot rule out failure); (2) local
-validation is required (the TS safety rate $0.0064$ under the operating
-point-estimate criterion on the full L2
-shift matrix shows that TS is not universally safe, and the Youden
-deployment criterion is fitted in-sample). Where these qualifications
-are not met, prior-correction methods
-require a confidence gate, and the deployment criterion should be
-combined with local validation. A third, precondition qualification
-applies throughout: recalibration presumes clinically acceptable
-discrimination, and the measured OOD accuracy is below the target
-majority-class baseline in 4 of the 6 directions; in those
-scenarios recalibration is moot until the discrimination problem is
-solved, because TS cannot alter accuracy by construction. All
-hypotheses are exploratory
-+ robustness validation, not confirmatory.
-
-Three additional analyses strengthen these conclusions. First, a noise
-floor control (\S\ref{sec:noise_floor}) confirms that the primary
-endpoint is not a SmoothECE artifact: the worst-case metric noise
-($+0.021$) is $4$--$13\times$ smaller than the observed raw ECE
-($0.06$--$0.35$). Second, the discrimination-aware calibration gate
-(C5, \S\ref{sec:gate}) provides an actionable deployment criterion:
-7/14 strata pass both calibration and discrimination layers, and the
-gate correctly rejects all strata where TS would be clinically moot.
-Third, real-data Shapley cross-fitting (\S\ref{sec:real_shapley})
-shows 85\% direction accuracy but systematic magnitude overestimation
-(mean error $+0.29$), and a sensitivity analysis with three additional
-label-free features ($T$, Wasserstein-1, entropy) confirms the
-predictability boundary is robust: all features yield $R^2 < 0$
-under LOO cross-validation. The sign-based gate is the appropriate
-deployment criterion.
-
-\textbf{Note on meta-analytic pooling.} The meta-analytic pooled
-effect (fixed-effect inverse-variance weighting, see
-\texttt{meta\_analytic\_pooled.csv}) is sensitive to between-study
-heterogeneity in CI widths: the ResNet1D fixed-effect pooled estimate
-is slightly negative ($-0.000573$) because the narrow-CI studies
-dominate the inverse-variance weights. Under the DerSimonian--Laird
-random-effects model (also in \texttt{meta\_analytic\_pooled.csv}),
-all three strata are positive (InceptionTime $+0.0151$, ResNet1D
-$+0.0158$, CrossArchitecture $+0.0148$), and the simple unweighted
-means are likewise positive ($+0.0152$, $+0.0165$, $+0.0159$). The
-sign discrepancy between fixed-effect and random-effects pooling
-confirms that the fixed-effect pooled estimate is driven by CI-width
-heterogeneity ($\tau^2 \approx 3\times10^{-5}$, $Q \gg k-1$) rather
-than by a genuinely negative central effect. The directional asymmetry
-in NCV (OOD positive, ID negative) further contributes to this CI-width
-heterogeneity across splits. We therefore report the
-\textbf{count-based sign proportion} (51/60 = 85.0\% supported) as the
-primary, more robust test, and treat the meta-analytic pooled effect
-as a secondary, model-dependent summary. The DerSimonian--Laird
-$\tau^2$ estimate exhibits implementation-dependent variation (pooled
-estimate stable within 3.3\%, but $\tau^2$ varies by 41\% across
-implementations); we report the standard DerSimonian--Laird
-implementation.
-
-\textbf{Family size and multiple-comparison scope.} The 60 seed
-experiments constitute the robustness-evidence family; the
-pre-registered confirmatory family is the shift-level grid of
-$6$ pairs $\times 2$ architectures $\times 13$ shift levels $=156$
-comparisons (protocol \S6). The 8-method design space
-($8$ methods $\times$ 6 pairs $\times$ 5 seeds $\times$ 2 architectures
-$=480$ cells) is reported in the method-selection boundary
-analysis (Sec.~\ref{sec:method_boundary}). Multiple-comparison corrections on
-the 60-seed robustness family leave the headline count unchanged
-(51/60 under BH-60 and Bonferroni), and the honest
-pair$\times$architecture-stratum aggregation
-(12 strata) retains 9/12 directions after BH correction (InceptionTime
-6/6). Under Bonferroni-12 correction, only 2/12 directions retain
-significance (cpsc\_chapman/IT and ptbxl\_chapman/RN), reflecting the
-stringent nature of the 12-stratum family-level correction.
-
-\textbf{CI width distribution.} Across the 60 TS experiments, the
-95\% CI widths for $\Delta\text{ECE}_{\text{OOD}}$ range from
-$2.1\times10^{-5}$ to $1.2\times10^{-2}$ (median $1.2\times10^{-3}$).
-52/60 TS cells fall below the repository's narrow-CI diagnostic
-threshold ($0.005$), and six \emph{supporting} cells have degenerate
-widths ($<3\times10^{-4}$); excluding those six, the headline count
-becomes 45/60 (75.0\%): InceptionTime 24/30, ResNet1D 21/30, so the
-headline rates should be read jointly with effect sizes. The narrow
-CIs partly reflect the moderate calibration sample size
-($n_{\text{cal}} = 1027$--$2099$ records, $1027$--$1873$ patients,
-per the per-experiment logs) and
-the low variance of the SmoothECE
-estimator; per-experiment bootstrap metadata (B=10000, CI method=BCa) are stored
-in the \texttt{methods.ts.meta} field of each \texttt{transfer\_result.json},
-enabling post-hoc provenance audit of the BCa rerun.
-CI width does not affect the support/counter-example
-classification, which depends on the sign of the CI lower bound: a
-narrow CI around a positive point estimate yields a positive lower
-bound (support), while a narrow CI around a negative point estimate
-yields a negative lower bound (counter-example). The heterogeneity in
-CI widths across studies is the reason the fixed-effect meta-analytic
-pooled estimate is model-sensitive (see note above), whereas the
-count-based sign proportion is not.
+of temperature scaling (TS) in cross-corpus ECG transfer. \textbf{(C1)}
+OOD benefit: 51/60 seed experiments support
+$\Delta\text{ECE}_{\text{OOD}}>0$ (85.0\%; InceptionTime 27/30 = 90.0\%,
+ResNet1D 24/30 = 80.0\%) on all 6 directions. \textbf{(C2)} ID boundary:
+23/60 cells (38.3\%) have 95\% CIs containing zero under the BCa
+operating CI (percentile: 29/60 = 48.3\%), below the $\geq$80\%
+criterion, triggering the pre-registered branch; the OOD benefit is
+$1.9\times$ the ID benefit. \textbf{(C3)} Shapley decomposition: 27/27
+cells pass at $n=20{,}000$ (21/27 at $n=500$). \textbf{(C4)} Method
+selection: TS robust (51/60), EM prior and Matrix scaling fragile (15/30
+each). \textbf{(C5)} Gate: 7/14 strata pass both layers, reframing the 9
+counter-examples as 4 calibration and 5 discrimination failures. The
+predictability failure branch is triggered (three-step chain becomes
+two-step), and all hypotheses are exploratory + robustness validation.
+Nine counter-examples are disclosed, mostly with low OOD accuracy ($\leq
+0.50$ in 6/9) and a large ID--OOD gap ($\geq 0.18$ in 7/9), a tendency
+rather than a sufficient gate (three have OOD accuracy $>0.5$). TS needs
+local validation (safety rate $0.0064$), the Youden criterion is fitted
+in-sample, and OOD accuracy is below the majority-class baseline in 4 of
+6 directions, where TS cannot help.  A noise floor control
+(\S\ref{sec:noise_floor}) rules out a SmoothECE artifact: worst-case
+metric noise ($+0.021$) is $4$--$13\times$ below the raw ECE
+($0.06$--$0.35$). The C5 gate (\S\ref{sec:gate}) rejects every
+clinically moot stratum. Real-data Shapley cross-fitting
+(\S\ref{sec:real_shapley}) gives 85\% direction accuracy with magnitude
+overestimation (mean error $+0.29$); $T$, Wasserstein-1, and entropy
+features confirm the boundary (all $R^2 < 0$).  \textbf{Meta-analytic
+pooling.} The fixed-effect estimate is CI-width sensitive: ResNet1D is
+slightly negative ($-0.000573$) because narrow-CI studies dominate,
+while DerSimonian--Laird random effects are positive (InceptionTime
+$+0.0151$, ResNet1D $+0.0158$, CrossArchitecture $+0.0148$; unweighted
+$+0.0152$, $+0.0165$, $+0.0159$). This reflects heterogeneity ($\tau^2
+\approx 3\times10^{-5}$, $Q \gg k-1$), not a negative central effect, so
+the count-based proportion (51/60 = 85.0\%) is primary; $\tau^2$ varies
+by 41\% (pooled estimate stable within 3.3\%).  \textbf{Family size.}
+The 60 experiments form the robustness-evidence family; the confirmatory
+family is the $6 \times 2 \times 13 = 156$ shift grid, and the $8 \times
+6 \times 5 \times 2 = 480$-cell method design is in
+Sec.~\ref{sec:method_boundary}. BH-60 and Bonferroni leave the headline
+unchanged (51/60); stratum aggregation (12 strata) retains 9/12
+directions (InceptionTime 6/6), and Bonferroni-12 retains 2/12
+(cpsc\_chapman/IT, ptbxl\_chapman/RN).  \textbf{CI width.} Across the 60 TS experiments the 95\% CI widths span
+$2.1\times10^{-5}$ to $1.2\times10^{-2}$ (median $1.2\times10^{-3}$);
+52/60 cells fall below the narrow-CI diagnostic threshold ($0.005$) and
+six supporting cells have degenerate widths ($<3\times10^{-4}$), so
+excluding those the count becomes 45/60 (75.0\%; InceptionTime 24/30,
+ResNet1D 21/30). Narrow CIs reflect the moderate calibration sample
+($n_{\text{cal}} = 1027$--$2099$ records, $1027$--$1873$ patients) and low
+SmoothECE variance ($B=10{,}000$, CI method=BCa); they do not affect the
+sign-based support/counter-example classification.
 
 % ============================================================================
 \section*{Honesty Declaration (5 items, adversarial audit product)}
