@@ -8,6 +8,22 @@ The study asks a deployment-critical question: after a calibration fix delivers 
 
 **Main endpoint**: `G = ECE_S1 − ECE_oracle` (zero-shot transfer gap), with the recalibration benefit `ΔECE = ECE_raw − ECE_cal` and its ID→OOD **decay** as secondary endpoints. Uncertainty is quantified with patient-level cluster bootstrap + BCa (B = 10,000), multiple testing controlled by BH-FDR.
 
+## Results at a glance
+
+Pooled zero-shot transfer gap `G` (random-effects meta-analysis over the 60-experiment grid = 6 corpus pairs × 2 architectures × 5 seeds; patient-level cluster BCa, B = 10,000):
+
+| Stratum | n | Pooled G | 95% CI |
+|---|---|---|---|
+| InceptionTime | 30 | 0.0151 | [0.0131, 0.0172] |
+| ResNet-1D | 30 | 0.0158 | [0.0140, 0.0176] |
+| **All (cross-architecture)** | **60** | **0.0148** | **[0.0141, 0.0155]** |
+
+- Recalibration retains a positive OOD benefit in most settings, but it is **not universally safe**: the temperature-scaling deployment safety rate is **0.64%** across the holdout grid (`results/deployment_metrics.csv`).
+- Sensitivity grid under L2 input shifts: **381/390 cells (97.7%) safe** (`results/l2_shift_full_390cells.csv`).
+- Full 5-seed per-cell ID/OOD ΔECE with CIs: `results/robustness_validation_5seeds.csv`.
+
+**Trained checkpoints** for the full 60-experiment grid (62 `best_model.pt` + SHA-256 manifest) are available as release assets: [**v1.0.0**](https://github.com/gt17641001169-design/ecg-calibration-transportability/releases/tag/v1.0.0).
+
 ## Repositories & databases
 
 Experiments use three public databases, unified to 5 superclasses (`NORM / MI / STTC / CD / HYP`; CPSC uses a 4-class subspace `{NORM, CD, STTC, MI}` because HYP has n=11):
@@ -123,4 +139,19 @@ Code: MIT (see `LICENSE`). The three databases remain under their respective Phy
 
 ## Citation
 
-Citation block will be added upon publication.
+If you use this codebase or the split indices, please cite the accompanying article:
+
+```bibtex
+@article{ecgcalib2026,
+  title  = {When Does Recalibration Transfer? Decomposing the ID-to-OOD Decay
+            of Calibration Benefit in Cross-Corpus ECG Classification},
+  author = {Anonymous},
+  journal= {Biomedical Signal Processing and Control},
+  note   = {under review},
+  year   = {2026}
+}
+```
+
+The three source databases should additionally be cited via their original
+publications (PTB-XL: Wagner et al., *Scientific Data* 2020; Chapman–Shaoxing:
+Zheng et al. 2020; CPSC2018: Liu et al., *CinC* 2018).
