@@ -75,7 +75,7 @@ payload = {
     ).stdout.decode().strip(),
     "files": rows,
 }
-with open(os.path.join(OUT, "08_HASH_MANIFEST_as_uploaded.json"), "w", encoding="utf-8") as fh:
+with open(os.path.join(OUT, "08_HASH_MANIFEST_as_uploaded.json"), "w", encoding="utf-8", newline="\n") as fh:
     json.dump(payload, fh, indent=2)
 
 changed = [r for r in rows if r["changed_since_freeze"]]
@@ -131,14 +131,14 @@ lines += [
     "`SHA256SUMS.txt` lists the SHA-256 of every file in this bundle as uploaded.",
     "",
 ]
-with open(os.path.join(OUT, "README_ARCHIVAL_STATUS.md"), "w", encoding="utf-8") as fh:
+with open(os.path.join(OUT, "README_ARCHIVAL_STATUS.md"), "w", encoding="utf-8", newline="\n") as fh:
     fh.write("\n".join(lines))
 
 payload = sorted(
     f for f in os.listdir(OUT)
     if os.path.isfile(os.path.join(OUT, f)) and f != "SHA256SUMS.txt"
 )
-with open(os.path.join(OUT, "SHA256SUMS.txt"), "w", encoding="utf-8") as fh:
+with open(os.path.join(OUT, "SHA256SUMS.txt"), "w", encoding="utf-8", newline="\n") as fh:
     for f in payload:
         p = os.path.join(OUT, f)
         fh.write(f"{hashlib.sha256(open(p, 'rb').read()).hexdigest()}  {f}\n")
