@@ -24,7 +24,7 @@
 \usepackage{hyperref}
 \hypersetup{colorlinks=false,pdfborder={0 0 0},
   pdftitle={When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study},
-  pdfauthor={Zero Token Lab}}
+  pdfauthor={Toni Guan}}
 
 % --- Typesetting optimization ---
 \emergencystretch=3em
@@ -38,11 +38,11 @@
 
 \title{When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study}
 
-\author[inst1]{Zero Token Lab\corref{cor1}}
+\author[inst1]{Toni Guan\corref{cor1}}
 \ead{guantong490@gmail.com}
 \cortext[cor1]{Corresponding author.}
-\affiliation[inst1]{organization={Deployment Science Group},
-  city={Shouguang}, country={China}}
+\affiliation[inst1]{organization={College of Information Technology, Shenyang Institute of Technology},
+  city={Shenyang}, state={Liaoning}, country={China}}
 
 \begin{document}
 \begin{frontmatter}
@@ -2005,6 +2005,21 @@ large language model assistant for language editing and for drafting and
 refactoring parts of the analysis code. The author reviewed and verified
 all resulting content and takes full responsibility for the content of
 the publication.
+
+\section*{CRediT authorship contribution statement}
+\textbf{Toni Guan:} Conceptualization, Methodology, Software, Validation,
+Formal analysis, Investigation, Data curation, Writing -- original draft,
+Writing -- review \& editing, Visualization, Project administration.
+
+\section*{Data statement}
+This study used only publicly available databases: PTB-XL
+(v1.0.3, PhysioNet), Chapman--Shaoxing (PhysioNet), and CPSC2018+2019
+(PhysioNet Challenge). No new raw waveforms were collected. The patient-level
+split indices generated in this work, the label-mapping tables, the analysis
+code, and the per-experiment result artifacts are openly available at
+\url{https://github.com/gt17641001169-design/ecg-calibration-transportability};
+trained model checkpoints are provided as release assets of the same
+repository.
 
 \section*{Declaration of competing interest}
 The author declares no competing financial or personal interests.

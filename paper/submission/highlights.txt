@@ -1,0 +1,7 @@
+Highlights
+
+- Recalibration benefit is measured across six cross-corpus ECG transfer pairs
+- The benefit decays from in-distribution to out-of-distribution in most settings
+- Slope, intercept, and prevalence components expose why recalibration fails
+- Temperature scaling was deployment-safe in only 1 of 157 holdout cells
+- A discrimination-first gate flags corpora where recalibration cannot pay off
