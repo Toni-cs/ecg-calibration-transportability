@@ -1,16 +1,93 @@
-# Calibration Recalibration Transportability in Cross-Corpus ECG Classification
+# When Does Recalibration Transfer? Decomposing the ID-to-OOD Decay of Calibration Benefit in Cross-Corpus ECG Classification
 
-Code, data-split indices, and result artifacts for the study:
+Official code and data-split release for the accompanying article (under review).
 
-> **When Does Recalibration Transfer? Decomposing the ID→OOD Decay of Calibration Benefit in Cross-Corpus ECG Classification**
+Given a calibration fix with a benefit in-distribution (ID), this study measures how much of that benefit survives out-of-distribution (OOD) transfer across three public ECG corpora, decomposes the decay into three interpretable components (slope / intercept / prevalence), and derives a deployment-safety criterion for recalibration before transfer.
 
-The study asks a deployment-critical question: after a calibration fix delivers a benefit in-distribution (ID), how much of that benefit survives out-of-distribution (OOD) — and which component (slope / intercept / prevalence) of the miscalibration decay dominates for a given shift type?
+## Contents
 
-**Main endpoint**: `G = ECE_S1 − ECE_oracle` (zero-shot transfer gap), with the recalibration benefit `ΔECE = ECE_raw − ECE_cal` and its ID→OOD **decay** as secondary endpoints. Uncertainty is quantified with patient-level cluster bootstrap + BCa (B = 10,000), multiple testing controlled by BH-FDR.
+- [Requirements](#requirements)
+- [Dataset](#dataset)
+- [Reproducing the results](#reproducing-the-results)
+- [Data splits](#data-splits)
+- [Paper-to-artifact map](#paper-to-artifact-map)
+- [Results](#results)
+- [License](#license)
+- [Citation](#citation)
 
-## Results at a glance
+## Requirements
 
-Pooled zero-shot transfer gap `G` (random-effects meta-analysis over the 60-experiment grid = 6 corpus pairs × 2 architectures × 5 seeds; patient-level cluster BCa, B = 10,000):
+- Python ≥ 3.10, PyTorch ≥ 2.4 (CUDA optional; CPU suffices for evaluation-only reproduction)
+- All Python dependencies: `pip install -r requirements.txt`
+
+## Dataset
+
+Three public databases, unified to five superclasses (`NORM / MI / STTC / CD / HYP`; CPSC uses a four-class subspace `{NORM, CD, STTC, MI}` because HYP has n = 11):
+
+| Database | Records (after preprocessing) | Source |
+|---|---|---|
+| PTB-XL | 21,522 | [PhysioNet v1.0.3](https://physionet.org/content/ptb-xl/1.0.3/) |
+| Chapman–Shaoxing | 20,243 | PhysioNet (Chapman–Shaoxing ECG) |
+| CPSC2018+2019 | 10,285 | [CPSC challenge](https://physionet.org/content/challenge-2018/) |
+
+Raw waveforms are **not redistributed** in this repository (database licenses, size). Download the databases from the sources above, then build the unified NPZ + metadata:
+
+```bash
+python scripts/preprocess_ptbxl.py   --source-root data/ptbxl   --output-root data/ptbxl_processed
+python scripts/preprocess_chapman.py --source-root data/chapman --output-root data/chapman_processed_v2
+python scripts/preprocess_cpsc.py    --source-root data/cpsc    --output-root data/cpsc_processed
+```
+
+## Reproducing the results
+
+```bash
+# 0. Install and preprocess (see above)
+
+# 1. Regenerate the exact as-used split indices (should be byte-identical to splits/*.csv)
+python scripts/export_splits.py
+python scripts/export_splits.py --validate 42   # cross-check against the dataset builders
+
+# 2. Train + main endpoint for one grid cell (60 cells: 6 corpus pairs x 2 archs x 5 seeds)
+python scripts/train.py --dataset ptbxl --seed 42
+
+# 3. Cross-corpus transfer / recalibration evaluation
+python scripts/eval_transfer.py \
+    --source ptbxl --source-dir data/ptbxl_processed \
+    --target chapman --target-dir data/chapman_processed_v2 \
+    --arch inceptiontime --methods ts platt --seeds 42
+
+# 4. Standalone synthetic validation of the decomposition estimator (no data needed, ~4 min)
+python scripts/validate_decomposition.py --boot 500
+```
+
+Trained checkpoints for the full 60-experiment grid (62 `best_model.pt` + SHA-256 manifest) are provided as assets of [release v1.0.0](https://github.com/gt17641001169-design/ecg-calibration-transportability/releases/tag/v1.0.0).
+
+## Data splits
+
+[`splits/`](splits/) contains the exact patient-level partition indices used by all 60 experiments: 25 CSVs = 5 dataset variants (`ptbxl`, `ptbxl_sub4`, `chapman`, `chapman_sub4`, `cpsc`) × seeds 42–46, with columns `record_id`, `patient_id`, `split` (`train/val/cal/test`), `in_train_loader` (`yes/no`).
+
+Two documented properties:
+
+- **PTB-XL as-used semantics.** The carved-out `val` patients' records remain in the training loader (all of folds 1–8 are trained on; `val` is early-stopping monitoring only). The CSVs report this faithfully via `in_train_loader=yes` on `val` rows. `cal` (fold 9) and `test` (fold 10) patients have zero overlap with folds 1–8 (asserted at build time). For Chapman/CPSC, `val` patients are excluded from training. See the article's Limitations section.
+- **Builder cross-validation.** `scripts/export_splits.py` mirrors the split logic of `scripts/train.py` line-by-line and was verified against the real dataset builders: 20/20 split×builder checks MATCH (5 variants × train/val/cal/test, seed 42).
+
+## Paper-to-artifact map
+
+| Paper element | Script | Artifact |
+|---|---|---|
+| Data splits (all experiments) | `scripts/export_splits.py` | `splits/*.csv` |
+| Main endpoint G, ΔECE, BCa CIs | `scripts/train.py` + `scripts/eval_transfer.py` | `results/robustness_validation_5seeds.csv`, `results/bootstrap_diagnostics.csv` |
+| Discrimination (AUROC, 60 exp) | `scripts/train.py` | `results/discrimination_metrics_60exp.csv` |
+| Multiple-testing control | `scripts/eval_transfer.py` | `results/bh_fdr_correction.csv` |
+| Recalibration deployment safety | `scripts/deployment_holdout_recompute.py` | `results/deployment_metrics.csv`, `results/deployment_holdout_recompute.csv` |
+| L2 shift sensitivity grid | `scripts/eval_l2_shift.py` | `results/l2_shift_full_390cells.csv` |
+| Three-component decomposition | `src/utils/decomposition.py` | `results/decomposition_validation_n20000.csv` |
+| TS component ablation | `scripts/run_e2_ablation_discrimination.py` | `results/ablation_ts_components.csv` |
+| Preregistered protocol | — | `docs/EXPERIMENT_PROTOCOL.md`, `docs/PROTOCOL_AMENDMENT_*.md`, `docs/osf_archive_manifest.json` |
+
+## Results
+
+Pooled zero-shot transfer gap `G` (random-effects meta-analysis over the 60-experiment grid; patient-level cluster BCa, B = 10,000):
 
 | Stratum | n | Pooled G | 95% CI |
 |---|---|---|---|
@@ -18,140 +95,29 @@ Pooled zero-shot transfer gap `G` (random-effects meta-analysis over the 60-expe
 | ResNet-1D | 30 | 0.0158 | [0.0140, 0.0176] |
 | **All (cross-architecture)** | **60** | **0.0148** | **[0.0141, 0.0155]** |
 
-- Recalibration retains a positive OOD benefit in most settings, but it is **not universally safe**: the temperature-scaling deployment safety rate is **0.64%** across the holdout grid (`results/deployment_metrics.csv`).
-- Sensitivity grid under L2 input shifts: **381/390 cells (97.7%) safe** (`results/l2_shift_full_390cells.csv`).
-- Full 5-seed per-cell ID/OOD ΔECE with CIs: `results/robustness_validation_5seeds.csv`.
-
-**Trained checkpoints** for the full 60-experiment grid (62 `best_model.pt` + SHA-256 manifest) are available as release assets: [**v1.0.0**](https://github.com/gt17641001169-design/ecg-calibration-transportability/releases/tag/v1.0.0).
-
-## Repositories & databases
-
-Experiments use three public databases, unified to 5 superclasses (`NORM / MI / STTC / CD / HYP`; CPSC uses a 4-class subspace `{NORM, CD, STTC, MI}` because HYP has n=11):
-
-| Database | Source | Access |
-|---|---|---|
-| PTB-XL (21,522 records after preprocessing) | [PhysioNet](https://physionet.org/content/ptb-xl/1.0.3/) | open (O Attribution 4.0) |
-| Chapman–Shaoxing (20,243 records) | CPSC+Chapman stack on PhysioNet | open |
-| CPSC2018+2019 (10,285 records) | [CPSC challenge](https://physionet.org/content/challenge-2018/) | open |
-
-⚠️ **Raw waveforms are NOT redistributed here** (license terms + size). Download from the sources above, then run the preprocessing scripts in `scripts/preprocess_*.py`.
-
-## What is in this repo
-
-```text
-src/
-  data/
-    splits.py               patient-level splits, official PTB-XL folds, leakage assertions
-    mapping.py              5-superclass label maps, SUBSPACE_CPSC, filter_subspace
-    datasets.py             NPZ dataset loader
-  models/                   backbones (BiMamba / InceptionTime-lite / ResNet-1D baselines)
-  utils/
-    calibration.py          TS/Platt/ECE/SmoothECE, BCa benefit_inference, two-layer bootstrap
-    calibration_methods.py  9-method recalibration registry
-    decomposition.py        3-component (slope/intercept/prevalence) decomposition estimator
-    prior_shift.py          BBSE / EM label-shift prior estimators
-scripts/
-  preprocess_ptbxl.py       PTB-XL → unified NPZ + metadata
-  preprocess_chapman.py     Chapman → unified NPZ + metadata
-  preprocess_cpsc.py        CPSC → unified NPZ + metadata
-  train.py                  end-to-end training + main endpoint (paired BCa bootstrap, B=10,000)
-  eval_transfer.py          cross-corpus transfer / calibration evaluation
-  export_splits.py          ★ exports the exact as-used split indices (see below)
-  validate_decomposition.py synthetic 27-cell validation of the decomposition estimator
-splits/                     ★ 25 CSVs: 5 variants × seeds 42–46 (see below)
-results/                    result artifacts (small CSV/JSON only)
-docs/
-  EXPERIMENT_PROTOCOL.md    preregistered protocol (v2.0)
-  PROTOCOL_AMENDMENT_*.md   registered protocol amendments
-  osf_archive_manifest.json hash manifest for archival
-```
-
-## The `splits/` directory — exact as-used partition indices
-
-Every CSV corresponds to one of the 60 experiments' data partition:
-
-| File pattern | Variant |
-|---|---|
-| `ptbxl_seed{S}.csv` | PTB-XL, 5 superclasses |
-| `ptbxl_sub4_seed{S}.csv` | PTB-XL, 4-class subspace |
-| `chapman_seed{S}.csv` | Chapman, 5 superclasses |
-| `chapman_sub4_seed{S}.csv` | Chapman, 4-class subspace |
-| `cpsc_seed{S}.csv` | CPSC, 4-class subspace (fixed) |
-
-Columns: `record_id` (preprocessing NPZ stem), `patient_id`, `split` (`train/val/cal/test`), `in_train_loader` (`yes/no`).
-
-**PTB-XL as-used semantics (important).** In `train.py`, the carved-out `val` patients' records remain in the training loader (all of folds 1–8 are trained on; `val` serves early-stopping monitoring only). This is how the 60 experiments actually ran; the CSVs reflect this faithfully via the `in_train_loader` column (`val` rows are `yes`). `cal` (fold 9) / `test` (fold 10) patients have **zero overlap** with folds 1–8 (asserted). For Chapman/CPSC, `val` patients are correctly excluded from training (`no`). This quirk is disclosed in the paper's Limitations.
-
-**Verification.** `scripts/export_splits.py` mirrors the split logic in `train.py` line-by-line and was cross-validated against the real dataset builders: **20/20 split×builder checks MATCH** (5 variants × train/val/cal/test, seed 42):
-
-```bash
-python scripts/export_splits.py                 # regenerate all 25 CSVs (seeds 42–46)
-python scripts/export_splits.py --validate 42   # cross-check against real builders
-```
-
-## Reproduction
-
-```bash
-pip install -r requirements.txt
-
-# 1. Download the three databases from PhysioNet (links above)
-# 2. Preprocess (writes data/<db>_processed/metadata_single_label.csv + NPZ)
-python scripts/preprocess_ptbxl.py
-python scripts/preprocess_chapman.py
-python scripts/preprocess_cpsc.py
-
-# 3. Regenerate the split indices (should be byte-identical to splits/*.csv)
-python scripts/export_splits.py
-
-# 4. Train + evaluate one cell (example)
-python scripts/train.py --dataset ptbxl --seed 42
-
-# 5. Cross-corpus transfer / calibration evaluation
-python scripts/eval_transfer.py
-```
-
-The synthetic validation of the decomposition estimator runs standalone (no data download needed, ≈4 min):
-
-```bash
-python scripts/validate_decomposition.py --boot 500
-```
-
-## Key results (artifacts in `results/`)
-
-| File | Content |
-|---|---|
-| `discrimination_metrics_60exp.csv` | discrimination (AUROC) for all 60 experiments |
-| `robustness_validation_5seeds.csv` | 5-seed robustness validation |
-| `ablation_ts_components.csv` | temperature-scaling component ablation |
-| `bootstrap_diagnostics.csv` | BCa bootstrap diagnostics |
-| `bh_fdr_correction.csv` | BH-FDR multiple-testing correction |
-| `deployment_metrics.csv` + `deployment_holdout_recompute.csv` | deployment-safety metrics (TS safety rate 0.64%) |
-| `l2_shift_full_*.csv` | L2 shift-sensitivity grid |
-| `decomposition_validation_n20000.csv` | decomposition estimator synthetic validation (n=20,000) |
-
-## Data availability statement
-
-Split indices + label maps + preprocessing scripts in this repo allow exact reconstruction of all 60 experiments' data partitions from the public sources, without trusting a prose description of the splitting logic. Full code snapshot and environment lock are archived (Zenodo DOI upon acceptance).
+Recalibration retains a positive OOD benefit in most settings but is not universally safe: temperature-scaling deployment safety rate is 0.64% across the holdout grid; 381/390 (97.7%) cells remain safe under L2 input shifts.
 
 ## License
 
-Code: MIT (see `LICENSE`). The three databases remain under their respective PhysioNet / challenge licenses — users must obtain access directly from the sources.
+Code: MIT (see [LICENSE](LICENSE)). The three databases remain under their respective PhysioNet / challenge licenses.
 
 ## Citation
 
-If you use this codebase or the split indices, please cite the accompanying article:
+If you use this codebase or the split indices, please cite the accompanying article (see also [CITATION.cff](CITATION.cff)):
 
 ```bibtex
 @article{ecgcalib2026,
-  title  = {When Does Recalibration Transfer? Decomposing the ID-to-OOD Decay
-            of Calibration Benefit in Cross-Corpus ECG Classification},
-  author = {Anonymous},
-  journal= {Biomedical Signal Processing and Control},
-  note   = {under review},
-  year   = {2026}
+  title   = {When Does Recalibration Transfer? Decomposing the ID-to-OOD Decay
+             of Calibration Benefit in Cross-Corpus ECG Classification},
+  author  = {Anonymous},
+  journal = {Biomedical Signal Processing and Control},
+  note    = {under review},
+  year    = {2026}
 }
 ```
 
-The three source databases should additionally be cited via their original
-publications (PTB-XL: Wagner et al., *Scientific Data* 2020; Chapman–Shaoxing:
-Zheng et al. 2020; CPSC2018: Liu et al., *CinC* 2018).
+Please also cite the source databases (PTB-XL: Wagner et al., *Scientific Data* 2020; Chapman–Shaoxing: Zheng et al. 2020; CPSC2018: Liu et al., *CinC* 2018).
+
+## Contact
+
+Questions and issues: please open a [GitHub issue](https://github.com/gt17641001169-design/ecg-calibration-transportability/issues).
