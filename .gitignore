@@ -1,0 +1,26 @@
+# data & large artifacts (never redistribute raw waveforms or checkpoints)
+data/
+checkpoints/
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+
+# logs & temp
+logs/
+*.log
+tmp_*/
+tb_*/
+
+# paper build
+paper/
+*.aux
+*.out
+*.synctex.gz

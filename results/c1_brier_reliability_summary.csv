@@ -1,0 +1,16 @@
+# E3 主终点汇总：Brier Reliability 改善
+"# 主终点 = Reliability_toplabel 改善 (TS 前 - TS 后, 正值=好)"
+# 统计: paired t-test + Cohen's d + 95% bootstrap CI (B=10000)
+# n_checkpoints,60
+
+metric,split,mean_before,mean_after,mean_diff,std_diff,cohen_d,cohen_d_ci_lo,cohen_d_ci_hi,t_stat,p_value,n
+Reliability_toplabel (主终点),OOD,0.125977,0.078140,+0.047836,0.068340,+0.7000,+0.4567,+0.9914,+5.4220,1.149683e-06,60
+Reliability_toplabel (参考),ID,0.071226,0.060186,+0.011040,0.051285,+0.2153,-0.0285,+0.4338,+1.6674,1.007352e-01,60
+Resolution_toplabel (H1诊断),OOD,0.065061,0.054399,+0.010662,0.030253,+0.3524,+0.1077,+0.6196,+2.7299,8.337943e-03,60
+Uncertainty_toplabel (应≈0),OOD,0.219583,0.219583,+0.000000,0.000000,+0.0000,+0.0000,+0.0000,+nan,nan,60
+Reliability_OvR (敏感性),OOD,0.084697,0.072450,+0.012247,0.018719,+0.6543,+0.4108,+0.9379,+5.0678,4.254783e-06,60
+
+# H1 诊断: |ΔResolution| / |ΔReliability| (OOD)
+h1_ratio,0.2229,# <0.1 → H1 近似成立; >0.3 → H1 可能不成立
+mean_delta_reliability,+0.047836
+mean_delta_resolution,+0.010662
