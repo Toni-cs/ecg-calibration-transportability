@@ -1,4 +1,4 @@
-# When Does Recalibration Transfer? Decomposing the ID-to-OOD Decay of Calibration Benefit in Cross-Corpus ECG Classification
+# When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study
 
 Official code and data-split release for the accompanying article (under review).
 
@@ -109,8 +109,8 @@ If you use this codebase or the split indices, please cite the accompanying arti
 
 ```bibtex
 @article{ecgcalib2026,
-  title   = {When Does Recalibration Transfer? Decomposing the ID-to-OOD Decay
-             of Calibration Benefit in Cross-Corpus ECG Classification},
+  title   = {When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer?
+             A Multi-Seed Calibration Boundary Study},
   author  = {Guan, Toni},
   journal = {Biomedical Signal Processing and Control},
   note    = {under review},
