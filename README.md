@@ -62,6 +62,8 @@ python scripts/validate_decomposition.py --boot 500
 
 Trained checkpoints for the full 60-experiment grid (62 `best_model.pt` + SHA-256 manifest) are provided as assets of [release v1.0.0](https://github.com/gt17641001169-design/ecg-calibration-transportability/releases/tag/v1.0.0).
 
+The preregistered protocol and its registered amendments live in [`docs/`](docs/README.md) (written in Chinese; an English translation is available on request).
+
 ## Data splits
 
 [`splits/`](splits/) contains the exact patient-level partition indices used by all 60 experiments: 25 CSVs = 5 dataset variants (`ptbxl`, `ptbxl_sub4`, `chapman`, `chapman_sub4`, `cpsc`) × seeds 42–46, with columns `record_id`, `patient_id`, `split` (`train/val/cal/test`), `in_train_loader` (`yes/no`).

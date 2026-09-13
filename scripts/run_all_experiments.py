@@ -16,6 +16,13 @@ import os
 
 os.environ["PYTHONIOENCODING"] = "utf-8"
 
+# Working directory for the child experiment processes. Defaults to the
+# repository root (two levels above this script); override with --work-dir.
+WORK_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+for _i, _a in enumerate(sys.argv):
+    if _a == "--work-dir" and _i + 1 < len(sys.argv):
+        WORK_DIR = os.path.abspath(sys.argv[_i + 1])
+
 EXPERIMENTS = [
     {
         "name": "E3",
@@ -82,7 +89,7 @@ def run_experiment(exp):
                 cmd,
                 stdout=logf,
                 stderr=subprocess.STDOUT,
-                cwd=r"D:\A1\ecg-lab-v2",
+                cwd=WORK_DIR,
                 env={**os.environ, "PYTHONIOENCODING": "utf-8"},
             )
             proc.wait(timeout=timeout)
