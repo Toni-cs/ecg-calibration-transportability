@@ -111,7 +111,7 @@ If you use this codebase or the split indices, please cite the accompanying arti
 @article{ecgcalib2026,
   title   = {When Does Recalibration Transfer? Decomposing the ID-to-OOD Decay
              of Calibration Benefit in Cross-Corpus ECG Classification},
-  author  = {Anonymous},
+  author  = {Guan, Toni},
   journal = {Biomedical Signal Processing and Control},
   note    = {under review},
   year    = {2026}

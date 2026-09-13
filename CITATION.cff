@@ -4,8 +4,10 @@ message: >-
   If you use this codebase or the released data-split indices, please cite it using this metadata.
 type: software
 authors:
-  - name: Anonymous
-    note: Author list withheld for double-blind review
+  - family-names: Guan
+    given-names: Toni
+    affiliation: "College of Information Technology, Shenyang Institute of Technology, Shenyang, China"
+    email: guantong490@gmail.com
 version: v1.0.0
 date-released: "2026-09-13"
 license: MIT
