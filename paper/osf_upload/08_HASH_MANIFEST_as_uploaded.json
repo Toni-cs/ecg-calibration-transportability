@@ -1,7 +1,7 @@
 {
   "note": "Companion to 07_HASH_MANIFEST_baseline_2026-09-05.json. Records, for every file in the baseline manifest, its current hash and whether the frozen content can still be recovered from version control.",
   "baseline_timestamp_utc": "2026-09-05T04:19:46.851339+00:00",
-  "as_uploaded_timestamp_utc": "2026-09-13T20:30:24+08:00",
+  "as_uploaded_timestamp_utc": "2026-09-13T20:42:51+08:00",
   "files": [
     {
       "path": "docs/EXPERIMENT_PROTOCOL.md",

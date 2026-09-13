@@ -22,7 +22,7 @@ manuscript's "Pre-registration archival status" paragraph.
 
 | Field | Answer |
 |---|---|
-| **Title** | Preregistered protocol and amendments: temperature-scaling calibration transfer across ECG corpora (v2.1-A1) |
+| **Title** | Protocol and amendments v2.1-A1: temperature-scaling calibration transfer across ECG corpora |
 | **Description** | Paste the block from `OSF_PROJECT_DESCRIPTION.md`, starting at "Protocol and amendments for". |
 | **Hypotheses** | The primary endpoint is the OOD calibration benefit `ΔECE_OOD = ECE_raw^OOD − ECE_TS^OOD` of temperature scaling under cross-corpus ECG transfer, tested one-sided against a registered empirical direction prior. H1: TS yields a positive OOD benefit. The pre-registered ID boundary criterion (≥80% of cells with 95% CIs containing zero) was not met (23/60 = 38.3% under the BCa operating CI), triggering the registered "ID nonzero boundary" branch. Amendment A2 reduces the confirmatory family from 156 to 12 hypotheses (6 transfer pairs × 2 architectures × 1 primary shift level); the 13 L2 shift levels are exploratory dose-response. All hypotheses are tagged exploratory + robustness validation, not confirmatory. |
 

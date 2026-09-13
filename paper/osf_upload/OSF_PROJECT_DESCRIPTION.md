@@ -54,7 +54,7 @@ be redistributed with attribution.
 
 | Field | Value |
 |---|---|
-| Title | Preregistered protocol and amendments: temperature-scaling calibration transfer across ECG corpora (v2.1-A1) |
+| Title | Protocol and amendments v2.1-A1: temperature-scaling calibration transfer across ECG corpora |
 | Category | Project (or "Data" if a dataset-style record is preferred) |
 | Contributors | Toni Guan (Shenyang Institute of Technology) — bibliographic contributor |
 | License | CC-BY-4.0 for the documents; CC0-1.0 if OSF requires it for a registration |
