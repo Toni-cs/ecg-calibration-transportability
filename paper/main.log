@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.6)  13 SEP 2026 20:06
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (MiKTeX 26.5) (preloaded format=pdflatex 2026.9.6)  13 SEP 2026 20:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -742,621 +742,632 @@ g_reliability_chapman_cpsc.pdf>] [32 <./figures/fig_reliability_cpsc_ptbxl.pdf>
 es.pdf>] [34] [35] [36]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1444.
+(hyperref)                removing `math shift' on input line 1445.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\not' on input line 1444.
+(hyperref)                removing `\not' on input line 1445.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `math shift' on input line 1444.
+(hyperref)                removing `math shift' on input line 1445.
 
 [37] [38] [39] [40] [41] [42] [43] [44] [45]
-<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed42.pdf, id=1136, 498.30
+<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed42.pdf, id=1135, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed42.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_resnet1d_see
-d42.pdf  used on input line 1736.
+d42.pdf  used on input line 1743.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed43.pdf, id=1137, 498.30
+<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed43.pdf, id=1136, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed43.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_resnet1d_see
-d43.pdf  used on input line 1737.
+d43.pdf  used on input line 1744.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed44.pdf, id=1138, 498.30
+<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed44.pdf, id=1137, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed44.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_resnet1d_see
-d44.pdf  used on input line 1738.
+d44.pdf  used on input line 1745.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed45.pdf, id=1139, 498.30
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed45.pdf, id=1138, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed45.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_resnet1d_see
-d45.pdf  used on input line 1744.
+d45.pdf  used on input line 1751.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed46.pdf, id=1140, 498.30
+<figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed46.pdf, id=1139, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed46.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_resnet1d_see
-d46.pdf  used on input line 1745.
+d46.pdf  used on input line 1752.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed42.pdf, id=1141, 4
+<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed42.pdf, id=1140, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed42.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_inceptiontim
-e_seed42.pdf  used on input line 1751.
+e_seed42.pdf  used on input line 1758.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed43.pdf, id=1142, 4
+<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed43.pdf, id=1141, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed43.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_inceptiontim
-e_seed43.pdf  used on input line 1752.
+e_seed43.pdf  used on input line 1759.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed44.pdf, id=1143, 4
+<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed44.pdf, id=1142, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed44.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_inceptiontim
-e_seed44.pdf  used on input line 1753.
+e_seed44.pdf  used on input line 1760.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed45.pdf, id=1144, 4
+<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed45.pdf, id=1143, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed45.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_inceptiontim
-e_seed45.pdf  used on input line 1759.
+e_seed45.pdf  used on input line 1766.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed46.pdf, id=1145, 4
+<figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed46.pdf, id=1144, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed46.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_cpsc_inceptiontim
-e_seed46.pdf  used on input line 1760.
+e_seed46.pdf  used on input line 1767.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed42.pdf, id=1146, 498.3
+<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed42.pdf, id=1145, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed42.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_se
-ed42.pdf  used on input line 1768.
+ed42.pdf  used on input line 1775.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed43.pdf, id=1147, 498.3
+<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed43.pdf, id=1146, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed43.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_se
-ed43.pdf  used on input line 1769.
+ed43.pdf  used on input line 1776.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed44.pdf, id=1148, 498.3
+<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed44.pdf, id=1147, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed44.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_se
-ed44.pdf  used on input line 1770.
+ed44.pdf  used on input line 1777.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed45.pdf, id=1149, 498.3
+<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed45.pdf, id=1148, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed45.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_se
-ed45.pdf  used on input line 1776.
+ed45.pdf  used on input line 1783.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed46.pdf, id=1150, 498.3
+<figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed46.pdf, id=1149, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed46.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_resnet1d_se
-ed46.pdf  used on input line 1777.
+ed46.pdf  used on input line 1784.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed42.pdf, id=1151, 
+<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed42.pdf, id=1150, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed42.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_inceptionti
-me_seed42.pdf  used on input line 1783.
+me_seed42.pdf  used on input line 1790.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed43.pdf, id=1152, 
+<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed43.pdf, id=1151, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed43.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_inceptionti
-me_seed43.pdf  used on input line 1784.
+me_seed43.pdf  used on input line 1791.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed44.pdf, id=1153, 
+<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed44.pdf, id=1152, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed44.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_inceptionti
-me_seed44.pdf  used on input line 1785.
+me_seed44.pdf  used on input line 1792.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed45.pdf, id=1154, 
+<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed45.pdf, id=1153, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed45.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_inceptionti
-me_seed45.pdf  used on input line 1791.
+me_seed45.pdf  used on input line 1798.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed46.pdf, id=1155, 
+<figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed46.pdf, id=1154, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed46.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_chapman_ptbxl_inceptionti
-me_seed46.pdf  used on input line 1792.
+me_seed46.pdf  used on input line 1799.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed42.pdf, id=1156, 498.30
+<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed42.pdf, id=1155, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed42.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_resnet1d_see
-d42.pdf  used on input line 1800.
+d42.pdf  used on input line 1807.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed43.pdf, id=1157, 498.30
+<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed43.pdf, id=1156, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed43.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_resnet1d_see
-d43.pdf  used on input line 1801.
+d43.pdf  used on input line 1808.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed44.pdf, id=1158, 498.30
+<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed44.pdf, id=1157, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed44.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_resnet1d_see
-d44.pdf  used on input line 1802.
+d44.pdf  used on input line 1809.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed45.pdf, id=1159, 498.30
+<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed45.pdf, id=1158, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed45.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_resnet1d_see
-d45.pdf  used on input line 1808.
+d45.pdf  used on input line 1815.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed46.pdf, id=1160, 498.30
+<figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed46.pdf, id=1159, 498.30
 794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed46.pdf Graphic fil
 e (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_resnet1d_see
-d46.pdf  used on input line 1809.
+d46.pdf  used on input line 1816.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed42.pdf, id=1161, 4
+<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed42.pdf, id=1160, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed42.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_inceptiontim
-e_seed42.pdf  used on input line 1815.
+e_seed42.pdf  used on input line 1822.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed43.pdf, id=1162, 4
+<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed43.pdf, id=1161, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed43.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_inceptiontim
-e_seed43.pdf  used on input line 1816.
+e_seed43.pdf  used on input line 1823.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed44.pdf, id=1163, 4
+<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed44.pdf, id=1162, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed44.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_inceptiontim
-e_seed44.pdf  used on input line 1817.
+e_seed44.pdf  used on input line 1824.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed45.pdf, id=1164, 4
+<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed45.pdf, id=1163, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed45.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_inceptiontim
-e_seed45.pdf  used on input line 1823.
+e_seed45.pdf  used on input line 1830.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed46.pdf, id=1165, 4
+<figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed46.pdf, id=1164, 4
 98.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed46.pdf Graphi
 c file (type pdf)
 <use figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_chapman_inceptiontim
-e_seed46.pdf  used on input line 1824.
+e_seed46.pdf  used on input line 1831.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed42.pdf, id=1166, 498.2176
+<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed42.pdf, id=1165, 498.2176
 pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed42.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed4
-2.pdf  used on input line 1832.
+2.pdf  used on input line 1839.
 (pdftex.def)             Requested size: 124.80286pt x 106.0397pt.
-<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed43.pdf, id=1167, 498.3079
+<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed43.pdf, id=1166, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed43.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed4
-3.pdf  used on input line 1833.
+3.pdf  used on input line 1840.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed44.pdf, id=1168, 498.3079
+<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed44.pdf, id=1167, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed44.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed4
-4.pdf  used on input line 1834.
+4.pdf  used on input line 1841.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-[46 <./figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed42.pdf> <./figure
-s/fig_reliability_supp_chapman_cpsc_resnet1d_seed43.pdf> <./figures/fig_reliabi
-lity_supp_chapman_cpsc_resnet1d_seed44.pdf>]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed45.pdf, id=1363, 498.3079
+<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed45.pdf, id=1168, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed45.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed4
-5.pdf  used on input line 1840.
+5.pdf  used on input line 1847.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed46.pdf, id=1364, 498.2176
+<figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed46.pdf, id=1169, 498.2176
 pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed46.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed4
-6.pdf  used on input line 1841.
+6.pdf  used on input line 1848.
 (pdftex.def)             Requested size: 175.49881pt x 149.11833pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed42.pdf, id=1365, 498
+<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed42.pdf, id=1170, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed42.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_
-seed42.pdf  used on input line 1847.
+seed42.pdf  used on input line 1854.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed43.pdf, id=1366, 498
+<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed43.pdf, id=1171, 498
 .2176pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed43.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_
-seed43.pdf  used on input line 1848.
+seed43.pdf  used on input line 1855.
 (pdftex.def)             Requested size: 124.80286pt x 106.0397pt.
-<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed44.pdf, id=1367, 498
+<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed44.pdf, id=1172, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed44.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_
-seed44.pdf  used on input line 1849.
+seed44.pdf  used on input line 1856.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed45.pdf, id=1368, 498
+<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed45.pdf, id=1173, 498
 .2176pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed45.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_
-seed45.pdf  used on input line 1855.
+seed45.pdf  used on input line 1862.
 (pdftex.def)             Requested size: 175.49881pt x 149.11833pt.
-<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed46.pdf, id=1369, 498
+<figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed46.pdf, id=1174, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed46.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_
-seed46.pdf  used on input line 1856.
+seed46.pdf  used on input line 1863.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed42.pdf, id=1370, 498.3
+<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed42.pdf, id=1175, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed42.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_se
-ed42.pdf  used on input line 1864.
+ed42.pdf  used on input line 1871.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed43.pdf, id=1371, 498.3
+<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed43.pdf, id=1176, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed43.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_se
-ed43.pdf  used on input line 1865.
+ed43.pdf  used on input line 1872.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed44.pdf, id=1372, 498.3
+<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed44.pdf, id=1177, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed44.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_se
-ed44.pdf  used on input line 1866.
+ed44.pdf  used on input line 1873.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
+[46]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed45.pdf, id=1373, 498.3
+<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed45.pdf, id=1187, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed45.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_se
-ed45.pdf  used on input line 1872.
+ed45.pdf  used on input line 1879.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed46.pdf, id=1374, 498.3
+<figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed46.pdf, id=1188, 498.3
 0794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed46.pdf Graphic fi
 le (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_resnet1d_se
-ed46.pdf  used on input line 1873.
+ed46.pdf  used on input line 1880.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed42.pdf, id=1375, 
+<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed42.pdf, id=1189, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed42.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_inceptionti
-me_seed42.pdf  used on input line 1879.
+me_seed42.pdf  used on input line 1886.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed43.pdf, id=1376, 
+<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed43.pdf, id=1190, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed43.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_inceptionti
-me_seed43.pdf  used on input line 1880.
+me_seed43.pdf  used on input line 1887.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed44.pdf, id=1377, 
+<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed44.pdf, id=1191, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed44.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_inceptionti
-me_seed44.pdf  used on input line 1881.
+me_seed44.pdf  used on input line 1888.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed45.pdf, id=1378, 
+<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed45.pdf, id=1192, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed45.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_inceptionti
-me_seed45.pdf  used on input line 1887.
+me_seed45.pdf  used on input line 1894.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed46.pdf, id=1379, 
+<figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed46.pdf, id=1193, 
 498.30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed46.pdf Graph
 ic file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_chapman_inceptionti
-me_seed46.pdf  used on input line 1888.
+me_seed46.pdf  used on input line 1895.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed42.pdf, id=1380, 498.3079
+<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed42.pdf, id=1194, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed42.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed4
-2.pdf  used on input line 1896.
+2.pdf  used on input line 1903.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed43.pdf, id=1381, 498.3079
+<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed43.pdf, id=1195, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed43.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed4
-3.pdf  used on input line 1897.
+3.pdf  used on input line 1904.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed44.pdf, id=1382, 498.3079
+<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed44.pdf, id=1196, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed44.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed4
-4.pdf  used on input line 1898.
+4.pdf  used on input line 1905.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed45.pdf, id=1383, 498.3079
+<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed45.pdf, id=1197, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed45.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed4
-5.pdf  used on input line 1904.
+5.pdf  used on input line 1911.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed46.pdf, id=1384, 498.3079
+<figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed46.pdf, id=1198, 498.3079
 4pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed46.pdf Graphic file 
 (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed4
-6.pdf  used on input line 1905.
+6.pdf  used on input line 1912.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed42.pdf, id=1385, 498
+<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed42.pdf, id=1199, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed42.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed42.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_
-seed42.pdf  used on input line 1911.
+seed42.pdf  used on input line 1918.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed43.pdf, id=1386, 498
+<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed43.pdf, id=1200, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed43.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed43.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_
-seed43.pdf  used on input line 1912.
+seed43.pdf  used on input line 1919.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
-<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed44.pdf, id=1387, 498
+<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed44.pdf, id=1201, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed44.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed44.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_
-seed44.pdf  used on input line 1913.
+seed44.pdf  used on input line 1920.
 (pdftex.def)             Requested size: 124.80286pt x 106.02032pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed45.pdf, id=1388, 498
+<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed45.pdf, id=1202, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed45.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed45.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_
-seed45.pdf  used on input line 1919.
+seed45.pdf  used on input line 1926.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
-<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed46.pdf, id=1389, 498
+<figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed46.pdf, id=1203, 498
 .30794pt x 423.33307pt>
 File: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed46.pdf Graphic 
 file (type pdf)
 <use figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed46.pdf>
 Package pdftex.def Info: figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_
-seed46.pdf  used on input line 1920.
+seed46.pdf  used on input line 1927.
 (pdftex.def)             Requested size: 175.49881pt x 149.0925pt.
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
-[47 <./figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed45.pdf> <./figure
-s/fig_reliability_supp_chapman_cpsc_resnet1d_seed46.pdf> <./figures/fig_reliabi
-lity_supp_chapman_cpsc_inceptiontime_seed42.pdf> <./figures/fig_reliability_sup
-p_chapman_cpsc_inceptiontime_seed43.pdf> <./figures/fig_reliability_supp_chapma
-n_cpsc_inceptiontime_seed44.pdf>] [48 <./figures/fig_reliability_supp_chapman_c
-psc_inceptiontime_seed45.pdf> <./figures/fig_reliability_supp_chapman_cpsc_ince
-ptiontime_seed46.pdf> <./figures/fig_reliability_supp_chapman_ptbxl_resnet1d_se
-ed42.pdf> <./figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed43.pdf> <.
-/figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed44.pdf>] [49 <./figure
-s/fig_reliability_supp_chapman_ptbxl_resnet1d_seed45.pdf> <./figures/fig_reliab
-ility_supp_chapman_ptbxl_resnet1d_seed46.pdf> <./figures/fig_reliability_supp_c
-hapman_ptbxl_inceptiontime_seed42.pdf> <./figures/fig_reliability_supp_chapman_
-ptbxl_inceptiontime_seed43.pdf> <./figures/fig_reliability_supp_chapman_ptbxl_i
-nceptiontime_seed44.pdf>] [50 <./figures/fig_reliability_supp_chapman_ptbxl_inc
-eptiontime_seed45.pdf> <./figures/fig_reliability_supp_chapman_ptbxl_inceptiont
-ime_seed46.pdf> <./figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed42.pd
-f> <./figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed43.pdf> <./figures
-/fig_reliability_supp_cpsc_chapman_resnet1d_seed44.pdf>] [51 <./figures/fig_rel
-iability_supp_cpsc_chapman_resnet1d_seed45.pdf> <./figures/fig_reliability_supp
-_cpsc_chapman_resnet1d_seed46.pdf> <./figures/fig_reliability_supp_cpsc_chapman
-_inceptiontime_seed42.pdf> <./figures/fig_reliability_supp_cpsc_chapman_incepti
-ontime_seed43.pdf> <./figures/fig_reliability_supp_cpsc_chapman_inceptiontime_s
-eed44.pdf>] [52 <./figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed
-45.pdf> <./figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed46.pdf> 
-<./figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed42.pdf> <./figures/fig_
-reliability_supp_cpsc_ptbxl_resnet1d_seed43.pdf> <./figures/fig_reliability_sup
-p_cpsc_ptbxl_resnet1d_seed44.pdf>] [53 <./figures/fig_reliability_supp_cpsc_ptb
-xl_resnet1d_seed45.pdf> <./figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_see
-d46.pdf> <./figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed42.pdf> <
-./figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed43.pdf> <./figures/
-fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed44.pdf>] [54 <./figures/fig_r
-eliability_supp_cpsc_ptbxl_inceptiontime_seed45.pdf> <./figures/fig_reliability
-_supp_cpsc_ptbxl_inceptiontime_seed46.pdf> <./figures/fig_reliability_supp_ptbx
-l_chapman_resnet1d_seed42.pdf> <./figures/fig_reliability_supp_ptbxl_chapman_re
-snet1d_seed43.pdf> <./figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed4
-4.pdf>] [55 <./figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed45.pdf> 
-<./figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed46.pdf> <./figures/f
-ig_reliability_supp_ptbxl_chapman_inceptiontime_seed42.pdf> <./figures/fig_reli
-ability_supp_ptbxl_chapman_inceptiontime_seed43.pdf> <./figures/fig_reliability
-_supp_ptbxl_chapman_inceptiontime_seed44.pdf>] [56 <./figures/fig_reliability_s
-upp_ptbxl_chapman_inceptiontime_seed45.pdf> <./figures/fig_reliability_supp_ptb
-xl_chapman_inceptiontime_seed46.pdf> <./figures/fig_reliability_supp_ptbxl_cpsc
-_resnet1d_seed42.pdf> <./figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed4
-3.pdf> <./figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed44.pdf>]
-[57 <./figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed45.pdf> <./figures/
-fig_reliability_supp_ptbxl_cpsc_resnet1d_seed46.pdf> <./figures/fig_reliability
-_supp_ptbxl_cpsc_inceptiontime_seed42.pdf> <./figures/fig_reliability_supp_ptbx
-l_cpsc_inceptiontime_seed43.pdf> <./figures/fig_reliability_supp_ptbxl_cpsc_inc
-eptiontime_seed44.pdf>] [58 <./figures/fig_reliability_supp_ptbxl_cpsc_inceptio
-ntime_seed45.pdf> <./figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed
-46.pdf>] [59] [60] [61] [62] [63] [64] [65] [66] (main.aux)
+
+Overfull \vbox (4.25076pt too high) has occurred while \output is active []
+
+
+Overfull \vbox (4.25076pt too high) has occurred while \output is active []
+
+
+[47 <./figures/fig_reliability_supp_chapman_cpsc_resnet1d_seed42.pdf> <./figure
+s/fig_reliability_supp_chapman_cpsc_resnet1d_seed43.pdf> <./figures/fig_reliabi
+lity_supp_chapman_cpsc_resnet1d_seed44.pdf> <./figures/fig_reliability_supp_cha
+pman_cpsc_resnet1d_seed45.pdf> <./figures/fig_reliability_supp_chapman_cpsc_res
+net1d_seed46.pdf>] [48 <./figures/fig_reliability_supp_chapman_cpsc_inceptionti
+me_seed42.pdf> <./figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed4
+3.pdf> <./figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed44.pdf> <
+./figures/fig_reliability_supp_chapman_cpsc_inceptiontime_seed45.pdf> <./figure
+s/fig_reliability_supp_chapman_cpsc_inceptiontime_seed46.pdf>] [49 <./figures/f
+ig_reliability_supp_chapman_ptbxl_resnet1d_seed42.pdf> <./figures/fig_reliabili
+ty_supp_chapman_ptbxl_resnet1d_seed43.pdf> <./figures/fig_reliability_supp_chap
+man_ptbxl_resnet1d_seed44.pdf> <./figures/fig_reliability_supp_chapman_ptbxl_re
+snet1d_seed45.pdf> <./figures/fig_reliability_supp_chapman_ptbxl_resnet1d_seed4
+6.pdf>] [50 <./figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed42.
+pdf> <./figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed43.pdf> <.
+/figures/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed44.pdf> <./figure
+s/fig_reliability_supp_chapman_ptbxl_inceptiontime_seed45.pdf> <./figures/fig_r
+eliability_supp_chapman_ptbxl_inceptiontime_seed46.pdf>] [51 <./figures/fig_rel
+iability_supp_cpsc_chapman_resnet1d_seed42.pdf> <./figures/fig_reliability_supp
+_cpsc_chapman_resnet1d_seed43.pdf> <./figures/fig_reliability_supp_cpsc_chapman
+_resnet1d_seed44.pdf> <./figures/fig_reliability_supp_cpsc_chapman_resnet1d_see
+d45.pdf> <./figures/fig_reliability_supp_cpsc_chapman_resnet1d_seed46.pdf>]
+[52 <./figures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed42.pdf> <./f
+igures/fig_reliability_supp_cpsc_chapman_inceptiontime_seed43.pdf> <./figures/f
+ig_reliability_supp_cpsc_chapman_inceptiontime_seed44.pdf> <./figures/fig_relia
+bility_supp_cpsc_chapman_inceptiontime_seed45.pdf> <./figures/fig_reliability_s
+upp_cpsc_chapman_inceptiontime_seed46.pdf>] [53 <./figures/fig_reliability_supp
+_cpsc_ptbxl_resnet1d_seed42.pdf> <./figures/fig_reliability_supp_cpsc_ptbxl_res
+net1d_seed43.pdf> <./figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed44.pd
+f> <./figures/fig_reliability_supp_cpsc_ptbxl_resnet1d_seed45.pdf> <./figures/f
+ig_reliability_supp_cpsc_ptbxl_resnet1d_seed46.pdf>] [54 <./figures/fig_reliabi
+lity_supp_cpsc_ptbxl_inceptiontime_seed42.pdf> <./figures/fig_reliability_supp_
+cpsc_ptbxl_inceptiontime_seed43.pdf> <./figures/fig_reliability_supp_cpsc_ptbxl
+_inceptiontime_seed44.pdf> <./figures/fig_reliability_supp_cpsc_ptbxl_inception
+time_seed45.pdf> <./figures/fig_reliability_supp_cpsc_ptbxl_inceptiontime_seed4
+6.pdf>] [55 <./figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed42.pdf> 
+<./figures/fig_reliability_supp_ptbxl_chapman_resnet1d_seed43.pdf> <./figures/f
+ig_reliability_supp_ptbxl_chapman_resnet1d_seed44.pdf> <./figures/fig_reliabili
+ty_supp_ptbxl_chapman_resnet1d_seed45.pdf> <./figures/fig_reliability_supp_ptbx
+l_chapman_resnet1d_seed46.pdf>] [56 <./figures/fig_reliability_supp_ptbxl_chapm
+an_inceptiontime_seed42.pdf> <./figures/fig_reliability_supp_ptbxl_chapman_ince
+ptiontime_seed43.pdf> <./figures/fig_reliability_supp_ptbxl_chapman_inceptionti
+me_seed44.pdf> <./figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed
+45.pdf> <./figures/fig_reliability_supp_ptbxl_chapman_inceptiontime_seed46.pdf>
+] [57 <./figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed42.pdf> <./figure
+s/fig_reliability_supp_ptbxl_cpsc_resnet1d_seed43.pdf> <./figures/fig_reliabili
+ty_supp_ptbxl_cpsc_resnet1d_seed44.pdf> <./figures/fig_reliability_supp_ptbxl_c
+psc_resnet1d_seed45.pdf> <./figures/fig_reliability_supp_ptbxl_cpsc_resnet1d_se
+ed46.pdf>] [58 <./figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed42.
+pdf> <./figures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed43.pdf> <./fi
+gures/fig_reliability_supp_ptbxl_cpsc_inceptiontime_seed44.pdf> <./figures/fig_
+reliability_supp_ptbxl_cpsc_inceptiontime_seed45.pdf> <./figures/fig_reliabilit
+y_supp_ptbxl_cpsc_inceptiontime_seed46.pdf>] [59] [60] [61] [62] [63] [64]
+[65] [66] (main.aux)
  ***********
 LaTeX2e <2026-06-01>
 L3 programming layer <2026-07-20>
@@ -1372,7 +1383,7 @@ Package rerunfilecheck Info: File `main.out' has not changed.
 Here is how much of TeX's memory you used:
  13800 strings out of 467501
  245643 string characters out of 5404663
- 726571 words of memory out of 5000000
+ 726906 words of memory out of 5000000
  42648 multiletter control sequences out of 15000+600000
  651453 words of font info for 102 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -1408,9 +1419,9 @@ cm/cmsy10.pfb><C:/Users/Administrator/AppData/Local/Programs/MiKTeX/fonts/type1
 KTeX/fonts/type1/public/amsfonts/cm/cmsy8.pfb><C:/Users/Administrator/AppData/L
 ocal/Programs/MiKTeX/fonts/type1/public/amsfonts/symbols/msam10.pfb><C:/Users/A
 dministrator/AppData/Local/Programs/MiKTeX/fonts/type1/urw/zapfding/uzdr.pfb>
-Output written on main.pdf (66 pages, 2298307 bytes).
+Output written on main.pdf (66 pages, 2298802 bytes).
 PDF statistics:
- 5638 PDF objects out of 6186 (max. 8388607)
+ 5640 PDF objects out of 6186 (max. 8388607)
  213 named destinations out of 1000 (max. 500000)
  16049 words of extra memory for PDF output out of 17280 (max. 10000000)
 
