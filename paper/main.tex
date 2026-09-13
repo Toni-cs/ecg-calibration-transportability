@@ -1429,11 +1429,12 @@ experiments, mean OOD accuracy is 0.540 (median 0.546; range
 0.388--0.701) and the mean ID--OOD drop is 0.236 (maximum 0.412).
 Against each target corpus's majority-class baseline (CPSC 0.528,
 PTB-XL 0.411, Chapman-Shaoxing 0.713), mean OOD accuracy is
-\emph{below} baseline in 4 of 6 directions: Chapman$\rightarrow$CPSC
-0.510 vs.\ 0.528; CPSC$\rightarrow$PTB-XL 0.424 vs.\ 0.411
-(essentially at baseline); CPSC$\rightarrow$Chapman 0.619 and
-PTB-XL$\rightarrow$Chapman 0.620 (both well below 0.713). There
-recalibration is moot, since no temperature improves a model that
+\emph{below} baseline in 3 of 6 directions, with a fourth essentially
+at baseline: Chapman$\rightarrow$CPSC
+0.510 vs.\ 0.528; CPSC$\rightarrow$PTB-XL 0.424 vs.\ 0.411 (0.013
+above baseline); CPSC$\rightarrow$Chapman 0.619 and
+PTB-XL$\rightarrow$Chapman 0.620 (both well below 0.713). In those
+directions recalibration is moot, since no temperature improves a model that
 should be replaced by a majority-class predictor, consistent with
 the counter-example pattern (6/9 with low OOD accuracy).
 Per-direction AUROC/AUPRC are not computed in the released artifacts
@@ -1548,7 +1549,8 @@ lookup table requires labeled target data, and the label-free proxies
 failed their pre-registered branch, so no label-free gate is claimed;
 (xiv) TS is argmax-invariant and cannot improve accuracy, AUROC, or
 AUPRC, so the viability precondition is screened by accuracy alone, with
-OOD accuracy below the majority-class baseline in 4 of 6 directions;
+OOD accuracy below the majority-class baseline in 3 of 6 directions
+(and at baseline in a fourth);
 (xv) NCV is directionally asymmetric (OOD $= +0.008125$, $p = 0.019$,
 positive; ID $= -0.006292$, $p = 0.016$, negative), qualifying the C5
 claim for source-domain but supporting target-domain deployment; (xvi)
@@ -1593,8 +1595,8 @@ accuracy ($\leq
 0.50$ in 6/9) and a large ID--OOD gap ($\geq 0.18$ in 7/9), a tendency
 rather than a sufficient gate (three have OOD accuracy $>0.5$). TS needs
 local validation (safety rate $0.0064$), the Youden criterion is fitted
-in-sample, and OOD accuracy is below the majority-class baseline in 4 of
-6 directions, where TS cannot help.  A noise floor control
+in-sample, and OOD accuracy is below the majority-class baseline in 3 of
+6 directions (a fourth sits at baseline), where TS cannot help.  A noise floor control
 (\S\ref{sec:noise_floor}) rules out a SmoothECE artifact: worst-case
 metric noise ($+0.021$) is $4$--$13\times$ below the raw ECE
 ($0.06$--$0.35$). The C5 gate (\S\ref{sec:gate}) rejects every
@@ -1671,6 +1673,11 @@ and the full per-experiment result files
 \texttt{results/*.csv}) are included with the submission as
 supplementary material and are also available in the public repository
 \url{https://github.com/gt17641001169-design/ecg-calibration-transportability}.
+\textbf{Pre-registration archival status.} The protocol and both amendments
+(A1, A2), together with an archival-status report, are being deposited under
+a public OSF timestamp before publication. Until that record is live,
+\texttt{docs/osf\_archive\_manifest.json} is a local snapshot taken on
+2026-09-05 and is not a substitute for public registration.
 
 \section*{Code availability}
 The full pipeline code, preprocessing (reproducible from the
@@ -1685,9 +1692,9 @@ provided as release assets of the same repository. The repository will
 be archived on Zenodo with a DOI upon acceptance.
 
 \section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
-During the preparation of this work the author used a general-purpose
-large language model assistant for language editing and for drafting and
-refactoring parts of the analysis code. The author reviewed and verified
+During the preparation of this work the author used a widely available
+commercial large language model service for language editing and for
+drafting and refactoring parts of the analysis code. The author reviewed and verified
 all resulting content and takes full responsibility for the content of
 the publication.
 
