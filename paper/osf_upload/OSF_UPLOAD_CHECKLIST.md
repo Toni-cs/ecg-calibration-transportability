@@ -17,7 +17,9 @@ the manuscript. Nothing here requires re-running any analysis.
 ## 1. Create the OSF project
 
 - [ ] Sign in at osf.io, then **Create new project**.
-- [ ] Title: `Preregistered protocol and amendments: temperature-scaling calibration transfer across ECG corpora (v2.1-A1)`
+- [ ] Title: `Protocol and amendments v2.1-A1: temperature-scaling calibration transfer across ECG corpora`
+      (deliberately does not say "Preregistered"; this record is a public
+      archival made after analysis, and the title should not claim otherwise)
 - [ ] Category: *Project*. Add the tags listed in `OSF_PROJECT_DESCRIPTION.md`.
 - [ ] Paste the description block from `OSF_PROJECT_DESCRIPTION.md` into the
       project description field.
