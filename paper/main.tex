@@ -142,7 +142,7 @@ by an independent pilot, and is archived with before/after protocol hashes
 \cite{nosek2019prereg,lakens2019prereg}. Multi-seed validation
 (5 seeds $\times$ 6 transfer pairs $\times$ 2 architectures) supplies the
 robustness evidence; all 60 seed results, including nine counter-examples,
-are reported.
+are reported transparently.
 
 \textbf{Contributions.} Five independent contributions:
 \begin{description}
@@ -150,10 +150,11 @@ are reported.
     endpoint $\Delta\text{ECE}_{\text{OOD}}$, TS yields a statistically
     significant positive OOD benefit in 51/60 seed experiments (6 transfer
     pairs $\times$ 2 architectures; InceptionTime 27/30, ResNet1D 24/30),
-    with nine counter-examples disclosed and mechanistically explained.
+    with nine counter-examples transparently disclosed and mechanistically
+    explained.
     InceptionTime: three of six directions achieve 5/5, three achieve 4/5.
     ResNet1D: two of six achieve 5/5, two 4/5, two 3/5.
-    \item[\textbf{C2} (Boundary condition, branch triggered):]
+    \item[\textbf{C2} (Boundary condition, pre-registered branch triggered):]
     Across 12 pair$\times$architecture strata, 23/60 cells (38.3\%;
     BCa operating CI) have 95\% CIs containing zero and 34/60 have CI
     lower bound $>0$ (stratum means $-0.0008$ to $+0.0232$; ID mean
@@ -167,13 +168,13 @@ are reported.
     point estimates are positive and $2/60 = 3.3\%$ have
     $\Delta\text{ECE}_{\text{ID}} < -0.01$ (counter-example 6, $-0.0152$;
     one marginal case, $-0.0128$).
-    \item[\textbf{C3} (Shapley validation):]
+    \item[\textbf{C3} (Methodological, Shapley decomposition validation):]
     A 27-cell full-factorial synthetic validation
     (slope$\times$intercept$\times$prevalence, $n=20{,}000$) recovers
     ground truth in the identifiable regime (27/27 at $n=20{,}000$;
     21/27 at $n=500$), flags entangled regions without a threshold,
     and reports bootstrap CIs on absolute Shapley values.
-    \item[\textbf{C4} (Method selection):] Across
+    \item[\textbf{C4} (Practical, method-selection boundary):] Across
     8 methods $\times$ 6 pairs $\times$ 5 seeds $\times$ 2 architectures,
     TS is robust (51/60) while EM prior adaptation is fragile when
     ill-conditioned cells ($w_{\text{ID}}>10$) are included (InceptionTime
@@ -181,7 +182,7 @@ are reported.
     is prior-likelihood mismatch: EM fits a target prior that amplifies
     shift-induced miscalibration when the source confusion matrix is
     ill-conditioned.
-    \item[\textbf{C5} (Calibration gate):]
+    \item[\textbf{C5} (Clinical, discrimination-aware calibration gate):]
     A two-layer gate decouples calibration effectiveness (C1:
     $\Delta\text{ECE}_{\text{OOD}}>0$) from clinical viability
     (accuracy $\geq$ source-domain baseline). Across 14
@@ -1272,8 +1273,9 @@ The 51/60 robustness rate is driven by nine counter-examples across
 5 of the 6 transfer pairs and both architectures (Chapman$\rightarrow$CPSC 2,
 Chapman$\rightarrow$PTB-XL 2, CPSC$\rightarrow$Chapman 2,
 CPSC$\rightarrow$PTB-XL 2, PTB-XL$\rightarrow$Chapman 1; only
-PTB-XL$\rightarrow$CPSC has zero). We disclose all nine: the protocol
-requires all seed results, and each has an identifiable post-hoc mechanism
+PTB-XL$\rightarrow$CPSC has zero). We transparently disclose all nine
+rather than excluding them, because the protocol requires all seed
+results to be reported and each has an identifiable post-hoc mechanism
 supporting the qualified claim.
 
 \begin{figure}[htbp]
@@ -1503,34 +1505,41 @@ frame the NCV as \emph{supportive of OOD deployment} and \emph{cautionary
 for ID deployment}. It also informs the meta-analytic pooling
 (Sec.~\ref{sec:conclusion}), where the asymmetry contributes to CI-width
 heterogeneity across splits. A permutation test with tighter CIs and a
-multi-threshold NCV analysis remain future work.
+multi-threshold NCV analysis are registered as future work.
 
 % ----------------------------------------------------------------------------
 \subsection{Limitations and future work}
 % ----------------------------------------------------------------------------
 \textbf{Limitations}: (i) the main endpoint covers InceptionTime and
-ResNet1D on all 6 directed pairs with 5-seed coverage (60 experiments);
-BiMamba is a toy experiment ($n=60$, supplement) after memory exhaustion
-on an RTX 5060 (8~GB); (ii) the predictability failure branch is
-triggered (three-step to two-step); the deployment criterion is an
-empirical lookup table; (iii) real-data Shapley cross-fitting
-(\S\ref{sec:real_shapley}) shows 85\% direction accuracy but magnitude
-overestimation (mean error $+0.29$); $T$, Wasserstein-1, and entropy
-features confirm the boundary (all $R^2 < 0$); (iv) the 27-cell
-decomposition validation uses binned ECE, not the main endpoint's
-SmoothECE, limiting cross-definition use; (v) the safety criterion is
-rarely satisfied on the full L2 shift matrix (TS safety rate $0.0064$);
-TS is a useful default, not universally safe; (vi) nine counter-examples
-of 60 experiments (15.0\%) are disclosed but not excluded; (vii) the
-operating CI is BCa at $B=10{,}000$, re-run on all 60 experiments
-(60/60, \texttt{methods.ts.meta}); percentile CIs from $B=200$ in 21/60
-experiments remain (5 lack logs); (viii) the Youden threshold is fitted
-in-sample, making the operating characteristic optimistic; (ix) the L2
-analysis covers 157 of 390 planned cells at 2 seeds on one architecture,
-with synthetic noise rather than the unavailable pre-registered PTB-XL
-Database; (x) temperature was fitted once per experiment, so CIs omit
-temperature-fitting uncertainty (the two-layer bootstrap is disabled);
-(xi) model selection used validation ECE rather than the pre-registered
+ResNet1D on all 6 directed pairs with 5-seed coverage (60 experiments,
+fully balanced); BiMamba is a toy experiment ($n=60$, supplement) after
+memory exhaustion on an RTX 5060 (8~GB); (ii) the predictability failure
+branch is triggered (three-step to two-step); the deployment criterion
+is an empirical lookup table, not a predictive criterion; (iii)
+real-data Shapley cross-fitting (\S\ref{sec:real_shapley}) shows 85\%
+direction accuracy but systematic magnitude overestimation (mean error
+$+0.29$), and a sensitivity analysis with $T$, Wasserstein-1, and
+entropy features confirms the predictability boundary is robust (all
+$R^2 < 0$); (iv) the 27-cell decomposition validation uses binned ECE,
+not the main endpoint's SmoothECE, so quantitative conclusions cannot be
+extrapolated across ECE definitions; (v) the safety criterion is rarely
+satisfied on the full L2 shift matrix (TS safety rate $0.0064$); TS is a
+useful default, not universally safe; (vi) nine counter-examples of 60
+experiments (15.0\%) are transparently disclosed, with a frequent post-hoc pattern
+(low OOD accuracy, non-positive decay, elevated OOD raw ECE) but no
+post-hoc exclusion; (vii) the operating CI is BCa at $B=10{,}000$,
+re-run on all 60 experiments (60/60 successful, metadata in
+\texttt{methods.ts.meta}); percentile CIs from $B=200$ in 21/60
+experiments are retained as historical provenance (5 lack logs); (viii)
+the Youden threshold is fitted in-sample (the protocol's held-out dose
+levels were not used), making the operating characteristic optimistic;
+(ix) the L2 deployment/safety analysis covers 157 of 390 planned (pair,
+seed, shift) cells at 2 seeds on one architecture, and the L2 noise
+levels are synthetic rather than the pre-registered PTB-XL Noise Stress
+Test Database (unavailable under PhysioNet licensing); (x) temperature
+was fitted once per experiment, so CIs omit temperature-fitting
+uncertainty (the pre-registered two-layer bootstrap is implemented but
+not enabled); (xi) model selection used validation ECE rather than the pre-registered
 NLL early-stopping rule, plausibly contributing to the positive ID
 boundary estimates; (xii) the per-pair decomposition into covariate,
 prior-probability, and concept-shift components is not asserted, since
@@ -1576,8 +1585,11 @@ selection: TS robust (51/60), EM prior and Matrix scaling fragile (15/30
 each). \textbf{(C5)} Gate: 7/14 strata pass both layers, reframing the 9
 counter-examples as 4 calibration and 5 discrimination failures. The
 predictability failure branch is triggered (three-step chain becomes
-two-step), and all hypotheses are exploratory + robustness validation.
-Nine counter-examples are disclosed, mostly with low OOD accuracy ($\leq
+two-step), and all hypotheses are exploratory + robustness validation,
+not confirmatory; protocol v2.1-A1 and the five-item honesty declaration
+(\S\ref{sec:honesty}) are archived for transparency. Nine
+counter-examples are transparently disclosed, mostly with low OOD
+accuracy ($\leq
 0.50$ in 6/9) and a large ID--OOD gap ($\geq 0.18$ in 7/9), a tendency
 rather than a sufficient gate (three have OOD accuracy $>0.5$). TS needs
 local validation (safety rate $0.0064$), the Youden criterion is fitted
@@ -1590,9 +1602,11 @@ clinically moot stratum. Real-data Shapley cross-fitting
 (\S\ref{sec:real_shapley}) gives 85\% direction accuracy with magnitude
 overestimation (mean error $+0.29$); $T$, Wasserstein-1, and entropy
 features confirm the boundary (all $R^2 < 0$).  \textbf{Meta-analytic
-pooling.} The fixed-effect estimate is CI-width sensitive: ResNet1D is
-slightly negative ($-0.000573$) because narrow-CI studies dominate,
-while DerSimonian--Laird random effects are positive (InceptionTime
+pooling.} Both the fixed-effect and DerSimonian--Laird random-effects
+estimates are tabulated in \texttt{meta\_analytic\_pooled.csv}. The
+fixed-effect estimate is CI-width sensitive: ResNet1D is slightly
+negative ($-0.000573$) because narrow-CI studies dominate, while
+DerSimonian--Laird random effects are positive (InceptionTime
 $+0.0151$, ResNet1D $+0.0158$, CrossArchitecture $+0.0148$; unweighted
 $+0.0152$, $+0.0165$, $+0.0159$). This reflects heterogeneity ($\tau^2
 \approx 3\times10^{-5}$, $Q \gg k-1$), not a negative central effect, so
