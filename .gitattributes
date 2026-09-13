@@ -1,0 +1,4 @@
+# Archive artifacts are hash-verified. Preserve their bytes exactly.
+# Without this, core.autocrlf=true rewrites LF to CRLF on checkout and every
+# line in paper/osf_upload/SHA256SUMS.txt stops verifying.
+paper/osf_upload/** -text

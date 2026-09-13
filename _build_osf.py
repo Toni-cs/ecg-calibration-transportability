@@ -23,13 +23,13 @@ os.makedirs(OUT, exist_ok=True)
 EN = "D:/A1/ecg-release/docs"
 COPIES = [
     # English translations (public-facing) from the released repository
-    (f"{EN}/EXPERIMENT_PROTOCOL.md", "01_PROTOCOL_v2.1-A1_EN.md"),
-    (f"{EN}/PROTOCOL_AMENDMENT_A1_PREREG_RELOCATION.md", "03_AMENDMENT_A1_EN.md"),
-    (f"{EN}/PROTOCOL_AMENDMENT_A2_FAMILY_REDUCTION.md", "05_AMENDMENT_A2_EN.md"),
+    (f"{EN}/EXPERIMENT_PROTOCOL.md", "01_PROTOCOL_EN.md"),
+    (f"{EN}/PROTOCOL_AMENDMENT_A1_PREREG_RELOCATION.md", "03_AMENDMENT_1_EN.md"),
+    (f"{EN}/PROTOCOL_AMENDMENT_A2_FAMILY_REDUCTION.md", "05_AMENDMENT_2_EN.md"),
     # Chinese originals (record of authority)
-    ("docs/EXPERIMENT_PROTOCOL.md", "02_PROTOCOL_v2.1-A1_ZH_original.md"),
-    ("docs/PROTOCOL_AMENDMENT_A1_PREREG_RELOCATION.md", "04_AMENDMENT_A1_ZH_original.md"),
-    ("docs/PROTOCOL_AMENDMENT_A2_FAMILY_REDUCTION.md", "06_AMENDMENT_A2_ZH_original.md"),
+    ("docs/EXPERIMENT_PROTOCOL.md", "02_PROTOCOL_ZH_original.md"),
+    ("docs/PROTOCOL_AMENDMENT_A1_PREREG_RELOCATION.md", "04_AMENDMENT_1_ZH_original.md"),
+    ("docs/PROTOCOL_AMENDMENT_A2_FAMILY_REDUCTION.md", "06_AMENDMENT_2_ZH_original.md"),
     # the baseline hash manifest, preserved byte-for-byte
     ("docs/osf_archive_manifest.json", "07_HASH_MANIFEST_baseline_2026-09-05.json"),
 ]
@@ -134,12 +134,16 @@ lines += [
 with open(os.path.join(OUT, "README_ARCHIVAL_STATUS.md"), "w", encoding="utf-8") as fh:
     fh.write("\n".join(lines))
 
-files = sorted(os.path.join(OUT, f) for f in os.listdir(OUT) if f != "SHA256SUMS.txt")
+payload = sorted(
+    f for f in os.listdir(OUT)
+    if os.path.isfile(os.path.join(OUT, f)) and f != "SHA256SUMS.txt"
+)
 with open(os.path.join(OUT, "SHA256SUMS.txt"), "w", encoding="utf-8") as fh:
-    for p in files:
-        fh.write(f"{hashlib.sha256(open(p, 'rb').read()).hexdigest()}  {os.path.basename(p)}\n")
+    for f in payload:
+        p = os.path.join(OUT, f)
+        fh.write(f"{hashlib.sha256(open(p, 'rb').read()).hexdigest()}  {f}\n")
 
 print()
-print(f"bundle: {len(os.listdir(OUT))} files")
+print(f"bundle: {len(payload) + 1} files (payload only; _local_notes/ excluded)")
 print(f"changed since freeze: {len(changed)}/{len(rows)}")
 print(f"frozen content unrecoverable: {len(lost)}/{len(rows)}")

@@ -3,6 +3,8 @@
 Do these in order. Steps 1 to 4 are the upload; steps 5 to 7 close the loop in
 the manuscript. Nothing here requires re-running any analysis.
 
+> **Working note — not part of the deposit.** Do not upload this file to OSF.
+
 ## Before you start
 
 - [ ] Read `README_ARCHIVAL_STATUS.md`. You are about to publish a record that
@@ -17,25 +19,47 @@ the manuscript. Nothing here requires re-running any analysis.
 ## 1. Create the OSF project
 
 - [ ] Sign in at osf.io, then **Create new project**.
-- [ ] Title: `Protocol and amendments v2.1-A1: temperature-scaling calibration transfer across ECG corpora`
-      (deliberately does not say "Preregistered"; this record is a public
-      archival made after analysis, and the title should not claim otherwise)
+- [ ] Title: `Protocol and amendments: temperature-scaling calibration transfer across ECG corpora`
+      (no version or amendment label in the record name — those live inside the
+      documents; and deliberately no "Preregistered", since this record is a
+      public archival made after analysis and the title should not claim
+      otherwise)
 - [ ] Category: *Project*. Add the tags listed in `OSF_PROJECT_DESCRIPTION.md`.
 - [ ] Paste the description block from `OSF_PROJECT_DESCRIPTION.md` into the
       project description field.
 
 ## 2. Add contributors and license
 
-- [ ] Add **Toni Guan** as a bibliographic contributor (add an ORCID if you have
-      one; it strengthens the record).
+- [ ] Add **Toni Guan** as a bibliographic contributor, affiliation
+      *College of Information Technology, Shenyang Institute of Technology*
+      (add an ORCID if you have one; it strengthens the record).
 - [ ] Set the license to **CC-BY-4.0**. If OSF insists on CC0-1.0 for a
       registration, accept CC0 and note the change here: ______________
 
 ## 3. Upload the bundle
 
-- [ ] Upload every file in this folder, including `SHA256SUMS.txt`.
-- [ ] Add `OSF_PROJECT_DESCRIPTION.md` and `OSF_UPLOAD_CHECKLIST.md` only if you
-      want the working notes public; they are not part of the record itself.
+The deposit is exactly **11 files**, all of them sitting directly beside this
+note (`_local_notes/` is not part of it):
+
+```
+01_PROTOCOL_EN.md
+02_PROTOCOL_ZH_original.md
+03_AMENDMENT_1_EN.md
+04_AMENDMENT_1_ZH_original.md
+05_AMENDMENT_2_EN.md
+06_AMENDMENT_2_ZH_original.md
+07_HASH_MANIFEST_baseline_2026-09-05.json
+08_HASH_MANIFEST_as_uploaded.json
+09_REVISION_LOG.md
+README_ARCHIVAL_STATUS.md
+SHA256SUMS.txt
+```
+
+- [ ] Upload those 11 files. Select them individually.
+- [ ] Do **not** drag the folder, and do **not** upload anything from
+      `_local_notes/` — those four files are instructions to you, and publishing
+      them would put a checklist inside the record that the checklist itself
+      describes.
 
 ## 4. Make it public and record the DOI
 
@@ -51,10 +75,10 @@ the manuscript. Nothing here requires re-running any analysis.
 
 ## 5. Update the manuscript
 
-Three edits in `D:\A1\ecg-lab-v2\paper\main.tex`.
+Edits in `D:\A1\ecg-lab-v2\paper\main.tex`.
 
 - [ ] **Data availability**, the sentence beginning "Pre-registration archival
-      status." Replace:
+      status." (around line 1676). Replace:
 
       ```
       \textbf{Pre-registration archival status.} The protocol and both amendments
@@ -74,7 +98,7 @@ Three edits in `D:\A1\ecg-lab-v2\paper\main.tex`.
       public record.
       ```
 
-- [ ] **Bibliography note** (the `\bibitem` for the protocol, around line 2044).
+- [ ] **Bibliography note** (the `\bibitem` for the protocol, around line 2046).
       Replace the parenthetical:
 
       ```
@@ -85,6 +109,15 @@ Three edits in `D:\A1\ecg-lab-v2\paper\main.tex`.
 
       ```
       (local snapshot; archived at \url{https://doi.org/XXXXX})
+      ```
+
+- [ ] **Bibliography title**: the same `\bibitem` still reads
+      ``...pre-registered experiment protocol v2.1-A1,''``. The deposited record
+      name now carries no version label, so drop the trailing version from the
+      cited title to keep the citation and the deposit consistent:
+
+      ```
+      ``ECG calibration boundary study -- experiment protocol,''
       ```
 
 - [ ] **Header comment**: no change needed; the archive only affects bodies of
@@ -128,6 +161,6 @@ Three edits in `D:\A1\ecg-lab-v2\paper\main.tex`.
 
 The upload cannot repair the 7 files whose frozen content is gone. If a reviewer
 asks for the protocol exactly as it stood on 2026-09-05, the honest answer is
-that it is not recoverable, and that the deposited v2.1-A1 is the earliest
+that it is not recoverable, and that the deposited protocol is the earliest
 complete version that still exists. `README_ARCHIVAL_STATUS.md` says this in
 writing, which is better than being asked and having no answer.
