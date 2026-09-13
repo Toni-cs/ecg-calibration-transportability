@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """Leave-shift-type-out Youden recomputation for the deployment criterion.
 
-论文 main.tex 部署节 caveat 的持久化产物：
-- 阈值搜索 = 排除留出档的全格池（percentile 网格 0..100 step 0.5）
-- 评估 = 仅该留出档（fs125 / leads2 / noise0 / gain2.0）
-- 冻结阈值 0.126725 在四个留出档上的 sens/spec/J
+Persistent artifact for the caveat in the deployment section of paper main.tex:
+- Threshold search = the full-cell pool excluding the held-out shift (percentile grid 0..100 step 0.5)
+- Evaluation = only the held-out shift (fs125 / leads2 / noise0 / gain2.0)
+- Frozen threshold 0.126725 evaluated for sensitivity/specificity/J on the four held-out shifts
 
-输出 results/deployment_holdout_recompute.csv；与正文四值同口径。
-只读计算，不修改任何实验产物。
+Writes results/deployment_holdout_recompute.csv, consistent with the four values reported in the paper text.
+Read-only computation; does not modify any experiment artifacts.
 """
 import json
 from pathlib import Path

@@ -1,73 +1,79 @@
-"""E2: TS 组件消融 + 判别指标（60 实验全量）
+"""E2: temperature-scaling component ablation + discrimination metrics (all 60 experiments).
 
 =====================================================================
-实验目标
+Experiment goals
 =====================================================================
-1. 3 阶段消融，分离温度缩放(TS)各组件对 Brier reliability 的贡献：
-   Stage 1: TS only          — 单一全局温度 T，仅校准置信度锐度
-   Stage 2: TS + binned T    — 按预测熵(不确定度)分 5 箱，每箱一个 T
-   Stage 3: TS + binned + τ  — 在 binned 基础上优化分类阈值 τ_k
+1. 3-stage ablation that isolates the contribution of each temperature-scaling (TS)
+   component to Brier reliability:
+   Stage 1: TS only          -- a single global temperature T, calibrating only confidence sharpness
+   Stage 2: TS + binned T    -- split into 5 bins by predicted entropy (uncertainty), one T per bin
+   Stage 3: TS + binned + tau-- additionally optimize classification thresholds tau_k on top of binned
 
-2. 判别指标(AUROC/AUPRC/F1/PPV/NPV/MCC)对 60 个实验全部计算。
-
-=====================================================================
-核心主张（正方论证）
-=====================================================================
-- 消融设计能分离各组件贡献，因为三阶段是严格嵌套的参数子集：
-    Θ_1 = {T}                    ⊂ Θ_2 = {T, T_1..T_5}     ⊂ Θ_3 = {T, T_1..T_5, τ_1..τ_K}
-  ΔReliability(Stage2−Stage1) = binned T 的边际贡献（控制全局 T 后）
-  ΔReliability(Stage3−Stage2) = threshold opt 的边际贡献（控制 binned T 后）
-  嵌套结构保证边际贡献可加性解释（无参数空间交叉）。
-
-- TS 保持 argmax 不变（softmax(log p / T) 对 T>0 保序）：
-    * accuracy / F1 / MCC 等 argmax 类指标在 Stage 1/2 与 raw 相同
-    * AUROC/AUPRC 基于概率排序：二分类下 TS 是单调变换→严格不变；
-      多分类 OvR 下 TS 不保证逐类保序→可能微变（脚本实测验证并报告）
-    * Stage 3 的 threshold optimization 改变 argmax→F1/PPV/NPV/MCC 改变
+2. Discrimination metrics (AUROC/AUPRC/F1/PPV/NPV/MCC) computed for all 60 experiments.
 
 =====================================================================
-关键假设
+Core claims
 =====================================================================
-A1. binned temperature 的分箱变量=TS 校准后预测分布熵 H(TS(p))=−Σ p'_k log p'_k，
-    其中 p'=TS(p)（Stage 1 的温度缩放输出）。注意：E4 的 binned-T 分箱变量
-    为 H(p)（对原始概率分箱），两者不可直接比较，原因有二：
-    (1) 分箱变量不同：E2 Stage2/3 为 H(TS(p))，E4 为 H(p)；
-    (2) 结构不同：E2 Stage2/3 为 TS+binned（先全局 TS 再分箱温度），
-        E4 为 binned-only（仅分箱温度，无前置全局 TS）。
-    两者参数空间非嵌套亦非同构，故 ΔReliability 不可作边际贡献解释。
-    假设：不确定度高的样本段需要不同的锐度校准（置信与不确定样本
-    的 over/under-confidence 模式不同）。若该假设不成立，
-    Stage2−Stage1 ≈ 0（脚本会如实报告）。
-A2. threshold optimization 在 cal 集上拟合、test 集上评估。
-    假设：cal 与 test 同分布（ID 假设）；OOD 下阈值迁移有衰减，
-    脚本同时报告 cal 上最优 τ 在 test 上的表现（无偷看 test）。
-A3. 每箱样本量 ≥ 10 才拟合该箱 T；否则该箱 T=1.0（不校准）。
-    防止小箱过拟合（n_cal=60 的 smoke 场景下部分箱可能不足）。
+- The ablation isolates each component's contribution because the three stages are
+  strictly nested parameter subsets:
+    Theta_1 = {T}                    subset Theta_2 = {T, T_1..T_5}   subset Theta_3 = {T, T_1..T_5, tau_1..tau_K}
+  DeltaReliability(Stage2-Stage1) = marginal contribution of binned T (controlling for global T)
+  DeltaReliability(Stage3-Stage2) = marginal contribution of threshold optimization (controlling for binned T)
+  The nested structure guarantees additive interpretation of marginal contributions
+  (no parameter-space overlap).
+
+- TS preserves argmax (softmax(log p / T) is order-preserving for T>0):
+    * accuracy / F1 / MCC and other argmax-based metrics are identical between Stage 1/2 and raw
+    * AUROC/AUPRC are based on probability ranking: under binary classification TS is a monotonic
+      transform -> strictly invariant; under multiclass OvR TS does not guarantee per-class order
+      preservation -> may change slightly (measured and reported by the script)
+    * Stage 3 threshold optimization changes argmax -> F1/PPV/NPV/MCC change
 
 =====================================================================
-适用边界
+Key assumptions
 =====================================================================
-- 消融结论适用于本 60 实验的 (source, target, arch, seed) 组合，
-  外推到新数据集需重新验证 A1（熵分箱的有效性）。
-- threshold optimization 的收益上界受 cal 集大小限制：
-  n_cal 小时 τ 估计方差大，Stage3−Stage2 可能含噪声。
-- 多分类 AUROC "TS 不变" 是近似而非精确——脚本实测 |ΔAUROC| 并报告。
+A1. Binned temperature uses as its binning variable the entropy H(TS(p)) = -sum p'_k log p'_k of the
+    TS-calibrated distribution, where p' = TS(p) (the output of the Stage 1 temperature scaling).
+    Note: E4's binned-T uses H(p) (binning on the raw probabilities), so the two are not directly
+    comparable, for two reasons:
+    (1) different binning variable: E2 Stage2/3 use H(TS(p)), E4 uses H(p);
+    (2) different structure: E2 Stage2/3 = TS+binned (global TS first, then binned temperature),
+        E4 = binned only (binned temperature without a preceding global TS).
+    The two parameter spaces are neither nested nor isomorphic, so DeltaReliability is not
+    interpretable as a marginal contribution.
+    Assumption: high-uncertainty sample segments need a different sharpness calibration than
+    low-uncertainty ones (over/under-confidence patterns differ). If false, Stage2-Stage1 ~ 0
+    (reported honestly by the script).
+A2. Threshold optimization is fit on the cal set and evaluated on the test set.
+    Assumption: cal and test are identically distributed (ID assumption); under OOD the threshold
+    transfer decays, so the script also reports the cal-optimal tau's behavior on test (no test peeking).
+A3. A bin is only fit if it has >= 10 samples; otherwise T=1.0 (no calibration).
+    Prevents overfitting small bins (in the n_cal=60 smoke scenario some bins may be too small).
 
 =====================================================================
-输出
+Applicability boundaries
+=====================================================================
+- Ablation conclusions apply to the (source, target, arch, seed) combinations of these 60 experiments;
+  extrapolating to new datasets requires re-validating A1 (validity of entropy binning).
+- The upside of threshold optimization is bounded by cal set size: with small n_cal the tau estimate
+  has high variance, and Stage3-Stage2 may contain noise.
+- Multiclass "TS invariance" of AUROC is approximate, not exact -- the script measures |DeltaAUROC| and reports it.
+
+=====================================================================
+Outputs
 =====================================================================
 1. results/ablation_ts_components.csv
-   列: source, target, arch, seed, stage, brier_reliability, brier_resolution,
-       brier_uncertainty, brier_raw, ece, smooth_ece, n_samples, T_global,
-       T_binned(mean,min,max), threshold_norm
+   columns: source, target, arch, seed, stage, brier_reliability, brier_resolution,
+            brier_uncertainty, brier_raw, ece, smooth_ece, n_samples, T_global,
+            T_binned(mean,min,max), threshold_norm
 2. results/discrimination_metrics_60exp.csv
-   列: source, target, arch, seed, split(cal/test), variant(raw/ts/binned/threshold),
-       auroc, auprc, f1, ppv, npv, mcc, auroc_ts_minus_raw(诚实校验列)
+   columns: source, target, arch, seed, split(cal/test), variant(raw/ts/binned/threshold),
+            auroc, auprc, f1, ppv, npv, mcc, auroc_ts_minus_raw (honest check column)
 
-调用:
+Usage:
     python scripts/run_e2_ablation_discrimination.py
-    python scripts/run_e2_ablation_discrimination.py --limit 240  # 冒烟
-    python scripts/run_e2_ablation_discrimination.py --pairs ptbxl_chapman  # 单对
+    python scripts/run_e2_ablation_discrimination.py --limit 240   # smoke test
+    python scripts/run_e2_ablation_discrimination.py --pairs ptbxl_chapman   # single pair
 """
 
 from __future__ import annotations
@@ -112,7 +118,7 @@ from train import (  # noqa: E402
 from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES  # noqa: E402
 
 # =====================================================================
-# 配置
+# Configuration
 # =====================================================================
 
 DATA_DIRS = {
@@ -132,18 +138,18 @@ CKPT_ROOT = _PROJECT_ROOT / "checkpoints" / "transfer"
 RESULTS_DIR = _PROJECT_ROOT / "results"
 CACHE_DIR = _PROJECT_ROOT / "checkpoints" / "e2_probs_cache"
 
-N_BINS_TEMPERATURE = 5      # binned temperature 箱数
-MIN_SAMPLES_PER_BIN = 10    # 每箱最少样本数，不足则 T=1.0
-N_BINS = 10                 # Brier reliability / ECE 评估分箱数（与 E3/E4/E6 及库默认一致）
+N_BINS_TEMPERATURE = 5      # number of bins for binned temperature
+MIN_SAMPLES_PER_BIN = 10    # minimum samples per bin; below this T=1.0
+N_BINS = 10                 # bins for Brier reliability / ECE evaluation (consistent with E3/E4/E6 and library default)
 EPS = 1e-12
 
 
 # =====================================================================
-# 1. Binned temperature（Stage 2 组件）
+# 1. Binned temperature (Stage 2 component)
 # =====================================================================
 
 def _entropy(probs: np.ndarray) -> np.ndarray:
-    """预测分布熵 H(p) = -Σ p_k log p_k（不确定度度量）"""
+    """Predicted-distribution entropy H(p) = -sum p_k log p_k (uncertainty measure)."""
     p = np.clip(probs, EPS, 1.0)
     return -np.sum(p * np.log(p), axis=1)
 
@@ -153,21 +159,21 @@ def fit_binned_temperature(
     cal_labels: np.ndarray,
     n_bins: int = N_BINS_TEMPERATURE,
 ) -> dict:
-    """按预测熵分 n_bins 箱，每箱拟合一个温度 T
+    """Fit one temperature T per bin, binning by predicted entropy into n_bins bins.
 
-    分箱=等频分箱（quantile），保证每箱样本量均衡。
-    每箱内用 fit_temperature_multiclass 拟合（多分类 NLL 最小化）。
-    样本不足的箱 T=1.0（不校准，假设 A3）。
+    Binning uses equal-frequency (quantile) bins to balance sample counts per bin.
+    Each bin is fit with fit_temperature_multiclass (multiclass NLL minimization).
+    Bins with too few samples get T=1.0 (no calibration, assumption A3).
 
     Returns:
         {'temperatures': [T_0..T_{n_bins-1}],
-         'bin_edges': entropy 分箱边界 (n_bins+1,)}
+         'bin_edges': entropy bin edges (n_bins+1,)}
     """
-    n_bins = _validate_n_bins(n_bins)  # R7-ATK-1：公共守卫，拦截 bool 穿透 + OOM
+    n_bins = _validate_n_bins(n_bins)  # public guard: reject bool input + avoid OOM
     ent = _entropy(cal_probs)
     bin_edges = np.quantile(ent, np.linspace(0, 1, n_bins + 1))
-    bin_edges[0] = -np.inf       # 左端开放
-    bin_edges[-1] = np.inf       # 右端闭
+    bin_edges[0] = -np.inf       # left edge open
+    bin_edges[-1] = np.inf       # right edge closed
     bin_idx = np.digitize(ent, bin_edges[1:-1])  # 0..n_bins-1
 
     temperatures = []
@@ -185,7 +191,7 @@ def fit_binned_temperature(
 
 
 def apply_binned_temperature(probs: np.ndarray, params: dict) -> np.ndarray:
-    """按样本熵分箱，用对应箱的 T 做温度缩放"""
+    """Bin by sample entropy, apply the corresponding bin's T as temperature scaling."""
     ent = _entropy(probs)
     bin_edges = np.asarray(params["bin_edges"])
     bin_idx = np.digitize(ent, bin_edges[1:-1])
@@ -201,13 +207,14 @@ def apply_binned_temperature(probs: np.ndarray, params: dict) -> np.ndarray:
 
 
 # =====================================================================
-# 2. Threshold optimization（Stage 3 组件）
+# 2. Threshold optimization (Stage 3 component)
 # =====================================================================
 
 def predict_with_thresholds(probs: np.ndarray, thresholds: np.ndarray) -> np.ndarray:
-    """阈值调整后预测: argmax(p_k - τ_k)
+    """Threshold-adjusted prediction: argmax(p_k - tau_k).
 
-    τ=0 退化为标准 argmax。τ_k 大→类 k 更难被预测（需更高 p_k）。
+    tau=0 degenerates to standard argmax. Larger tau_k -> class k is harder to predict
+    (requires higher p_k).
     """
     return (probs - thresholds[None, :]).argmax(axis=1)
 
@@ -217,11 +224,11 @@ def optimize_thresholds(
     cal_labels: np.ndarray,
     n_classes: int,
 ) -> np.ndarray:
-    """在 cal 集上优化阈值 τ 最大化 macro-F1
+    """Optimize thresholds tau on the cal set to maximize macro-F1.
 
-    用坐标下降+网格搜索（每类在 [-0.3, 0.3] 上 61 个点）。
-    目标=macro-F1（对类别不平衡更稳健 than accuracy）。
-    返回最优 τ (n_classes,)。
+    Uses coordinate descent + grid search (61 points per class on [-0.3, 0.3]).
+    Objective = macro-F1 (more robust to class imbalance than accuracy).
+    Returns the optimal tau (n_classes,).
     """
     from scipy.optimize import minimize
 
@@ -239,11 +246,11 @@ def optimize_thresholds(
 
 
 # =====================================================================
-# 3. 判别指标
+# 3. Discrimination metrics
 # =====================================================================
 
 def _npv(y_true, y_pred, n_classes):
-    """NPV = TN/(TN+FN)，macro 平均"""
+    """NPV = TN/(TN+FN), macro-averaged."""
     cm = confusion_matrix(y_true, y_pred, labels=list(range(n_classes)))
     npvs = []
     for k in range(n_classes):
@@ -261,15 +268,15 @@ def compute_discrimination_metrics(
     labels: np.ndarray,
     thresholds: Optional[np.ndarray] = None,
 ) -> dict:
-    """计算 AUROC/AUPRC/F1/PPV/NPV/MCC
+    """Compute AUROC/AUPRC/F1/PPV/NPV/MCC.
 
-    AUROC/AUPRC 基于概率（OvR），不受 argmax/threshold 影响。
-    F1/PPV/NPV/MCC 基于 argmax(p - τ)；thresholds=None 时 τ=0（标准 argmax）。
+    AUROC/AUPRC are based on probabilities (OvR), unaffected by argmax/threshold.
+    F1/PPV/NPV/MCC are based on argmax(p - tau); thresholds=None means tau=0 (standard argmax).
     """
     n_classes = probs.shape[1]
     labels = np.asarray(labels, dtype=int)
 
-    # --- AUROC / AUPRC（基于概率排序，OvR macro）---
+    # --- AUROC / AUPRC (probability-ranking based, OvR macro) ---
     onehot = np.eye(n_classes)[labels]
     try:
         auroc = roc_auc_score(
@@ -282,7 +289,7 @@ def compute_discrimination_metrics(
     except ValueError:
         auprc = float("nan")
 
-    # --- argmax / threshold 类指标 ---
+    # --- argmax / threshold-based metrics ---
     if thresholds is None:
         preds = probs.argmax(axis=1)
     else:
@@ -307,18 +314,18 @@ def compute_discrimination_metrics(
 
 
 # =====================================================================
-# 4. Brier reliability（消融主量）
+# 4. Brier reliability (ablation primary quantity)
 # =====================================================================
 
 def calibration_reliability(probs: np.ndarray, labels: np.ndarray) -> dict:
-    """Brier reliability + ECE + SmoothECE
+    """Brier reliability + ECE + SmoothECE.
 
-    对多分类 top-label 场景：max_prob vs correct_mask 二值化
-    （与 eval_transfer.py 主终点语义一致）。
+    For the multiclass top-label setting: max_prob vs correct_mask binarized
+    (consistent with the eval_transfer.py primary endpoint semantics).
     """
     max_prob = probs.max(axis=1)
     correct = (probs.argmax(axis=1) == labels).astype(float)
-    # 正方修补(P0-3): 显式传 n_bins=N_BINS，使 Brier reliability 分箱粒度可控
+    # Explicitly pass n_bins=N_BINS so the Brier reliability bin granularity is controlled.
     b_total, rel, res, unc = brier_parts(max_prob, correct, n_bins=N_BINS)
     return {
         "brier_reliability": float(rel),
@@ -331,11 +338,11 @@ def calibration_reliability(probs: np.ndarray, labels: np.ndarray) -> dict:
 
 
 # =====================================================================
-# 5. 模型加载 + 前向推理（复用 eval_transfer 逻辑）
+# 5. Model loading + forward inference (reuses eval_transfer logic)
 # =====================================================================
 
 def _infer_arch_params(arch: str, sd: dict, args):
-    """从 state_dict 推断 d_model / n_layers（复用 eval_transfer.py 逻辑）"""
+    """Infer d_model / n_layers from the state_dict (reuses eval_transfer.py logic)."""
     if arch == "mamba":
         inferred_d_model = sd["backbone.stem.0.weight"].shape[0]
         import re
@@ -367,19 +374,19 @@ def _build(dataset: str, data_dir: str, seed: int, limit, subspace=None):
 def load_probs_for_checkpoint(
     source: str, target: str, arch: str, seed: int, args, device
 ) -> Optional[dict]:
-    """加载 checkpoint，在 source-cal 和 target-test 上前向推理
+    """Load checkpoint, run forward inference on source-cal and target-test.
 
-    返回:
+    Returns:
         {'cal_probs': (Ncal,K), 'cal_labels': (Ncal,),
          'test_probs': (Ntest,K), 'test_labels': (Ntest,),
          'num_classes': K}
-    或 None（checkpoint 不存在/加载失败）
+    or None (checkpoint missing / load failed)
     """
     ckpt_path = CKPT_ROOT / f"{source}_{target}" / arch / f"seed{seed}" / "best_model.pt"
     if not ckpt_path.exists():
         return None
 
-    # 缓存路径（避免重复前向推理）
+    # cache path (avoid repeated forward inference)
     cache_file = CACHE_DIR / f"{source}_{target}_{arch}_seed{seed}.npz"
     if args.use_cache and cache_file.exists():
         d = np.load(cache_file, allow_pickle=True)
@@ -393,12 +400,12 @@ def load_probs_for_checkpoint(
     num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
     subspace = SUBSPACE_CPSC if num_classes == 4 else None
 
-    # 加载 checkpoint
+    # load checkpoint
     ckpt = torch.load(ckpt_path, weights_only=False, map_location=device)
     sd = ckpt["model_state_dict"]
     ckpt_nc = ckpt.get("num_classes")
     if ckpt_nc is not None and ckpt_nc != num_classes:
-        warnings.warn(f"{ckpt_path}: num_classes mismatch {ckpt_nc}≠{num_classes}, skip")
+        warnings.warn(f"{ckpt_path}: num_classes mismatch {ckpt_nc} != {num_classes}, skip")
         return None
 
     d_model, n_layers = _infer_arch_params(arch, sd, args)
@@ -413,13 +420,13 @@ def load_probs_for_checkpoint(
         return None
     model.eval()
 
-    # source-cal 前向
+    # source-cal forward
     src_ds, _ = _build(source, DATA_DIRS[source], seed, args.limit, subspace=subspace)
     cal_loader = create_dataloader(src_ds["cal"], args.batch_size, shuffle=False,
                                    num_workers=args.num_workers)
     cal_eval = evaluate(model, cal_loader, device, compute_calibration=False)
 
-    # target-test 前向
+    # target-test forward
     tgt_ds, _ = _build(target, DATA_DIRS[target], seed, args.limit, subspace=subspace)
     tgt_loader = create_dataloader(tgt_ds["test"], args.batch_size, shuffle=False,
                                    num_workers=args.num_workers)
@@ -431,7 +438,7 @@ def load_probs_for_checkpoint(
         "num_classes": num_classes,
     }
 
-    # 缓存
+    # cache
     if args.use_cache:
         cache_file.parent.mkdir(parents=True, exist_ok=True)
         np.savez_compressed(
@@ -444,13 +451,13 @@ def load_probs_for_checkpoint(
 
 
 # =====================================================================
-# 6. 单实验：3 阶段消融 + 判别指标
+# 6. Single experiment: 3-stage ablation + discrimination metrics
 # =====================================================================
 
 def run_single_experiment(
     source: str, target: str, arch: str, seed: int, args
 ) -> Tuple[List[dict], List[dict]]:
-    """对单个 (source, target, arch, seed) 运行 3 阶段消融 + 判别指标
+    """Run the 3-stage ablation + discrimination metrics for one (source, target, arch, seed).
 
     Returns:
         (ablation_rows, discrimination_rows)
@@ -475,11 +482,11 @@ def run_single_experiment(
     test_s1 = apply_temperature_multiclass(test_p, ts_params)
 
     # ===== Stage 2: TS + binned temperature =====
-    # 正方修补(P0-3): 先做 TS（复用 Stage 1 的 ts_params 与 cal_s1/test_s1），
-    # 再在 TS 校准后的概率上拟合并应用 binned-T。
-    # 旧实现直接对 raw cal_p/test_p 做 binned-T（=binned only），导致
-    # Stage 2 实际是 Θ={T_1..T_5} 而非 Θ={T_global, T_1..T_5 on TS output}，
-    # 破坏了 Stage1 ⊂ Stage2 的嵌套关系，消融边际贡献不可解释。
+    # First apply TS (reuse Stage 1's ts_params and cal_s1/test_s1), then fit and apply
+    # binned-T on the TS-calibrated probabilities. The old implementation applied
+    # binned-T directly to raw cal_p/test_p (= binned only), which made Stage 2 actually
+    # Theta={T_1..T_5} instead of Theta={T_global, T_1..T_5 on TS output}, breaking the
+    # Stage1 subset Stage2 nesting so the ablation marginal contribution was not interpretable.
     binned_params = fit_binned_temperature(cal_s1, cal_y)
     cal_s2 = apply_binned_temperature(cal_s1, binned_params)
     test_s2 = apply_binned_temperature(test_s1, binned_params)
@@ -487,10 +494,10 @@ def run_single_experiment(
 
     # ===== Stage 3: TS + binned + threshold optimization =====
     tau = optimize_thresholds(cal_s2, cal_y, K)
-    # Stage3 概率=Stage2 概率（threshold 只改 argmax，不改概率）
+    # Stage3 probabilities = Stage2 probabilities (threshold only changes argmax, not probabilities)
     cal_s3, test_s3 = cal_s2, test_s2
 
-    # ===== 消融 Brier reliability（test 集）=====
+    # ===== Ablation Brier reliability (test set) =====
     for stage_name, probs in [
         ("raw", test_p),
         ("stage1_ts", test_s1),
@@ -510,9 +517,9 @@ def run_single_experiment(
         row.update(rel)
         ablation_rows.append(row)
 
-    # ===== 判别指标（60 实验全量）=====
+    # ===== Discrimination metrics (all 60 experiments) =====
     # variant: raw / ts / binned / threshold
-    # AUROC/AUPRC 基于概率；F1/PPV/NPV/MCC 基于 argmax(p-τ)
+    # AUROC/AUPRC based on probabilities; F1/PPV/NPV/MCC based on argmax(p-tau)
     for split_name, probs, labels in [
         ("cal", cal_p, cal_y),
         ("test", test_p, test_y),
@@ -520,10 +527,10 @@ def run_single_experiment(
         for variant, v_probs, v_tau in [
             ("raw", probs, None),
             ("ts", apply_temperature_multiclass(probs, ts_params), None),
-            # 正方修补(P0-3): "binned" variant 须与 Stage 2 语义一致(TS+binned)，
-            # "threshold" variant 须与 Stage 3 语义一致(TS+binned+τ)。
-            # 旧实现直接 apply_binned_temperature(probs, ...) 是 binned only，
-            # 与 ablation 表的 stage2_ts_binned 不一致。
+            # "binned" must match Stage 2 semantics (TS+binned), and "threshold" must match
+            # Stage 3 semantics (TS+binned+tau). The old implementation called
+            # apply_binned_temperature(probs, ...) directly (= binned only), inconsistent
+            # with the ablation table's stage2_ts_binned.
             ("binned",
              apply_binned_temperature(
                  apply_temperature_multiclass(probs, ts_params), binned_params),
@@ -541,8 +548,8 @@ def run_single_experiment(
             row.update(m)
             disc_rows.append(row)
 
-    # ===== 诚实校验：TS 对 AUROC 的影响 =====
-    # 二分类: 严格不变(单调变换); 多分类 OvR: 可能微变
+    # ===== Honest check: effect of TS on AUROC =====
+    # Binary: strictly invariant (monotonic transform); multiclass OvR: may change slightly
     raw_disc = compute_discrimination_metrics(test_p, test_y)
     ts_disc = compute_discrimination_metrics(test_s1, test_y)
     delta_auroc = ts_disc["auroc"] - raw_disc["auroc"]
@@ -550,17 +557,17 @@ def run_single_experiment(
 
     print(
         f"  [{source}_{target}/{arch}/s{seed}] "
-        f"T={T_global:.3f} T_binned=[{np.mean(T_binned):.3f}±{np.std(T_binned):.3f}] "
-        f"||τ||={np.linalg.norm(tau):.4f} | "
+        f"T={T_global:.3f} T_binned=[{np.mean(T_binned):.3f}+-{np.std(T_binned):.3f}] "
+        f"||tau||={np.linalg.norm(tau):.4f} | "
         f"Rel: raw={ablation_rows[0]['brier_reliability']:.4f} "
         f"s1={ablation_rows[1]['brier_reliability']:.4f} "
         f"s2={ablation_rows[2]['brier_reliability']:.4f} "
         f"s3={ablation_rows[3]['brier_reliability']:.4f} | "
         f"AUROC raw={raw_disc['auroc']:.4f} ts={ts_disc['auroc']:.4f} "
-        f"Δ={delta_auroc:+.6f} (TS对AUROC影响, 多分类应≈0)"
+        f"delta={delta_auroc:+.6f} (effect of TS on AUROC; should be ~0 for multiclass)"
     )
 
-    # 把 ΔAUROC 校验列附加到 test/ts 行（供 CSV 审查）
+    # Attach the DeltaAUROC check column to the test/ts row (for CSV inspection)
     for r in disc_rows:
         if r["split"] == "test" and r["variant"] == "ts":
             r["auroc_ts_minus_raw"] = delta_auroc
@@ -573,11 +580,11 @@ def run_single_experiment(
 
 
 # =====================================================================
-# 7. 主入口
+# 7. Entry point
 # =====================================================================
 
 def discover_checkpoints() -> List[Tuple[str, str, str, int]]:
-    """扫描 CKPT_ROOT，返回所有 (source, target, arch, seed) 组合"""
+    """Scan CKPT_ROOT, return all (source, target, arch, seed) combinations."""
     pairs = []
     for pair_dir in sorted(CKPT_ROOT.iterdir()):
         if not pair_dir.is_dir() or "_" not in pair_dir.name:
@@ -599,20 +606,20 @@ def discover_checkpoints() -> List[Tuple[str, str, str, int]]:
 
 
 def main():
-    ap = argparse.ArgumentParser(description="E2: TS消融 + 判别指标")
+    ap = argparse.ArgumentParser(description="E2: TS ablation + discrimination metrics")
     ap.add_argument("--pairs", nargs="+", default=None,
-                    help="指定 pair（如 ptbxl_chapman）；默认全部60")
+                    help="specify pair (e.g. ptbxl_chapman); default all 60")
     ap.add_argument("--archs", nargs="+", default=None,
-                    help="指定 arch；默认全部")
+                    help="specify arch; default all")
     ap.add_argument("--seeds", nargs="+", type=int, default=None,
-                    help="指定 seed；默认全部")
-    ap.add_argument("--limit", type=int, default=None, help="冒烟截断样本数")
+                    help="specify seed; default all")
+    ap.add_argument("--limit", type=int, default=None, help="smoke-test sample cap")
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--d-model", dest="d_model", type=int, default=64)
     ap.add_argument("--n-layers", dest="n_layers", type=int, default=2)
     ap.add_argument("--num-workers", type=int, default=0)
     ap.add_argument("--use-cache", action="store_true", default=True,
-                    help="缓存前向推理 probs（默认开）")
+                    help="cache forward-inference probs (default on)")
     ap.add_argument("--no-cache", dest="use_cache", action="store_false")
     ap.add_argument("--output-ablation", default=str(RESULTS_DIR / "ablation_ts_components.csv"))
     ap.add_argument("--output-discrimination", default=str(RESULTS_DIR / "discrimination_metrics_60exp.csv"))
@@ -620,7 +627,7 @@ def main():
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
 
-    # 发现 checkpoint
+    # discover checkpoints
     all_ckpts = discover_checkpoints()
     if args.pairs:
         all_ckpts = [c for c in all_ckpts if f"{c[0]}_{c[1]}" in args.pairs]
@@ -629,10 +636,10 @@ def main():
     if args.seeds:
         all_ckpts = [c for c in all_ckpts if c[3] in args.seeds]
 
-    print(f"E2 消融+判别: {len(all_ckpts)} 个 checkpoint")
-    print(f"  输出1: {args.output_ablation}")
-    print(f"  输出2: {args.output_discrimination}")
-    print(f"  缓存: {CACHE_DIR} (use_cache={args.use_cache})")
+    print(f"E2 ablation+discrimination: {len(all_ckpts)} checkpoints")
+    print(f"  output 1: {args.output_ablation}")
+    print(f"  output 2: {args.output_discrimination}")
+    print(f"  cache: {CACHE_DIR} (use_cache={args.use_cache})")
     print()
 
     all_ablation = []
@@ -643,11 +650,11 @@ def main():
         all_ablation.extend(ab_rows)
         all_discrimination.extend(disc_rows)
 
-    # ===== 输出 CSV =====
+    # ===== Output CSV =====
     df_abl = pd.DataFrame(all_ablation)
     df_disc = pd.DataFrame(all_discrimination)
 
-    # 消融表：加边际贡献列
+    # ablation table: add marginal-contribution column
     if not df_abl.empty:
         pivot_rel = df_abl.pivot_table(
             index=["source", "target", "arch", "seed"],
@@ -663,30 +670,30 @@ def main():
     df_disc.to_csv(args.output_discrimination, index=False, float_format="%.6f")
 
     print(f"\n{'='*70}")
-    print(f"消融结果: {args.output_ablation} ({len(df_abl)} rows)")
-    print(f"判别指标: {args.output_discrimination} ({len(df_disc)} rows)")
+    print(f"Ablation results: {args.output_ablation} ({len(df_abl)} rows)")
+    print(f"Discrimination metrics: {args.output_discrimination} ({len(df_disc)} rows)")
 
-    # ===== 汇总统计 =====
+    # ===== Summary statistics =====
     if not df_abl.empty:
-        print(f"\n--- 消融 Brier reliability 汇总 (test, mean±std) ---")
+        print(f"\n--- Ablation Brier reliability summary (test, mean±std) ---")
         for stage in ["raw", "stage1_ts", "stage2_ts_binned", "stage3_ts_binned_threshold"]:
             sub = df_abl[df_abl["stage"] == stage]
             if not sub.empty:
                 r = sub["brier_reliability"]
                 print(f"  {stage:30s}: {r.mean():.4f} ± {r.std():.4f}")
 
-        # 边际贡献
+        # marginal contributions
         s1 = df_abl[df_abl["stage"] == "stage1_ts"]["brier_reliability"].mean()
         s2 = df_abl[df_abl["stage"] == "stage2_ts_binned"]["brier_reliability"].mean()
         s3 = df_abl[df_abl["stage"] == "stage3_ts_binned_threshold"]["brier_reliability"].mean()
         raw = df_abl[df_abl["stage"] == "raw"]["brier_reliability"].mean()
-        print(f"\n--- 边际贡献 (reliability 降低=好) ---")
-        print(f"  Stage1 TS only:           {raw:.4f} → {s1:.4f} (Δ={s1-raw:+.4f})")
-        print(f"  Stage2 +binned T:         {s1:.4f} → {s2:.4f} (Δ={s2-s1:+.4f})")
-        print(f"  Stage3 +threshold opt:    {s2:.4f} → {s3:.4f} (Δ={s3-s2:+.4f}, ≡0 by construction: threshold只改argmax不改概率)")
+        print(f"\n--- Marginal contributions (lower reliability = better) ---")
+        print(f"  Stage1 TS only:           {raw:.4f} -> {s1:.4f} (delta={s1-raw:+.4f})")
+        print(f"  Stage2 +binned T:         {s1:.4f} -> {s2:.4f} (delta={s2-s1:+.4f})")
+        print(f"  Stage3 +threshold opt:    {s2:.4f} -> {s3:.4f} (delta={s3-s2:+.4f}, =0 by construction: threshold only changes argmax, not probabilities)")
 
     if not df_disc.empty:
-        print(f"\n--- 判别指标汇总 (test, mean) ---")
+        print(f"\n--- Discrimination metrics summary (test, mean) ---")
         test_disc = df_disc[df_disc["split"] == "test"]
         for variant in ["raw", "ts", "binned", "threshold"]:
             sub = test_disc[test_disc["variant"] == variant]
@@ -699,20 +706,21 @@ def main():
                       f"NPV={sub['npv'].mean():.4f} "
                       f"MCC={sub['mcc'].mean():.4f}")
 
-        # 诚实报告：TS 对 AUROC 的影响
+        # Honest report: effect of TS on AUROC
         ts_rows = test_disc[test_disc["variant"] == "ts"]
         if "auroc_ts_minus_raw" in ts_rows.columns:
             deltas = ts_rows["auroc_ts_minus_raw"].dropna()
             if not deltas.empty:
-                print(f"\n--- TS 对 AUROC 影响校验 (诚实报告) ---")
-                print(f"  ΔAUROC(ts−raw): mean={deltas.mean():+.6f} "
-                      f"max|Δ|={deltas.abs().max():.6f} "
-                      f"(二分类应=0, 多分类OvR可能微变)")
-                print(f"  注: TS保持argmax→F1/MCC不变; "
-                      f"AUROC基于概率排序, 多分类下TS非逐类单调→可能微变")
+                print(f"\n--- TS effect on AUROC check (honest report) ---")
+                print(f"  deltaAUROC(ts-raw): mean={deltas.mean():+.6f} "
+                      f"max|delta|={deltas.abs().max():.6f} "
+                      f"(should be 0 for binary, may shift slightly for multiclass OvR)")
+                print(f"  note: TS preserves argmax -> F1/MCC unchanged; "
+                      f"AUROC is probability-ranking based, and under multiclass TS is not "
+                      f"per-class monotonic -> may shift slightly")
 
     print(f"\n{'='*70}")
-    print("E2 完成。")
+    print("E2 complete.")
 
 
 if __name__ == "__main__":

@@ -1,21 +1,25 @@
-"""Chapman-Shaoxing (ecg-arrhythmia 1.0.0, 20265患者) 预处理 → ECGNPZDataset 格式
+"""Chapman-Shaoxing (ecg-arrhythmia 1.0.0, 20265 patients) preprocessing -> ECGNPZDataset format.
 
-输入：PhysioNet ecg-arrhythmia 1.0.0 解压目录
-      （a-large-scale-...-1.0.0/WFDBRecords/XX/XXX/JSxxxxx.hea，#Dx: SNOMED码）
-输出：与 preprocess_ptbxl.py 同构
-  - metadata_single_label.csv：id/label/npy_path/fs/original_len/patient_id
-    （Chapman每患者1条ECG，patient_id=记录号stem；无strat_fold——划分由
-    train.py的 patient_wise_split 按协议§2患者级70/10/20执行）
-  - data/*.npy：float32 (12, 5000) 500Hz×10s
-  - preprocess_summary.json：STROBE计数 + 未映射SNOMED码频次表 + 码表覆盖率
+Input: PhysioNet ecg-arrhythmia 1.0.0 unpacked directory
+       (a-large-scale-...-1.0.0/WFDBRecords/XX/XXX/JSxxxxx.hea, #Dx: SNOMED codes)
+Output: isomorphic with preprocess_ptbxl.py
+  - metadata_single_label.csv: id/label/npy_path/fs/original_len/patient_id
+    (Chapman has one ECG per patient, patient_id = record-stem; no strat_fold -- splitting is
+    done by train.py's patient_wise_split at the protocol §2 patient-level 70/10/20 ratio)
+  - data/*.npy: float32 (12, 5000) 500Hz x 10s
+  - preprocess_summary.json: STROBE counts + unmapped-SNOMED-code frequency table + code-table
+    coverage
 
-Chapman 专用码表覆写（code_overrides，不动全局 SCP_TO_SUPERCLASS）：
-  全局表为 CINC2021 定制，把 426177001(SB窦缓)/427084000(ST窦速) 归 STTC；
-  但在 Chapman 语境这两者是**正常窦性节律的速率变体**，按 ECG 五超类应归
-  NORM（窦性）。不覆写则 Chapman 91% 样本被判 STTC（严重类失衡伪影）。
-  ——跨库语义冲突，登记协议敏感性对象，覆写仅作用于 Chapman 预处理。
+Chapman-specific code-table override (code_overrides, does not touch the global
+SCP_TO_SUPERCLASS):
+  the global table is CINC2021-customized and maps 426177001 (SB bradycardia) /
+  427084000 (ST tachycardia) to STTC; but in the Chapman context these two are rate variants of
+  normal sinus rhythm and, under the ECG five-superclass scheme, should map to NORM (sinus).
+  Without the override, 91% of Chapman samples would be labeled STTC (severe class-imbalance
+  artifact). This cross-library semantic conflict is registered as a protocol sensitivity object,
+  and the override applies only to Chapman preprocessing.
 
-用法：
+Usage:
     python scripts/preprocess_chapman.py \
         --source-root ./data/downloads/ecg-arrhythmia-1.0.0/a-large-scale-...-1.0.0 \
         --output-root ./data/chapman_processed_v2
@@ -54,7 +58,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def parse_dx_line(hea_path: Path) -> list[str]:
-    """解析 .hea 中 '#Dx: code,code,...'（该数据集无空格前缀变体，两种都兼容）"""
+    """Parse '#Dx: code,code,...' from the .hea (the dataset has no space-prefixed variant;
+    both forms are accepted)."""
     for line in hea_path.read_text(encoding="utf-8", errors="ignore").splitlines():
         t = line.strip()
         if t.startswith("#Dx:") or t.startswith("# Dx:"):
@@ -80,12 +85,14 @@ def main() -> None:
         raise FileNotFoundError(f"WFDBRecords/ not found under {args.source_root}")
     data_dir = ensure_output_dirs(args.output_root, args.overwrite)
 
-    # Chapman 专用码表覆写（不动全局表，防污染PTB-XL；见模块docstring）：
-    # 窦缓/窦速在Chapman属正常窦性节律速率变体 → NORM（全局表为CINC2021归STTC）
+    # Chapman-specific code-table override (does not touch the global table, to avoid
+    # contaminating PTB-XL; see module docstring):
+    # SB/ST in Chapman are normal sinus-rhythm rate variants -> NORM (the global table maps them
+    # to STTC for CINC2021)
     chapman_overrides = {
-        "426177001": "NORM",  # SB sinus bradycardia → 窦性正常
-        "427084000": "NORM",  # ST sinus tachycardia → 窦性正常
-        "427393009": "NORM",  # SA sinus arrhythmia → 窦性正常（R12扩展，与R13 SARRH→NORM跨库对齐）
+        "426177001": "NORM",  # SB sinus bradycardia -> normal sinus
+        "427084000": "NORM",  # ST sinus tachycardia -> normal sinus
+        "427393009": "NORM",  # SA sinus arrhythmia -> normal sinus (cross-library alignment)
     }
 
     hea_paths = sorted(wfdb_root.rglob("*.hea"))
@@ -96,7 +103,7 @@ def main() -> None:
 
     rows: list[dict[str, object]] = []
     counters = {"total_headers": 0, "skipped_missing_dx": 0, "skipped_unmappable": 0,
-                "skipped_signal_error": 0, "skipped_nonfinite": 0,  # QC：污染信号不计
+                "skipped_signal_error": 0, "skipped_nonfinite": 0,  # QC: contaminated signals excluded
                 "skipped_existing": 0, "written": 0}
     unmapped_code_freq: Counter = Counter()
 
@@ -114,14 +121,15 @@ def main() -> None:
                 if str(c) not in SCP_TO_SUPERCLASS or SCP_TO_SUPERCLASS[str(c)] is None:
                     unmapped_code_freq[str(c)] += 1
             continue
-        stem = hea_path.stem  # JSxxxxx（每患者1条ECG，patient_id=记录号）
+        stem = hea_path.stem  # JSxxxxx (one ECG per patient, patient_id = record stem)
         record_id = f"chapman_{stem}"
         npy_path = data_dir / f"{record_id}.npy"
         record_path = hea_path.with_suffix("")
 
         if npy_path.exists():
-            # 可恢复重跑：npy信号与label无关，已存在则跳过信号加载/重写，
-            # 仅据当前映射重建metadata行（R12/R13语义更新后无需重写信号）。
+            # Resumable rerun: the npy signal is independent of the label, so if it already
+            # exists skip signal loading/rewriting and rebuild the metadata row from the current
+            # mapping (a label-semantics update does not require rewriting the signal).
             counters["skipped_existing"] += 1
             rows.append({
                 "id": record_id,
@@ -129,7 +137,7 @@ def main() -> None:
                 "npy_path": npy_path.name,
                 "fs": args.sampling_rate,
                 "original_len": args.signal_length,
-                "patient_id": stem,  # 字符串patient_id（patient_wise_split兼容Hashable）
+                "patient_id": stem,  # string patient_id (compatible with patient_wise_split Hashable)
             })
             continue
 
@@ -142,10 +150,11 @@ def main() -> None:
             counters["skipped_signal_error"] += 1
             continue
 
-        # QC（R16，协议§13数据完整性）：源信号含NaN/Inf（坏导联段/人工伪迹
-        # 采样）必须在此剔除——否则非有限值会静默传播进校准误差与训练/评估
-        # （ECGNPZDataset._load_signal 的 fail-fast 守卫会在运行时崩溃）。丢
-        # 0.1%污染记录是标准ECG QC（人工伪迹）；插值填充会引入系统性偏倚。
+        # QC (protocol §13 data integrity): source signals containing NaN/Inf (bad-lead segments /
+        # artifact sampling) must be dropped here -- otherwise non-finite values would silently
+        # propagate into calibration error and training/evaluation (ECGNPZDataset._load_signal's
+        # fail-fast guard would crash at runtime). Dropping ~0.1% contaminated records is standard
+        # ECG QC (artifacts); interpolation would introduce systematic bias.
         if not np.isfinite(signal).all():
             counters["skipped_nonfinite"] += 1
             continue
@@ -157,7 +166,7 @@ def main() -> None:
             "npy_path": npy_path.name,
             "fs": args.sampling_rate,
             "original_len": int(signal.shape[1]),
-            "patient_id": stem,  # 字符串patient_id（patient_wise_split兼容Hashable）
+            "patient_id": stem,  # string patient_id (compatible with patient_wise_split Hashable)
         })
         counters["written"] += 1
 
@@ -168,7 +177,8 @@ def main() -> None:
     metadata_path = args.output_root / "metadata_single_label.csv"
     metadata.to_csv(metadata_path, index=False)
 
-    # 码表覆盖率分析（对照ConditionNames_SNOMED-CT全表，用于码表扩展决策）
+    # Code-table coverage analysis (against the full ConditionNames_SNOMED-CT table, for
+    # code-table extension decisions)
     cond_csv = args.source_root / "ConditionNames_SNOMED-CT.csv"
     coverage_note = {}
     if cond_csv.exists():
@@ -193,9 +203,9 @@ def main() -> None:
         "unmapped_code_freq": dict(unmapped_code_freq.most_common()),
         "mapping_coverage": coverage_note or None,
         "mapping": "src.data.mapping.MAP_TO_5SUPERCLASS (MI>STTC>CD>HYP>NORM); "
-                   "patient_id=记录号stem（每患者1条ECG）; "
-                   f"Chapman覆写: {', '.join(f'{k}→{v}' for k, v in chapman_overrides.items())}"
-                   "（窦性家族，跨库语义冲突登记§10-T1）",
+                   "patient_id = record-stem (one ECG per patient); "
+                   f"Chapman overrides: {', '.join(f'{k}->{v}' for k, v in chapman_overrides.items())}"
+                   " (sinus-family cross-library semantic conflict, registered under protocol §10-T1)",
     }
     summary_path = args.output_root / "preprocess_summary.json"
     summary_path.write_text(json.dumps(summary, indent=2, ensure_ascii=False),
@@ -203,7 +213,7 @@ def main() -> None:
 
     print(f"Wrote {counters['written']} samples to {args.output_root}")
     print(f"Unmapped excluded: {counters['skipped_unmappable']} "
-          f"(码频: {dict(unmapped_code_freq.most_common(10))})")
+          f"(code freq: {dict(unmapped_code_freq.most_common(10))})")
     print(f"Label distribution: {summary['label_distribution']}")
     print(f"Metadata: {metadata_path}\nSummary: {summary_path}")
 

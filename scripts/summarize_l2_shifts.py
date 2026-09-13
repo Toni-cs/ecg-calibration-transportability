@@ -1,9 +1,9 @@
-"""汇总 L2 移位阶梯实验结果（6对×2seed×8档×8方法）。
+"""Summarize the L2 shift-ladder experiment results (6 pairs x 2 seeds x 8 shifts x 8 methods).
 
-输出：
-1. 跨 shift 汇总表（每对每方法 seed 均值±std）
-2. TS 稳健性验证（全档负收益计数）
-3. 退化趋势验证（降采样/导联单调性）
+Outputs:
+1. Cross-shift summary table (per-pair, per-method seed mean±std)
+2. TS robustness check (count of shifts with negative gain across all shifts)
+3. Degradation trend check (downsample/lead monotonicity)
 """
 from __future__ import annotations
 import json
@@ -35,10 +35,10 @@ def load_all():
 
 def main():
     data = load_all()
-    print(f"已加载 {len(data)} 个 run\n")
+    print(f"Loaded {len(data)} runs\n")
 
     print("=" * 120)
-    print("表1: 跨 shift raw ECE + TS ΔECE（seed 均值±std）")
+    print("Table 1: cross-shift raw ECE + TS ΔECE (seed mean±std)")
     print("=" * 120)
     header = f"{'Pair':<16}" + "".join(f"{s:>14}" for s in SHIFTS)
     print(header)
@@ -56,7 +56,7 @@ def main():
         print(row)
 
     print("\n" + "=" * 120)
-    print("表2: 各方法 ΔECE 汇总（跨6对×2seed×8档；正收益=恶化；剔除 skipped 与恒等假零）")
+    print("Table 2: per-method ΔECE summary (across 6 pairs x 2 seeds x 8 shifts; positive = worse; skipped and identity-fake-zero excluded)")
     print("=" * 120)
     header = f"{'Method':<12}{'mean':>8}{'std':>8}{'n_pos':>8}{'n_neg':>8}{'n_skip':>8}{'n_used':>8}{'pos_rate':>10}"
     print(header)
@@ -84,7 +84,7 @@ def main():
         print(f"{m:<12}{np.mean(deltas):>8.4f}{np.std(deltas):>8.4f}{n_pos:>8}{n_neg:>8}{n_skip:>8}{n:>8}{n_pos/max(n,1)*100:>9.1f}%")
 
     print("\n" + "=" * 120)
-    print("表3: TS 稳健性验证（每对 TS 负收益档数 / 总档数）")
+    print("Table 3: TS robustness check (shifts with negative TS gain / total shifts)")
     print("=" * 120)
     for pair in PAIRS:
         for seed in SEEDS:
@@ -95,11 +95,11 @@ def main():
                 if shift in data[(pair, seed)] and "ts" in data[(pair, seed)][shift]:
                     ts_deltas.append(data[(pair, seed)][shift]["ts"]["delta_ece"])
             n_neg = sum(1 for d in ts_deltas if d < -1e-6)
-            print(f"  {pair:<16} seed{seed}: TS 负收益 {n_neg}/{len(ts_deltas)} 档 "
+            print(f"  {pair:<16} seed{seed}: TS negative-gain shifts {n_neg}/{len(ts_deltas)} "
                   f"(mean={np.mean(ts_deltas):+.4f}, range=[{min(ts_deltas):+.4f}, {max(ts_deltas):+.4f}])")
 
     print("\n" + "=" * 120)
-    print("表4: 退化趋势验证（降采样 fs250<fs125, 导联 leads6<leads3<leads2<leads1）")
+    print("Table 4: degradation trend check (downsample fs250<fs125, leads leads6<leads3<leads2<leads1)")
     print("=" * 120)
     for pair in PAIRS:
         for seed in SEEDS:
@@ -120,7 +120,7 @@ def main():
                           for i in range(len(lead_vals)-1)) if all(v is not None for v in lead_vals) else None
             ds_str = "✓" if ds_ok else "✗" if ds_ok is not None else "?"
             lead_str = "✓" if lead_ok else "✗" if lead_ok is not None else "?"
-            print(f"  {pair:<16} seed{seed}: 降采样单调 {ds_str}  导联单调 {lead_str}")
+            print(f"  {pair:<16} seed{seed}: downsample monotone {ds_str}  leads monotone {lead_str}")
 
 
 if __name__ == "__main__":

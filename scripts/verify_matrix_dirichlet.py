@@ -1,4 +1,4 @@
-"""验证 matrix scaling 与 Dirichlet 是否数学等价（同函数族两种参数化）。"""
+"""Verify whether matrix scaling and Dirichlet are mathematically equivalent (two parameterizations of the same function family)."""
 import sys
 from pathlib import Path
 import numpy as np
@@ -21,7 +21,7 @@ model = ECGClassifier(in_channels=12, d_model=D_MODEL, n_layers=N_LAYERS,
 _ckpt = torch.load(CKPT, weights_only=False, map_location=device)
 _ckpt_nc = _ckpt.get("num_classes")
 if _ckpt_nc is not None and _ckpt_nc != 5:
-    raise RuntimeError(f"Checkpoint num_classes={_ckpt_nc} ≠ 5")
+    raise RuntimeError(f"Checkpoint num_classes={_ckpt_nc} not 5")
 model.load_state_dict(_ckpt["model_state_dict"])
 
 src_ds, _ = build_ptbxl_datasets(str(ROOT / "data/ptbxl_processed"), SEED, limit=None)
@@ -41,6 +41,6 @@ diff = np.abs(out_m - out_d)
 print(f"n_params matrix={pm['n_params']} dirichlet={pd['n_params']}")
 print(f"max|p_mat - p_dir| = {diff.max():.2e}")
 print(f"mean|p_mat - p_dir| = {diff.mean():.2e}")
-print(f"\nmatrix M (近似恒等?):")
+print(f"\nmatrix M (approximately identity?):")
 print(np.round(pm['M'], 4))
 print(f"matrix b: {np.round(pm['b'], 4)}")

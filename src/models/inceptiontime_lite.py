@@ -1,40 +1,40 @@
-"""InceptionTime-Lite 主干：3 blocks 轻量 InceptionTime（E5 实验，协议§4 第3架构家族）
+"""InceptionTime-Lite backbone: 3-block lightweight InceptionTime (E5 experiment, Section 4 architecture family 3).
 
-设计目标（E5 预注册）：
-- 参数量 ~200K-500K（与 ResNet1D ~200K、BiMamba ~400K 同量级，公平对比）
-- 3 个 Inception module（原始 InceptionTime 6 个，简化为 3 个）
-- 保留 InceptionTime 三个关键归纳偏置：
-  (a) 多尺度并行卷积（kernel 5/11/23 同时捕获短/中/长时程特征）
-  (b) bottleneck 1x1 降维（降低卷积成本，Inception 系列标志）
-  (c) maxpool 旁路（保留高频信息，与卷积分支互补）
-- 时间维不降采样（seq_out == seq_len），与 BiMamba 全分辨率特性对齐
+Design goals (E5 preregistration):
+- Parameter count ~200K-500K (comparable to ResNet1D ~200K, BiMamba ~400K, for fair comparison).
+- 3 Inception modules (original InceptionTime uses 6, simplified to 3).
+- Preserve the three key inductive biases of InceptionTime:
+  (a) Multi-scale parallel convolutions (kernels 5/11/23 capture short/medium/long-range features).
+  (b) 1x1 bottleneck for dimensionality reduction (lowers convolution cost, signature of the Inception family).
+  (c) maxpool branch (retains high-frequency information, complementary to the conv branches).
+- No temporal downsampling (seq_out == seq_len), aligning with BiMamba's full-resolution property.
 
-架构家族独立性论证（正方立场）：
-  架构家族的区分在于归纳偏置，而非深度：
-  - ResNet1D：串行残差 + 逐级降采样（VGG/ResNet 范式）
-  - BiMamba：选择性状态空间 + 双向扫描（SSM 范式）
-  - InceptionTime-Lite：多尺度并行卷积 + bottleneck + maxpool 旁路（Inception 范式）
-  三者在特征提取机制上正交，3 blocks vs 6 blocks 是深度选择，不改变家族归属。
+Argument for architectural-family independence (proponent position):
+  Architectural families differ by inductive bias, not depth:
+  - ResNet1D: serial residuals + staged downsampling (VGG/ResNet paradigm).
+  - BiMamba: selective state space + bidirectional scan (SSM paradigm).
+  - InceptionTime-Lite: multi-scale parallel conv + bottleneck + maxpool branch (Inception paradigm).
+  The three are orthogonal in feature-extraction mechanism; 3 vs 6 blocks is a depth choice, not a family change.
 
-参数量推导（n_filters=48, bottleneck=48, 3 blocks, d_model=64, in_ch=12）：
-  Block 1: bottleneck(12*48=576) + 3 convs(48*48*(5+11+23)=89856) + pool(48*48=2304) + BN(384) ≈ 93K
-  Block 2: bottleneck(192*48=9216) + 3 convs(89856) + pool(2304) + BN(384) ≈ 102K
-  Block 3: 同 Block 2 ≈ 102K
-  proj(192*64=12288) + LayerNorm(128) ≈ 12K
-  Backbone 总计 ≈ 310K（在 200K-500K 目标内）
-  加 ECGClassifier head（AttentionPooling + MLP）≈ 10K → 全模型 ~320K
+Parameter derivation (n_filters=48, bottleneck=48, 3 blocks, d_model=64, in_ch=12):
+  Block 1: bottleneck(12*48=576) + 3 convs(48*48*(5+11+23)=89856) + pool(48*48=2304) + BN(384) ~ 93K
+  Block 2: bottleneck(192*48=9216) + 3 convs(89856) + pool(2304) + BN(384) ~ 102K
+  Block 3: same as Block 2 ~ 102K
+  proj(192*64=12288) + LayerNorm(128) ~ 12K
+  Backbone total ~ 310K (within the 200K-500K target)
+  Adding the ECGClassifier head (AttentionPooling + MLP) ~ 10K -> full model ~ 320K
 
-OOM 备选（RTX 5060 8GB 约束，4 级降级链）：
-  Level 1: n_filters 64→48→32（本文件默认 48；若 OOM 改 32，参数量降至 ~136K）
-  Level 2: gradient_checkpointing（包装 forward，用时间换显存）
-  Level 3: ResNet1D 不同超参变体（depth 3/5/7, width 32/64/128）——退化为 ResNet1D 子家族
-  Level 4: 诚实报告"2 架构家族 + BiMamba toy"（最坏情况，论文降级声明）
+OOM fallback (RTX 5060 8GB constraint, 4-level degradation chain):
+  Level 1: n_filters 64->48->32 (this file defaults to 48; if OOM, use 32, params drop to ~136K).
+  Level 2: gradient_checkpointing (wrap forward, trade time for memory).
+  Level 3: ResNet1D with different hyperparameter variants (depth 3/5/7, width 32/64/128) -- degrades to a ResNet1D subfamily.
+  Level 4: honestly report "2 architecture families + BiMamba toy" (worst case, paper downgrade statement).
 
-参考文献：
+References:
 - Ismail Fawaz et al., "InceptionTime: Finding AlexNet for Time Series Classification",
   Data Mining and Knowledge Discovery, 2020.
 - Wang et al., "Time Series Classification from Scratch with Deep Neural Networks",
-  arXiv:1903.05994, 2019（InceptionTime 前身 Inception 块设计）。
+  arXiv:1903.05994, 2019 (predecessor Inception block design behind InceptionTime).
 """
 
 from __future__ import annotations
@@ -46,15 +46,15 @@ from torch.utils.checkpoint import checkpoint
 
 
 # ===========================================================================
-# InceptionTime-Lite 块（多尺度并行卷积 + bottleneck + maxpool 旁路）
+# InceptionTime-Lite block (multi-scale parallel conv + bottleneck + maxpool branch)
 # ===========================================================================
 class InceptionBlockLite(nn.Module):
-    """InceptionTime-Lite 的 inception 模块（3 分支 + pool 旁路，轻量版）
+    """InceptionTime-Lite inception module (3 branches + pool branch, lightweight).
 
-    与 baselines._InceptionBlock1D 的区别：
-    - 显式支持 gradient checkpointing（OOM 备选 Level 2）
-    - 默认 kernel_sizes=(5, 11, 23)（与原始 InceptionTime 一致）
-    - 文档明确标注参数量贡献，便于 E5 参数量审计
+    Differences from baselines._InceptionBlock1D:
+    - Explicit gradient checkpointing support (OOM fallback Level 2).
+    - Default kernel_sizes=(5, 11, 23) (consistent with original InceptionTime).
+    - Docs annotate per-module parameter contributions for E5 parameter auditing.
     """
 
     def __init__(
@@ -100,24 +100,24 @@ class InceptionBlockLite(nn.Module):
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         if self.use_checkpoint and self.training:
-            # gradient checkpointing：前向不存激活，反向重算（省显存换时间）
+            # gradient checkpointing: do not store activations in forward, recompute in backward (trade time for memory)
             return checkpoint(self._forward_impl, x, use_reentrant=False)
         return self._forward_impl(x)
 
 
 # ===========================================================================
-# InceptionTime-Lite 主干
+# InceptionTime-Lite backbone
 # ===========================================================================
 class ECGInceptionTimeLite(nn.Module):
-    """InceptionTime-Lite 主干（12 导联 ECG → 时序特征 (batch, seq_len, d_model)）
+    """InceptionTime-Lite backbone (12-lead ECG -> temporal features (batch, seq_len, d_model)).
 
-    E5 实验专用：3 blocks 轻量 InceptionTime，参数量目标 ~200K-500K。
+    E5 experiment only: 3-block lightweight InceptionTime, target params ~200K-500K.
 
-    与 baselines.ECGInceptionTime 的区别：
-    - 默认 n_blocks=3（vs 原始 4，vs InceptionTime 原文 6）
-    - 默认 n_filters=48, bottleneck=48（参数量 ~310K，在目标区间）
-    - 显式 use_checkpoint 支持 OOM 备选 Level 2
-    - 提供 count_parameters() 便于 E5 参数量审计
+    Differences from baselines.ECGInceptionTime:
+    - Default n_blocks=3 (vs original 4, vs InceptionTime paper 6).
+    - Default n_filters=48, bottleneck=48 (~310K params, within target range).
+    - Explicit use_checkpoint for OOM fallback Level 2.
+    - Provides count_parameters() for E5 parameter auditing.
     """
 
     def __init__(
@@ -133,8 +133,8 @@ class ECGInceptionTimeLite(nn.Module):
     ):
         super().__init__()
         assert n_blocks == 3, (
-            f"InceptionTime-Lite 固定 n_blocks=3（E5 预注册）；got {n_blocks}. "
-            "若需其他深度请用 baselines.ECGInceptionTime。"
+            f"InceptionTime-Lite fixes n_blocks=3 (E5 preregistration); got {n_blocks}. "
+            "Use baselines.ECGInceptionTime for other depths."
         )
         self.in_channels = in_channels
         self.d_model = d_model
@@ -166,7 +166,7 @@ class ECGInceptionTimeLite(nn.Module):
         return self.dropout(self.norm(x))
 
     def count_parameters(self) -> dict:
-        """参数量审计（E5 预注册要求：报告 backbone 各 block 参数量）"""
+        """Parameter audit (E5 preregistration requires per-block backbone parameter reporting)."""
         audit = {"total": 0, "blocks": []}
         for i, block in enumerate(self.blocks):
             n = sum(p.numel() for p in block.parameters())
@@ -181,7 +181,7 @@ class ECGInceptionTimeLite(nn.Module):
 
 
 # ===========================================================================
-# 构建函数（供 E5 脚本按名取用，与 baselines.build_backbone 接口一致）
+# Build function (used by E5 scripts by name, same interface as baselines.build_backbone)
 # ===========================================================================
 def build_inceptiontime_lite(
     in_channels: int = 12,
@@ -191,10 +191,10 @@ def build_inceptiontime_lite(
     dropout: float = 0.0,
     use_checkpoint: bool = False,
 ) -> ECGInceptionTimeLite:
-    """构建 InceptionTime-Lite 主干（E5 专用）
+    """Build the InceptionTime-Lite backbone (E5 only).
 
-    默认参数量 ~310K（n_filters=48, bottleneck=48, 3 blocks, d_model=64）。
-    OOM 备选：n_filters=32, bottleneck=32 → ~136K（Level 1 降级）。
+    Default params ~310K (n_filters=48, bottleneck=48, 3 blocks, d_model=64).
+    OOM fallback: n_filters=32, bottleneck=32 -> ~136K (Level 1 degradation).
     """
     return ECGInceptionTimeLite(
         in_channels=in_channels,

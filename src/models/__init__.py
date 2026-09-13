@@ -1,7 +1,7 @@
-"""ECG校准修复研究 - 模型模块"""
+"""ECG calibration study - models subpackage."""
 
 from .s4_backbone import ECGMambaBackbone, BiMambaBlock
 from .ecg_classifier import ECGClassifier, AttentionPooling
 
-# 兼容旧导入
+# legacy import alias
 S4Backbone = ECGMambaBackbone

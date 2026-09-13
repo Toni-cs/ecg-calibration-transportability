@@ -1,20 +1,20 @@
-"""CPSC2018+2019 → ECGNPZDataset 格式预处理。
+"""Preprocess CPSC2018+2019 into the ECGNPZDataset format.
 
-输入：
-  --cpsc2018-root  含 Training_WFDB/ 的目录（A0001.hea 等）
-  --cpsc2019-root  含 Training_2/ 的目录（Q0001.hea 等）
-  --output-root    输出目录
+Inputs:
+  --cpsc2018-root  directory containing Training_WFDB/ (A0001.hea, etc.)
+  --cpsc2019-root  directory containing Training_2/ (Q0001.hea, etc.)
+  --output-root     output directory
 
-输出（与 preprocess_chapman.py 同构）：
+Outputs (same structure as preprocess_chapman.py):
   - metadata_single_label.csv: id/label/npy_path/fs/original_len/patient_id
-    CPSC 每条记录 = 1 患者；patient_id = 记录名；无 strat_fold（由 train.py
-    的 patient_wise_split 按 70/10/20 执行）
-  - data/*.npy: float32 (12, 5000) 500Hz×10s
-  - preprocess_summary.json: STROBE 计数 + SNOMED 码频次表 + 映射覆盖率
+    Each CPSC record = 1 patient; patient_id = record name; no strat_fold
+    (patient_wise_split in train.py applies the 70/10/20 split)
+  - data/*.npy: float32 (12, 5000) 500Hz x 10s
+  - preprocess_summary.json: STROBE counts + SNOMED code frequency table + mapping coverage
 
-CPSC2018: 6844 条，12 导联 500Hz 7500采样(15s) → 截断到 5000(10s)
-CPSC2019: 3453 条，12 导联 500Hz 5000采样(10s)
-合计约 10297 条（去重后；CPSC2018 与 2019 无重叠）
+CPSC2018: 6844 records, 12 leads, 500Hz, 7500 samples (15s) -> truncated to 5000 (10s)
+CPSC2019: 3453 records, 12 leads, 500Hz, 5000 samples (10s)
+Total ~10297 records (after dedup; CPSC2018 and 2019 do not overlap)
 """
 from __future__ import annotations
 

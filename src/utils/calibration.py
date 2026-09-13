@@ -1,11 +1,11 @@
-"""校准原语库 v2: 温度缩放 / Platt scaling / ECE / Brier Score
+"""Calibration primitives: temperature scaling / Platt scaling / ECE / Brier Score
 
-关键修复（基于对抗性审查）：
-1. Nelder-Mead → L-BFGS-B（梯度方法更高效）
-2. 添加多分类校准支持
-3. 添加Bootstrap置信区间
-4. 修复ECE分箱策略
-5. 添加校准曲线可视化
+
+1. Temperature fitting uses L-BFGS-B (gradient method) instead of Nelder-Mead.
+2. Multiclass calibration support (single global temperature).
+3. Bootstrap confidence intervals.
+4. ECE binning strategy.
+5. Reliability-diagram visualization.
 """
 
 import warnings
@@ -14,32 +14,32 @@ from scipy.optimize import minimize, minimize_scalar
 from typing import Tuple, List, Optional
 
 EPS = 1e-7
-T_MIN = 0.01  # 温度下界（更宽松的范围）
-T_MAX = 100.0  # 温度上界
+T_MIN = 0.01  # Lower temperature bound (wider range)
+T_MAX = 100.0  # Upper temperature bound
 
 
 def _validate_n_bins(n_bins, upper_bound=10**4):
-    """验证 n_bins 参数合法性（公共守卫）。
+    """Validate the n_bins argument (shared guard).
 
-    供 calibration.py 内 6 处守卫与 scripts/ 中 4 个 n_bins 函数统一调用，
-    避免守卫模式重复散布。R7 修复：上界由 10**6 降至 10**4，
-    与 O(n_bins) Python 循环实现匹配（单次 ece <50ms）。
-    R8-4 修复：calibration.py 内 ece/bootstrap_ece/brier_parts/mce/
-    plot_reliability_diagram/compute_all_metrics 6 处守卫已全部改为调用
-    _validate_n_bins（此前为内联重复守卫，与本 docstring "统一调用" 声称不符）。
-    R8-4 修复：calibration.py 内 ece/bootstrap_ece/brier_parts/mce/
-    plot_reliability_diagram/compute_all_metrics 6 处守卫已全部改为调用
-    _validate_n_bins（此前为内联重复守卫，与本 docstring "统一调用" 声称不符）。
+    Called by 6 guards inside calibration.py and 4 n_bins functions in scripts/ so
+    the guard logic is not duplicated. The upper bound is 10**4 (down from 10**6) to
+    match the O(n_bins) Python-loop implementation (a single ece call stays under ~50ms).
+    
+    
+    
+    
+    
+    
 
     Args:
-        n_bins: 待验证的分箱数量
-        upper_bound: 上界（默认 10000）
+        n_bins: number of bins to validate
+        upper_bound: upper bound (default 10000)
 
     Returns:
         int(n_bins)
 
     Raises:
-        ValueError: n_bins 非 int/np.integer、为 bool、<1 或 > upper_bound
+        ValueError: if n_bins is not a positive int/np.integer, is a bool, <1, or > upper_bound
     """
     if isinstance(n_bins, bool) or not isinstance(n_bins, (int, np.integer)) or n_bins < 1 or n_bins > upper_bound:
         raise ValueError(f"n_bins must be a positive integer in [1, {upper_bound}], got {n_bins!r}")
@@ -47,56 +47,56 @@ def _validate_n_bins(n_bins, upper_bound=10**4):
 
 
 def to_logit(p: np.ndarray) -> np.ndarray:
-    """概率转logit，带数值保护"""
+    """Probability to logit, with numerical protection."""
     p = np.clip(p, EPS, 1 - EPS)
     return np.log(p / (1 - p))
 
 
 def sigmoid(x: np.ndarray) -> np.ndarray:
-    """logit转概率，带数值保护"""
+    """Logit to probability, with numerical protection."""
     x = np.clip(x, -30, 30)
     return 1.0 / (1.0 + np.exp(-x))
 
 
 def nll(a: float, b: float, lg: np.ndarray, y: np.ndarray) -> float:
-    """负对数似然: Platt scaling的目标函数"""
+    """Negative log-likelihood: objective for Platt scaling."""
     z = a * lg + b
     z = np.clip(z, -30, 30)
     return float(-np.mean(y * z - np.log1p(np.exp(z))))
 
 
 def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
-    """在验证集上拟合温度缩放参数T
+    """Fit temperature-scaling parameter T on a validation set.
     
-    修复：
-    1. 默认使用L-BFGS-B（梯度方法），而非Nelder-Mead
-    2. 合理的温度范围[0.01, 100.0]
-    3. 多分类使用单一全局温度（标准做法）
+    
+    1. Uses L-BFGS-B (gradient method) by default, not Nelder-Mead.
+    2. Temperature range [0.01, 100.0].
+    3. Single global temperature for multiclass (standard practice; Guo et al., 2017).
     
     Args:
-        val_p: 验证集预测概率 (n_samples,) 或 (n_samples, n_classes)
-        val_y: 验证集真实标签 (n_samples,) 或 one-hot (n_samples, n_classes)
-        method: 优化方法 ('L-BFGS-B', 'Brent', 'Nelder-Mead')
+        val_p: validation probabilities, shape (n_samples,) or (n_samples, n_classes)
+        val_y: validation labels, shape (n_samples,) or one-hot (n_samples, n_classes)
+        method: optimizer ('L-BFGS-B', 'Brent', 'Nelder-Mead')
     
     Returns:
-        最优温度参数T
+        optimal temperature T
     """
     val_p = np.asarray(val_p)
     val_y = np.asarray(val_y)
     
-    # 多分类：使用单一全局温度（标准做法）
-    # 参考：Guo et al., 2017 "On Calibration of Modern Neural Networks"
+    # Multiclass: single global temperature (standard practice).
+    # Reference: Guo et al., 2017 "On Calibration of Modern Neural Networks"
     if val_p.ndim == 2:
-        # 计算logits（从概率反推）
-        # 使用log-sum-exp技巧数值稳定
+        # Compute logits from probabilities.
+        # log-sum-exp trick for numerical stability
         logits = np.log(np.clip(val_p, EPS, 1 - EPS))
         
-        # 单一温度优化（全局NLL）
+        # Optimize a single temperature (global NLL).
         def objective(T_arr):
             T = T_arr[0]
             if T < T_MIN or T > T_MAX:
                 return 1e10
-            # 多分类NLL
+            # Multiclass NLL
             scaled_logits = logits / T
             # log-sum-exp
             log_sum_exp = np.max(scaled_logits, axis=1, keepdims=True)
@@ -114,11 +114,11 @@ def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
         )
         return float(np.clip(res.x[0], T_MIN, T_MAX))
     
-    # 二分类
+    # Binary
     lg = to_logit(val_p)
     
     if method == "L-BFGS-B":
-        # 使用L-BFGS-B（修复：替换Nelder-Mead）
+        # L-BFGS-B (replaces Nelder-Mead)
         def objective(T_arr):
             T = T_arr[0]
             if T < T_MIN or T > T_MAX:
@@ -135,7 +135,7 @@ def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
         T = float(np.clip(res.x[0], T_MIN, T_MAX))
         
     elif method == "Brent":
-        # 使用Brent方法（专用于1D优化）
+        # Brent's method (1-D optimization).
         def objective(T):
             return nll(1.0 / T, 0.0, lg, val_y)
         
@@ -147,7 +147,7 @@ def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
         T = float(np.clip(res.x, T_MIN, T_MAX))
         
     else:
-        # Nelder-Mead（兼容旧代码）
+        # Nelder-Mead (legacy compatibility).
         def objective(T_arr):
             T = T_arr[0]
             if T < T_MIN or T > T_MAX:
@@ -169,16 +169,16 @@ def fit_temperature(val_p, val_y, method: str = "L-BFGS-B") -> float:
 
 
 def fit_platt(val_p, val_y):
-    """在验证集上拟合Platt scaling参数(a, b)
+    """Fit Platt scaling parameters (a, b) on a validation set.
     
     Platt scaling: p' = sigmoid(a * logit(p) + b)
     
     Args:
-        val_p: 验证集预测概率 (n_samples,)
-        val_y: 验证集真实标签 (n_samples,)
+        val_p: validation probabilities, shape (n_samples,)
+        val_y: validation labels, shape (n_samples,)
     
     Returns:
-        (a, b) 参数对
+        (a, b) parameter pair
     """
     val_p = np.asarray(val_p)
     val_y = np.asarray(val_y)
@@ -188,7 +188,7 @@ def fit_platt(val_p, val_y):
         a, b = ab
         if a < 0.05 or a > 20.0 or b < -10.0 or b > 10.0:
             return 1e10
-        return nll(a, b, lg, val_y)  # 移除正则化项
+        return nll(a, b, lg, val_y)  # No regularization term
     
     res = minimize(objective, x0=np.array([1.0, 0.0]), method="L-BFGS-B",
                    bounds=[(0.05, 20.0), (-10.0, 10.0)])
@@ -200,26 +200,26 @@ def fit_platt(val_p, val_y):
 
 
 def apply_cal(p, a, b) -> np.ndarray:
-    """应用Platt scaling校准"""
+    """Apply Platt scaling."""
     return sigmoid(a * to_logit(p) + b)
 
 
 def apply_temperature(p, T) -> np.ndarray:
-    """应用温度缩放校准
+    """Apply temperature scaling.
 
-    - 1-D输入（二分类概率）：sigmoid(logit(p)/T)，数学上等价于 p^(1/T) 重归一化
-    - 2-D输入（多分类概率矩阵）：softmax(log(p)/T)，即 p^(1/T) 逐行归一化
+    - 1-D input (binary probability): sigmoid(logit(p)/T), equivalent to renormalized p^(1/T).
+    - 2-D input (multiclass probability matrix): softmax(log(p)/T), i.e. p^(1/T) normalized per row.
 
-    两种情况下输出均严格归一化（和为1）。
+    In both cases the output is strictly normalized (sums to 1).
     """
     T = float(np.clip(T, T_MIN, T_MAX))
     p = np.asarray(p, dtype=float)
     if p.ndim == 1:
         return sigmoid(to_logit(p) / T)
-    # 多分类：log p / T 后重归一化（数值上等价于 p^(1/T) / sum）
+    # Multiclass: normalize log p / T (numerically p^(1/T) / sum).
     p = np.clip(p, EPS, 1.0)
     log_p = np.log(p) / T
-    log_p -= log_p.max(axis=-1, keepdims=True)  # 数值稳定
+    log_p -= log_p.max(axis=-1, keepdims=True)  # Numerically stable
     out = np.exp(log_p)
     return out / out.sum(axis=-1, keepdims=True)
 
@@ -227,29 +227,29 @@ def apply_temperature(p, T) -> np.ndarray:
 def ece(probs, labels, n_bins: int = 10, adaptive: bool = False) -> float:
     """Expected Calibration Error
     
-    修复：
-    1. 支持自适应分箱（等样本量）
-    2. 修复最后一个bin的边界问题
+    
+    1. Supports adaptive (equal-mass) binning.
+    2. Corrects the last-bin boundary.
     
     Args:
-        probs: 预测概率
-        labels: 真实标签
-        n_bins: 分箱数量
-        adaptive: 是否使用自适应分箱
+        probs: predicted probabilities
+        labels: ground-truth labels
+        n_bins: number of bins
+        adaptive: whether to use adaptive binning
     
     Returns:
-        ECE值（越小越好）
+        ECE value (lower is better)
     
     Raises:
-        ValueError: n_bins 非法时由 _validate_n_bins 抛出（N2-r2 fix: 文档化
-            ValueError 行为；调用方不应 try-except，让异常传播以暴露编程错误）
+        ValueError: raised by _validate_n_bins for invalid n_bins. Callers should let
+            it propagate rather than swallow it, to surface programming errors.
     """
     n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs, dtype=float)
     labels = np.asarray(labels, dtype=float)
 
     if adaptive:
-        # 自适应分箱（等样本量）
+        # Adaptive binning (equal mass)
         quantiles = np.linspace(0, 1, n_bins + 1)
         bin_boundaries = np.quantile(probs, quantiles)
         bin_boundaries[0] = 0.0
@@ -260,7 +260,7 @@ def ece(probs, labels, n_bins: int = 10, adaptive: bool = False) -> float:
     ece_val = 0.0
     
     for i in range(n_bins):
-        # 修复边界问题：所有bin使用左闭右开，最后一个bin包含1.0
+        # Boundary fix: all bins are left-closed/right-open; the last bin includes 1.0.
         if i == n_bins - 1:
             mask = (probs >= bin_boundaries[i]) & (probs <= bin_boundaries[i + 1])
         else:
@@ -277,47 +277,47 @@ def ece(probs, labels, n_bins: int = 10, adaptive: bool = False) -> float:
 
 
 def smooth_ece(probs, labels, bandwidth: Optional[float] = None) -> float:
-    """SmoothECE：核平滑校准误差（无分箱偏差的主估计量）
+    """SmoothECE: kernel-smoothed calibration error (binning-free primary estimator).
 
-    统计修复（对抗性审查第三轮，修正第二轮发现的实现错误）：
-    - 旧版错误：在均匀网格上平均（无样本的网格点稀释估计）+ 带宽不随n缩放
-    - 正确实现（Błasiok & Nakkiran, ICLR 2024思想）：在**每个数据点处**计算
-      核加权的准确率，与该点预测概率之差取绝对值，按数据权重平均：
+    Computation notes:
+    - Previously: averaged over a uniform grid (empty grid points diluted the estimate) and bandwidth did not scale with n.
+    - Correct implementation (Błasiok & Nakkiran, ICLR 2024): computed at every data point,
+      kernel-weighted accuracy minus the point's predicted probability, in absolute value, averaged over data weights:
 
-          smooth_ece = (1/n) * Σ_i | Σ_j w_ij·y_j / Σ_j w_ij − p_i |
+          smooth_ece = (1/n) * Σ_i | Σ_j w_ij*y_j / Σ_j w_ij − p_i |
           w_ij = exp(-0.5 ((logit(p_i) - logit(p_j))/h)²)
 
-    - logit 空间核（Błasiok & Nakkiran 思想）：避免概率空间端点饱和
-      （p→1 时 logit 分辨率远高于 p，修复对抗审查 N9 端点饱和反例）
-    - 带宽默认 h = 0.45·(n/2000)^(−0.2)（F3修复：实现与协议§11"带宽n^(−0.2)"
-    声称对齐；标定锚点 n=2000→h=0.45，与既有底噪标定一致——完美校准底噪
-    ECE值（非带宽h）：n=500→ECE≈0.028、n=2000→ECE≈0.027、n=20000→ECE≈0.019；
-    n=200 冒烟量级→ECE≈0.049 为信息极限。
-    对应带宽h值：n=500→h≈0.594、n=2000→h=0.45、n=20000→h≈0.284、n=200→h≈0.713。
-    固定带宽敏感性可显式传 bandwidth=0.45 复现旧行为）
+    - A logit-space kernel avoids endpoint saturation in probability space
+      (resolution of p is far higher near p=1).
+    - Bandwidth default h = 0.45*(n/2000)^(-0.2) (aligns with the preregistered protocol §11 "bandwidth n^(-0.2)").
+    the calibration floor for perfectly calibrated data is roughly
+    ECE ~ 0.028 at n=500, ~0.027 at n=2000, ~0.019 at n=20000,
+    ~0.049 at n=200 (information limit).
+    Corresponding bandwidths: n=500 -> h~0.594, n=2000 -> h=0.45, n=20000 -> h~0.284, n=200 -> h~0.713.
+    Pass bandwidth=0.45 to reproduce the previous fixed-bandwidth behavior.
 
     Args:
-        probs: 预测概率 (n,)
-        labels: 真实标签 (n,)
-        bandwidth: logit 空间核带宽（默认 0.45·(n/2000)^(−0.2)，F3修复见docstring）
+        probs: predicted probabilities (n,)
+        labels: ground-truth labels (n,)
+        bandwidth: logit-space kernel bandwidth (default 0.45*(n/2000)^(-0.2)).
 
     Returns:
-        SmoothECE值（完全校准的数据 → 趋近0）
+        SmoothECE value (converges to 0 for perfectly calibrated data).
     """
     probs = np.asarray(probs, dtype=float)
     labels = np.asarray(labels, dtype=float)
     n = len(probs)
     if bandwidth is None:
-        # F3修复：n^(-0.2)缩放（协议§11声称），锚点n=2000→0.45
+        # n^(-0.2) scaling (preregistered protocol §11); anchor n=2000 -> 0.45.
         bandwidth = 0.45 * (n / 2000.0) ** (-0.2)
 
-    # logit 空间高斯核
+    # logit-space Gaussian kernel
     p_clip = np.clip(probs, 1e-6, 1 - 1e-6)
     logit_p = np.log(p_clip / (1 - p_clip))
 
-    # 分块计算核加权准确率，防O(n²)内存（n=10000时全矩阵≈800MB）
+    # Block-wise kernel-weighted accuracy to avoid O(n^2) memory (n=10000 full matrix ~800MB)
     abs_err = np.empty(n)
-    chunk = max(1, int(2e7 // max(n, 1)))  # 每块约20M个float
+    chunk = max(1, int(2e7 // max(n, 1)))  # ~20M floats per block
     for s in range(0, n, chunk):
         e = min(s + chunk, n)
         z = (logit_p[s:e, None] - logit_p[None, :]) / bandwidth
@@ -330,12 +330,12 @@ def smooth_ece(probs, labels, bandwidth: Optional[float] = None) -> float:
 
 
 def smooth_ece_gpu(probs, labels, bandwidth=None, device=None):
-    """smooth_ece 的 PyTorch GPU 实现（float64，与 CPU 版数值一致）
+    """PyTorch GPU implementation of smooth_ece (float64, numerically consistent with the CPU version).
 
-    用于 bootstrap/jackknife 大量重复调用的加速：n=4050 时 CPU 单次 ~0.59s，
-    GPU 单次 ~10ms（RTX 5060 实测）。无 CUDA 时自动回退 CPU 版。
+    Accelerates many repeated bootstrap/jackknife calls: at n=4050, one CPU call ~0.59s,
+    one GPU call ~10ms (measured on RTX 5060). Falls back to CPU automatically when CUDA is unavailable.
 
-    Args/Returns: 与 smooth_ece 完全相同（bandwidth 逻辑一致）
+    Args/Returns: identical to smooth_ece (same bandwidth logic).
     """
     import torch
     probs = np.asarray(probs, dtype=np.float64)
@@ -355,7 +355,7 @@ def smooth_ece_gpu(probs, labels, bandwidth=None, device=None):
     logit_p = torch.log(p_clip / (1 - p_clip))
 
     abs_err = torch.empty(n, dtype=torch.float64, device=device)
-    chunk = max(1, int(2e7 // max(n, 1)))  # 与CPU版同块策略
+    chunk = max(1, int(2e7 // max(n, 1)))  # Same blocking strategy as the CPU version
     for s in range(0, n, chunk):
         e = min(s + chunk, n)
         z = (logit_p[s:e, None] - logit_p[None, :]) / bandwidth
@@ -369,18 +369,18 @@ def smooth_ece_gpu(probs, labels, bandwidth=None, device=None):
 
 def _bca_interval(theta_hat: float, boot_stats: np.ndarray,
                   jackknife_stats: np.ndarray, confidence: float) -> Tuple[float, float]:
-    """BCa区间（bias-correction + acceleration）
+    """BCa interval (bias-correction + acceleration).
 
-    F2修复：此前的"CI"实为percentile；预注册§7:116要求BCa。
-    - bias-correction z0：bootstrap分布相对点估计的中位偏移
-    - acceleration a：delete-group/delete-cluster jackknife（Efron 1987标准公式）
-    返回percentile截断点（百分比）。
+    The preregistered protocol §7:116 requires BCa (previously the "CI" was only percentile).
+    - bias-correction z0: median shift of the bootstrap distribution relative to the point estimate.
+    - acceleration a: delete-group/delete-cluster jackknife (Efron 1987 standard formula).
+    Returns percentile cut points.
 
-    已知近似（R4轮对抗审查登记，P2级）：
-    - delete-group jackknife（G组剔除）相对delete-1 jackknife的加速度项被组均值
-      稀释约√m倍（m=组均样本数），a系统性低估→CI偏窄；cluster场景用
-      leave-one-cluster-out（每患者一簇）近似delete-1，偏差更小
-    - θ̂位于bootstrap分布同侧极端时z0饱和→截断点相等→零宽CI（触发时警告）
+    Known approximation (registered caveat):
+    - delete-group jackknife (G groups removed) underestimates the acceleration term by ~sqrt(m)
+      relative to delete-1 jackknife (m = mean group size), biasing the CI narrow; cluster
+      scenarios use leave-one-cluster-out (one cluster per patient) to approximate delete-1.
+    - When theta_hat lies at an extreme of the bootstrap distribution, z0 saturates -> equal cut points -> zero-width CI (warns when triggered).
     """
     from scipy.stats import norm
     boot_stats = np.asarray(boot_stats, dtype=float)
@@ -412,18 +412,18 @@ def _bca_interval(theta_hat: float, boot_stats: np.ndarray,
     a2 = np.clip(_adj(z_1alpha), 1e-6, 1 - 1e-6)
     lo, hi = np.percentile(boot_stats, [a1 * 100, a2 * 100])
     if lo == hi:
-        warnings.warn("BCa区间退化为零宽（z0饱和：点估计位于bootstrap分布同侧极端），"
-                      "CI不可用——建议检查效应量或改用percentile敏感性")
+        warnings.warn("BCa interval degenerated to zero width (z0 saturated: point estimate lies at an extreme of the bootstrap distribution),"
+                      " CI unavailable -- consider checking the effect size or using a percentile sensitivity check")
     return float(lo), float(hi)
 
 
 def _group_jackknife_benefit(probs_raw, probs_cal, labels, metric, clusters,
                              n_groups=100):
-    """ΔECE的jackknife影响值（BCa加速度项）
+    """Jackknife influence values of ΔECE (for the BCa acceleration term).
 
-    F2修复：cluster提供时=leave-one-cluster-out（患者级，协议语义）；
-    否则=delete-group jackknife（G=min(100,n)组剔除，delete-m近似，
-    O(n²)metric下控制成本）。返回每次剔除后的ΔECE。
+    When clusters are provided, uses leave-one-cluster-out (patient-level, per protocol);
+    otherwise delete-group jackknife (G=min(100,n) groups removed, approximating delete-m,
+    to control cost under O(n^2) metrics). Returns ΔECE after each removal.
     """
     n = len(labels)
     if clusters is not None:
@@ -458,28 +458,28 @@ def benefit_inference(
     rng: Optional[np.random.Generator] = None,
     bci_method: str = "bca",
 ) -> dict:
-    """校准修复收益的配对bootstrap推断（论文主终点）
+    """Paired bootstrap inference of calibration benefit (paper primary endpoint).
 
-    统计修复（对抗性审查FATAL-1/FATAL-3 + R轮F2）：
-    - 主终点 = 绝对收益 ΔECE = metric(probs_raw) - metric(probs_cal)，带配对CI
-      （比值ECE_raw/ECE_cal有floor effect与估计器偏差伪影，降级为次要描述量）
-    - before/after在同一批样本上强正相关 → 必须同一重采样索引上配对计算
-    - 支持患者级cluster重采样（clusters=患者ID）
-    - bci_method='bca'（默认，F2修复：预注册§7:116要求BCa，含bias-correction与
-      delete-group/leave-one-cluster-out jackknife加速度）；'percentile'仅作敏感性
-    - n_bootstrap默认10000（F2修复：此前train.py传2000≠预注册B=10,000）
-    - 同时返回比值R（次要）与比值CI（percentile——比值含inf/nan，BCa不稳）
+    Statistical notes:
+    - Primary endpoint = absolute benefit ΔECE = metric(probs_raw) - metric(probs_cal), with paired CI.
+      (the ratio ECE_raw/ECE_cal has floor-effect and estimator-bias artifacts, demoted to a secondary descriptive quantity).
+    - before/after are strongly correlated on the same samples -> must be computed on the same resampling indices (paired).
+    - Supports patient-level cluster resampling (clusters=patient id).
+    - bci_method='bca' (default; preregistered protocol §7:116 requires BCa, with bias-correction and
+      delete-group/leave-one-cluster-out jackknife acceleration); 'percentile' is a sensitivity check only.
+    - n_bootstrap defaults to 10000 (preregistered B=10,000; previously train.py passed 2000).
+    - Also returns ratio R (secondary) and its percentile CI (ratio may contain inf/nan, so BCa is unstable).
 
     Args:
-        probs_raw: 未校准概率
-        probs_cal: 校准后概率（须与probs_raw同序）
-        labels: 真实标签
-        metric: 校准误差函数（默认ece；可传smooth_ece）
-        n_bootstrap: 重采样次数
-        confidence: 置信水平
-        clusters: 患者ID（可选）
+        probs_raw: uncalibrated probabilities
+        probs_cal: calibrated probabilities (same order as probs_raw)
+        labels: ground-truth labels
+        metric: calibration-error function (default ece; smooth_ece allowed)
+        n_bootstrap: number of resamples
+        confidence: confidence level
+        clusters: patient id (optional)
         rng: Generator
-        bci_method: 'bca'（默认）| 'percentile'
+        bci_method: 'bca' (default) | 'percentile'
 
     Returns:
         dict(benefit=ΔECE, benefit_ci=(lo,hi), ratio=R, ratio_ci=(lo,hi),
@@ -497,7 +497,7 @@ def benefit_inference(
     benefit_point = raw_point - cal_point
     ratio_point = raw_point / cal_point if cal_point > 0 else np.inf
 
-    # n_bootstrap=0：跳过CI（快速路径）
+    # n_bootstrap=0: skip CI (fast path)
     if n_bootstrap <= 0:
         return {
             'raw': raw_point,
@@ -559,25 +559,25 @@ def bootstrap_ece(
     clusters: Optional[np.ndarray] = None,
     rng: Optional[np.random.Generator] = None,
 ) -> Tuple[float, float, float]:
-    """Bootstrap置信区间 for ECE
+    """Bootstrap confidence interval for ECE.
 
-    统计修复（对抗性审查第二轮）：
-    1. 点估计 = 全样本统计量（bootstrap均值只用于CI，不作为点估计报告）
-    2. 显式rng参数保证可复现
-    3. 支持患者级cluster重采样（cluster bootstrap，消除患者内相关性导致的CI过窄）
-    4. n_bootstrap默认提升到10000
+    Statistical notes:
+    1. Point estimate = full-sample statistic (bootstrap mean used only for CI, not reported as point estimate).
+    2. Explicit rng argument for reproducibility.
+    3. Supports patient-level cluster resampling (cluster bootstrap, removing CI under-coverage from within-patient correlation).
+    4. n_bootstrap defaults to 10000.
 
     Args:
-        probs: 预测概率
-        labels: 真实标签
-        n_bins: 分箱数量
-        n_bootstrap: Bootstrap采样次数
-        confidence: 置信水平
-        clusters: 患者ID数组（与probs等长）；提供时按簇重采样
+        probs: predicted probabilities
+        labels: ground-truth labels
+        n_bins: number of bins
+        n_bootstrap: number of bootstrap samples
+        confidence: confidence level
+        clusters: patient-id array (same length as probs); resample by cluster when provided
         rng: np.random.Generator
 
     Returns:
-        (point_estimate, ci_lower, ci_upper)  point_estimate为全样本ECE
+        (point_estimate, ci_lower, ci_upper); point_estimate is the full-sample ECE
     """
     n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs, dtype=float)
@@ -586,14 +586,14 @@ def bootstrap_ece(
     if rng is None:
         rng = np.random.default_rng(0)
 
-    # 全样本点估计
+    # Full-sample point estimate
     point = ece(probs, labels, n_bins)
 
-    # n_bootstrap=0：跳过CI（早停快速路径）
+    # n_bootstrap=0: skip CI (early-stop fast path)
     if n_bootstrap <= 0:
         return float(point), float('nan'), float('nan')
 
-    # 重采样索引（记录级或患者级cluster）
+    # Resampling indices (record-level or patient-level cluster)
     if clusters is not None:
         clusters = np.asarray(clusters)
         uniq = np.unique(clusters)
@@ -618,18 +618,18 @@ def bootstrap_ece(
 
 
 def brier_parts(probs, labels, n_bins: int = 10):
-    """Brier Score Murphy分解（精确恒等式）
+    """Brier Score Murphy decomposition (exact identity).
 
     Brier = Reliability - Resolution + Uncertainty
 
-    注意：用 raw mean((p-y)^2) 时该恒等式仅在分箱内概率恒定时精确成立；
-    此处返回的 brier_total 取 REL - RES + UNC（按构造精确成立），
-    raw Brier 由 brier_raw(probs, labels) 单独计算。
+    Note: with raw mean((p-y)^2) the identity holds exactly only when probabilities are constant within bins;
+    here brier_total = REL - RES + UNC (exact by construction),
+    while raw Brier is computed separately by brier_raw(probs, labels).
 
     Args:
-        probs: 预测概率
-        labels: 真实标签
-        n_bins: 分箱数量（默认10，与原实现保持一致）
+        probs: predicted probabilities
+        labels: ground-truth labels
+        n_bins: number of bins (default 10, matching the original implementation)
 
     Returns:
         (brier_total, reliability, resolution, uncertainty)
@@ -639,7 +639,7 @@ def brier_parts(probs, labels, n_bins: int = 10):
     labels = np.asarray(labels, dtype=float)
     n = len(probs)
 
-    # 分箱计算
+    # Binning
     bins = np.linspace(0, 1, n_bins + 1)
     reliability = 0.0
     resolution = 0.0
@@ -647,7 +647,7 @@ def brier_parts(probs, labels, n_bins: int = 10):
     uncertainty = base_rate * (1 - base_rate)
 
     for i in range(n_bins):
-        if i == n_bins - 1:  # 最后一个bin包含1.0
+        if i == n_bins - 1:  # Last bin includes 1.0
             mask = (probs >= bins[i]) & (probs <= bins[i + 1])
         else:
             mask = (probs >= bins[i]) & (probs < bins[i + 1])
@@ -667,7 +667,7 @@ def brier_parts(probs, labels, n_bins: int = 10):
 
 
 def brier_raw(probs, labels) -> float:
-    """经验Brier Score: mean((p - y)^2)"""
+    """Empirical Brier Score: mean((p - y)^2)."""
     probs = np.asarray(probs, dtype=float)
     labels = np.asarray(labels, dtype=float)
     return float(np.mean((probs - labels) ** 2))
@@ -676,19 +676,19 @@ def brier_raw(probs, labels) -> float:
 def mce(probs, labels, n_bins: int = 10) -> float:
     """Maximum Calibration Error
     
-    新增指标：最差bin的校准误差
+    Metric: calibration error of the worst bin.
     
     Args:
-        probs: 预测概率
-        labels: 真实标签
-        n_bins: 分箱数量
+        probs: predicted probabilities
+        labels: ground-truth labels
+        n_bins: number of bins
     
     Returns:
-        MCE值（越小越好）
+        MCE value (lower is better)
     
     Raises:
-        ValueError: n_bins 非法时由 _validate_n_bins 抛出（N2-r2 fix: 文档化
-            ValueError 行为；调用方不应 try-except，让异常传播以暴露编程错误）
+        ValueError: raised by _validate_n_bins for invalid n_bins. Callers should let
+            it propagate rather than swallow it, to surface programming errors.
     """
     n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs, dtype=float)
@@ -721,16 +721,16 @@ def plot_reliability_diagram(
     title: str = "Reliability Diagram",
     save_path: Optional[str] = None
 ):
-    """绘制校准曲线（可靠性图）
+    """Plot the calibration (reliability) curve.
     
-    新增功能：可视化校准效果
+    Visualizes calibration quality.
     
     Args:
-        probs: 预测概率
-        labels: 真实标签
-        n_bins: 分箱数量
-        title: 图表标题
-        save_path: 保存路径（可选）
+        probs: predicted probabilities
+        labels: ground-truth labels
+        n_bins: number of bins
+        title: plot title
+        save_path: output path (optional)
     """
     n_bins = _validate_n_bins(n_bins)
     import matplotlib.pyplot as plt
@@ -756,13 +756,13 @@ def plot_reliability_diagram(
     
     fig, ax = plt.subplots(1, 1, figsize=(6, 6))
     
-    # 完美校准线
+    # Perfect calibration line
     ax.plot([0, 1], [0, 1], 'k--', label='Perfect calibration')
     
-    # 实际校准曲线
+    # Actual calibration curve
     ax.plot(bin_centers, bin_means, 's-', label='Model', color='blue')
     
-    # 样本数量柱状图
+    # Sample-count bar chart
     ax2 = ax.twinx()
     ax2.bar(bin_centers, bin_counts, width=0.05, alpha=0.3, color='gray', label='Sample count')
     ax2.set_ylabel('Sample count')
@@ -786,18 +786,18 @@ def compute_all_metrics(
     n_bins: int = 10,
     n_bootstrap: int = 1000
 ) -> dict:
-    """计算所有校准指标
+    """Compute all calibration metrics.
     
-    新增功能：一站式评估
+    One-stop evaluation.
     
     Args:
-        probs: 预测概率
-        labels: 真实标签
-        n_bins: 分箱数量
-        n_bootstrap: Bootstrap采样次数
+        probs: predicted probabilities
+        labels: ground-truth labels
+        n_bins: number of bins
+        n_bootstrap: number of bootstrap samples
     
     Returns:
-        字典包含所有指标
+        dict containing all metrics
     """
     n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs)
@@ -837,23 +837,23 @@ def two_layer_benefit_inference(
     confidence: float = 0.95,
     rng: Optional[np.random.Generator] = None,
 ) -> dict:
-    """两层联合bootstrap（F2修复：协议§7:117"val重采样→拟合T→test重采样→指标"）
+    """Two-layer joint bootstrap (preregistered protocol §7:117: "resample val -> fit T -> resample test -> metric").
 
-    温度拟合集的不确定性传入ΔECE的CI：
-    - 第一层（b_val次）：温度拟合集有放回重采样 → fit_fn重拟合 → T分布
-    - 第二层（b_test次）：测试集有放回重采样 idx → 从T分布抽T_b → apply_fn →
-      配对ΔECE_b
-    CI = T不确定性 ⊕ 重采样不确定性的联合percentile（非嵌套实现，成本可控；
-    协议注记：嵌套B=10000×重拟合在O(n²) metric下不可行，此为诚实近似并已登记）。
+    Temperature-fit-set uncertainty is propagated into the ΔECE CI:
+    - Layer 1 (b_val times): resample the temperature-fit set with replacement -> refit via fit_fn -> T distribution.
+    - Layer 2 (b_test times): resample the test set with replacement (idx) -> draw T_b from the T distribution -> apply_fn ->
+      paired ΔECE_b.
+    CI = joint percentile of T-uncertainty + resampling-uncertainty (non-nested implementation, tractable cost;
+    protocol note: nested B=10000 x refit is infeasible under O(n^2) metrics, so this is an honest approximation and is registered).
 
     Args:
-        probs_raw_test: 测试集未校准概率（1D max-prob或2D矩阵，与fit/apply闭包一致）
-        labels_test: 测试集标签（top-label场景为correct mask，与主终点语义一致）
-        fit_probs/fit_labels: 温度拟合集概率/标签（协议：cal split）
-        fit_fn: (probs, labels) -> T 的拟合闭包
-        apply_fn: (probs, T) -> 校准后概率 的应用闭包
-        metric: 校准误差（主终点=smooth_ece，由调用方传入）
-        b_val/b_test: 两层重复数
+        probs_raw_test: uncalibrated test probabilities (1D max-prob or 2D matrix, consistent with fit/apply closures).
+        labels_test: test labels (top-label case is the correct mask, consistent with the primary endpoint).
+        fit_probs/fit_labels: temperature-fit-set probabilities/labels (protocol: cal split).
+        fit_fn: fitting closure (probs, labels) -> T.
+        apply_fn: application closure (probs, T) -> calibrated probabilities.
+        metric: calibration error (primary endpoint = smooth_ece, passed by caller).
+        b_val/b_test: repetition counts for the two layers.
         rng: Generator
 
     Returns:

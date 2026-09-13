@@ -1,27 +1,29 @@
-"""跨库校准迁移 S1 评估：源模型 → OOD 目标 的主终点测量（协议§7 + §13）
+"""Cross-library calibration transfer S1 evaluation: source model -> OOD target primary endpoint (protocol §7 + §13).
 
-用途：把论文"校准收益 ID→OOD 衰减"的主检验跑在真实跨库对上。
-场景 S1（零样本迁移，主分析）：校准方法在**源cal**上拟合 → 直接应用到
-**目标test**（无目标标签）。对比 ID 基线（源test上同法）的 ΔECE 衰减。
+Purpose: run the paper's primary test of "calibration-benefit ID->OOD decay" on real
+cross-library pairs.
+Scenario S1 (zero-shot transfer, primary analysis): the calibration method is fit on the
+source cal split and applied directly to the target test split (no target labels). Compare
+against the ID baseline (same method on source test) to obtain the ΔECE decay.
 
-流程：
-1. 在 source 上训练模型（train/val/cal/test 四分割，患者级无泄漏）
-2. 源模型对 source-test 与 target-test 各出一份 raw probs
-3. 每个校准方法在 source-cal 拟合（S1），同一参数应用到：
-     - source-test  → ΔECE_ID（ID 基线）
-     - target-test  → ΔECE_OOD（OOD，主分析对象）
-4. benefit_inference（BCa, 患者级 cluster, B=10,000）出 ΔECE 配对 CI
-5. 主检验单元 H0: ΔECE_ID − ΔECE_OOD = 0 的差值与其CI
+Pipeline:
+1. Train the source model (train/val/cal/test four-way split, patient-level leakage-free).
+2. The source model emits raw probs for source-test and target-test.
+3. Each calibration method is fit on source-cal (S1) and the same parameters are applied to
+   source-test (ΔECE_ID, the ID baseline) and target-test (ΔECE_OOD, the primary analysis).
+4. benefit_inference (BCa, patient-level cluster, B=10,000) yields the paired CI for ΔECE.
+5. Primary test: H0 that (ΔECE_ID - ΔECE_OOD) = 0, with its CI.
 
-调用：
+Invocation:
     python scripts/eval_transfer.py \
         --source ptbxl --source-dir data/ptbxl_processed \
         --target chapman --target-dir data/chapman_processed_v2 \
         --arch mamba --seeds 42 43
-    # 冒烟：加 --limit 240 --epochs 2
+    # smoke test: add --limit 240 --epochs 2
 
-依赖一致：两库同用 SUPERCLASSES=(NORM,MI,STTC,CD,HYP) 固定标签顺序，
-概率空间对齐（跨库校准迁移的前提，已由 preprocessing 保证）。
+Consistency requirement: both libraries use the fixed label order
+SUPERCLASSES = (NORM, MI, STTC, CD, HYP), so their probability spaces are aligned
+(a precondition for cross-library calibration transfer, guaranteed by preprocessing).
 """
 
 from __future__ import annotations
@@ -62,10 +64,10 @@ DATASET_NUM_CLASSES = {
 
 def _build(dataset: str, data_dir: str, seed: int, limit: int | None,
            subspace: tuple | None = None):
-    """构建四分割；返回 (datasets, clusters_test)
+    """Build the four-way split; returns (datasets, clusters_test)
 
-    subspace：若提供（如SUBSPACE_CPSC），ptbxl/chapman 按子空间过滤降级（协议§2对称重算）；
-    cpsc 始终用 SUBSPACE_CPSC（内置4类），subspace 参数忽略。
+    subspace: if provided (e.g. SUBSPACE_CPSC), ptbxl/chapman are filtered/reduced to the subspace (preregistered protocol §2 symmetric recomputation);
+    cpsc always uses SUBSPACE_CPSC (built-in 4 classes); the subspace argument is ignored.
     """
     builder = DATASET_BUILDERS[dataset]
     if dataset == "cpsc":
@@ -78,29 +80,29 @@ def _build(dataset: str, data_dir: str, seed: int, limit: int | None,
 
 
 def fit_apply_method(method_name, fit_probs, fit_labels, test_probs):
-    """在 fit 分布上拟合校准方法，应用到 test 分布 → (校准后概率, params)"""
+    """Fit the calibration method on the fit distribution and apply it to the test distribution -> (calibrated probabilities, params)"""
     if method_name == "none":
         return test_probs, {}
     fit_fn, apply_fn, _ = CALIBRATION_METHODS[method_name]
-    # fit_fn 需要 2D 全类概率 + 类标签（one-hot 或整数索引视方法）
+    # fit_fn needs 2D full-class probabilities + class labels (one-hot or integer index, method-dependent)
     params = fit_fn(fit_probs, fit_labels)
-    if params is None:  # 小样本/过参数化预注册失效 → 返回原概率（无收益）
+    if params is None:  # small-sample / over-parameterized preregistered failure -> return original probabilities (no benefit)
         return test_probs, {}
     return apply_fn(test_probs, params), params
 
 
 def run_pair(args, source_name, source_dir, target_name, target_dir,
              seed: int) -> dict:
-    """训练源模型并做 S1 跨库评估，返回该 (pair, arch, seed) 的主终点结果。"""
+    """Train the source model and run the S1 cross-library evaluation; return the primary-endpoint result for this (pair, arch, seed)."""
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(seed)
 
-    # ---------- num_classes / subspace 推断（协议§2：涉及CPSC→4类对称降级） ----------
+    # ---------- num_classes / subspace inference (preregistered protocol §2: CPSC -> 4-class symmetric reduction) ----------
     num_classes = min(DATASET_NUM_CLASSES[source_name],
                       DATASET_NUM_CLASSES[target_name])
     subspace = SUBSPACE_CPSC if num_classes == 4 else None
 
-    # ---------- 源模型训练（train/val/cal/test） ----------
+    # ---------- source model training (train/val/cal/test) ----------
     src_ds, src_clusters = _build(source_name, source_dir, seed, args.limit,
                                   subspace=subspace)
     loaders = {k: create_dataloader(src_ds[k], args.batch_size,
@@ -122,8 +124,8 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
         ckpt_nc = ckpt.get("num_classes")
         if ckpt_nc is not None and ckpt_nc != num_classes:
             raise RuntimeError(
-                f"Checkpoint num_classes={ckpt_nc} ≠ 当前 num_classes={num_classes}。"
-                f"该 checkpoint 不可复用于此 pair（标签维度不匹配）。")
+                f"Checkpoint num_classes={ckpt_nc} != current num_classes={num_classes}."
+                f"This checkpoint cannot be reused for this pair (label dimension mismatch).")
         sd = ckpt["model_state_dict"]
         if args.arch == "mamba":
             inferred_d_model = sd["backbone.stem.0.weight"].shape[0]
@@ -145,32 +147,32 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
             model.load_state_dict(sd)
         except RuntimeError as e:
             raise RuntimeError(
-                f"load_state_dict 失败（疑似 num_classes 不匹配）: {e}") from e
+                f"load_state_dict failed (likely num_classes mismatch): {e}") from e
         print(f"Loaded checkpoint {ckpt_path} (epoch {ckpt.get('epoch','?')}, "
               f"val_ece={ckpt.get('val_ece','?'):.4f}, d_model={inferred_d_model}, n_layers={inferred_n_layers})")
     else:
         model = train_model(model, loaders["train"], loaders["val"], cfg, device)
 
-    # ---------- 源ID评估：源cal拟合 → 源test应用 ----------
+    # ---------- source ID evaluation: source-cal fit -> source-test apply ----------
     cal_eval = evaluate(model, loaders["cal"], device, compute_calibration=False)
     test_eval = evaluate(model, loaders["test"], device, compute_calibration=False)
-    id_probs = test_eval["probs"]          # (N_ID, 5) 源test raw
+    id_probs = test_eval["probs"]          # (N_ID, 5) source test raw
     id_labels = test_eval["labels"]
-    cal_probs = cal_eval["probs"]          # (N_cal, 5) 源cal raw
+    cal_probs = cal_eval["probs"]          # (N_cal, 5) source cal raw
     cal_labels = cal_eval["labels"]
 
-    # ---------- OOD目标：源模型前向 target test ----------
+    # ---------- OOD target: source model forward pass on target test ----------
     tgt_ds, tgt_clusters = _build(target_name, target_dir, seed, args.limit,
                                   subspace=subspace)
     tgt_loaders = create_dataloader(tgt_ds["test"], args.batch_size,
                                     shuffle=False, num_workers=args.num_workers)
     tgt_eval = evaluate(model, tgt_loaders, device, compute_calibration=False)
-    ood_probs = tgt_eval["probs"]          # (N_OOD, 5) 目标raw
+    ood_probs = tgt_eval["probs"]          # (N_OOD, 5) target raw
     ood_labels = tgt_eval["labels"]
-    # 目标患者ID作为cluster（患者级bootstrap）
+    # target patient IDs used as clusters (patient-level bootstrap)
     ood_clusters = tgt_clusters
 
-    # ---------- 每个方法：S1拟合(源cal)→ 双域应用 ----------
+    # ---------- per-method: S1 fit (source-cal) -> apply to both domains ----------
     results = {
         "source": source_name, "target": target_name, "arch": args.arch,
         "seed": seed,
@@ -187,19 +189,19 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
     rng = np.random.default_rng(seed)
     for mname in args.methods:
         if mname in ("em_prior", "bbse_prior"):
-            # S1' 目标域无监督先验适配（Saerens 2002 / BBSE, Lipton 2018）：
-            # 用源cal(有标签) + 目标test(无标签)估计目标先验 π̂ → 概率再缩放。
-            # 注记：同一 π̂ 应用到 ID 域会刻意引入先验失配（ID 真实先验=源先验），
-            # 其 ID 退化是该方法范式的一部分——decay 对 prior 方法解读为
-            # "目标特异性收益"，论文中需显式注明（防审稿人 challenge 配对公平性）。
+            # S1 (target-domain unsupervised prior adaptation; Saerens 2002 / BBSE, Lipton 2018):
+            # estimate the target prior pi_hat from source-cal (labeled) + target-test (unlabeled) -> rescale probabilities.
+            # Note: applying the same pi_hat to the ID domain deliberately introduces a prior mismatch (ID true prior = source prior),
+            # and its ID degradation is part of the method's paradigm -- for prior methods the decay is interpreted as
+            # "target-specific benefit"; the paper must state this explicitly (to preempt reviewer challenges on pairing fairness).
             from src.utils.prior_shift import fit_em, fit_bbse
             fit_fn = fit_em if mname == "em_prior" else fit_bbse
             res = fit_fn(cal_probs, cal_labels, ood_probs)
             if res is None:
                 results["methods"][mname] = {
-                    "status": "skipped", "reason": "先验不可辨识",
+                    "status": "skipped", "reason": "prior not identifiable",
                     "id": None, "ood": None, "decay": None}
-                print(f"[{mname:9s}] SKIPPED: 先验不可辨识")
+                print(f"[{mname:9s}] SKIPPED: prior not identifiable")
                 continue
             pi_hat, pi_train = res["pi_hat"], res["pi_train"]
 
@@ -223,8 +225,8 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
                 pi_id = res_id["pi_hat"]
                 w_id = pi_id / np.maximum(pi_train, 1e-12)
                 print(f"  [{mname}] [sanity] π̂_ID={np.round(pi_id, 3)} "
-                      f"w_ID={np.round(w_id, 2)} (≈1 if no shift)")
-                # R8-H1 gate: ID sanity drift alarm (identifiability proxy)
+                      f"w_ID={np.round(w_id, 2)} (~1 if no shift)")
+                # ID sanity drift alarm (identifiability proxy)
                 max_drift = float(np.nanmax(np.abs(w_id - 1.0)))
                 cond_id = res_id.get("confusion_cond")
                 if max_drift > 10.0:
@@ -241,29 +243,29 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
                 "w_ID": w_id.tolist() if w_id is not None else None,
                 "sanity_flag": sanity_flag}
         elif mname == "saerens":
-            # saerens 需目标域无监督先验估计，与 S1 源cal拟合范式不兼容（范畴错误：
-            # saerens 的"参数"是目标先验，只能在目标域估计）。标记 skipped 而非伪造输出。
-            # S1' 场景请用 em_prior / bbse_prior（等价方法，正确范式）。
+            # saerens needs target-domain unsupervised prior estimation, incompatible with the S1 source-cal fitting paradigm (category error:
+            # saerens's "parameter" is the target prior and can only be estimated in the target domain). Mark as skipped rather than fabricating output.
+            # For the S1 scenario use em_prior / bbse_prior (equivalent methods, correct paradigm).
             results["methods"][mname] = {
                 "status": "skipped",
-                "reason": "saerens 需目标域无监督拟合，与S1源cal拟合范式不兼容；用em_prior/bbse_prior",
+                "reason": "saerens needs target-domain unsupervised fit; incompatible with the S1 source-cal fitting paradigm; use em_prior/bbse_prior",
                 "id": None, "ood": None, "decay": None,
             }
-            print(f"[{mname:9s}] SKIPPED: 需目标域无监督拟合，S1源cal范式不兼容")
+            print(f"[{mname:9s}] SKIPPED: needs target-domain unsupervised fit; incompatible with S1 source-cal fitting")
             continue
         else:
             ood_cal, fit_params = fit_apply_method(mname, cal_probs, cal_labels, ood_probs)
             id_cal, _ = fit_apply_method(mname, cal_probs, cal_labels, id_probs)
 
-        # 配对 cluster bootstrap 需 (probs_raw, probs_cal) 同序 + labels
+        # Paired cluster bootstrap needs (probs_raw, probs_cal) in the same order + labels
         metric_fn = smooth_ece_gpu if args.gpu_inference else smooth_ece
-        print(f"  [{mname}] OOD bootstrap推断中... (B={args.bootstrap}, "
+        print(f"  [{mname}] OOD bootstrap inference in progress... (B={args.bootstrap}, "
               f"method={args.bci_method}, metric={'gpu' if args.gpu_inference else 'cpu'})")
         ood_ben = benefit_inference(
             _maxprob(ood_probs), _maxprob(ood_cal), _bin(ood_cal, ood_labels),
             metric=metric_fn, n_bootstrap=args.bootstrap, rng=rng,
             clusters=ood_clusters, bci_method=args.bci_method)
-        print(f"  [{mname}] ID bootstrap推断中...")
+        print(f"  [{mname}] ID bootstrap inference in progress...")
         id_ben = benefit_inference(
             _maxprob(id_probs), _maxprob(id_cal), _bin(id_cal, id_labels),
             metric=metric_fn, n_bootstrap=args.bootstrap, rng=rng,
@@ -314,30 +316,30 @@ def main():
                     choices=["mamba", "resnet1d", "inceptiontime"])
     ap.add_argument("--methods", nargs="+",
                     default=["ts", "platt", "em_prior", "bbse_prior"],
-                    help="S1主方法子集：ts/platt/isotonic/vector/matrix/dirichlet/"
-                         "em_prior/bbse_prior（S1'目标域无监督先验适配）")
+                    help="S1 primary method subset: ts/platt/isotonic/vector/matrix/dirichlet/"
+                         "em_prior/bbse_prior (S1 target-domain unsupervised prior adaptation)")
     ap.add_argument("--seeds", nargs="+", type=int, default=[42])
     ap.add_argument("--epochs", type=int, default=50)
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--d-model", "--d_model", dest="d_model",
-                    type=int, default=64, help="Hidden dimension（--d-model/--d_model 均可）")
+                    type=int, default=64, help="Hidden dimension(--d-model/--d_model both accepted)")
     ap.add_argument("--n-layers", type=int, default=2)
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--bootstrap", type=int, default=10000,
-                    help="预注册B=10,000（默认）；冒烟可加 --bootstrap 200")
+                    help="Preregistered B=10,000 (default); use --bootstrap 200 for a smoke test")
     ap.add_argument("--n-jobs", type=int, default=1,
-                    help="leave-one-cluster-out jackknife并行worker数（默认1串行；"
-                         "正式pilot设>=8加速BCa加速度项，输出逐位一致）")
+                    help="leave-one-cluster-out jackknife parallel worker count (default 1, serial;"
+                         "formal pilot set >=8 to speed up BCa acceleration term, bit-identical output)")
     ap.add_argument("--save-dir", default="checkpoints/transfer")
-    ap.add_argument("--limit", type=int, default=None, help="冒烟截断")
+    ap.add_argument("--limit", type=int, default=None, help="smoke-test truncation")
     ap.add_argument("--num-workers", type=int, default=0,
-                    help="DataLoader多线程数据加载（0=单线程，4-8可显著加速I/O）")
+                    help="DataLoader multi-threaded data loading (0=single thread, 4-8 speeds up I/O significantly)")
     ap.add_argument("--bci-method", default="bca", choices=["bca", "percentile"],
-                    help="CI方法：bca(默认,含jackknife加速度,慢)或percentile(快,跳过jackknife)")
+                    help="CI method: bca (default, includes jackknife acceleration, slow) or percentile (fast, skips jackknife)")
     ap.add_argument("--gpu-inference", action="store_true",
-                    help="smooth_ece用GPU实现（数值与CPU一致maxdiff<1e-15，jackknife快92倍）")
+                    help="Use GPU implementation of smooth_ece (numerically identical to CPU, max diff <1e-15, jackknife 92x faster)")
     ap.add_argument("--load-model", action="store_true",
-                    help="复用已训练best_model.pt跳过重训（仅推断新方法时用）")
+                    help="Reuse a trained best_model.pt to skip retraining (use only when inferring new methods)")
     args = ap.parse_args()
 
     all_runs = []
@@ -346,13 +348,13 @@ def main():
                      args.target, args.target_dir, seed)
         all_runs.append(r)
 
-    # 汇总 decay（主检验量：OOD ΔECE − ID ΔECE）
+    # aggregate decay (primary test statistic: OOD ΔECE - ID ΔECE)
     print("\n" + "=" * 60)
-    print("S1 跨库主终点汇总 (ID→OOD ΔECE 衰减)")
+    print("S1 cross-library primary-endpoint summary (ID->OOD ΔECE decay)")
     print("=" * 60)
     for mname in args.methods:
         decays = [r["methods"][mname]["decay"] for r in all_runs]
-        print(f"  {mname:9s} decay均值={np.mean(decays):+.4f} "
+        print(f"  {mname:9s} mean decay={np.mean(decays):+.4f} "
               f"sd={np.std(decays):.4f} (n={len(decays)} seed)")
 
     agg_path = Path(args.save_dir) / f"{args.source}_{args.target}" / \

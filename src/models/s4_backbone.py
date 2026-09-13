@@ -1,14 +1,14 @@
-"""Bidirectional Mamba Backbone for ECG Signal Processing (2026 SOTA)
+"""Bidirectional Mamba Backbone for ECG Signal Processing (2026 SOTA).
 
-架构（全量重写，无遗留旧代码）：
-- mambapy Mamba 块（纯PyTorch平行扫描 Blelloch prefix-sum，O(L log L)，Windows可用）
-- 双向扫描：前向 Mamba + 翻转后向 Mamba → 融合（ECG-Mamba2 / S2M2ECG 模式）
-- 点卷积 Stem（不降采样，保留全时序分辨率）
-- 残差连接 + LayerNorm
+Architecture (full rewrite, no legacy code):
+- mambapy Mamba block (pure-PyTorch parallel scan, Blelloch prefix-sum, O(L log L), Windows-compatible).
+- Bidirectional scan: forward Mamba + flipped backward Mamba -> fusion (ECG-Mamba2 / S2M2ECG style).
+- Pointwise-conv Stem (no downsampling, preserves full temporal resolution).
+- Residual connections + LayerNorm.
 
-输出 (batch, seq_len, d_model)——不内部池化，由分类器的 AttentionPooling 负责。
+Output (batch, seq_len, d_model) -- no internal pooling; the classifier's AttentionPooling handles it.
 
-参考：
+References:
 - Mamba: Linear-Time Sequence Modeling with Selective State Spaces (Gu & Dao, 2023)
 - ECG-Mamba2: Bidirectional State Space Model (2024-2026)
 - S2M2ECG: Spatio-temporal bi-directional SSM (2025)
@@ -24,11 +24,11 @@ from mambapy.mamba import Mamba, MambaConfig
 
 
 class BiMambaBlock(nn.Module):
-    """双向Mamba块（flip-and-fuse 模式）
+    """Bidirectional Mamba block (flip-and-fuse style).
 
     forward:  mamba_f(x)
     backward: mamba_b(x.flip([1])).flip([1])
-    fusion:   concat -> Linear(2d -> d) + 残差
+    fusion:   concat -> Linear(2d -> d) + residual
     """
 
     def __init__(self, d_model: int, d_state: int = 16, d_conv: int = 4, expand: int = 2):
@@ -55,12 +55,13 @@ class BiMambaBlock(nn.Module):
 
 
 class ECGMambaBackbone(nn.Module):
-    """ECG 双向Mamba主干网络（2026 SOTA）
+    """ECG bidirectional Mamba backbone network (2026 SOTA).
 
-    流程：
-    1. Pointwise Stem: Conv1d(k=1) + BN + GELU —— 12导联 -> d_model，不降采样
-    2. n_layers 个 BiMambaBlock（双向扫描 + 残差融合）
-    3. 输出全时序特征 (batch, seq_len, d_model)，池化交给下游 AttentionPooling
+    Pipeline:
+    1. Pointwise Stem: Conv1d(k=1) + BN + GELU -- 12 leads -> d_model, no downsampling.
+    2. n_layers BiMambaBlocks (bidirectional scan + residual fusion).
+    3. Output full temporal features (batch, seq_len, d_model); pooling is delegated to
+       the downstream AttentionPooling.
     """
 
     def __init__(
@@ -94,9 +95,9 @@ class ECGMambaBackbone(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Args:
-            x: (batch, n_leads, seq_len) 12导联ECG
+            x: (batch, n_leads, seq_len) 12-lead ECG
         Returns:
-            features: (batch, seq_len, d_model) 全时序特征（未池化）
+            features: (batch, seq_len, d_model) full temporal features (unpooled)
         """
         x = self.stem(x)            # (batch, d_model, seq_len)
         x = x.transpose(1, 2)       # (batch, seq_len, d_model)
@@ -106,7 +107,7 @@ class ECGMambaBackbone(nn.Module):
         return self.dropout(x)
 
 
-# 兼容旧命名
+# legacy alias
 S4Backbone = ECGMambaBackbone
 
 
@@ -116,7 +117,7 @@ def create_ecg_mamba(
     n_layers: int = 4,
     **kwargs,
 ) -> ECGMambaBackbone:
-    """工厂函数"""
+    """Factory function."""
     return ECGMambaBackbone(
         in_channels=in_channels,
         d_model=d_model,

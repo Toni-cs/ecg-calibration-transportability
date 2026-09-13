@@ -1,13 +1,17 @@
-"""ECG 专用数据增强模块
+"""ECG-specific data augmentation module.
 
-设计原则（教学点）:
-    1. 只在训练时随机应用，验证/测试集保持原样——评估必须反映真实分布
-    2. 增强不能破坏诊断特征（这是与图像增强的本质区别）:
-       - 禁止信号翻转: 心电上下颠倒在医学上是另一种病理
-       - 禁止时间反转: QRS波群形态有方向性
-       - 所有扰动幅度保持温和
-    3. 概率触发: 每种增强独立以 p 概率触发，一条样本可能叠加多种效果
-    4. 在线增强(on-the-fly): 每个epoch同一样本呈现不同变体，等效扩充数据集
+Design principles:
+    1. Apply randomly during training only; validation/test sets stay untouched -- evaluation
+       must reflect the real distribution.
+    2. Augmentation must not destroy diagnostic features (the key difference from image
+       augmentation):
+       - No signal flipping: an upside-down ECG is a different pathology clinically.
+       - No time reversal: QRS complex morphology is directional.
+       - Keep all perturbation amplitudes mild.
+    3. Probabilistic triggers: each augmentation fires independently with probability p; a
+       single sample may accumulate several effects.
+    4. On-the-fly augmentation: the same sample shows a different variant each epoch,
+       effectively enlarging the dataset.
 """
 
 import numpy as np
@@ -16,7 +20,7 @@ from torch.utils.data import Dataset
 
 
 def random_crop_pad(x: np.ndarray, crop: int = 900) -> np.ndarray:
-    """随机截取9秒窗口再边缘补齐: 模拟记录窗口偏移，逼迫模型不依赖固定相位"""
+    """Randomly crop a 9-second window then edge-pad: simulates recording-window offset, forcing the model not to rely on a fixed phase."""
     n = x.shape[-1]
     start = np.random.randint(0, n - crop + 1)
     seg = x[..., start:start + crop]
@@ -26,18 +30,18 @@ def random_crop_pad(x: np.ndarray, crop: int = 900) -> np.ndarray:
 
 
 def amplitude_scale(x: np.ndarray, lo: float = 0.8, hi: float = 1.2) -> np.ndarray:
-    """整体幅度缩放: 模拟不同采集设备的增益差异"""
+    """Global amplitude scaling: simulates gain differences across acquisition devices."""
     return x * np.random.uniform(lo, hi)
 
 
 def gaussian_noise(x: np.ndarray, sigma_max: float = 0.05) -> np.ndarray:
-    """高斯噪声: 模拟采集电路噪声（信号已标准化为std=1，sigma<=0.05属温和）"""
+    """Gaussian noise: simulates acquisition-circuit noise (signal is standardized to std=1, so sigma<=0.05 is mild)."""
     sigma = np.random.uniform(0.01, sigma_max)
     return x + np.random.normal(0, sigma, x.shape).astype(np.float32)
 
 
 def baseline_wander(x: np.ndarray, fs: int = 100, amp: float = 0.1) -> np.ndarray:
-    """基线漂移: 叠加0.05~0.5Hz低频正弦，模拟呼吸/电极移动伪影（真实心电最常见噪声）"""
+    """Baseline wander: adds a 0.05-0.5 Hz low-frequency sine to simulate respiration/electrode-motion artifacts (the most common real ECG noise)."""
     t = np.arange(x.shape[-1]) / fs
     freq = np.random.uniform(0.05, 0.5)
     phase = np.random.uniform(0, 2 * np.pi)
@@ -62,7 +66,7 @@ def augment(x: np.ndarray) -> np.ndarray:
 
 
 class AugmentedECGDataset(Dataset):
-    """训练集包装器: 取样本时在线随机增强（只包装train，val/test禁用）"""
+    """Training-set wrapper: applies online random augmentation on fetch (wraps train only; val/test disabled)."""
 
     def __init__(self, base: Dataset, enabled: bool = True):
         self.base = base

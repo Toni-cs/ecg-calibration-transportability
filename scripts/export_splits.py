@@ -1,29 +1,31 @@
-"""导出患者级划分索引（论文 Code/Data availability 承诺交付物）
+"""Export patient-level split indices (paper Code/Data availability deliverable).
 
-用途：把 60 个种子实验实际使用的数据划分导出为 CSV，使任何人可从公开源
-数据库精确重建本研究的数据划分，无需信任"划分逻辑描述"。
+Purpose: export the data splits actually used by the 60-seed experiments to CSV, so
+anyone can exactly reconstruct this study's data splits from the public source database
+without trusting a prose description of the split logic.
 
-输出：splits/{dataset}[_sub4]_seed{S}.csv，列：
-  record_id   预处理产物记录ID（npy stem，与 metadata_single_label.csv 一致）
-  patient_id  患者ID
-  split       train / val / cal / test（数据加载器语义，见下）
-  in_train_loader  yes/no —— 该记录是否同时进入训练加载器
-【重要·PTB-XL as-used 语义】train.py 的 build_ptbxl_datasets 中，carve 出的
-val 患者记录仍保留在训练加载器（folds 1-8 全量训练，val 仅作早停监控）——
-这是 60 个实验的实际运行口径，本导出如实反映（in_train_loader=yes 标注），
-不做事后修饰。cal(fold9)/test(fold10) 与 folds1-8 患者零交集（已断言），
-主终点评估不受影响。Chapman/CPSC 的 val 患者已从训练集正确剔除
-（in_train_loader=no）。
+Output: splits/{dataset}[_sub4]_seed{S}.csv with columns:
+  record_id       preprocessed-record id (npy stem, consistent with metadata_single_label.csv)
+  patient_id      patient id
+  split           train / val / cal / test (data-loader semantics, see below)
+  in_train_loader yes/no -- whether the record also enters the training loader
+[Important: PTB-XL as-used semantics] In train.py build_ptbxl_datasets, the carved-out
+val patient records are still kept in the training loader (folds 1-8 are trained in full;
+val is only used for early-stopping monitoring) -- this is the actual run convention of
+the 60 experiments, and this export reflects it faithfully (flagged in_train_loader=yes),
+with no post-hoc cosmetic change. cal (fold9) / test (fold10) have zero patient overlap
+with folds 1-8 (asserted), so the primary-endpoint evaluation is unaffected. For
+Chapman/CPSC the val patients are correctly removed from the train set (in_train_loader=no).
 
-与 builder 的 lockstep 约定：本脚本的划分逻辑与 scripts/train.py 的
-build_ptbxl_datasets / build_chapman_datasets / build_cpsc_datasets 逐行
-镜像。若 builder 修改划分逻辑，必须同步修改本脚本并用 --validate 对真实
-builder 交叉验证（在有预处理数据的机器上运行）。
+Lockstep contract with the builder: this script's split logic mirrors, line by line,
+build_ptbxl_datasets / build_chapman_datasets / build_cpsc_datasets in scripts/train.py.
+If the builder's split logic changes, this script must be updated in sync and cross-validated
+against the real builder with --validate (run on a machine with preprocessed data).
 
-用法：
-    python scripts/export_splits.py                 # 导出 seeds 42-46 全变体
-    python scripts/export_splits.py --validate 42   # 与真实 builder 交叉验证
-    python scripts/export_splits.py --seeds 42 43   # 指定种子
+Usage:
+    python scripts/export_splits.py                 # export seeds 42-46, all variants
+    python scripts/export_splits.py --validate 42   # cross-validate against the real builder
+    python scripts/export_splits.py --seeds 42 43   # specify seeds
 """
 from __future__ import annotations
 
@@ -52,10 +54,10 @@ DATA_ROOTS = {
 
 
 def _carve_val_patients(pat_label: dict, frac: float, seed: int) -> set:
-    """与 train.py _carve_val_patients 逐行镜像（lockstep：改动须同步）
+    """Line-by-line mirror of train.py _carve_val_patients (lockstep: keep in sync)
 
-    注意：必须用 rng.permutation 洗牌后取前 n_val 个（与 builder 完全一致），
-    不能写成 rng.choice——RNG 消耗序列不同，选出的患者成员会不同。
+    Note: must use rng.permutation then take the first n_val members (identical to the builder);
+    do not use rng.choice -- the RNG consumption sequence differs and would select different patient members.
     """
     rng = np.random.default_rng(seed)
     val_patients: set = set()
@@ -68,9 +70,9 @@ def _carve_val_patients(pat_label: dict, frac: float, seed: int) -> set:
 
 
 def _split_chapman_like(meta_f: pd.DataFrame, seed: int) -> pd.DataFrame:
-    """Chapman/CPSC 型划分：patient_wise_split(0.7,0.1,0.2) + 1/7 val carve。
+    """Chapman/CPSC-style split: patient_wise_split(0.7, 0.1, 0.2) + 1/7 val carve.
 
-    与 train.py build_chapman_datasets / build_cpsc_datasets 的划分段逐行镜像。
+    Line-by-line mirror of the split section in train.py build_chapman_datasets / build_cpsc_datasets.
     """
     patients = meta_f["patient_id"].unique().tolist()
     pat_label = meta_f.groupby("patient_id")["label"].agg(
@@ -98,18 +100,18 @@ def _split_chapman_like(meta_f: pd.DataFrame, seed: int) -> pd.DataFrame:
         "patient_id": meta_f["patient_id"].astype(str),
     })
     out["split"] = out["patient_id"].map(_s)
-    # Chapman/CPSC：val 已从训练集剔除 → in_train_loader = (split=='train')
+      # Chapman/CPSC: val already removed from the train set -> in_train_loader = (split=='train')
     out["in_train_loader"] = np.where(out["split"] == "train", "yes", "no")
     return out.sort_values("record_id").reset_index(drop=True)
 
 
 def _split_ptbxl(meta: pd.DataFrame, seed: int,
                  subspace: tuple | None) -> pd.DataFrame:
-    """PTB-XL 划分：官方折 1-8/9/10 + folds1-8 内 12.5% 患者级 val carve。
+    """PTB-XL split: official folds 1-8/9/10 + 12.5% patient-level val carve within folds 1-8.
 
-    与 train.py build_ptbxl_datasets 的划分段逐行镜像（lockstep）。
-    as-used 语义：训练加载器 = folds1-8 全量记录（含 val 患者记录），
-    见模块 docstring。
+    Line-by-line mirror of the split section in train.py build_ptbxl_datasets (lockstep).
+    as-used semantics: the train loader = all folds 1-8 records (including val patient records),
+    see the module docstring.
     """
     split_meta = meta
     if subspace is not None:
@@ -123,7 +125,7 @@ def _split_ptbxl(meta: pd.DataFrame, seed: int,
     pat_label = meta18.groupby("patient_id")["label"].agg(
         lambda s: s.mode().iat[0]).to_dict()
     val_patients = _carve_val_patients(pat_label, 0.125, seed + 100)
-    # 统一为 str 集合：meta 的 patient_id 可能是 int64，_s() 里按 str 比较
+    # Unify as a str set: meta patient_id may be int64, _s() compares by str
     val_patients = {str(p) for p in val_patients}
     cal_patients = sorted(set(np.asarray(splits["cal"]["patients"], dtype=object).tolist()))
     test_patients = sorted(set(np.asarray(splits["test"]["patients"], dtype=object).tolist()))
@@ -145,7 +147,7 @@ def _split_ptbxl(meta: pd.DataFrame, seed: int,
         "fold": split_meta["strat_fold"].astype(int),
     })
     out["split"] = out.apply(_s, axis=1)
-    # as-used：训练加载器 = 全部 folds1-8 记录（含 val 患者，见模块 docstring）
+      # as-used: train loader = all folds 1-8 records (including val patients; see module docstring)
     out["in_train_loader"] = np.where(out["fold"] <= 8, "yes", "no")
     return out.drop(columns=["fold"]).sort_values("record_id").reset_index(drop=True)
 
@@ -158,7 +160,7 @@ def export_all(seeds: list[int], out_dir: Path) -> list[Path]:
         ("ptbxl_sub4_seed{seed}.csv", "ptbxl", SUBSPACE_CPSC),
         ("chapman_seed{seed}.csv", "chapman", None),
         ("chapman_sub4_seed{seed}.csv", "chapman", SUBSPACE_CPSC),
-        ("cpsc_seed{seed}.csv", "cpsc", None),  # cpsc builder 内部固定子空间
+        ("cpsc_seed{seed}.csv", "cpsc", None),    # cpsc builder fixes the subspace internally
     ]
     for seed in seeds:
         for name_tpl, ds, subspace in jobs:
@@ -171,7 +173,7 @@ def export_all(seeds: list[int], out_dir: Path) -> list[Path]:
                     rep = filter_subspace(meta["label"].tolist(), subspace)
                     meta_f = meta.iloc[rep["kept_indices"]].reset_index(drop=True)
                 df = _split_chapman_like(meta_f, seed)
-            else:  # cpsc：builder 内部固定 SUBSPACE_CPSC
+            else:  # cpsc: builder fixes SUBSPACE_CPSC internally
                 rep = filter_subspace(meta["label"].tolist(), SUBSPACE_CPSC)
                 meta_f = meta.iloc[rep["kept_indices"]].reset_index(drop=True)
                 df = _split_chapman_like(meta_f, seed)
@@ -184,8 +186,8 @@ def export_all(seeds: list[int], out_dir: Path) -> list[Path]:
 
 
 def validate_against_builders(seed: int) -> bool:
-    """在有预处理数据的机器上：与真实 builder 交叉验证（最强保证）"""
-    from train import (  # noqa: E402  延迟导入（torch 重）
+    """Cross-validate against the real builders on a machine with preprocessed data (strongest guarantee)."""
+    from train import (  # noqa: E402  deferred import (torch is heavy)
         build_ptbxl_datasets, build_chapman_datasets, build_cpsc_datasets,
     )
     ok = True
@@ -220,7 +222,7 @@ def main() -> None:
     ap.add_argument("--seeds", type=int, nargs="+", default=SEEDS_DEFAULT)
     ap.add_argument("--out-dir", type=Path, default=Path("splits"))
     ap.add_argument("--validate", type=int, default=None, metavar="SEED",
-                    help="与真实 builder 交叉验证指定种子（需本地预处理数据）")
+                    help="Cross-validate against the real builder for the given seed (requires local preprocessed data)")
     args = ap.parse_args()
     if args.validate is not None:
         ok = validate_against_builders(args.validate)

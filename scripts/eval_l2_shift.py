@@ -1,7 +1,7 @@
-"""L2 移位阶梯 eval-only 实验（协议§3:44-48）。
+"""L2 shift-ladder eval-only experiment (preregistered protocol §3:44-48).
 
-对每个已有 checkpoint，在 target test 上做 8 档移位变换（降采样+导联+增益），
-评估 raw ECE + 8 方法校准后 ECE + ΔECE。
+For each existing checkpoint, apply 8 shift transforms (downsample + lead drop + gain)
+on the target test set, and evaluate raw ECE plus post-calibration ECE for 8 methods, plus ΔECE.
 """
 from __future__ import annotations
 import argparse, json, sys, hashlib
@@ -35,7 +35,7 @@ def _bin(p, labels):
 
 def shifted_eval(model, dataset, shift, device, batch_size=64,
                  pair_id: str = None, arch: str = None, train_seed: int = None):
-    """对 dataset 的每条信号施加 shift 后评估 model。"""
+    """Apply the shift to every signal in the dataset, then evaluate the model."""
     if pair_id is None or arch is None or train_seed is None:
         raise ValueError(
             "pair_id, arch, train_seed must be explicitly provided for reproducible seed derivation"
@@ -43,11 +43,12 @@ def shifted_eval(model, dataset, shift, device, batch_size=64,
     model.eval()
     all_probs, all_labels = [], []
     n = len(dataset)
-    # P0-1 R3修复：基于实验参数派生噪声种子，确保跨实验/跨档/跨移位类型噪声独立。
-    # 使用 hashlib.md5 代替内置 hash()，保证跨进程可复现（不受 PYTHONHASHSEED 影响）。
-    # 派生键包含 pair_id|arch|train_seed|shift_name，不同实验/不同档/不同移位类型
-    # 必然获得不同种子。注意：此变更使已有 l2_shift_results.json 不可精确复现，
-    # 需重跑受影响实验（见 docs/p0r2_final_verdict.md §2.2）。
+    # Derive the noise seed from the experiment parameters so that noise stays
+    # independent across experiments, shifts, and shift types. Use hashlib.md5
+    # instead of the built-in hash() to ensure cross-process reproducibility
+    # (independent of PYTHONHASHSEED). The derived key includes
+    # pair_id|arch|train_seed|shift_name, so distinct experiments/shifts/types
+    # always obtain distinct seeds.
     noise_seed = int(
         hashlib.md5(f"{pair_id}|{arch}|{train_seed}|{shift['name']}".encode()).hexdigest()[:8], 16
     ) % (2**32)
@@ -77,7 +78,7 @@ def main():
     ap.add_argument("--n-layers", type=int, default=2)
     ap.add_argument("--save-dir", default="checkpoints/transfer")
     ap.add_argument("--methods", nargs="+", default=["ts", "platt", "isotonic", "vector", "matrix", "dirichlet", "em_prior", "bbse_prior"])
-    ap.add_argument("--shifts", nargs="+", default=None, help="只跑指定档（如 noise24 noise12），默认全部")
+    ap.add_argument("--shifts", nargs="+", default=None, help="run only the specified shifts (e.g. noise24 noise12); default all")
     args = ap.parse_args()
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -183,10 +184,12 @@ def main():
                   " ".join(f"{m}={method_results[m]['delta_ece']:+.4f}" for m in args.methods if m in method_results))
 
         all_results[f"seed{seed}"] = seed_results
-        # P0-1 R7修复（Attack-1）：无条件写入 per-seed seed_strategy 版本标记，
-        # 与 run_e1a_l2_shift_full.py L433 一致，供 is_checkpoint_complete 校验，
-        # 避免断点续传时新旧种子策略结果静默混用。R6修复错误地将标记写入放在
-        # if out_path.exists() 条件块内，首次运行时文件不存在导致标记永远不写入。
+        # Unconditionally write the per-seed seed_strategy version marker,
+        # consistent with run_e1a_l2_shift_full.py L433, so that
+        # is_checkpoint_complete can validate it and silently mixing old/new
+        # seed-strategy results during resume is avoided. (The marker must not
+        # be placed inside the if out_path.exists() block, otherwise it would
+        # never be written on the first run when the file does not yet exist.)
         all_results[f"seed{seed}"]["__seed_strategy__"] = SEED_STRATEGY_VERSION
         out_path = run_dir / "l2_shift_results.json"
         if out_path.exists():
@@ -195,7 +198,7 @@ def main():
             if sk not in existing:
                 existing[sk] = {}
             existing[sk].update(seed_results)
-            existing[sk]["__seed_strategy__"] = SEED_STRATEGY_VERSION  # 续传也写入
+            existing[sk]["__seed_strategy__"] = SEED_STRATEGY_VERSION  # also written on resume
             all_results = existing
         out_path.write_text(json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"Saved to {out_path}")

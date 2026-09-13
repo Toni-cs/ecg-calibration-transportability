@@ -1,107 +1,79 @@
-"""E3 核心实验：Brier Reliability + DCR + NCV + ECE 变化
+"""E3 core experiment: Brier Reliability + DCR + NCV + ECE change.
 
-==========================================================================
-核心主张（正方论证）
-==========================================================================
-Brier Score 的 Murphy 分解（Murphy 1973）：
+Primary endpoint rationale
+--------------------------
+Murphy decomposition of the Brier score (Murphy 1973):
 
     Brier = Reliability - Resolution + Uncertainty
 
-温度缩放（TS）在 T>0 时保持 argmax（不改变预测类别），因此：
-  - Uncertainty（全局 base rate 的函数）严格不变
-  - Resolution（分箱内标签频率与全局 base rate 的偏离）在**精确分箱极限**下不变
-  - Reliability（分箱内预测概率与经验频率的偏离）是 TS 唯一显著影响的分量
+Temperature scaling (TS) with T>0 preserves argmax (the predicted class is unchanged), therefore:
+  - Uncertainty (a function of the global base rate) is exactly invariant
+  - Resolution (per-bin deviation of label frequency from the global base rate) is invariant
+    in the exact-binning limit
+  - Reliability (per-bin deviation of predicted probability from empirical frequency) is the
+    only component materially affected by TS
 
-∴ 主终点 = Reliability 组件的改善（而非总 Brier Score），因为：
-  1. 总 Brier Score 的变化混合了 Reliability 改善和 Resolution 变化，效应稀释
-  2. Reliability 直接度量"概率与频率的匹配程度"——校准的数学定义
-  3. Resolution 和 Uncertainty 不由 TS 控制，报告它们的改善无意义
+Hence the primary endpoint is the improvement in the Reliability component (not the total Brier
+Score), because:
+  1. Total Brier change mixes Reliability improvement with Resolution change, diluting the effect
+  2. Reliability directly measures calibration (agreement of probability with frequency)
+  3. Resolution and Uncertainty are not controlled by TS, so reporting their "improvement" is meaningless
 
-==========================================================================
-关键假设
-==========================================================================
-H1（TS 只影响 Reliability）：
-  - 精确分箱（每个唯一概率一个 bin）极限下**严格成立**
-  - 10 等宽分箱下**近似成立**——TS 改变概率值可能导致样本跨 bin 迁移，
-    从而轻微改变 Resolution。本脚本报告 ΔResolution 作为 H1 的诊断验证。
+Key assumptions
+---------------
+H1 (TS affects only Reliability):
+  - strictly holds in the exact-binning limit (one bin per unique probability)
+  - approximately holds under 10 equal-width bins; TS can shift samples across bins, slightly
+    changing Resolution. This script reports DeltaResolution as a diagnostic for H1.
+H2 (TS preserves argmax): softmax(logits/T) argmax = softmax(logits) argmax for T>0. Strictly
+  holds (T>0 is a monotonic transform); thus the ECE correctness mask is unchanged by TS.
+H3 (paired independence): the 60 checkpoints' improvement values are treated as independent
+  paired samples. Approximately holds: checkpoints differ in seed/pair/arch but share data and code.
 
-H2（TS 保持 argmax）：
-  - T>0 时 softmax(logits/T) 的 argmax = softmax(logits) 的 argmax
-  - **严格成立**（T>0 是单调变换）。∴ ECE 的 correct mask 在 TS 前后不变。
+Applicability bounds
+--------------------
+1. DCR (Decision Cost Reduction) is an indirect clinical-relevance indicator:
+   - tau=0.5 means "act only if confidence > 50%, otherwise abstain"
+   - abstain_cost=0.5 (symmetric) is a simplification; real clinical costs of misdiagnosis vs
+     missed diagnosis are asymmetric
+   - DCR does not replace a formal decision-curve analysis (DCA); it is directional evidence only
+2. NCV (Net Clinical Value) symmetric definition bounds:
+   - N_total = N_samples * N_classes assumes each (sample, class) pair is independent
+   - the K OvR decisions for one sample are not independent (probabilities sum to 1),
+     so NCV variance is underestimated
+   - the symmetric definition (equal weights on TP/TN/FP/FN) does not reflect clinical preference
+   - NCV is an indirect indicator, not a formal clinical-utility claim
+3. Brier decomposition 10-bin discretization:
+   - the exact identity holds only when probabilities are constant within a bin
+   - brier_total = REL - RES + UNC holds by construction
+   - the gap between raw Brier (mean((p-y)^2)) and brier_total reflects binning granularity
 
-H3（配对独立性）：
-  - 60 个 checkpoint 的改善值视为独立配对样本
-  - **近似成立**——不同 checkpoint 使用不同 seed/pair/arch，但共享数据集和代码路径
+Caveats (sensitivity analyses)
+------------------------------
+- A1: TS-only-affects-Reliability is not strict under 10 bins. Mitigation: report the
+  DeltaResolution/DeltaReliability ratio; if <<1 the approximation holds, otherwise use exact
+  binning (unique probs) or more bins (50/100).
+- A2: NCV multiclass definition. Mitigation: NCV is directional (sign), not an effect size for
+  formal hypothesis testing; report per-sample-aggregated NCV (N_total=N) as sensitivity.
+- A3: DCR abstain_cost=0.5. Mitigation: DCR is monotonic in abstain_cost over [0,1], so the sign
+  is invariant (TS improves the decision direction); report abstain_cost=0.3 and 0.7 as sensitivity.
+- A4: independence of the 60 checkpoints. Mitigation: different pairs use different source/target
+  domains and independently trained seeds; report pair-level aggregation (mean of 6 pairs) as a
+  conservative analysis.
+- A5: top-label vs per-class OvR Brier decomposition. Mitigation: top-label matches the ECE
+  primary-endpoint semantics; report per-class OvR as sensitivity.
 
-==========================================================================
-适用边界
-==========================================================================
-1. DCR（Decision Cost Reduction）——间接临床意义指标：
-   - τ=0.5 阈值含义："模型置信度 > 50% 才决策，否则弃权"
-   - abstain_cost=0.5（对称）是简化假设；真实临床中误诊与漏诊成本不对称
-   - DCR 不替代正式决策曲线分析（DCA），仅作方向性证据
+Outputs
+-------
+1. results/c1_brier_reliability.csv         -- 60 checkpoints x Brier 3 components (TS before/after, ID+OOD)
+2. results/c1_dcr_ncv_multiclass.csv        -- 60 checkpoints x DCR/NCV/ECE (TS before/after, ID+OOD)
+3. results/c1_brier_reliability_summary.csv -- primary endpoint summary (Cohen's d, 95% CI, paired t-test)
+4. results/c1_dcr_ncv_summary.csv           -- secondary endpoint summary (t-test, BH FDR q=0.05)
 
-2. NCV（Net Clinical Value）对称定义的边界：
-   - N_total = N_samples × N_classes 假设每个 (sample, class) 对独立
-   - 实际上同一样本的 K 个 OvR 决策不独立（概率和为 1），NCV 方差被低估
-   - 对称定义（TP/TN/FP/FN 等权）不反映临床偏好
-   - NCV 是间接指标，不作为正式临床效用声明
-
-3. Brier 分解的 10-bin 离散化：
-   - 精确恒等式仅在分箱内概率恒定时成立
-   - brier_total = REL - RES + UNC 按构造成立
-   - raw Brier（mean((p-y)²)）与 brier_total 的偏差反映分箱粒度
-
-==========================================================================
-推理链条
-==========================================================================
-1. Murphy (1973): Brier = REL - RES + UNC（概率预报的角分解定理）
-2. TS: p' = softmax(logits/T), T>0 → argmax 不变 → RES/UNC 不受控 [H1,H2]
-3. 校准目标: min REL（使概率匹配经验频率）
-4. ∴ 主终点 = REL_before - REL_after（TS 前后的 Reliability 改善，正值=好）
-5. 统计: 60 个 checkpoint 配对 → paired t-test + Cohen's d + 95% bootstrap CI
-6. 次要: DCR/NCV 量化决策层面收益 → BH FDR (q=0.05, 2 个次要终点)
-7. 探索: ECE 变化（top-label）作为校准误差的补充度量
-
-==========================================================================
-潜在攻击点（正方主动披露）
-==========================================================================
-A1. "TS 只影响 Reliability"在 10-bin 下不严格：
-    → 反驳：报告 ΔResolution/ΔReliability 比值，若 <<1 则近似成立
-    → 若不成立：改用精确分箱（unique probs）或增加 bin 数到 50/100
-
-A2. NCV 多类定义的合理性：
-    → 攻击：N_total=N×K 中同一样本的 K 个决策不独立，NCV 方差被低估
-    → 反驳：NCV 是方向性指标（正/负），不用于正式假设检验的效应量
-    → 补充：报告 per-sample 聚合的 NCV（N_total=N）作为敏感性
-
-A3. DCR 的 abstain_cost=0.5 选择：
-    → 攻击：对称成本不反映临床现实
-    → 反驳：DCR 在 abstain_cost ∈ [0,1] 上单调，符号不变（TS 改善决策的方向）
-    → 补充：报告 abstain_cost=0.3 和 0.7 的敏感性
-
-A4. 60 个 checkpoint 的独立性：
-    → 攻击：共享数据集 → 改善值有相关性 → paired t-test 的 p 值偏小
-    → 反驳：不同 pair 使用不同源/目标域，不同 seed 独立训练
-    → 补充：报告 pair-level 聚合（6 个 pair 的均值）作为保守分析
-
-A5. top-label vs per-class OvR Brier 分解：
-    → 攻击：top-label 丢弃非最大类的信息
-    → 反驳：top-label 与 ECE 主终点语义一致（置信度-正确性映射）
-    → 补充：同时报告 per-class OvR 作为敏感性
-
-==========================================================================
-输出
-==========================================================================
-1. results/c1_brier_reliability.csv         — 60 checkpoint × Brier 3 分量（TS 前后, ID+OOD）
-2. results/c1_dcr_ncv_multiclass.csv        — 60 checkpoint × DCR/NCV/ECE（TS 前后, ID+OOD）
-3. results/c1_brier_reliability_summary.csv — 主终点汇总（Cohen's d, 95% CI, paired t-test）
-4. results/c1_dcr_ncv_summary.csv           — 次要终点汇总（t-test, BH FDR q=0.05）
-
-用法:
-    python scripts/run_e3_brier_dcr_ncv.py           # 用缓存概率（若存在）
-    python scripts/run_e3_brier_dcr_ncv.py --regen   # 重新前向传播生成概率
-    python scripts/run_e3_brier_dcr_ncv.py --limit 240  # 冒烟测试
+Usage:
+    python scripts/run_e3_brier_dcr_ncv.py           # use cached probs (if present)
+    python scripts/run_e3_brier_dcr_ncv.py --regen   # re-run forward pass to generate probs
+    python scripts/run_e3_brier_dcr_ncv.py --limit 240  # smoke test
 """
 from __future__ import annotations
 
@@ -116,7 +88,7 @@ from typing import Dict, List, Optional, Tuple
 import numpy as np
 
 # ---------------------------------------------------------------------------
-# 路径设置
+# Path setup
 # ---------------------------------------------------------------------------
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT))
@@ -127,7 +99,7 @@ from src.utils.calibration import (  # noqa: E402
 )
 
 # ---------------------------------------------------------------------------
-# 实验配置
+# Experiment configuration
 # ---------------------------------------------------------------------------
 PAIRS = [
     "ptbxl_chapman", "ptbxl_cpsc",
@@ -136,7 +108,7 @@ PAIRS = [
 ]
 ARCHS = ["inceptiontime", "resnet1d"]
 SEEDS = [42, 43, 44, 45, 46]
-# 6 pairs × 2 archs × 5 seeds = 60 checkpoints
+# 6 pairs x 2 archs x 5 seeds = 60 checkpoints
 
 DATA_DIRS = {
     "ptbxl": _PROJECT_ROOT / "data" / "ptbxl_processed",
@@ -145,22 +117,22 @@ DATA_DIRS = {
 }
 DATASET_NUM_CLASSES = {"ptbxl": 5, "chapman": 5, "cpsc": 4}
 
-TAU = 0.5           # DCR/NCV 决策阈值
-ABSTAIN_COST = 0.5  # 弃权成本（对称）
-N_BINS = 10         # Brier 分解分箱数
+TAU = 0.5           # DCR/NCV decision threshold
+ABSTAIN_COST = 0.5  # abstain cost (symmetric)
+N_BINS = 10         # Brier decomposition bin count
 N_BOOTSTRAP = 10000 # Cohen's d bootstrap CI
-FDR_Q = 0.05        # BH FDR 显著性水平
-RNG_SEED = 42       # 全局可复现种子
+FDR_Q = 0.05        # BH FDR significance level
+RNG_SEED = 42       # global reproducible seed
 
 RESULTS_DIR = _PROJECT_ROOT / "results"
 
 
 # ===========================================================================
-# 第一部分：指标计算
+# Part 1: metric computation
 # ===========================================================================
 
 def _to_onehot(labels: np.ndarray, K: int) -> np.ndarray:
-    """类索引 → one-hot (N, K)"""
+    """Class indices -> one-hot (N, K)"""
     onehot = np.zeros((len(labels), K), dtype=float)
     onehot[np.arange(len(labels)), labels] = 1.0
     return onehot
@@ -168,10 +140,10 @@ def _to_onehot(labels: np.ndarray, K: int) -> np.ndarray:
 
 def brier_parts_toplabel(probs: np.ndarray, labels: np.ndarray,
                          n_bins: int = N_BINS) -> Tuple[float, float, float, float]:
-    """Top-label Brier 分解
+    """Top-label Brier decomposition.
 
-    将多分类转化为二分类：p = max prob, y = 1[argmax == label]
-    与 calibration.compute_all_metrics 语义一致（置信度-正确性映射）。
+    Reduce multiclass to binary: p = max prob, y = 1[argmax == label].
+    Consistent with calibration.compute_all_metrics (confidence-correctness mapping).
 
     Returns:
         (brier_total, reliability, resolution, uncertainty)
@@ -183,10 +155,10 @@ def brier_parts_toplabel(probs: np.ndarray, labels: np.ndarray,
 
 def brier_parts_ovr(probs: np.ndarray, labels: np.ndarray,
                     n_bins: int = N_BINS) -> Tuple[float, float, float, float]:
-    """Per-class OvR Brier 分解（平均 over classes）
+    """Per-class OvR Brier decomposition (averaged over classes).
 
-    对每个类 k 做二分类 Brier 分解：(p_k vs 1[label==k])，然后平均。
-    利用全部概率信息，作为 top-label 的敏感性分析。
+    For each class k compute a binary Brier decomposition (p_k vs 1[label==k]), then average.
+    Uses all probability information; serves as a sensitivity analysis to top-label.
 
     Returns:
         (brier_total_mean, reliability_mean, resolution_mean, uncertainty_mean)
@@ -205,7 +177,7 @@ def brier_parts_ovr(probs: np.ndarray, labels: np.ndarray,
 
 
 def ece_toplabel(probs: np.ndarray, labels: np.ndarray, n_bins: int = N_BINS) -> float:
-    """Top-label ECE（与 calibration.ece 一致）"""
+    """Top-label ECE (consistent with calibration.ece)"""
     max_p = probs.max(axis=1)
     correct = (probs.argmax(axis=1) == labels).astype(float)
     return ece(max_p, correct, n_bins=n_bins)
@@ -214,11 +186,11 @@ def ece_toplabel(probs: np.ndarray, labels: np.ndarray, n_bins: int = N_BINS) ->
 def dcr_multiclass(probs_raw: np.ndarray, probs_cal: np.ndarray,
                    labels: np.ndarray, tau: float = TAU,
                    abstain_cost: float = ABSTAIN_COST) -> Tuple[float, float, float]:
-    """Decision Cost Reduction at threshold τ
+    """Decision Cost Reduction at threshold tau.
 
-    决策规则：if max_p > τ → 预测 argmax；else → 弃权
-    成本：错误决策=1，弃权=abstain_cost，正确决策=0
-    DCR = Cost_raw - Cost_cal（正值=TS 减少了决策成本=好）
+    Decision rule: if max_p > tau -> predict argmax; else -> abstain.
+    Cost: wrong decision = 1, abstain = abstain_cost, correct decision = 0.
+    DCR = Cost_raw - Cost_cal (positive = TS reduced decision cost = good).
 
     Returns:
         (dcr, cost_raw, cost_cal)
@@ -238,21 +210,21 @@ def dcr_multiclass(probs_raw: np.ndarray, probs_cal: np.ndarray,
 
 def ncv_multiclass(probs_raw: np.ndarray, probs_cal: np.ndarray,
                    labels: np.ndarray, tau: float = TAU) -> Dict:
-    """Net Clinical Value（对称定义）
+    """Net Clinical Value (symmetric definition).
 
     NCV = (TP_improved + TN_improved - FP_worsened - FN_worsened) / N_total
-    N_total = N_samples × N_classes
+    N_total = N_samples * N_classes
 
-    对每个 (sample, class) 对：
-      raw_pos = p_raw > τ,  cal_pos = p_cal > τ,  true_pos = (label == class)
-      TP_improved: raw=neg → cal=pos, true=pos  （正确地变得更自信）
-      TN_improved: raw=pos → cal=neg, true=neg  （正确地变得更不自信）
-      FP_worsened: raw=neg → cal=pos, true=neg  （错误地变得更自信）
-      FN_worsened: raw=pos → cal=neg, true=pos  （错误地变得更不自信）
+    For each (sample, class) pair:
+      raw_pos = p_raw > tau,  cal_pos = p_cal > tau,  true_pos = (label == class)
+      TP_improved: raw=neg -> cal=pos, true=pos  (correctly became more confident)
+      TN_improved: raw=pos -> cal=neg, true=neg  (correctly became less confident)
+      FP_worsened: raw=neg -> cal=pos, true=neg  (wrongly became more confident)
+      FN_worsened: raw=pos -> cal=neg, true=pos  (wrongly became less confident)
 
     Returns:
         dict(ncv, tp_improved, tn_improved, fp_worsened, fn_worsened, n_total,
-             ncv_per_sample)  # ncv_per_sample 用 N_total=N 作敏感性
+             ncv_per_sample)  # ncv_per_sample uses N_total=N as sensitivity
     """
     N, K = probs_raw.shape
     N_total = N * K
@@ -270,7 +242,7 @@ def ncv_multiclass(probs_raw: np.ndarray, probs_cal: np.ndarray,
     fn_worsened = int((raw_pos & (~cal_pos) & true_pos).sum())
 
     ncv = (tp_improved + tn_improved - fp_worsened - fn_worsened) / N_total
-    # 敏感性：per-sample 聚合（N_total=N）
+    # Sensitivity: per-sample aggregation (N_total=N)
     ncv_per_sample = (tp_improved + tn_improved - fp_worsened - fn_worsened) / N
 
     return {
@@ -286,37 +258,37 @@ def ncv_multiclass(probs_raw: np.ndarray, probs_cal: np.ndarray,
 
 def compute_all_metrics_for_split(probs_raw: np.ndarray, probs_cal: np.ndarray,
                                   labels: np.ndarray) -> Dict:
-    """对一个测试集（ID 或 OOD）计算 TS 前后的所有指标
+    """Compute all E3 metrics for one test split (ID or OOD), before and after TS.
 
     Returns:
         dict with all E3 metrics for this split
     """
-    # --- Brier 3 分量（top-label，主终点） ---
+    # --- Brier 3 components (top-label, primary endpoint) ---
     b_raw, rel_raw, res_raw, unc_raw = brier_parts_toplabel(probs_raw, labels)
     b_cal, rel_cal, res_cal, unc_cal = brier_parts_toplabel(probs_cal, labels)
 
-    # --- Brier 3 分量（per-class OvR，敏感性） ---
+    # --- Brier 3 components (per-class OvR, sensitivity) ---
     bo_raw, relo_raw, reso_raw, unco_raw = brier_parts_ovr(probs_raw, labels)
     bo_cal, relo_cal, reso_cal, unco_cal = brier_parts_ovr(probs_cal, labels)
 
-    # --- raw Brier Score（经验均值，无分箱） ---
+    # --- raw Brier Score (empirical mean, no binning) ---
     brier_raw_before = brier_raw(probs_raw.max(axis=1),
                                  (probs_raw.argmax(axis=1) == labels).astype(float))
     brier_raw_after = brier_raw(probs_cal.max(axis=1),
                                 (probs_cal.argmax(axis=1) == labels).astype(float))
 
-    # --- ECE（top-label，探索性） ---
+    # --- ECE (top-label, exploratory) ---
     ece_before = ece_toplabel(probs_raw, labels)
     ece_after = ece_toplabel(probs_cal, labels)
 
-    # --- DCR（次要终点 1） ---
+    # --- DCR (secondary endpoint 1) ---
     dcr_val, cost_raw, cost_cal = dcr_multiclass(probs_raw, probs_cal, labels)
 
-    # --- NCV（次要终点 2） ---
+    # --- NCV (secondary endpoint 2) ---
     ncv_result = ncv_multiclass(probs_raw, probs_cal, labels)
 
     return {
-        # Brier top-label（主终点）
+        # Brier top-label (primary endpoint)
         'brier_toplabel_before': b_raw,
         'brier_toplabel_after': b_cal,
         'reliability_toplabel_before': rel_raw,
@@ -325,10 +297,10 @@ def compute_all_metrics_for_split(probs_raw: np.ndarray, probs_cal: np.ndarray,
         'resolution_toplabel_after': res_cal,
         'uncertainty_toplabel_before': unc_raw,
         'uncertainty_toplabel_after': unc_cal,
-        'delta_reliability_toplabel': rel_raw - rel_cal,  # 正值=改善
-        'delta_resolution_toplabel': res_raw - res_cal,   # 诊断 H1
-        'delta_uncertainty_toplabel': unc_raw - unc_cal,  # 应≈0
-        # Brier per-class OvR（敏感性）
+        'delta_reliability_toplabel': rel_raw - rel_cal,  # positive = improvement
+        'delta_resolution_toplabel': res_raw - res_cal,   # H1 diagnostic
+        'delta_uncertainty_toplabel': unc_raw - unc_cal,  # should ~= 0
+        # Brier per-class OvR (sensitivity)
         'reliability_ovr_before': relo_raw,
         'reliability_ovr_after': relo_cal,
         'delta_reliability_ovr': relo_raw - relo_cal,
@@ -338,7 +310,7 @@ def compute_all_metrics_for_split(probs_raw: np.ndarray, probs_cal: np.ndarray,
         # ECE
         'ece_before': ece_before,
         'ece_after': ece_after,
-        'delta_ece': ece_before - ece_after,  # 正值=改善
+        'delta_ece': ece_before - ece_after,  # positive = improvement
         # DCR
         'dcr': dcr_val,
         'decision_cost_before': cost_raw,
@@ -355,17 +327,17 @@ def compute_all_metrics_for_split(probs_raw: np.ndarray, probs_cal: np.ndarray,
 
 
 # ===========================================================================
-# 第二部分：统计检验
+# Part 2: statistical tests
 # ===========================================================================
 
 def cohen_d_paired(before: np.ndarray, after: np.ndarray,
                    improvement_direction: str = "decrease") -> Dict:
-    """配对 Cohen's d + 95% bootstrap CI + paired t-test
+    """Paired Cohen's d + 95% bootstrap CI + paired t-test.
 
     Args:
-        before, after: TS 前后的指标值（60 个配对）
-        improvement_direction: "decrease"（指标减小为改善，如 Reliability/ECE）
-                               或 "increase"（指标增大为改善，如 DCR/NCV）
+        before, after: metric values before/after TS (60 pairs)
+        improvement_direction: "decrease" (smaller is better, e.g. Reliability/ECE)
+                               or "increase" (larger is better, e.g. DCR/NCV)
 
     Returns:
         dict(mean_before, mean_after, mean_diff, std_diff, cohen_d,
@@ -378,15 +350,15 @@ def cohen_d_paired(before: np.ndarray, after: np.ndarray,
     n = len(before)
 
     if improvement_direction == "decrease":
-        diff = before - after  # 正值=改善
+        diff = before - after  # positive = improvement
     else:
-        diff = after - before  # 正值=改善
+        diff = after - before  # positive = improvement
 
     mean_diff = float(np.mean(diff))
     std_diff = float(np.std(diff, ddof=1)) if n > 1 else 0.0
     cohen_d = mean_diff / std_diff if std_diff > 1e-12 else 0.0
 
-    # paired t-test（scipy 的 ttest_rel 检验 before==after 的 H0）
+    # paired t-test (scipy's ttest_rel tests H0: before == after)
     t_stat, p_value = ttest_rel(before, after)
 
     # 95% CI for Cohen's d via bootstrap
@@ -414,11 +386,11 @@ def cohen_d_paired(before: np.ndarray, after: np.ndarray,
 
 
 def bh_fdr(p_values: List[float], q: float = FDR_Q) -> Tuple[List[bool], List[float]]:
-    """Benjamini-Hochberg FDR 校正
+    """Benjamini-Hochberg FDR correction.
 
     Args:
-        p_values: 原始 p 值列表
-        q: FDR 显著性水平
+        p_values: raw p-value list
+        q: FDR significance level
 
     Returns:
         (reject_list, adjusted_p_list)
@@ -428,10 +400,10 @@ def bh_fdr(p_values: List[float], q: float = FDR_Q) -> Tuple[List[bool], List[fl
     order = np.argsort(p)
     ranked = p[order]
 
-    # BH 临界值: k * q / n
+    # BH critical value: k * q / n
     critical = q * np.arange(1, n + 1) / n
 
-    # 找最大的 k 使得 p_(k) <= k*q/n
+    # Find the largest k with p_(k) <= k*q/n
     reject_flags = np.zeros(n, dtype=bool)
     max_k = 0
     for i in range(n - 1, -1, -1):
@@ -440,9 +412,9 @@ def bh_fdr(p_values: List[float], q: float = FDR_Q) -> Tuple[List[bool], List[fl
             break
     reject_flags[order[:max_k]] = True
 
-    # 调整 p 值: p_adj_(k) = min_{j>=k} (p_(j) * n / j)
+    # Adjusted p-values: p_adj_(k) = min_{j>=k} (p_(j) * n / j)
     adj_p_sorted = ranked * n / np.arange(1, n + 1)
-    # 从大到小取累积最小，保证单调性
+    # Cumulative minimum from largest to smallest to ensure monotonicity
     adj_p_sorted = np.minimum.accumulate(adj_p_sorted[::-1])[::-1]
     adj_p = np.empty(n)
     adj_p[order] = adj_p_sorted
@@ -452,37 +424,37 @@ def bh_fdr(p_values: List[float], q: float = FDR_Q) -> Tuple[List[bool], List[fl
 
 
 # ===========================================================================
-# 第三部分：概率获取（带缓存）
+# Part 3: probability acquisition (with cache)
 # ===========================================================================
 
 def _parse_pair(pair: str) -> Tuple[str, str]:
-    """ptbxl_chapman → (ptbxl, chapman)"""
+    """ptbxl_chapman -> (ptbxl, chapman)"""
     parts = pair.split("_")
     return parts[0], parts[1]
 
 
 def get_num_classes(source: str, target: str) -> int:
-    """涉及 CPSC → 4 类（SUBSPACE_CPSC 对称降级）；否则 5 类"""
+    """CPSC maps to 4 classes (symmetric SUBSPACE_CPSC downgrade); otherwise 5."""
     return min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
 
 
 def load_or_compute_probs(pair: str, arch: str, seed: int,
                           regen: bool, limit: Optional[int],
                           batch_size: int = 16, num_workers: int = 0) -> Optional[Dict]:
-    """加载或计算一个 checkpoint 的原始概率
+    """Load or compute the raw probabilities for one checkpoint.
 
-    缓存路径: checkpoints/transfer/{pair}/{arch}/seed{seed}/e3_probs.npz
+    Cache path: checkpoints/transfer/{pair}/{arch}/seed{seed}/e3_probs.npz
 
     Returns:
         dict(cal_probs, cal_labels, id_probs, id_labels, ood_probs, ood_labels,
-             T, num_classes) 或 None（加载失败）
+             T, num_classes) or None (load failed)
     """
     source, target = _parse_pair(pair)
     ckpt_dir = _PROJECT_ROOT / "checkpoints" / "transfer" / pair / arch / f"seed{seed}"
     cache_path = ckpt_dir / "e3_probs.npz"
     ckpt_path = ckpt_dir / "best_model.pt"
 
-    # --- 尝试从缓存加载 ---
+    # --- try loading from cache ---
     if not regen and cache_path.exists():
         try:
             data = np.load(cache_path, allow_pickle=False)
@@ -497,21 +469,21 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
                 'num_classes': int(data['num_classes']),
             }
         except Exception as e:
-            warnings.warn(f"缓存加载失败 {cache_path}: {e}，将重新计算")
+            warnings.warn(f"Cache load failed {cache_path}: {e}; will recompute")
 
-    # --- 检查 checkpoint 是否存在 ---
+    # --- check checkpoint exists ---
     if not ckpt_path.exists():
-        warnings.warn(f"Checkpoint 不存在: {ckpt_path}")
+        warnings.warn(f"Checkpoint not found: {ckpt_path}")
         return None
 
-    # --- 检查数据目录 ---
+    # --- check data directories ---
     src_data = DATA_DIRS.get(source)
     tgt_data = DATA_DIRS.get(target)
     if src_data is None or tgt_data is None or not src_data.exists() or not tgt_data.exists():
-        warnings.warn(f"数据目录不存在: {src_data} 或 {tgt_data}")
+        warnings.warn(f"Data directory not found: {src_data} or {tgt_data}")
         return None
 
-    # --- 加载模型并前向传播 ---
+    # --- load model and run forward pass ---
     try:
         import torch
         from src.models.ecg_classifier import ECGClassifier
@@ -521,7 +493,7 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
         )
         from src.data.mapping import SUBSPACE_CPSC
     except ImportError as e:
-        warnings.warn(f"无法导入训练依赖: {e}")
+        warnings.warn(f"Cannot import training dependencies: {e}")
         return None
 
     K = get_num_classes(source, target)
@@ -536,7 +508,7 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     set_seed(seed)
 
-    # 构建源数据集
+    # Build source dataset
     try:
         if source == "cpsc":
             src_ds, src_clusters = builders[source](str(src_data), seed, limit=limit)
@@ -545,18 +517,18 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
         else:
             src_ds, src_clusters = builders[source](str(src_data), seed, limit=limit)
     except Exception as e:
-        warnings.warn(f"构建源数据集失败 ({source}): {e}")
+        warnings.warn(f"Failed to build source dataset ({source}): {e}")
         return None
 
-    # cal 和 test 的 DataLoader
+    # cal and test DataLoaders
     cal_loader = create_dataloader(src_ds["cal"], batch_size, shuffle=False, num_workers=num_workers)
     test_loader = create_dataloader(src_ds["test"], batch_size, shuffle=False, num_workers=num_workers)
 
-    # 加载模型
+    # Load model
     try:
         ckpt = torch.load(ckpt_path, weights_only=False, map_location=device)
         sd = ckpt["model_state_dict"]
-        # 推断 d_model 和 n_layers
+        # Infer d_model and n_layers
         if arch == "mamba":
             inferred_d = sd["backbone.stem.0.weight"].shape[0]
             import re
@@ -574,10 +546,10 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
                               dropout=0.1, backbone_type=arch).to(device)
         model.load_state_dict(sd)
     except Exception as e:
-        warnings.warn(f"模型加载失败 {ckpt_path}: {e}")
+        warnings.warn(f"Model load failed {ckpt_path}: {e}")
         return None
 
-    # 前向传播：source-cal, source-test (ID)
+    # Forward pass: source-cal, source-test (ID)
     cal_eval = evaluate(model, cal_loader, device, compute_calibration=False)
     test_eval = evaluate(model, test_loader, device, compute_calibration=False)
     cal_probs = cal_eval["probs"]
@@ -585,7 +557,7 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
     id_probs = test_eval["probs"]
     id_labels = test_eval["labels"]
 
-    # 构建目标数据集并前向传播 (OOD)
+    # Build target dataset and run forward pass (OOD)
     try:
         if target == "cpsc":
             tgt_ds, tgt_clusters = builders[target](str(tgt_data), seed, limit=limit)
@@ -598,14 +570,14 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
         ood_probs = tgt_eval["probs"]
         ood_labels = tgt_eval["labels"]
     except Exception as e:
-        warnings.warn(f"目标数据集评估失败 ({target}): {e}")
+        warnings.warn(f"Target dataset evaluation failed ({target}): {e}")
         return None
 
-    # 拟合温度缩放（在 source-cal 上）
+    # Fit temperature scaling (on source-cal)
     cal_onehot = _to_onehot(cal_labels, K)
     T = fit_temperature(cal_probs, cal_onehot)
 
-    # 缓存
+    # Cache
     try:
         np.savez_compressed(
             str(cache_path),
@@ -615,7 +587,7 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
             T=np.array([T]), num_classes=np.array([K]),
         )
     except Exception as e:
-        warnings.warn(f"缓存保存失败: {e}")
+        warnings.warn(f"Cache save failed: {e}")
 
     return {
         'cal_probs': cal_probs, 'cal_labels': cal_labels,
@@ -626,11 +598,11 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
 
 
 # ===========================================================================
-# 第四部分：主流程
+# Part 4: main flow
 # ===========================================================================
 
 def run_experiment(args: argparse.Namespace) -> Tuple[List[Dict], List[Dict]]:
-    """运行 E3 实验，返回 (brier_rows, dcr_ncv_rows)"""
+    """Run the E3 experiment, return (brier_rows, dcr_ncv_rows)"""
 
     brier_rows: List[Dict] = []
     dcr_ncv_rows: List[Dict] = []
@@ -643,7 +615,7 @@ def run_experiment(args: argparse.Namespace) -> Tuple[List[Dict], List[Dict]]:
             for seed in SEEDS:
                 idx += 1
                 tag = f"[{idx}/{total}] {pair}/{arch}/seed{seed}"
-                print(f"{tag} 加载概率...", end=" ", flush=True)
+                print(f"{tag} loading probs...", end=" ", flush=True)
 
                 probs_data = load_or_compute_probs(
                     pair, arch, seed,
@@ -652,13 +624,13 @@ def run_experiment(args: argparse.Namespace) -> Tuple[List[Dict], List[Dict]]:
                 )
 
                 if probs_data is None:
-                    print("SKIP (概率不可用)")
+                    print("SKIP (probs unavailable)")
                     continue
 
                 T = probs_data['T']
                 K = probs_data['num_classes']
 
-                # 应用温度缩放
+                # Apply temperature scaling
                 id_probs_raw = probs_data['id_probs']
                 id_labels = probs_data['id_labels']
                 ood_probs_raw = probs_data['ood_probs']
@@ -667,18 +639,18 @@ def run_experiment(args: argparse.Namespace) -> Tuple[List[Dict], List[Dict]]:
                 id_probs_cal = apply_temperature(id_probs_raw, T)
                 ood_probs_cal = apply_temperature(ood_probs_raw, T)
 
-                # 计算指标（ID 和 OOD）
+                # Compute metrics (ID and OOD)
                 id_metrics = compute_all_metrics_for_split(id_probs_raw, id_probs_cal, id_labels)
                 ood_metrics = compute_all_metrics_for_split(ood_probs_raw, ood_probs_cal, ood_labels)
 
-                # 组装行
+                # Assemble rows
                 base = {
                     'pair': pair, 'source': source, 'target': target,
                     'arch': arch, 'seed': seed, 'T': T, 'num_classes': K,
                     'n_id': len(id_labels), 'n_ood': len(ood_labels),
                 }
 
-                # Brier reliability 行（ID + OOD 各一列）
+                # Brier reliability row (ID + OOD side by side)
                 brier_row = {**base}
                 for split_name, m in [('id', id_metrics), ('ood', ood_metrics)]:
                     for key, val in m.items():
@@ -689,7 +661,7 @@ def run_experiment(args: argparse.Namespace) -> Tuple[List[Dict], List[Dict]]:
                             brier_row[f'{key}_{split_name}'] = val
                 brier_rows.append(brier_row)
 
-                # DCR/NCV/ECE 行
+                # DCR/NCV/ECE row
                 dcr_row = {**base}
                 for split_name, m in [('id', id_metrics), ('ood', ood_metrics)]:
                     for key in ['ece_before', 'ece_after', 'delta_ece',
@@ -708,18 +680,18 @@ def run_experiment(args: argparse.Namespace) -> Tuple[List[Dict], List[Dict]]:
 
 
 def summarize_and_write(brier_rows: List[Dict], dcr_ncv_rows: List[Dict]) -> None:
-    """汇总统计 + 写入 4 个 CSV"""
+    """Aggregate statistics and write the 4 CSVs"""
 
     RESULTS_DIR.mkdir(parents=True, exist_ok=True)
     n = len(brier_rows)
-    print(f"\n成功处理 {n} / 60 个 checkpoint")
+    print(f"\nProcessed {n} / 60 checkpoints")
 
     if n == 0:
-        print("WARNING: 无数据，跳过汇总")
+        print("WARNING: no data, skipping summary")
         return
 
     # ==================================================================
-    # CSV 1: c1_brier_reliability.csv（逐 checkpoint）
+    # CSV 1: c1_brier_reliability.csv (per checkpoint)
     # ==================================================================
     csv1 = RESULTS_DIR / "c1_brier_reliability.csv"
     brier_fields = [
@@ -745,19 +717,19 @@ def summarize_and_write(brier_rows: List[Dict], dcr_ncv_rows: List[Dict]) -> Non
     ]
     with open(csv1, "w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["# E3 主终点：Brier Reliability 改善（Murphy 分解）"])
+        w.writerow(["# E3 primary endpoint: Brier Reliability improvement (Murphy decomposition)"])
         w.writerow(["# Brier = Reliability - Resolution + Uncertainty (Murphy 1973)"])
-        w.writerow(["# 主终点 = delta_reliability_toplabel（TS 前后，正值=改善）"])
-        w.writerow(["# 主分析在 OOD 上（60 配对），ID 作参考"])
+        w.writerow(["# Primary endpoint = delta_reliability_toplabel (TS before/after, positive = improvement)"])
+        w.writerow(["# Primary analysis on OOD (60 pairs); ID as reference"])
         w.writerow(["# n_checkpoints", n])
         w.writerow([])
         w.writerow(brier_fields)
         for row in brier_rows:
             w.writerow([row.get(k, '') for k in brier_fields])
-    print(f"写入 {csv1}")
+    print(f"Wrote {csv1}")
 
     # ==================================================================
-    # CSV 2: c1_dcr_ncv_multiclass.csv（逐 checkpoint）
+    # CSV 2: c1_dcr_ncv_multiclass.csv (per checkpoint)
     # ==================================================================
     csv2 = RESULTS_DIR / "c1_dcr_ncv_multiclass.csv"
     dcr_fields = [
@@ -775,68 +747,68 @@ def summarize_and_write(brier_rows: List[Dict], dcr_ncv_rows: List[Dict]) -> Non
     ]
     with open(csv2, "w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["# E3 次要终点：DCR + NCV + 探索性 ECE 变化"])
-        w.writerow(["# DCR: Decision Cost Reduction, τ=0.5, abstain_cost=0.5"])
-        w.writerow(["# NCV: Net Clinical Value, 对称定义, N_total=N_samples×N_classes"])
+        w.writerow(["# E3 secondary endpoints: DCR + NCV + exploratory ECE change"])
+        w.writerow(["# DCR: Decision Cost Reduction, tau=0.5, abstain_cost=0.5"])
+        w.writerow(["# NCV: Net Clinical Value, symmetric definition, N_total=N_samples x N_classes"])
         w.writerow(["# ECE: Expected Calibration Error (top-label, 10 bins)"])
         w.writerow(["# n_checkpoints", n])
         w.writerow([])
         w.writerow(dcr_fields)
         for row in dcr_ncv_rows:
             w.writerow([row.get(k, '') for k in dcr_fields])
-    print(f"写入 {csv2}")
+    print(f"Wrote {csv2}")
 
     # ==================================================================
-    # CSV 3: c1_brier_reliability_summary.csv（主终点汇总）
+    # CSV 3: c1_brier_reliability_summary.csv (primary endpoint summary)
     # ==================================================================
     csv3 = RESULTS_DIR / "c1_brier_reliability_summary.csv"
 
-    # 提取 OOD 和 ID 的配对值
+    # Extract paired values for OOD and ID
     rel_before_ood = [r['reliability_toplabel_before_ood'] for r in brier_rows]
     rel_after_ood = [r['reliability_toplabel_after_ood'] for r in brier_rows]
     rel_before_id = [r['reliability_toplabel_before_id'] for r in brier_rows]
     rel_after_id = [r['reliability_toplabel_after_id'] for r in brier_rows]
 
-    # 主终点统计（OOD）
+    # Primary endpoint statistics (OOD)
     stats_rel_ood = cohen_d_paired(rel_before_ood, rel_after_ood, "decrease")
     stats_rel_id = cohen_d_paired(rel_before_id, rel_after_id, "decrease")
 
-    # Resolution 变化（H1 诊断）
+    # Resolution change (H1 diagnostic)
     res_before_ood = [r['resolution_toplabel_before_ood'] for r in brier_rows]
     res_after_ood = [r['resolution_toplabel_after_ood'] for r in brier_rows]
     stats_res_ood = cohen_d_paired(res_before_ood, res_after_ood, "decrease")
 
-    # Uncertainty 变化（应≈0）
+    # Uncertainty change (should ~= 0)
     unc_before_ood = [r['uncertainty_toplabel_before_ood'] for r in brier_rows]
     unc_after_ood = [r['uncertainty_toplabel_after_ood'] for r in brier_rows]
     stats_unc_ood = cohen_d_paired(unc_before_ood, unc_after_ood, "decrease")
 
-    # per-class OvR Reliability（敏感性）
+    # per-class OvR Reliability (sensitivity)
     relo_before_ood = [r['reliability_ovr_before_ood'] for r in brier_rows]
     relo_after_ood = [r['reliability_ovr_after_ood'] for r in brier_rows]
     stats_relo_ood = cohen_d_paired(relo_before_ood, relo_after_ood, "decrease")
 
-    # H1 诊断比值
+    # H1 diagnostic ratio
     mean_delta_rel = stats_rel_ood['mean_diff']
     mean_delta_res = stats_res_ood['mean_diff']
     h1_ratio = abs(mean_delta_res) / abs(mean_delta_rel) if abs(mean_delta_rel) > 1e-12 else float('nan')
 
     with open(csv3, "w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["# E3 主终点汇总：Brier Reliability 改善"])
-        w.writerow(["# 主终点 = Reliability_toplabel 改善 (TS 前 - TS 后, 正值=好)"])
-        w.writerow(["# 统计: paired t-test + Cohen's d + 95% bootstrap CI (B=10000)"])
+        w.writerow(["# E3 primary endpoint summary: Brier Reliability improvement"])
+        w.writerow(["# Primary endpoint = Reliability_toplabel improvement (TS before - TS after, positive = good)"])
+        w.writerow(["# Statistics: paired t-test + Cohen's d + 95% bootstrap CI (B=10000)"])
         w.writerow(["# n_checkpoints", n])
         w.writerow([])
         w.writerow(["metric", "split", "mean_before", "mean_after", "mean_diff",
                     "std_diff", "cohen_d", "cohen_d_ci_lo", "cohen_d_ci_hi",
                     "t_stat", "p_value", "n"])
         for name, s, split in [
-            ("Reliability_toplabel (主终点)", stats_rel_ood, "OOD"),
-            ("Reliability_toplabel (参考)", stats_rel_id, "ID"),
-            ("Resolution_toplabel (H1诊断)", stats_res_ood, "OOD"),
-            ("Uncertainty_toplabel (应≈0)", stats_unc_ood, "OOD"),
-            ("Reliability_OvR (敏感性)", stats_relo_ood, "OOD"),
+            ("Reliability_toplabel (primary)", stats_rel_ood, "OOD"),
+            ("Reliability_toplabel (reference)", stats_rel_id, "ID"),
+            ("Resolution_toplabel (H1 diagnostic)", stats_res_ood, "OOD"),
+            ("Uncertainty_toplabel (should ~=0)", stats_unc_ood, "OOD"),
+            ("Reliability_OvR (sensitivity)", stats_relo_ood, "OOD"),
         ]:
             w.writerow([name, split,
                         f"{s['mean_before']:.6f}", f"{s['mean_after']:.6f}",
@@ -845,57 +817,57 @@ def summarize_and_write(brier_rows: List[Dict], dcr_ncv_rows: List[Dict]) -> Non
                         f"{s['cohen_d_ci_lo']:+.4f}", f"{s['cohen_d_ci_hi']:+.4f}",
                         f"{s['t_stat']:+.4f}", f"{s['p_value']:.6e}", s['n']])
         w.writerow([])
-        w.writerow(["# H1 诊断: |ΔResolution| / |ΔReliability| (OOD)"])
+        w.writerow(["# H1 diagnostic: |DeltaResolution| / |DeltaReliability| (OOD)"])
         w.writerow(["h1_ratio", f"{h1_ratio:.4f}",
-                    "# <0.1 → H1 近似成立; >0.3 → H1 可能不成立"])
+                    "# <0.1 -> H1 approx holds; >0.3 -> H1 may not hold"])
         w.writerow(["mean_delta_reliability", f"{mean_delta_rel:+.6f}"])
         w.writerow(["mean_delta_resolution", f"{mean_delta_res:+.6f}"])
-    print(f"写入 {csv3}")
+    print(f"Wrote {csv3}")
 
     # ==================================================================
-    # CSV 4: c1_dcr_ncv_summary.csv（次要终点汇总 + BH FDR）
+    # CSV 4: c1_dcr_ncv_summary.csv (secondary endpoint summary + BH FDR)
     # ==================================================================
     csv4 = RESULTS_DIR / "c1_dcr_ncv_summary.csv"
 
-    # DCR（OOD 主分析）
+    # DCR (OOD primary analysis)
     dcr_ood = [r['dcr_ood'] for r in dcr_ncv_rows]
     dcr_id = [r['dcr_id'] for r in dcr_ncv_rows]
-    # DCR 已是 (cost_raw - cost_cal)，正值=改善。用 "increase" 方向。
+    # DCR is already (cost_raw - cost_cal), positive = improvement. Use "increase" direction.
     stats_dcr_ood = cohen_d_paired(np.zeros(n), dcr_ood, "increase")
     stats_dcr_id = cohen_d_paired(np.zeros(n), dcr_id, "increase")
 
-    # NCV（OOD 主分析）
+    # NCV (OOD primary analysis)
     ncv_ood = [r['ncv_ood'] for r in dcr_ncv_rows]
     ncv_id = [r['ncv_id'] for r in dcr_ncv_rows]
     stats_ncv_ood = cohen_d_paired(np.zeros(n), ncv_ood, "increase")
     stats_ncv_id = cohen_d_paired(np.zeros(n), ncv_id, "increase")
 
-    # ECE 变化（探索性）
+    # ECE change (exploratory)
     ece_before_ood = [r['ece_before_ood'] for r in dcr_ncv_rows]
     ece_after_ood = [r['ece_after_ood'] for r in dcr_ncv_rows]
     stats_ece_ood = cohen_d_paired(ece_before_ood, ece_after_ood, "decrease")
 
-    # BH FDR 校正（2 个次要终点：DCR, NCV）
+    # BH FDR correction (2 secondary endpoints: DCR, NCV)
     p_values = [stats_dcr_ood['p_value'], stats_ncv_ood['p_value']]
     reject, adj_p = bh_fdr(p_values, q=FDR_Q)
 
     with open(csv4, "w", encoding="utf-8", newline="") as f:
         w = csv.writer(f)
-        w.writerow(["# E3 次要终点汇总：DCR + NCV + 探索性 ECE"])
-        w.writerow(["# DCR: Decision Cost Reduction (τ=0.5, abstain_cost=0.5)"])
-        w.writerow(["# NCV: Net Clinical Value (对称, N_total=N×K)"])
-        w.writerow(["# BH FDR 校正: q=0.05, 2 个次要终点 (DCR, NCV)"])
+        w.writerow(["# E3 secondary endpoint summary: DCR + NCV + exploratory ECE"])
+        w.writerow(["# DCR: Decision Cost Reduction (tau=0.5, abstain_cost=0.5)"])
+        w.writerow(["# NCV: Net Clinical Value (symmetric, N_total=N x K)"])
+        w.writerow(["# BH FDR correction: q=0.05, 2 secondary endpoints (DCR, NCV)"])
         w.writerow(["# n_checkpoints", n])
         w.writerow([])
         w.writerow(["metric", "split", "mean", "std", "cohen_d",
                     "cohen_d_ci_lo", "cohen_d_ci_hi", "t_stat", "p_value",
                     "p_adj_bh", "reject_h0", "n"])
         for name, s, split, p_adj, rej in [
-            ("DCR (次要终点1)", stats_dcr_ood, "OOD", adj_p[0], reject[0]),
-            ("DCR (参考)", stats_dcr_id, "ID", "", ""),
-            ("NCV (次要终点2)", stats_ncv_ood, "OOD", adj_p[1], reject[1]),
-            ("NCV (参考)", stats_ncv_id, "ID", "", ""),
-            ("ΔECE (探索性)", stats_ece_ood, "OOD", "", ""),
+            ("DCR (secondary 1)", stats_dcr_ood, "OOD", adj_p[0], reject[0]),
+            ("DCR (reference)", stats_dcr_id, "ID", "", ""),
+            ("NCV (secondary 2)", stats_ncv_ood, "OOD", adj_p[1], reject[1]),
+            ("NCV (reference)", stats_ncv_id, "ID", "", ""),
+            ("ΔECE (exploratory)", stats_ece_ood, "OOD", "", ""),
         ]:
             w.writerow([name, split,
                         f"{s['mean_diff']:+.6f}", f"{s['std_diff']:.6f}",
@@ -905,78 +877,78 @@ def summarize_and_write(brier_rows: List[Dict], dcr_ncv_rows: List[Dict]) -> Non
                         f"{p_adj:.6e}" if p_adj != "" else "",
                         str(rej) if rej != "" else "", s['n']])
         w.writerow([])
-        w.writerow(["# BH FDR 校正详情"])
-        w.writerow(["# 原始 p 值: DCR={:.6e}, NCV={:.6e}".format(p_values[0], p_values[1])])
-        w.writerow(["# 调整 p 值: DCR={:.6e}, NCV={:.6e}".format(adj_p[0], adj_p[1])])
-        w.writerow(["# 拒绝 H0:   DCR={}, NCV={}".format(reject[0], reject[1])])
-        w.writerow(["# FDR 阈值:   q={}".format(FDR_Q)])
-    print(f"写入 {csv4}")
+        w.writerow(["# BH FDR correction details"])
+        w.writerow(["# Raw p-values: DCR={:.6e}, NCV={:.6e}".format(p_values[0], p_values[1])])
+        w.writerow(["# Adjusted p-values: DCR={:.6e}, NCV={:.6e}".format(adj_p[0], adj_p[1])])
+        w.writerow(["# Reject H0:   DCR={}, NCV={}".format(reject[0], reject[1])])
+        w.writerow(["# FDR threshold:   q={}".format(FDR_Q)])
+    print(f"Wrote {csv4}")
 
     # ==================================================================
-    # 控制台汇总
+    # Console summary
     # ==================================================================
     print("\n" + "=" * 80)
-    print("E3 实验汇总")
+    print("E3 experiment summary")
     print("=" * 80)
-    print(f"\n【主终点】Brier Reliability 改善 (OOD, n={n})")
+    print(f"\n[Primary endpoint] Brier Reliability improvement (OOD, n={n})")
     print(f"  ΔReliability = {stats_rel_ood['mean_diff']:+.6f} ± {stats_rel_ood['std_diff']:.6f}")
     print(f"  Cohen's d = {stats_rel_ood['cohen_d']:+.4f} "
           f"[{stats_rel_ood['cohen_d_ci_lo']:+.4f}, {stats_rel_ood['cohen_d_ci_hi']:+.4f}]")
     print(f"  paired t = {stats_rel_ood['t_stat']:+.4f}, p = {stats_rel_ood['p_value']:.6e}")
 
-    print(f"\n【H1 诊断】|ΔResolution|/|ΔReliability| = {h1_ratio:.4f}")
+    print(f"\n[H1 diagnostic] |ΔResolution|/|ΔReliability| = {h1_ratio:.4f}")
     if h1_ratio < 0.1:
-        print(f"  → H1 近似成立（Resolution 变化 << Reliability 变化）")
+        print(f"  -> H1 approximately holds (Resolution change << Reliability change)")
     elif h1_ratio < 0.3:
-        print(f"  → H1 部分成立（Resolution 有轻微变化）")
+        print(f"  -> H1 partially holds (Resolution changes slightly)")
     else:
-        print(f"  → H1 可能不成立（Resolution 变化显著，建议增加 bin 数）")
+        print(f"  -> H1 may not hold (Resolution changes substantially; consider more bins)")
 
-    print(f"\n【次要终点1】DCR (OOD, τ=0.5)")
+    print(f"\n[Secondary endpoint 1] DCR (OOD, tau=0.5)")
     print(f"  DCR = {stats_dcr_ood['mean_diff']:+.6f}, p = {stats_dcr_ood['p_value']:.6e}, "
           f"p_adj = {adj_p[0]:.6e}, reject = {reject[0]}")
 
-    print(f"\n【次要终点2】NCV (OOD, N_total=N×K)")
+    print(f"\n[Secondary endpoint 2] NCV (OOD, N_total=N x K)")
     print(f"  NCV = {stats_ncv_ood['mean_diff']:+.6f}, p = {stats_ncv_ood['p_value']:.6e}, "
           f"p_adj = {adj_p[1]:.6e}, reject = {reject[1]}")
 
-    print(f"\n【探索性】ΔECE (OOD)")
+    print(f"\n[Exploratory] ΔECE (OOD)")
     print(f"  ΔECE = {stats_ece_ood['mean_diff']:+.6f}, p = {stats_ece_ood['p_value']:.6e}")
 
 
 # ===========================================================================
-# 第五部分：入口
+# Part 5: entry point
 # ===========================================================================
 
 def main():
     ap = argparse.ArgumentParser(
-        description="E3 核心实验: Brier Reliability + DCR + NCV + ECE 变化")
+        description="E3 core experiment: Brier Reliability + DCR + NCV + ECE change")
     ap.add_argument("--regen", action="store_true",
-                    help="重新前向传播生成概率（否则用缓存）")
+                    help="re-run forward pass to generate probabilities (otherwise use cache)")
     ap.add_argument("--limit", type=int, default=None,
-                    help="冒烟测试截断样本数")
+                    help="smoke-test sample truncation count")
     ap.add_argument("--batch-size", type=int, default=16)
     ap.add_argument("--num-workers", type=int, default=0,
-                    help="DataLoader 多线程")
+                    help="DataLoader worker threads")
     args = ap.parse_args()
 
     print("=" * 80)
-    print("E3 核心实验：Brier Reliability + DCR + NCV + ECE 变化")
+    print("E3 core experiment: Brier Reliability + DCR + NCV + ECE change")
     print("=" * 80)
-    print(f"Checkpoints: {len(PAIRS)} pairs × {len(ARCHS)} archs × {len(SEEDS)} seeds "
+    print(f"Checkpoints: {len(PAIRS)} pairs x {len(ARCHS)} archs x {len(SEEDS)} seeds "
           f"= {len(PAIRS) * len(ARCHS) * len(SEEDS)}")
-    print(f"主终点: Brier Reliability 改善 (Cohen's d + 95% CI + paired t-test)")
-    print(f"次要终点1: DCR (τ={TAU})")
-    print(f"次要终点2: NCV (对称, N_total=N×K)")
-    print(f"探索性: ECE 变化")
-    print(f"多重比较: BH FDR (q={FDR_Q}, 2 个次要终点)")
-    print(f"缓存: {'重新生成' if args.regen else '优先使用'}")
+    print(f"Primary endpoint: Brier Reliability improvement (Cohen's d + 95% CI + paired t-test)")
+    print(f"Secondary endpoint 1: DCR (tau={TAU})")
+    print(f"Secondary endpoint 2: NCV (symmetric, N_total=N x K)")
+    print(f"Exploratory: ECE change")
+    print(f"Multiple comparisons: BH FDR (q={FDR_Q}, 2 secondary endpoints)")
+    print(f"Cache: {'regenerate' if args.regen else 'prefer existing'}")
     print()
 
     brier_rows, dcr_ncv_rows = run_experiment(args)
     summarize_and_write(brier_rows, dcr_ncv_rows)
 
-    print("\nE3 实验完成。")
+    print("\nE3 experiment complete.")
 
 
 if __name__ == "__main__":

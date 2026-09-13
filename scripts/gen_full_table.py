@@ -1,4 +1,4 @@
-"""生成全方法表 LaTeX（正反方向 seed42）。"""
+"""Generate the full-method LaTeX table (forward and reverse directions, seed 42)."""
 import json
 from pathlib import Path
 

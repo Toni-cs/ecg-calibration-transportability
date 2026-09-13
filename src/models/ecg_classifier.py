@@ -1,14 +1,16 @@
-"""ECG Classification Model (architecture-agnostic; BiMamba default)
+"""ECG Classification Model (architecture-agnostic; BiMamba default).
 
-架构流程（全链路，无死代码）：
-12-lead ECG → backbone(可选 BiMamba / ResNet1D / InceptionTime) →
-AttentionPooling → LayerNorm+GELU MLP → 温度缩放 → Softmax
+Full pipeline (no dead code):
+12-lead ECG -> backbone (BiMamba / ResNet1D / InceptionTime optional) ->
+AttentionPooling -> LayerNorm+GELU MLP -> temperature scaling -> Softmax
 
-- backbone 契约：输入 (batch, n_leads, seq_len)，输出 (batch, seq_len_out,
-  d_model) 的时序特征；AttentionPooling 对任意 seq_len_out 生效。
-- 温度缩放：主协议 T≡1 冻结训练，只做后验TS（对抗性审查修复）。
-- §4 三架构对比：仅替换 backbone（build_backbone 按名取），分类头恒等，
-  保证校准修复对比在相同池化/分类/温度条件下公平。
+- backbone contract: input (batch, n_leads, seq_len), output (batch, seq_len_out,
+  d_model) temporal features; AttentionPooling works over any seq_len_out.
+- Temperature scaling: the main protocol freezes T=1 during training; temperature
+  scaling is applied only post hoc.
+- Section 4 three-architecture comparison: only the backbone is swapped
+  (build_backbone by name); the classification head is fixed, ensuring a fair
+  calibration comparison under identical pooling/classification/temperature.
 """
 
 import math
@@ -22,7 +24,7 @@ from .baselines import build_backbone
 
 
 class AttentionPooling(nn.Module):
-    """注意力池化：对 (batch, seq_len, d_model) 加权聚合为 (batch, d_model)"""
+    """Attention pooling: aggregate (batch, seq_len, d_model) into (batch, d_model)."""
 
     def __init__(self, d_model: int):
         super().__init__()
@@ -39,7 +41,7 @@ class AttentionPooling(nn.Module):
 
 
 class ECGClassifier(nn.Module):
-    """ECG分类器（主干可选 BiMamba/ResNet1D/InceptionTime + AttentionPooling + 校准就绪）"""
+    """ECG classifier (backbone: BiMamba/ResNet1D/InceptionTime + AttentionPooling + calibration-ready)."""
 
     def __init__(
         self,
@@ -49,8 +51,8 @@ class ECGClassifier(nn.Module):
         num_classes: int = 5,
         dropout: float = 0.1,
         temperature: float = 1.0,
-        learnable_temp: bool = False,  # 主协议：T≡1冻结训练，温度只做后验TS（对抗性审查修复）
-        backbone_type: str = "mamba",  # mamba | resnet1d | inceptiontime（协议§4）
+        learnable_temp: bool = False,  # main protocol: T=1 frozen during training; temperature applied only post hoc
+        backbone_type: str = "mamba",  # mamba | resnet1d | inceptiontime (Section 4)
     ):
         super().__init__()
         self.in_channels = in_channels
@@ -95,7 +97,7 @@ class ECGClassifier(nn.Module):
             x: (batch, n_leads, seq_len)
         Returns:
             logits: (batch, num_classes)
-            probs:  (batch, num_classes) 若 return_probs
+            probs:  (batch, num_classes) if return_probs
         """
         feats = self.backbone(x)          # (batch, seq_len, d_model)
         pooled = self.pool(feats)         # (batch, d_model)
@@ -109,20 +111,20 @@ class ECGClassifier(nn.Module):
         x: torch.Tensor,
         n_forward: int = 10,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """MC-Dropout不确定性量化
+        """MC-Dropout uncertainty quantification.
 
-        工程修复（对抗性审查）：
-        - MC采样时冻结BatchNorm（保持eval running stats），
-          否则即使no_grad也会更新running_mean/var，永久改变部署模型
-        - 结束后恢复原始training状态
+        Engineering note:
+        - Freeze BatchNorm during MC sampling (keep eval running stats); otherwise, even
+          under no_grad, running_mean/var would update and permanently alter the deployed model.
+        - Restore the original training state afterward.
 
         Returns:
             mean_probs: (batch, num_classes)
-            uncertainty: (batch,) 预测熵
-            std: (batch, num_classes) 概率标准差
+            uncertainty: (batch,) predictive entropy
+            std: (batch, num_classes) probability standard deviation
         """
         was_training = self.training
-        # 只开dropout，冻结BN
+        # enable dropout only; freeze BN
         self.train()
         for m in self.modules():
             if isinstance(m, (nn.BatchNorm1d, nn.BatchNorm2d, nn.LayerNorm)):
@@ -134,7 +136,7 @@ class ECGClassifier(nn.Module):
                 _, probs = self.forward(x)
                 probs_list.append(probs)
 
-        self.train(was_training)  # 恢复原状态
+        self.train(was_training)  # restore original state
 
         probs_stack = torch.stack(probs_list, dim=0)   # (n, batch, C)
         mean_probs = probs_stack.mean(dim=0)
@@ -143,7 +145,7 @@ class ECGClassifier(nn.Module):
         return mean_probs, uncertainty, std
 
     def get_features(self, x: torch.Tensor) -> torch.Tensor:
-        """获取池化后特征 (batch, d_model)"""
+        """Get pooled features (batch, d_model)."""
         return self.pool(self.backbone(x))
 
 
@@ -156,7 +158,7 @@ def create_ecg_classifier(
     backbone_type: str = "mamba",
     **kwargs,
 ) -> ECGClassifier:
-    """工厂函数（backbone_type: mamba/resnet1d/inceptiontime）"""
+    """Factory function (backbone_type: mamba/resnet1d/inceptiontime)."""
     return ECGClassifier(
         in_channels=in_channels,
         d_model=d_model,

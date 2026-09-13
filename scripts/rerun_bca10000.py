@@ -1,17 +1,17 @@
-"""BCa B=10,000 全网格重跑（ts 主终点）：6 对 × 2 架构 × 5 种子 = 60 runs。
+"""Re-run the full grid with BCa B=10,000 (ts primary endpoint): 6 pairs x 2 architectures x 5 seeds = 60 runs.
 
-协议预注册 B=10,000 + BCa（含 jackknife 加速度项）；历史 60 实验中
-31 个 percentile/B=10000、21 个 percentile/B=200、3 个 BCa（仅 ts 混合溯源）。
-本脚本把 ts 方法全部升级为正式版 BCa，并依赖 eval_transfer.py 写入的
-methods.ts.meta.n_bootstrap/bci_method 做可续跑 skip 判据。
+Per the preregistered protocol, B=10,000 + BCa (with the jackknife acceleration term); of the historical 60 experiments,
+31 used percentile/B=10000, 21 used percentile/B=200, and 3 used BCa (only with mixed ts provenance).
+This script upgrades all ts runs to the formal BCa version and relies on the
+methods.ts.meta.n_bootstrap/bci_method fields written by eval_transfer.py as the resume-skip criterion.
 
-- 每格独立调用（崩一格不影响其余），[ret=] 逐格落盘。
-- 已完成格（meta.n_bootstrap>=10000 且 bci_method=bca）自动跳过。
-- 只重写 ts 键（--methods ts），其余 7 方法历史 percentile 结果保留；
-  全方法 BCa 版可在全网格 ts 完成后把 METHODS 改为全部方法列表。
+- Each cell is invoked independently (one cell crashing does not affect the others), and [ret=] is logged per cell.
+- Already-completed cells (meta.n_bootstrap>=10000 and bci_method=bca) are skipped automatically.
+- Only the ts key is rewritten (--methods ts); the other 7 methods' historical percentile results are preserved;
+  a full-method BCa version can be produced by changing METHODS to the full method list after ts completes.
 
-需 GPU 空闲。预计每格 5-15 分钟（B=10000+jackknife），共 6-12 小时。
-用法：python scripts/rerun_bca10000.py [--archs inceptiontime resnet1d] [--dry-run]
+Requires a free GPU. Estimated 5-15 min per cell (B=10000+jackknife), 6-12 hours total.
+Usage: python scripts/rerun_bca10000.py [--archs inceptiontime resnet1d] [--dry-run]
 """
 import os
 import sys
@@ -91,11 +91,11 @@ def main() -> None:
         ret = os.system(cmd)
         rets.append((pair_key, arch, seed, ret))
         with open(LOG, "a", encoding="utf-8") as f:
-            f.write(f"\n[ret={ret}] {src}->{tgt} {arch} seed{seed} 完成\n")
+            f.write(f"\n[ret={ret}] {src}->{tgt} {arch} seed{seed} done\n")
 
     n_fail = sum(1 for r in rets if r[3] != 0)
     with open(LOG, "a", encoding="utf-8") as f:
-        f.write(f"\nBCa B=10000 全网格完成：{len(rets)} runs，失败 {n_fail}。\n")
+        f.write(f"\nBCa B=10000 full grid complete: {len(rets)} runs, {n_fail} failed.\n")
     print(f"[done] {len(rets)} runs, {n_fail} failed")
 
 

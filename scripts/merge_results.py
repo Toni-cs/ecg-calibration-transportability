@@ -1,4 +1,4 @@
-"""合并 4 方法备份与 6 方法结果为完整 8 方法表。"""
+"""Merge the 4-method backup and 6-method results into the full 8-method table."""
 import json
 from pathlib import Path
 
@@ -22,7 +22,7 @@ for pair, seed in PAIRS:
                 if k not in merged["methods"]:
                     merged["methods"][k] = v
     if merged is None:
-        print(f"[skip] {d}: 无备份文件")
+        print(f"[skip] {d}: no backup file")
         continue
     out = d / "transfer_result_full.json"
     out.write_text(json.dumps(merged, indent=2), encoding="utf-8")

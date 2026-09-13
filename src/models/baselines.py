@@ -1,23 +1,31 @@
-"""§4 三架构基线的两个 CNN 主干：1D-ResNet 与 InceptionTime（协议§13-1）
+"""Two CNN backbones for the Section 4 baselines: 1D-ResNet and InceptionTime.
 
-设计约束（与 BiMamba 主干可公平对比）：
-- 输入 (batch, n_leads=12, seq_len) → 输出 **(batch, seq_len_out, d_model)**
-- 与 ECGMambaBackbone 同契约：只做特征提取，不做最终分类；池化与分类头
-  由 ECGClassifier（AttentionPooling + LayerNorm/GELU/Linear）统一承担。
-- AttentionPooling 对任意 seq_len_out 生效（softmax over 时间维），故各主干
-  可自由降采样而不破坏下游接口——校准对比只在特征提取器不同，分类头恒等。
+Design constraints (for fair comparison with the BiMamba backbone):
+- Input (batch, n_leads=12, seq_len) -> output (batch, seq_len_out, d_model).
+- Same contract as ECGMambaBackbone: feature extraction only, no final
+  classification. Pooling and the classification head are unified in
+  ECGClassifier (AttentionPooling + LayerNorm/GELU/Linear).
+- AttentionPooling operates over any seq_len_out (softmax over time), so each
+  backbone may downsample freely without breaking the downstream interface.
+  Calibration comparison varies only the feature extractor; the head is fixed.
 
-架构（均为公开、可复现的标准实现，逐层注明）：
-1. ResNet1D：VGG/ResNet 一维化（He et al. 2016；ECG 分类社区通用 ResNet-1D）。
-   conv stem → 4 stage 残差（每 stage 首块 stride=2 降采样、通道加倍）→
-   全局/时序特征 → 1x1 投影到 d_model → (batch, seq_len_out, d_model)。
-2. InceptionTime：Ismail Fawaz et al. 2020 的 inception 模块（bottleneck 1x1 +
-   多尺度卷积 5/11/23 + 池化旁路），时间维不降采样，最终 1x1 投影到 d_model。
-   注：原始 InceptionTime 是全局平均池化分类；为统一接口，此处保留时序特征
-   并交由 AttentionPooling——仅在特征提取方式上与 BiMamba 公平对齐。
+Architectures (standard, reproducible public implementations, documented layer
+by layer):
+1. ResNet1D: VGG/ResNet 1D adaptation (He et al. 2016; standard ResNet-1D for
+   ECG classification). conv stem -> 4 residual stages (first block of each
+   stage uses stride=2 downsampling, channel doubling) -> global/temporal
+   features -> 1x1 projection to d_model -> (batch, seq_len_out, d_model).
+2. InceptionTime: inception module from Ismail Fawaz et al. 2020 (bottleneck
+   1x1 + multi-scale conv 5/11/23 + pooling branch), no temporal downsampling,
+   final 1x1 projection to d_model. The original InceptionTime uses global
+   average pooling for classification; to unify the interface we keep the
+   temporal features and delegate to AttentionPooling, aligning only on the
+   feature-extraction method.
 
-BN 纪律：训练时 BN 更新 running stats；主协议温度在 cal 拟合、指标只在
-test 报告（与 ECGClassifier.predict_with_uncertainty 的 BN 冻结逻辑兼容）。
+BatchNorm discipline: BN updates running stats during training; the main
+protocol temperature is fit at calibration time and metrics are reported only
+at test time (compatible with the BN-freezing logic in
+ECGClassifier.predict_with_uncertainty).
 """
 
 from __future__ import annotations
@@ -31,11 +39,11 @@ import torch.nn.functional as F
 # 1D-ResNet
 # ===========================================================================
 class _ResBlock1D(nn.Module):
-    """标准瓶颈/基本残差块（一维）
+    """Standard basic residual block (1D).
 
-    基本块（base_width 风格）：
-      bn+relu → conv3x3 → bn+relu → conv3x3 → +shortcut(投影可选)
-    支持 stride>1 降采样与通道扩展（first block of each stage）。
+    Basic block (base_width style):
+      bn+relu -> conv3x3 -> bn+relu -> conv3x3 -> + shortcut (optional projection).
+    Supports stride>1 downsampling and channel expansion (first block of each stage).
     """
 
     def __init__(self, in_ch, out_ch, stride=1, downsample=None):
@@ -59,30 +67,31 @@ class _ResBlock1D(nn.Module):
 
 
 class ECGResNet1D(nn.Module):
-    """1D ResNet 主干（12导联ECG → 时序特征 (batch, seq_out, d_model)）
+    """1D ResNet backbone (12-lead ECG -> temporal features (batch, seq_out, d_model)).
 
-    层配置（每 stage 的 block 数，默认 ResNet-34 风格 [3,4,6,3]）：
-      conv stem(7x7/stride2 + maxpool) → 4 stages 通道 [64,128,256,512]
-    → 1x1 投影到 d_model（可选对末 stage 输出做 adaptive 池化归一化长度）。
+    Layer config (number of blocks per stage; ResNet-34 style [3,4,6,3]):
+      conv stem (7x7/stride2 + maxpool) -> 4 stages with channels [64,128,256,512]
+      -> 1x1 projection to d_model (optional adaptive pooling to normalize length).
 
-    stages 逐级 stride=2 会把 seq_len 折半 4 次（~5000→313），此降采样
-    属 ResNet 设计，符合"架构不同即校准迁移异质性来源之一"的§4命题。
+    Each stage halves seq_len via stride=2 (4 times, ~5000->313). This downsampling
+    is intrinsic to ResNet and matches the Section 4 premise that differing
+    architectures are a source of calibration transfer heterogeneity.
     """
 
     def __init__(
         self,
         in_channels: int = 12,
         d_model: int = 64,
-        block_layers: tuple = (2, 2, 2, 2),  # ECG小型ResNet-1D（避免过度容量，公平对比）
-        base_width: int | None = None,        # None → 随 d_model 缩放
+        block_layers: tuple = (2, 2, 2, 2),  # small ECG ResNet-1D (limited capacity for fair comparison)
+        base_width: int | None = None,        # None -> scales with d_model
         dropout: float = 0.0,
     ):
         super().__init__()
         self.in_channels = in_channels
         self.d_model = d_model
-        # base_width 随 d_model 缩放，使主干容量与 BiMamba/InceptionTime 同量级
-        # （最终stage通道 = base_width*2^(len-1)；取 base_width≈d_model/4 使
-        #   最深层≈d_model，避免4-stage默认64导致7M参数的不公平对比）
+        # Scale base_width with d_model so capacity matches BiMamba/InceptionTime.
+        # Final stage channels = base_width * 2**(len-1); base_width ~ d_model/4 puts
+        # the deepest layer at ~d_model, avoiding the unfair ~7M params of a default 64.
         if base_width is None:
             base_width = max(8, int(d_model // 4))
         self.base_width = base_width
@@ -134,12 +143,13 @@ class ECGResNet1D(nn.Module):
 # InceptionTime
 # ===========================================================================
 class _InceptionBlock1D(nn.Module):
-    """InceptionTime inception 模块（Ismail Fawaz et al., Data Min. Knowl. Disc., 2020）
+    """InceptionTime inception module (Ismail Fawaz et al., Data Min. Knowl. Disc., 2020).
 
-    - bottleneck 1x1（降通道，降低卷积成本）
-    - 并行分支：kernel 5/11/23 一维卷积 + maxpool 旁路
-    - concat 后 batch-norm
-    原文用全局平均池化；此处保留时序输出交给 AttentionPooling。
+    - 1x1 bottleneck (reduces channels, lowers convolution cost).
+    - Parallel branches: 1D conv with kernel 5/11/23 + maxpool branch.
+    - batch-norm after concatenation.
+    The original uses global average pooling; here we keep the temporal output
+    for AttentionPooling.
     """
 
     def __init__(self, in_ch, n_filters=32, kernel_sizes=(5, 11, 23),
@@ -167,7 +177,7 @@ class _InceptionBlock1D(nn.Module):
         if self.bottleneck is not None:
             z = self.bottleneck(x)
         branches = [conv(z) for conv in self.convs]
-        branches.append(self.pool(self.maxpool(z)))  # pool 旁路经 1x1 保持通道
+        branches.append(self.pool(self.maxpool(z)))  # pooling branch keeps channels via 1x1
         out = torch.cat(branches, dim=1)
         if self.use_bn:
             out = self.bn(out)
@@ -175,10 +185,11 @@ class _InceptionBlock1D(nn.Module):
 
 
 class ECGInceptionTime(nn.Module):
-    """InceptionTime 主干（12导联ECG → 时序特征 (batch, seq_out, d_model)）
+    """InceptionTime backbone (12-lead ECG -> temporal features (batch, seq_out, d_model)).
 
-    时间维不降采样（seq_out == seq_len），多尺度卷积捕获跨样本局部结构；
-    适合校准迁移对比中对齐 BiMamba 的全分辨率特性。
+    No temporal downsampling (seq_out == seq_len); multi-scale convolutions capture
+    cross-sample local structure, aligning with the full-resolution property of
+    BiMamba for calibration transfer comparison.
     """
 
     def __init__(
@@ -195,7 +206,7 @@ class ECGInceptionTime(nn.Module):
         self.d_model = d_model
         cur_ch = in_channels
         self.blocks = nn.ModuleList()
-        # 每个块后通道 = n_filters*4；块间降半通道避免爆炸（InceptionTime 常用缩放）
+        # channels after each block = n_filters*4; halve between blocks to avoid blowup (common InceptionTime scaling)
         for i in range(n_blocks):
             self.blocks.append(
                 _InceptionBlock1D(cur_ch, n_filters=n_filters,
@@ -215,16 +226,17 @@ class ECGInceptionTime(nn.Module):
 
 
 # ===========================================================================
-# 主干注册表（供 ECGClassifier / train.py 按名取用）
+# Backbone registry (used by ECGClassifier / train.py to fetch by name)
 # ===========================================================================
 def build_backbone(name: str, in_channels: int, d_model: int,
                    n_layers: int, dropout: float) -> nn.Module:
-    """按 §4 架构名构造主干（返回 (batch,...,d_model) 时序特征主干）。
+    """Build a backbone by Section 4 architecture name (returns a (batch, ..., d_model)
+    temporal-feature backbone).
 
     name:
-      - "mamba"/"bimamba": 主协议 BiMamba（默认，s4_backbone.ECGMambaBackbone）
-      - "resnet1d": ECGResNet1D（§4 基线1）
-      - "inceptiontime": ECGInceptionTime（§4 基线2）
+      - "mamba"/"bimamba": main-protocol BiMamba (default, s4_backbone.ECGMambaBackbone).
+      - "resnet1d": ECGResNet1D (Section 4 baseline 1).
+      - "inceptiontime": ECGInceptionTime (Section 4 baseline 2).
     """
     name = name.lower()
     if name in ("mamba", "bimamba", "s4"):
@@ -238,7 +250,7 @@ def build_backbone(name: str, in_channels: int, d_model: int,
         return ECGInceptionTime(in_channels=in_channels, d_model=d_model,
                                 dropout=dropout)
     if name in ("inceptiontime_lite", "inception_lite", "inception-lite"):
-        # E5 实验：3 blocks 轻量 InceptionTime（~310K 参数，独立架构家族）
+        # E5 experiment: 3-block lightweight InceptionTime (~310K params, distinct architecture family)
         from .inceptiontime_lite import build_inceptiontime_lite
         return build_inceptiontime_lite(in_channels=in_channels,
                                         d_model=d_model,
@@ -253,8 +265,8 @@ __all__ = [
     "ECGInceptionTimeLite",
 ]
 
-# E5 实验：InceptionTime-Lite 暴露到 baselines 命名空间（供 ECGClassifier 按名取用）
+# E5 experiment: expose InceptionTime-Lite in the baselines namespace (used by ECGClassifier by name)
 from .inceptiontime_lite import ECGInceptionTimeLite  # noqa: E402,F401
 
-# E5 实验：InceptionTime-Lite 暴露到 baselines 命名空间（供 ECGClassifier 按名取用）
+# E5 experiment: expose InceptionTime-Lite in the baselines namespace (used by ECGClassifier by name)
 from .inceptiontime_lite import ECGInceptionTimeLite  # noqa: E402,F401

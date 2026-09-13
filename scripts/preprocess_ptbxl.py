@@ -1,29 +1,32 @@
-"""PTB-XL v1.0.3 预处理 → ECGNPZDataset 消费格式（协议§2 + §13-1集成层）
+"""PTB-XL v1.0.3 preprocessing -> ECGNPZDataset consumption format (protocol §2 + §13-1
+integration layer).
 
-输入：PTB-XL v1.0.3 官方目录（ptbxl_database.csv + records500/）
-输出：--output-root 下
-  - metadata_single_label.csv：列 id/label/npy_path/fs/original_len +
-    **patient_id/strat_fold**（F2遗留补列：患者级划分与clusters bootstrap依赖）
-  - data/*.npy：float32 (n_leads=12, seq_length=5000)，500Hz×10s定长
-  - preprocess_summary.json：STROBE式计数（总数/未映射排除/写入/分布）
+Input: PTB-XL v1.0.3 official directory (ptbxl_database.csv + records500/)
+Output under --output-root:
+  - metadata_single_label.csv: columns id/label/npy_path/fs/original_len +
+    **patient_id/strat_fold** (columns required by patient-level splitting and cluster bootstrap)
+  - data/*.npy: float32 (n_leads=12, seq_length=5000), 500Hz x 10s fixed length
+  - preprocess_summary.json: STROBE-style counts (total / unmapped-excluded / written / distribution)
 
-标签：src.data.mapping.MAP_TO_5SUPERCLASS（Wagner 2020 五超类体系，
-优先级 MI>STTC>CD>HYP>NORM，协议§2固定；窦性速率语句SBRAD/STACH/SARRH
-→NORM，协议R13，2026-09-02修订）；不可映射记录剔除并单列计数
-（协议§2"STROBE流程图：排除逐类计数"），**不做重映射**。
+Labels: src.data.mapping.MAP_TO_5SUPERCLASS (Wagner 2020 five-superclass scheme, priority
+MI>STTC>CD>HYP>NORM, fixed by protocol §2; sinus-rate statements SBRAD/STACH/SARRH -> NORM,
+protocol §2 revision R13, 2026-09-02). Unmappable records are dropped and counted separately
+(protocol §2 "STROBE flowchart: per-class exclusion counts"); **no remapping is performed**.
 
-可恢复重跑：npy信号文件与label无关。输出目录已存在且含data/*.npy时，
-配合 --overwrite 传参，脚本将跳过已存在npy的信号加载/重写，仅据源码CSV
-+当前映射重建 metadata 与 summary（label源更新时无需重写信号）。
+Resumable rerun: the npy signal file is independent of the label. When the output directory
+already exists and contains data/*.npy, combined with --overwrite the script skips loading/
+rewriting existing npy and rebuilds only metadata and summary from the source CSV + current
+mapping (a label-source update does not require rewriting signals).
 
-划分不在此脚本做：strat_fold 原样入CSV，患者级四分割由 train.py
-（folds1-8 train(+val患者级 carve) / fold9 cal / fold10 test，协议§2）执行。
+Splitting is not done by this script: strat_fold is written to the CSV as-is, and the patient-level
+four-way split is performed by train.py (folds 1-8 train (+ patient-level val carve) / fold 9 cal
+/ fold 10 test, protocol §2).
 
-用法：
+Usage:
     python scripts/preprocess_ptbxl.py \
         --source-root ./data/ptb-xl/1.0.3 \
         --output-root ./data/ptbxl_processed
-    # label源(映射)更新后仅重建元数据：
+    # rebuild metadata only after a label-source (mapping) update:
     python scripts/preprocess_ptbxl.py \
         --source-root ./data/ptb-xl/1.0.3 \
         --output-root ./data/ptbxl_processed --overwrite
@@ -43,7 +46,8 @@ _PROJECT_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_PROJECT_ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-# 复用vendor预处理的信号加载/重采样定长逻辑（逐字同一实现，保证两库格式一致）
+# Reuse the vendor preprocessing's signal loading / resample-and-fix-length logic
+# (identical implementation, to keep both libraries' formats consistent)
 from preprocess_cinc2021 import load_signal, resample_and_fix_length  # noqa: E402
 from src.data.mapping import MAP_TO_5SUPERCLASS  # noqa: E402
 
@@ -51,7 +55,7 @@ from src.data.mapping import MAP_TO_5SUPERCLASS  # noqa: E402
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         description="Preprocess PTB-XL v1.0.3 into the ECGNPZDataset format "
-                    "(with patient_id/strat_fold columns, F2遗留)."
+                    "(with patient_id/strat_fold columns)."
     )
     parser.add_argument("--source-root", type=Path, required=True,
                         help="PTB-XL root containing ptbxl_database.csv and records500/.")
@@ -87,7 +91,7 @@ def main() -> None:
     missing = need_cols - set(db.columns)
     if missing:
         raise KeyError(f"ptbxl_database.csv missing columns {missing} "
-                       "(确认下载的是完整 v1.0.3，而非仅波形子集)")
+                       "(confirm the full v1.0.3 was downloaded, not the waveform-only subset)")
     if args.limit is not None:
         db = db.head(args.limit)
 
@@ -109,7 +113,8 @@ def main() -> None:
 
         label = MAP_TO_5SUPERCLASS(scp_codes)
         if label is None:
-            # 协议§2 STROBE：官方无类/技术伪影记录剔除并单列计数，不重映射
+            # protocol §2 STROBE: official no-class / technical-artifact records are dropped and
+            # counted separately, not remapped
             counters["skipped_unmappable"] += 1
             if len(unmapped_examples) < 20:
                 unmapped_examples.append(f"{rec.ecg_id}:{sorted(scp_codes)}")
@@ -120,9 +125,10 @@ def main() -> None:
         record_path = args.source_root / str(rec.filename_lr)
 
         if npy_path.exists():
-            # 可恢复重跑：npy信号文件与label无关，已存在则跳过信号加载/重写，
-            # 直接以目标长度重建metadata行（resample_and_fix_length恒输出
-            # target_length=5000，故original_len恒等于target_length）。
+            # Resumable rerun: the npy signal file is independent of the label, so if it already
+            # exists skip signal loading/rewriting and rebuild the metadata row at the target
+            # length (resample_and_fix_length always outputs target_length=5000, so original_len
+            # is always equal to target_length).
             original_len = args.signal_length
             counters["skipped_existing"] += 1
             rows.append({

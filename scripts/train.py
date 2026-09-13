@@ -1,19 +1,6 @@
-﻿"""训练脚本: ECG分类器训练（对抗性审查P0修复版）
+"""ECG classifier training script.
 
-修复清单（第一轮对抗审查）：
-- [FATAL-1] 删除ECGClassifier不存在的kwargs（pooling/use_mamba）
-- [FATAL-2] torch.load(weights_only=False)
-- [FATAL-6] 全局种子管理 + 合成数据固定缓存（不再每epoch重随）
-- [HIGH-7]  温度语义单一化：训练时T≡1冻结，温度只做后验TS
-- [HIGH-8]  fit_temperature使用2D one-hot标准多分类分支（Guo et al. 2017）
-- [HIGH-9]  train/val/cal/test四分割：ECE早停用val、温度拟合用cal、
-            最终报告只用test（各集互不重叠）
-- [HIGH-12] 梯度裁剪 + NaN防护
-- [HIGH-13] val/test loader drop_last=False + loss按样本数加权
-- [HIGH-14] bootstrap固定rng + 早停路径跳过CI（只在最终报告算）
-- [MED-17]  checkpoint目录含dataset/seed，互相不覆盖
-
-用法：
+Usage:
     python scripts/train.py --dataset synthetic --epochs 5
     python scripts/train.py --dataset ptbxl --data_dir ./data/ptbxl
 """
@@ -31,7 +18,7 @@ from torch.utils.data import DataLoader, Dataset
 from pathlib import Path
 from typing import Dict, Any, Optional
 
-# 添加项目根目录到路径
+# Add project root to sys.path
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
@@ -44,7 +31,7 @@ from src.data.datasets import ECGNPZDataset
 from src.data.splits import patient_wise_split
 from src.data.mapping import SUPERCLASSES
 
-# N1-r2 fix: 显式 n_bins 常量，与 run_e3_brier_dcr_ncv.py 对齐，避免依赖默认值
+# N1-r2 fix: Explicit n_bins constant (kept consistent across metric calls).
 N_BINS = 10
 
 
@@ -61,7 +48,7 @@ def set_seed(seed: int, deterministic: bool = False):
 
 
 class ECGDataset(Dataset):
-    """ECG数据集基类（子类实现__getitem__和__len__）"""
+    """ECG dataset base class; subclasses implement __getitem__ and __len__."""
 
     def __init__(self, data_dir: str, split: str = 'train'):
         self.data_dir = Path(data_dir)
@@ -76,10 +63,11 @@ class ECGDataset(Dataset):
 
 
 class SyntheticECGDataset(ECGDataset):
-    """合成ECG数据集（种子固定，__init__时一次性生成并缓存）
+    """Synthetic ECG dataset with a fixed seed; tensors are generated once in __init__ and cached.
 
-    修复[FATAL-6]：旧版在__getitem__里每次重新randn，val集每个epoch都是
-    新的随机数据，ECE早停等于对纯噪声做模型选择。现在缓存固定张量。
+    Caching the tensors (rather than re-sampling per __getitem__ call) keeps the
+    validation set identical across epochs, so ECE-based early stopping does not
+    select on freshly drawn noise.
     """
 
     def __init__(
@@ -109,9 +97,9 @@ def create_dataloader(
     batch_size: int = 32,
     num_workers: int = 0,
     shuffle: bool = True,
-    drop_last: bool = False,  # 修复[HIGH-13]：val/test不丢尾批
+    drop_last: bool = False,  # Keep the last (partial) batch for val/test loaders
 ) -> DataLoader:
-    """创建DataLoader"""
+    """Build a DataLoader."""
     return DataLoader(
         dataset,
         batch_size=batch_size,
@@ -131,7 +119,7 @@ def train_epoch(
     epoch: int,
     max_grad_norm: float = 1.0,
 ) -> Dict[str, float]:
-    """训练一个epoch（含梯度裁剪与NaN防护）"""
+    """Run one training epoch (with gradient clipping and non-finite loss guarding)."""
     model.train()
     total_loss = 0.0
     total_samples = 0
@@ -144,17 +132,17 @@ def train_epoch(
         logits, _ = model(x, return_probs=False)
         loss = F.cross_entropy(logits, y)
 
-        if not torch.isfinite(loss):  # NaN防护
+        if not torch.isfinite(loss):  # Guard against non-finite loss
             print(f"[WARN] Epoch {epoch} batch {batch_idx}: non-finite loss, skipped")
             optimizer.zero_grad()
             continue
 
         loss.backward()
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)  # 修复[HIGH-12]
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)  # Gradient clipping
         optimizer.step()
 
         bs = y.size(0)
-        total_loss += loss.item() * bs  # 修复[HIGH-13]：按样本数加权
+        total_loss += loss.item() * bs  # Weight batch loss by sample count
         total_samples += bs
         _, predicted = logits.max(1)
         correct += predicted.eq(y).sum().item()
@@ -171,7 +159,7 @@ def evaluate(
     device: torch.device,
     compute_calibration: bool = True,
 ) -> Dict[str, Any]:
-    """评估模型（返回probs矩阵供后续温度拟合复用）"""
+    """Evaluate model; returns the prob matrix for later temperature fitting."""
     model.eval()
     total_loss = 0.0
     correct = 0
@@ -205,8 +193,8 @@ def evaluate(
     }
 
     if compute_calibration:
-        if all_probs.ndim != 2:  # 修复[MED-20]：静默错误分支改为报错
-            raise ValueError(f"evaluate期望2D概率矩阵，得到ndim={all_probs.ndim}")
+        if all_probs.ndim != 2:  # Expected a 2D probability matrix
+            raise ValueError(f"evaluate expects a 2D probability matrix, got ndim={all_probs.ndim}")
         max_probs = all_probs.max(axis=1)
         correct_mask = (all_probs.argmax(axis=1) == all_labels).astype(float)
         cal_metrics = compute_all_metrics(max_probs, correct_mask, n_bins=N_BINS, n_bootstrap=0)  # N1-r2 fix: explicit n_bins
@@ -222,7 +210,7 @@ def train_model(
     config: Dict[str, Any],
     device: torch.device,
 ) -> nn.Module:
-    """完整训练流程：ECE早停用val集（模型选择），温度与最终报告用cal/test"""
+    """Full training loop: ECE-based early stopping on the val set; temperature fit on cal and reported on test."""
     optimizer = torch.optim.Adam(
         model.parameters(),
         lr=config.get('lr', 1e-3),
@@ -281,7 +269,7 @@ def train_model(
             'val_ece': val_metrics.get('ece', float('nan')),
         }, ckpt_path)
 
-    # 修复[FATAL-2]：weights_only=False（自保存文件，含python标量）
+    # Load self-saved checkpoint (weights_only=False to allow python scalars).
     checkpoint = torch.load(ckpt_path, weights_only=False)
     model.load_state_dict(checkpoint['model_state_dict'])
 
@@ -289,7 +277,7 @@ def train_model(
 
 
 def _carve_val_patients(pat_label: dict, frac: float, seed: int) -> set:
-    """患者级val carve：按患者多数标签分层随机抽frac比例患者（确定性）"""
+    """Patient-level val carve: deterministically sample a frac of patients, stratified by patient majority label."""
     rng = np.random.default_rng(seed)
     val_patients: set = set()
     for lab in sorted(set(pat_label.values())):
@@ -306,7 +294,7 @@ def _pos_of_patients(meta: 'pd.DataFrame', patients) -> np.ndarray:
 
 def _build_npz_datasets(meta: 'pd.DataFrame', meta_csv: Path, pos: dict,
                         label_map: dict):
-    """按行号位置切分构建 ECGNPZDataset（roles: train/val→cal/cal/test）"""
+    """Build ECGNPZDataset per row position; roles map train/val->cal, cal->cal, test->test."""
     from src.data.datasets import ECGNPZDataset
     roles = {'train': 'train', 'val': 'cal', 'cal': 'cal', 'test': 'test'}
     return {
@@ -318,14 +306,14 @@ def _build_npz_datasets(meta: 'pd.DataFrame', meta_csv: Path, pos: dict,
 
 def build_ptbxl_datasets(data_dir: str, seed: int, limit: Optional[int] = None,
                          subspace: Optional[tuple] = None):
-    """真实PTB-XL四分割（协议§2）：folds1-8 train(+患者级val carve)/fold9 cal/fold10 test
+    """Real PTB-XL four-way split (preregistered protocol §2): folds 1-8 train (+ patient-level val carve) / fold 9 cal / fold 10 test.
 
-    - 划分用 src.data.splits.ptbxl_official_folds（官方strat_fold，患者不跨折）
-    - val carve：folds1-8内部按患者多数标签分层抽12.5%患者（患者级，防记录级泄漏）
-    - assert_no_leakage 硬性断言 train/val/cal/test 患者两两不交（协议§2硬性脚本）
-    - 返回 clusters_test（test记录的患者ID，按数据集顺序对齐）供主终点
-      benefit_inference(clusters=) 患者级cluster bootstrap（F2遗留接线）
-    - subspace：若提供（如SUBSPACE_CPSC），按子空间过滤并降级label_map（协议§2对称重算）
+    - Splitting uses src.data.splits.ptbxl_official_folds (official strat_fold; patients never cross folds).
+    - Val carve: within folds 1-8, sample 12.5% of patients stratified by patient majority label (patient-level, avoids record-level leakage).
+    - assert_no_leakage hard-asserts that train/val/cal/test patient sets are pairwise disjoint (protocol-mandated check).
+    - Returns clusters_test (patient ids of test records, aligned to dataset order) for the patient-level cluster bootstrap in the primary endpoint.
+      patient-level cluster bootstrap for the primary endpoint (via benefit_inference(clusters=)).
+    - subspace: if provided (e.g. SUBSPACE_CPSC), filter to the subspace and remap label_map (protocol-symmetric recomputation).
     """
     from src.data.splits import ptbxl_official_folds, assert_no_leakage
     from src.data.mapping import SUPERCLASSES
@@ -334,38 +322,38 @@ def build_ptbxl_datasets(data_dir: str, seed: int, limit: Optional[int] = None,
     meta_csv = data_dir / 'metadata_single_label.csv'
     if not meta_csv.exists():
         raise FileNotFoundError(
-            f"{meta_csv} 不存在——先运行 scripts/preprocess_ptbxl.py 生成")
+            f"{meta_csv} not found; run scripts/preprocess_ptbxl.py first to generate it")
     meta = pd.read_csv(meta_csv)
     missing = {'patient_id', 'strat_fold'} - set(meta.columns)
     if missing:
         raise KeyError(
-            f"metadata 缺少列 {missing}（patient_id 为 F2 遗留必需列；"
-            "请用 preprocess_ptbxl.py 重新预处理，vendor cinc 脚本不产出该列）")
+            f"metadata missing columns {missing} (patient_id is required; re-run "
+            "preprocess_ptbxl.py, the vendor cinc script does not emit this column)")
 
     if subspace is not None:
         from src.data.mapping import filter_subspace
         rep = filter_subspace(meta['label'].tolist(), subspace)
         if rep['n_dropped'] > 0:
-            print(f"[ptbxl] 子空间降级: 保留{rep['n_kept']}条 "
-                  f"(子空间{rep['allowed']})，剔除{rep['n_dropped']}条 "
-                  f"(分布{rep['dropped_counts']})")
+            print(f"[ptbxl] subspace reduction: kept {rep['n_kept']} records "
+                  f"(subspace {rep['allowed']}), dropped {rep['n_dropped']} records "
+                  f"(distribution {rep['dropped_counts']})")
         kept_indices = rep['kept_indices']
         meta_f = meta.iloc[kept_indices].reset_index(drop=True)
         label_map = {c: i for i, c in enumerate(subspace)}
         split_meta = meta_f
     else:
-        label_map = {c: i for i, c in enumerate(SUPERCLASSES)}  # NORM,MI,STTC,CD,HYP→0..4
+        label_map = {c: i for i, c in enumerate(SUPERCLASSES)}  # NORM, MI, STTC, CD, HYP -> 0..4
         kept_indices = None
         split_meta = meta
 
     unknown = sorted(set(split_meta['label']) - set(label_map))
     if unknown:
-        raise KeyError(f"标签超出超类体系: {unknown}")
+        raise KeyError(f"labels outside the super-class taxonomy: {unknown}")
 
     folds_df = split_meta[['patient_id']].assign(fold=split_meta['strat_fold'])
     splits = ptbxl_official_folds(folds_df)
 
-    # ---- folds1-8 内患者级 val carve（12.5%患者，按患者多数标签分层）----
+    # ---- Patient-level val carve within folds 1-8 (12.5% of patients, stratified by patient majority label) ----
     train_pos = np.sort(np.asarray(splits['train']['records'], dtype=int))
     meta18 = split_meta.loc[train_pos]
     pat_label = meta18.groupby('patient_id')['label'].agg(
@@ -376,7 +364,7 @@ def build_ptbxl_datasets(data_dir: str, seed: int, limit: Optional[int] = None,
     cal_patients = sorted(set(np.asarray(splits['cal']['patients'], dtype=object).tolist()))
     test_patients = sorted(set(np.asarray(splits['test']['patients'], dtype=object).tolist()))
 
-    # 硬性断言：四split患者两两不交（协议§2）
+    # Hard assertion: the four splits are pairwise patient-disjoint (preregistered protocol §2).
     assert_no_leakage({
         'train': train_patients, 'val': sorted(val_patients),
         'cal': cal_patients, 'test': test_patients,
@@ -387,10 +375,10 @@ def build_ptbxl_datasets(data_dir: str, seed: int, limit: Optional[int] = None,
 
     pos = {'train': np.sort(train_pos), 'val': _pos_of(val_patients),
            'cal': _pos_of(cal_patients), 'test': _pos_of(test_patients)}
-    if limit is not None:  # debug专用：每split截前 limit//4 条（确定性）
+    if limit is not None:  # For debugging: truncate each split to the first limit//4 records (deterministic).
         pos = {k: v[:max(limit // 4, 20)] for k, v in pos.items()}
 
-    # clusters_test 必须与 test 数据集顺序一致（split_indices保持给定顺序）
+    # clusters_test must stay aligned to the test dataset order (split_indices preserve the given order).
     clusters_test = split_meta.loc[pos['test'], 'patient_id'].to_numpy().astype(int)
 
     if kept_indices is not None:
@@ -400,24 +388,24 @@ def build_ptbxl_datasets(data_dir: str, seed: int, limit: Optional[int] = None,
         pos_orig = pos
     datasets = _build_npz_datasets(meta, meta_csv, pos_orig, label_map)
 
-    print(f"[ptbxl] 患者级四分割: train({len(train_patients)}p/{len(pos['train'])}r) "
+    print(f"[ptbxl] patient-level 4-way split: train({len(train_patients)}p/{len(pos['train'])}r) "
           f"val({len(val_patients)}p/{len(pos['val'])}r) "
           f"cal({len(cal_patients)}p/{len(pos['cal'])}r) "
           f"test({len(test_patients)}p/{len(pos['test'])}r)")
-    print(f"[ptbxl] 标签分布(test): "
+    print(f"[ptbxl] label distribution (test): "
           f"{pd.Series(split_meta.loc[pos['test'], 'label']).value_counts().to_dict()}")
     return datasets, clusters_test
 
 
 def build_chapman_datasets(data_dir: str, seed: int, limit: Optional[int] = None,
                            subspace: Optional[tuple] = None):
-    """真实Chapman-Shaoxing四分割（协议§2：患者级分层70/10/20，固定种子）
+    """Real Chapman-Shaoxing four-way split (preregistered protocol §2: patient-level stratified 70/10/20 with fixed seed).
 
-    - patient_wise_split(0.7, 0.1, 0.2)→train/cal/test（患者多数标签分层）
-    - val carve：train内部再抽1/7患者（→总比例≈60/10/10/20，患者级）
-    - 每患者1条ECG（Zheng 2022），patient_id=记录号stem（preprocess输出）
-    - assert_no_leakage 四split硬断言；clusters_test 接线同 ptbxl
-    - subspace：若提供（如SUBSPACE_CPSC），按子空间过滤并降级label_map（协议§2对称重算）
+    - patient_wise_split(0.7, 0.1, 0.2) -> train/cal/test (stratified by patient majority label).
+    - Val carve: within train, sample an additional 1/7 of patients (-> overall ~60/10/10/20, patient-level).
+    - One ECG per patient (Zheng 2022); patient_id = record stem (preprocess output).
+    - assert_no_leakage hard-asserts the four splits; clusters_test wired as in ptbxl.
+    - subspace: if provided (e.g. SUBSPACE_CPSC), filter to the subspace and remap label_map (protocol-symmetric recomputation).
     """
     from src.data.splits import patient_wise_split, assert_no_leakage
     from src.data.mapping import SUPERCLASSES
@@ -426,18 +414,18 @@ def build_chapman_datasets(data_dir: str, seed: int, limit: Optional[int] = None
     meta_csv = data_dir / 'metadata_single_label.csv'
     if not meta_csv.exists():
         raise FileNotFoundError(
-            f"{meta_csv} 不存在——先运行 scripts/preprocess_chapman.py 生成")
+            f"{meta_csv} not found; run scripts/preprocess_chapman.py first to generate it")
     meta = pd.read_csv(meta_csv)
     if 'patient_id' not in meta.columns:
-        raise KeyError("metadata 缺少 patient_id 列（请用 preprocess_chapman.py）")
+        raise KeyError("metadata missing patient_id column (run preprocess_chapman.py)")
 
     if subspace is not None:
         from src.data.mapping import filter_subspace
         rep = filter_subspace(meta['label'].tolist(), subspace)
         if rep['n_dropped'] > 0:
-            print(f"[chapman] 子空间降级: 保留{rep['n_kept']}条 "
-                  f"(子空间{rep['allowed']})，剔除{rep['n_dropped']}条 "
-                  f"(分布{rep['dropped_counts']})")
+            print(f"[chapman] subspace reduction: kept {rep['n_kept']} records "
+                  f"(subspace {rep['allowed']}), dropped {rep['n_dropped']} records "
+                  f"(distribution {rep['dropped_counts']})")
         kept_indices = rep['kept_indices']
         meta_f = meta.iloc[kept_indices].reset_index(drop=True)
         label_map = {c: i for i, c in enumerate(subspace)}
@@ -449,7 +437,7 @@ def build_chapman_datasets(data_dir: str, seed: int, limit: Optional[int] = None
 
     unknown = sorted(set(split_meta['label']) - set(label_map))
     if unknown:
-        raise KeyError(f"标签超出超类体系: {unknown}")
+        raise KeyError(f"labels outside the super-class taxonomy: {unknown}")
 
     patients = split_meta['patient_id'].unique().tolist()
     pat_label = split_meta.groupby('patient_id')['label'].agg(
@@ -460,7 +448,7 @@ def build_chapman_datasets(data_dir: str, seed: int, limit: Optional[int] = None
     cal_patients = sorted(set(t3['cal']))
     test_patients = sorted(set(t3['test']))
 
-    # train 内 val carve：1/7 train患者 → 总体≈60/10/10/20
+    # Val carve within train: 1/7 of train patients -> overall ~60/10/10/20.
     sub = {p: pat_label[p] for p in train_patients}
     val_patients = _carve_val_patients(sub, 1 / 7, seed + 100)
     train_patients = sorted(set(train_patients) - val_patients)
@@ -485,23 +473,23 @@ def build_chapman_datasets(data_dir: str, seed: int, limit: Optional[int] = None
         pos_orig = pos
     datasets = _build_npz_datasets(meta, meta_csv, pos_orig, label_map)
 
-    print(f"[chapman] 患者级四分割: train({len(train_patients)}p/{len(pos['train'])}r) "
+    print(f"[chapman] patient-level 4-way split: train({len(train_patients)}p/{len(pos['train'])}r) "
           f"val({len(val_patients)}p/{len(pos['val'])}r) "
           f"cal({len(cal_patients)}p/{len(pos['cal'])}r) "
           f"test({len(test_patients)}p/{len(pos['test'])}r)")
-    print(f"[chapman] 标签分布(test): "
+    print(f"[chapman] label distribution (test): "
           f"{pd.Series(split_meta.loc[pos['test'], 'label']).value_counts().to_dict()}")
     return datasets, clusters_test
 
 
 def build_cpsc_datasets(data_dir: str, seed: int, limit: Optional[int] = None):
-    """CPSC2018+2019 四分割（协议§2：4类降级子空间，患者级分层70/10/20）
+    """CPSC2018+2019 four-way split (preregistered protocol §2: 4-class reduced subspace, patient-level stratified 70/10/20).
 
-    - SUBSPACE_CPSC={NORM,CD,STTC,MI}（4类）；HYP(n=11)用filter_subspace剔除并计数
-    - patient_wise_split(0.7, 0.1, 0.2)→train/cal/test（患者多数标签分层）
-    - val carve：train内部再抽1/7患者（→总比例≈60/10/10/20，患者级）
-    - 每条记录=1患者（patient_id=记录名），无strat_fold
-    - assert_no_leakage 四split硬断言；clusters_test 接线同 ptbxl/chapman
+    - SUBSPACE_CPSC = {NORM, CD, STTC, MI} (4 classes); HYP (n=11) is dropped and counted via filter_subspace.
+    - patient_wise_split(0.7, 0.1, 0.2) -> train/cal/test (stratified by patient majority label).
+    - Val carve: within train, sample an additional 1/7 of patients (-> overall ~60/10/10/20, patient-level).
+    - Each record = one patient (patient_id = record name); no strat_fold.
+    - assert_no_leakage hard-asserts the four splits; clusters_test wired as in ptbxl/chapman
     """
     from src.data.splits import patient_wise_split, assert_no_leakage
     from src.data.mapping import SUBSPACE_CPSC, filter_subspace
@@ -510,23 +498,23 @@ def build_cpsc_datasets(data_dir: str, seed: int, limit: Optional[int] = None):
     meta_csv = data_dir / 'metadata_single_label.csv'
     if not meta_csv.exists():
         raise FileNotFoundError(
-            f"{meta_csv} 不存在——先运行 scripts/preprocess_cpsc.py 生成")
+            f"{meta_csv} not found; run scripts/preprocess_cpsc.py first to generate it")
     meta = pd.read_csv(meta_csv)
     if 'patient_id' not in meta.columns:
-        raise KeyError("metadata 缺少 patient_id 列（请用 preprocess_cpsc.py）")
+        raise KeyError("metadata missing patient_id column (run preprocess_cpsc.py)")
 
     rep = filter_subspace(meta['label'].tolist(), SUBSPACE_CPSC)
     if rep['n_dropped'] > 0:
-        print(f"[cpsc] 子空间降级: 保留{rep['n_kept']}条 "
-              f"(子空间{rep['allowed']})，剔除{rep['n_dropped']}条 "
-              f"(分布{rep['dropped_counts']})")
+        print(f"[cpsc] subspace reduction: kept {rep['n_kept']} records "
+              f"(subspace {rep['allowed']}), dropped {rep['n_dropped']} records "
+              f"(distribution {rep['dropped_counts']})")
     kept_indices = rep['kept_indices']
     meta_f = meta.iloc[kept_indices].reset_index(drop=True)
 
     label_map = {c: i for i, c in enumerate(SUBSPACE_CPSC)}
     unknown = sorted(set(meta_f['label']) - set(label_map))
     if unknown:
-        raise KeyError(f"标签超出降级子空间: {unknown}")
+        raise KeyError(f"labels outside the reduced subspace: {unknown}")
 
     patients = meta_f['patient_id'].unique().tolist()
     pat_label = meta_f.groupby('patient_id')['label'].agg(
@@ -558,11 +546,11 @@ def build_cpsc_datasets(data_dir: str, seed: int, limit: Optional[int] = None):
                 for k, v in pos.items()}
     datasets = _build_npz_datasets(meta, meta_csv, pos_orig, label_map)
 
-    print(f"[cpsc] 患者级四分割: train({len(train_patients)}p/{len(pos['train'])}r) "
+    print(f"[cpsc] patient-level 4-way split: train({len(train_patients)}p/{len(pos['train'])}r) "
           f"val({len(val_patients)}p/{len(pos['val'])}r) "
           f"cal({len(cal_patients)}p/{len(pos['cal'])}r) "
           f"test({len(test_patients)}p/{len(pos['test'])}r)")
-    print(f"[cpsc] 标签分布(test): "
+    print(f"[cpsc] label distribution (test): "
           f"{pd.Series(meta_f.loc[pos['test'], 'label']).value_counts().to_dict()}")
     return datasets, clusters_test
 
@@ -575,28 +563,27 @@ def main():
     parser.add_argument('--epochs', type=int, default=50)
     parser.add_argument('--batch_size', type=int, default=16)
     parser.add_argument('--lr', type=float, default=1e-3)
-    parser.add_argument('--d_model', type=int, default=64,  # 修复：512会OOM
+    parser.add_argument('--d_model', type=int, default=64,  # 512 channels cause OOM
                         help='Hidden dimension')
     parser.add_argument('--n_layers', type=int, default=2)
     parser.add_argument('--arch', type=str, default='mamba',
                         choices=['mamba', 'resnet1d', 'inceptiontime'],
-                        help='主干架构（协议§4三架构：mamba主/resnet1d/inceptiontime基线）')
+                        help='Backbone architecture (preregistered protocol §4: mamba primary, resnet1d/inceptiontime baselines)')
     parser.add_argument('--num_classes', type=int, default=5)
     parser.add_argument('--seq_length', type=int, default=1000)
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument('--save_dir', type=str, default='checkpoints')
     parser.add_argument('--limit', type=int, default=None,
-                        help='[debug] ptbxl每split截前limit/4条记录，冒烟用')
+                        help='[debug] [debug] truncate each ptbxl split to the first limit/4 records (smoke test)')
     parser.add_argument('--two-layer', action='store_true',
-                        help='启用两层联合bootstrap（协议§7:117；温度拟合集不确定性'
-                             '传入CI。真实数据阶段默认建议开启）')
+                        help='Enable two-layer joint bootstrap (preregistered protocol §7:117; propagate temperature-fit-set uncertainty into the CI. Recommended for real-data runs)')
     args = parser.parse_args()
 
     set_seed(args.seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print(f"Using device: {device}, seed={args.seed}")
 
-    # ============ 四分割：train / val / cal / test（修复[HIGH-9]） ============
+    # ============ Four-way split: train / val / cal / test ============
     if args.dataset == 'synthetic':
         datasets = {
             'train': SyntheticECGDataset(800, 12, args.seq_length, args.num_classes, 'train', seed=args.seed),
@@ -604,7 +591,7 @@ def main():
             'cal':   SyntheticECGDataset(200, 12, args.seq_length, args.num_classes, 'cal',   seed=args.seed + 2),
             'test':  SyntheticECGDataset(200, 12, args.seq_length, args.num_classes, 'test',  seed=args.seed + 3),
         }
-        clusters_test = None  # 合成数据无患者结构（协议§11已登记）
+        clusters_test = None  # Synthetic data has no patient structure (registered in preregistered protocol §11).
     elif args.dataset == 'ptbxl':
         datasets, clusters_test = build_ptbxl_datasets(
             args.data_dir, args.seed, limit=args.limit)
@@ -624,21 +611,21 @@ def main():
         'test':  create_dataloader(datasets['test'], args.batch_size, shuffle=False),
     }
 
-    # ============ 模型：learnable_temp=False（修复[HIGH-7]） ============
+    # ============ Model: learnable_temp=False (T frozen at 1 in training; temperature used only for posterior TS) ============
     model = ECGClassifier(
         in_channels=12,
         d_model=args.d_model,
         n_layers=args.n_layers,
         num_classes=args.num_classes,
         dropout=0.1,
-        learnable_temp=False,  # T≡1冻结训练；温度只做后验TS
+        learnable_temp=False,  # T frozen at 1 during training; temperature applied only as posterior TS
         backbone_type=args.arch,
     ).to(device)
 
     print(f"Model arch={args.arch}: d_model={args.d_model}, n_layers={args.n_layers}, "
           f"params={sum(p.numel() for p in model.parameters()):,}")
 
-    # 保存目录含seed+arch（修复[MED-17]）
+    # Save dir includes seed and arch so runs do not overwrite each other.
     run_dir = Path(args.save_dir) / args.dataset / args.arch / f"seed{args.seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
 
@@ -653,7 +640,7 @@ def main():
 
     model = train_model(model, loaders['train'], loaders['val'], config, device)
 
-    # ============ 最终协议：温度在cal拟合，指标只在test报告 ============
+    # ============ Final protocol: temperature fit on cal, metrics reported only on test ============
     print(f"\n{'='*60}\nFinal Evaluation (temperature fitted on cal, reported on test)\n{'='*60}")
 
     cal_eval = evaluate(model, loaders['cal'], device, compute_calibration=False)
@@ -664,38 +651,38 @@ def main():
     max_probs_raw = probs_raw.max(axis=1)
     correct_mask = (probs_raw.argmax(axis=1) == labels).astype(float)
 
-    # 修复[HIGH-8]+反例-1：fit_temperature走2D分支，且只用cal自己的标签
-    # （第二轮反例验证发现旧接线用了test标签配cal概率——既泄漏又错配）
+    # fit_temperature uses the 2D one-hot branch and only cal's own labels
+    # (mixing test labels with cal probabilities would both leak and mismatch).
     one_hot_cal = np.eye(args.num_classes)[cal_eval['labels']]
     T = fit_temperature(cal_eval['probs'], one_hot_cal)
     print(f"Fitted temperature (on cal, cal labels): {T:.4f}")
 
-    # 应用温度：2D矩阵级（全局TS不改变argmax，AUROC不变sanity check见协议）
+    # Apply temperature at 2D-matrix level (global TS preserves argmax, hence AUROC unchanged).
     probs_cal = apply_temperature(probs_raw, T)
     max_probs_cal = probs_cal.max(axis=1)
 
     raw_metrics = compute_all_metrics(max_probs_raw, correct_mask, n_bins=N_BINS, n_bootstrap=1000)  # N1-r2 fix: explicit n_bins
     cal_m = compute_all_metrics(max_probs_cal, correct_mask, n_bins=N_BINS, n_bootstrap=1000)  # N1-r2 fix: explicit n_bins
 
-    # 论文主终点：ΔECE配对cluster bootstrap推断（benefit_inference，配对CI）
-    # F2修复：n_bootstrap=10000（预注册§7:116 B=10,000，此前2000为违约）；
-    # BCa默认（delete-group jackknife加速度）；真实数据（ptbxl）传患者级
-    # clusters=clusters_test→leave-one-cluster-out（F2遗留已接线）
+    # Primary endpoint: paired cluster bootstrap of ΔECE via benefit_inference (paired CI).
+    # n_bootstrap=10000 (preregistered protocol §7:116, B=10,000).
+    # BCa by default (delete-group jackknife acceleration); real data (ptbxl) passes
+    # patient-level clusters=clusters_test -> leave-one-cluster-out.
     rng = np.random.default_rng(args.seed)
     benefit = benefit_inference(
         max_probs_raw, max_probs_cal, correct_mask,
-        metric=smooth_ece,  # 无分箱偏差的主估计量
+        metric=smooth_ece,  # Binning-free primary estimator
         n_bootstrap=10000,
         rng=rng,
-        clusters=clusters_test,  # 合成=None→记录级delete-group；ptbxl=患者ID
+        clusters=clusters_test,  # Synthetic: None -> record-level delete-group; ptbxl: patient ids
     )
-    print(f"\n[主终点] SmoothECE raw={benefit['raw']:.4f} -> cal={benefit['cal']:.4f}")
-    print(f"[主终点] ΔECE={benefit['benefit']:.4f} "
+    print(f"\n[primary endpoint] SmoothECE raw={benefit['raw']:.4f} -> cal={benefit['cal']:.4f}")
+    print(f"[primary endpoint] ΔECE={benefit['benefit']:.4f} "
           f"[95% CI: {benefit['benefit_ci'][0]:.4f}, {benefit['benefit_ci'][1]:.4f}] "
-          f"(配对bootstrap, {benefit['method']})")
-    print(f"[次要] 比值R={benefit['ratio']:.2f} [{benefit['ratio_ci'][0]:.2f}, {benefit['ratio_ci'][1]:.2f}]")
+          f"(paired bootstrap, {benefit['method']})")
+    print(f"[secondary] ratio R={benefit['ratio']:.2f} [{benefit['ratio_ci'][0]:.2f}, {benefit['ratio_ci'][1]:.2f}]")
 
-    # 两层联合bootstrap（F2修复：协议§7:117实现就绪，--two-layer启用）
+    # Two-layer joint bootstrap (preregistered protocol §7:117; enabled via --two-layer).
     if getattr(args, 'two_layer', False):
         two = two_layer_benefit_inference(
             probs_raw, labels_test=correct_mask,
@@ -707,10 +694,10 @@ def main():
             b_val=200, b_test=2000,
             rng=np.random.default_rng(args.seed + 1),
         )
-        print(f"[两层bootstrap] T̂={two['t_hat']:.4f} (sd={two['t_std']:.4f}) "
+        print(f"[two-layer bootstrap] T̂={two['t_hat']:.4f} (sd={two['t_std']:.4f}) "
               f"ΔECE={two['benefit']:.4f} "
               f"[95% CI: {two['benefit_ci'][0]:.4f}, {two['benefit_ci'][1]:.4f}] "
-              f"(T不确定性⊕重采样, B_val={two['b_val']}×B_test={two['b_test']})")
+              f"(T uncertainty + resampling, B_val={two['b_val']}x B_test={two['b_test']})")
 
     print(f"\nTest (raw):  acc={test_eval['acc']:.2f}%  ECE={raw_metrics['ece']:.4f} "
           f"[{raw_metrics['ece_ci_95'][0]:.4f}, {raw_metrics['ece_ci_95'][1]:.4f}]  "
@@ -719,11 +706,11 @@ def main():
           f"[{cal_m['ece_ci_95'][0]:.4f}, {cal_m['ece_ci_95'][1]:.4f}]  "
           f"Brier(TS)={cal_m['brier_raw']:.4f}")
 
-    # Sanity check：全局TS不改变argmax（AUROC不变）
+    # Sanity check: global TS must not change argmax (AUROC unchanged).
     assert np.array_equal(probs_raw.argmax(axis=1), probs_cal.argmax(axis=1)), \
-        "全局温度缩放不应改变argmax——管道有bug"
+        "Global temperature scaling must not change argmax -- pipeline bug"
 
-    # 绘制校准曲线
+    # Plot reliability diagram.
     try:
         fig = plot_reliability_diagram(
             max_probs_cal, correct_mask,
@@ -731,7 +718,7 @@ def main():
             save_path=str(run_dir / 'reliability_diagram.png'),
         )
         import matplotlib.pyplot as plt
-        plt.close(fig)  # 修复[MED-20]：close防内存泄漏
+        plt.close(fig)  # Close figure to release memory.
         print(f"\nReliability diagram saved to {run_dir}/reliability_diagram.png")
     except Exception as e:
         import traceback
