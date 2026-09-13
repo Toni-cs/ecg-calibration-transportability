@@ -41,9 +41,11 @@ the manuscript. Nothing here requires re-running any analysis.
       `10.17605/OSF.IO/XXXXX`.
 - [ ] Write the DOI here: `https://doi.org/____________________`
 - [ ] Optional but stronger: **Register** the project with the *OSF
-      Preregistration* template, answering the timeline questions honestly as
-      described at the end of `OSF_PROJECT_DESCRIPTION.md`. A registration gets a
-      second, immutable timestamp.
+      Preregistration* template. Use `OSF_REGISTRATION_ANSWERS.md`, which gives
+      the answer for every field. The decisive one is **Existing data →
+      "Registration following analysis of existing data"**; pick that and every
+      other answer stays consistent. A registration gets a second, immutable
+      timestamp and a separate DOI.
 
 ## 5. Update the manuscript
 
