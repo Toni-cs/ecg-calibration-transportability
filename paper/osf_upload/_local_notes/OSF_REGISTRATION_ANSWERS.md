@@ -5,6 +5,8 @@ column. Read the note under "Existing data" first: that single field decides
 whether this record is honest about its own timeline, and OSF's own taxonomy
 gives you an exact option for the truthful answer.
 
+> **Working note — not part of the deposit.** Do not upload this file to OSF.
+
 ## The one answer that matters
 
 **Existing data** → select **"Registration following analysis of existing
@@ -22,9 +24,9 @@ manuscript's "Pre-registration archival status" paragraph.
 
 | Field | Answer |
 |---|---|
-| **Title** | Protocol and amendments v2.1-A1: temperature-scaling calibration transfer across ECG corpora |
+| **Title** | Protocol and amendments: temperature-scaling calibration transfer across ECG corpora |
 | **Description** | Paste the block from `OSF_PROJECT_DESCRIPTION.md`, starting at "Protocol and amendments for". |
-| **Hypotheses** | The primary endpoint is the OOD calibration benefit `ΔECE_OOD = ECE_raw^OOD − ECE_TS^OOD` of temperature scaling under cross-corpus ECG transfer, tested one-sided against a registered empirical direction prior. H1: TS yields a positive OOD benefit. The pre-registered ID boundary criterion (≥80% of cells with 95% CIs containing zero) was not met (23/60 = 38.3% under the BCa operating CI), triggering the registered "ID nonzero boundary" branch. Amendment A2 reduces the confirmatory family from 156 to 12 hypotheses (6 transfer pairs × 2 architectures × 1 primary shift level); the 13 L2 shift levels are exploratory dose-response. All hypotheses are tagged exploratory + robustness validation, not confirmatory. |
+| **Hypotheses** | The primary endpoint is the OOD calibration benefit `ΔECE_OOD = ECE_raw^OOD − ECE_TS^OOD` of temperature scaling under cross-corpus ECG transfer, tested one-sided against a registered empirical direction prior. H1: TS yields a positive OOD benefit. The pre-registered ID boundary criterion (≥80% of cells with 95% CIs containing zero) was not met (23/60 = 38.3% under the BCa operating CI), triggering the registered "ID nonzero boundary" branch. Amendment 2 reduces the confirmatory family from 156 to 12 hypotheses (6 transfer pairs × 2 architectures × 1 primary shift level); the 13 L2 shift levels are exploratory dose-response. All hypotheses are tagged exploratory + robustness validation, not confirmatory. |
 
 ## Design plan
 
@@ -39,7 +41,7 @@ manuscript's "Pre-registration archival status" paragraph.
 
 | Field | Answer |
 |---|---|
-| **Existing data** | **Registration following analysis of existing data.** The protocol and both amendments were authored during the study (A1: 2026-09-05; A2: 2026-09-10); the analysis is complete; the public timestamp begins with this deposit. |
+| **Existing data** | **Registration following analysis of existing data.** The protocol and both amendments were authored during the study (2026-09-05 and 2026-09-10); the analysis is complete; the public timestamp begins with this deposit. |
 | **Data collection procedures** | None. Three public corpora are used: PTB-XL (PhysioNet, v1.0.3), Chapman-Shaoxing (PhysioNet), CPSC2018+2019 (PhysioNet Challenge). Data were not collected by the authors. |
 | **Sample size** | 60 seed experiments (6 pairs × 2 architectures × 5 seeds), fully balanced. Patient-level calibration samples range from 1,027 to 2,099 records. |
 | **Sample size rationale** | Fixed by design, not by power calculation: five seeds per cell to expose seed-level variability, two architectures to test architecture dependence, six directed pairs because all ordered pairs among three corpora are used. |
@@ -62,13 +64,13 @@ manuscript's "Pre-registration archival status" paragraph.
 | **Inference criteria** | α = 0.05, one-sided for the pre-registered direction. Family-wise control: BH-FDR q = 0.05 over the reduced 12-hypothesis family; Bonferroni-12 as sensitivity. The C5 deployment gate requires accuracy ≥ source-domain baseline in addition to a positive ΔECE_OOD. |
 | **Data exclusion** | No post-hoc exclusion. All 60 seed results, including nine counter-examples, are reported. Six supporting cells with degenerate CI widths (< 3×10⁻⁴) are reported alongside the count that excludes them (45/60 rather than 51/60). |
 | **Missing data** | Not applicable to the primary endpoint. The L2 analysis covers 157 of 390 planned cells (2 seeds, single architecture); this is reported as a coverage limitation rather than imputed. |
-| **Exploratory analysis** | The 13 L2 shift levels are exploratory dose-response under amendment A2. The decay contrast ΔECE_OOD − ΔECE_ID is restored as exploratory after the ID boundary branch was triggered. |
+| **Exploratory analysis** | The 13 L2 shift levels are exploratory dose-response under Amendment 2. The decay contrast ΔECE_OOD − ΔECE_ID is restored as exploratory after the ID boundary branch was triggered. |
 
 ## Other
 
 | Field | Answer |
 |---|---|
-| **Other** | The archived protocol is v2.1-A1, the earliest complete version still in existence. An internal SHA-256 manifest was taken on 2026-09-05T04:19:46Z, but for 7 of its 14 entries the frozen file content can no longer be recovered from version control, including the protocol document itself; `README_ARCHIVAL_STATUS.md` in this deposit lists them. This record therefore documents the protocol as deposited, not a pre-registration that predates data collection. |
+| **Other** | The archived protocol is the earliest complete version still in existence. An internal SHA-256 manifest was taken on 2026-09-05T04:19:46Z, but for 7 of its 14 entries the frozen file content can no longer be recovered from version control, including the protocol document itself; `README_ARCHIVAL_STATUS.md` in this deposit lists them. This record therefore documents the protocol as deposited, not a pre-registration that predates data collection. |
 
 ## After the registration is live
 
