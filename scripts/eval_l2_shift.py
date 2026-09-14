@@ -4,7 +4,7 @@
 评估 raw ECE + 8 方法校准后 ECE + ΔECE。
 """
 from __future__ import annotations
-import argparse, json, sys
+import argparse, json, sys, hashlib
 from pathlib import Path
 import numpy as np
 import torch
@@ -15,7 +15,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 
 from src.models.ecg_classifier import ECGClassifier
 from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES
-from src.data.l2_shifts import get_l2_shifts, apply_shift
+from src.data.l2_shifts import get_l2_shifts, apply_shift, SEED_STRATEGY_VERSION, SEED_STRATEGY_VERSION
 from src.utils.calibration_methods import CALIBRATION_METHODS
 from src.utils.prior_shift import fit_em, fit_bbse
 from src.utils.calibration import smooth_ece
@@ -33,15 +33,29 @@ def _bin(p, labels):
     return (np.asarray(p).argmax(1) == np.asarray(labels)).astype(float)
 
 
-def shifted_eval(model, dataset, shift, device, batch_size=64):
+def shifted_eval(model, dataset, shift, device, batch_size=64,
+                 pair_id: str = None, arch: str = None, train_seed: int = None):
     """对 dataset 的每条信号施加 shift 后评估 model。"""
+    if pair_id is None or arch is None or train_seed is None:
+        raise ValueError(
+            "pair_id, arch, train_seed must be explicitly provided for reproducible seed derivation"
+        )
     model.eval()
     all_probs, all_labels = [], []
     n = len(dataset)
+    # P0-1 R3修复：基于实验参数派生噪声种子，确保跨实验/跨档/跨移位类型噪声独立。
+    # 使用 hashlib.md5 代替内置 hash()，保证跨进程可复现（不受 PYTHONHASHSEED 影响）。
+    # 派生键包含 pair_id|arch|train_seed|shift_name，不同实验/不同档/不同移位类型
+    # 必然获得不同种子。注意：此变更使已有 l2_shift_results.json 不可精确复现，
+    # 需重跑受影响实验（见 docs/p0r2_final_verdict.md §2.2）。
+    noise_seed = int(
+        hashlib.md5(f"{pair_id}|{arch}|{train_seed}|{shift['name']}".encode()).hexdigest()[:8], 16
+    ) % (2**32)
+    rng = np.random.RandomState(noise_seed)
     for i in range(n):
         x, y = dataset[i]
         sig = x.numpy()
-        sig_s = apply_shift(sig, shift)
+        sig_s = apply_shift(sig, shift, rng=rng)
         x_s = torch.from_numpy(sig_s).unsqueeze(0).to(device)
         with torch.no_grad():
             _, probs = model(x_s)
@@ -123,7 +137,10 @@ def main():
 
         seed_results = {}
         for shift in shifts:
-            ood_probs, ood_labels = shifted_eval(model, tgt_ds["test"], shift, device)
+            ood_probs, ood_labels = shifted_eval(
+                model, tgt_ds["test"], shift, device,
+                pair_id=f"{args.source}_{args.target}", arch=args.arch, train_seed=seed,
+            )
             raw_ece = smooth_ece(_maxprob(ood_probs), _bin(ood_probs, ood_labels))
             mean_conf = float(np.mean(np.max(ood_probs, axis=1)))
             pred_entropy = float(np.mean(-np.sum(ood_probs * np.log(np.clip(ood_probs, 1e-12, 1)), axis=1)))
@@ -166,6 +183,11 @@ def main():
                   " ".join(f"{m}={method_results[m]['delta_ece']:+.4f}" for m in args.methods if m in method_results))
 
         all_results[f"seed{seed}"] = seed_results
+        # P0-1 R7修复（Attack-1）：无条件写入 per-seed seed_strategy 版本标记，
+        # 与 run_e1a_l2_shift_full.py L433 一致，供 is_checkpoint_complete 校验，
+        # 避免断点续传时新旧种子策略结果静默混用。R6修复错误地将标记写入放在
+        # if out_path.exists() 条件块内，首次运行时文件不存在导致标记永远不写入。
+        all_results[f"seed{seed}"]["__seed_strategy__"] = SEED_STRATEGY_VERSION
         out_path = run_dir / "l2_shift_results.json"
         if out_path.exists():
             existing = json.loads(out_path.read_text(encoding="utf-8"))
@@ -173,6 +195,7 @@ def main():
             if sk not in existing:
                 existing[sk] = {}
             existing[sk].update(seed_results)
+            existing[sk]["__seed_strategy__"] = SEED_STRATEGY_VERSION  # 续传也写入
             all_results = existing
         out_path.write_text(json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"Saved to {out_path}")

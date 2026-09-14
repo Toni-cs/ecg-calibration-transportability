@@ -77,7 +77,10 @@ SUPERCLASSES = ("NORM", "MI", "STTC", "CD", "HYP")
 DEFAULT_PRIORITY = ("MI", "STTC", "CD", "HYP", "NORM")
 
 # CPSC 降级子空间（协议§2：无HYP类，主分析两侧对称降级）
-SUBSPACE_CPSC = ("NORM", "CD", "STTC", "MI")
+# 与 SUPERCLASSES[:4] 编码顺序一致，消除标签语义错位（F2 修复）：
+# SUPERCLASSES=("NORM","MI","STTC","CD","HYP") 中 MI=1/CD=3，原 SUBSPACE_CPSC
+# 中 CD=1/MI=3 导致 ptbxl→cpsc 与 chapman→cpsc 两个方向的 MI/CD 预测全部算错。
+SUBSPACE_CPSC = ("NORM", "MI", "STTC", "CD")
 
 # ---------------------------------------------------------------------------
 # 第1层：PTB-XL官方 diagnostic statements（scp_statements.csv, v1.0.3, 逐字核对）

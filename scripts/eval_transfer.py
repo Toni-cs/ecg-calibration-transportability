@@ -78,15 +78,15 @@ def _build(dataset: str, data_dir: str, seed: int, limit: int | None,
 
 
 def fit_apply_method(method_name, fit_probs, fit_labels, test_probs):
-    """在 fit 分布上拟合校准方法，应用到 test 分布 → 校准后概率"""
+    """在 fit 分布上拟合校准方法，应用到 test 分布 → (校准后概率, params)"""
     if method_name == "none":
-        return test_probs
+        return test_probs, {}
     fit_fn, apply_fn, _ = CALIBRATION_METHODS[method_name]
     # fit_fn 需要 2D 全类概率 + 类标签（one-hot 或整数索引视方法）
     params = fit_fn(fit_probs, fit_labels)
     if params is None:  # 小样本/过参数化预注册失效 → 返回原概率（无收益）
-        return test_probs
-    return apply_fn(test_probs, params)
+        return test_probs, {}
+    return apply_fn(test_probs, params), params
 
 
 def run_pair(args, source_name, source_dir, target_name, target_dir,
@@ -252,8 +252,8 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
             print(f"[{mname:9s}] SKIPPED: 需目标域无监督拟合，S1源cal范式不兼容")
             continue
         else:
-            ood_cal = fit_apply_method(mname, cal_probs, cal_labels, ood_probs)
-            id_cal = fit_apply_method(mname, cal_probs, cal_labels, id_probs)
+            ood_cal, fit_params = fit_apply_method(mname, cal_probs, cal_labels, ood_probs)
+            id_cal, _ = fit_apply_method(mname, cal_probs, cal_labels, id_probs)
 
         # 配对 cluster bootstrap 需 (probs_raw, probs_cal) 同序 + labels
         metric_fn = smooth_ece_gpu if args.gpu_inference else smooth_ece
@@ -277,7 +277,8 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
             "decay": float(ood_ben["benefit"] - id_ben["benefit"]),
             "meta": {"n_bootstrap": int(args.bootstrap), "bci_method": args.bci_method,
                      "ts_fit": "source_cal" if mname == "ts" else "source_cal_or_target_unlabeled",
-                     "metric": "smooth_ece_0.45*(n/2000)^-0.2"},
+                     "metric": "smooth_ece_0.45*(n/2000)^-0.2",
+                     "T": float(fit_params.get('T', float('nan'))) if fit_params else float('nan')},
         }
         print(f"[{mname:9s}] ID ΔECE={id_ben['benefit']:+.4f} "
               f"[{id_ben['benefit_ci'][0]:+.4f},{id_ben['benefit_ci'][1]:+.4f}] | "

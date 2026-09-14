@@ -1,0 +1,11 @@
+\subsection{校准估计与重校准}
+自 Guo 等\cite{guo2017calibration}的开创性工作以来，现代神经网络的校准已被广泛研究，他们证明深度网络常常过度自信，并引入温度缩放(TS)作为一种简单的事后重校准方法。Nixon 等\cite{nixon2019}提出静态校准误差(Static Calibration Error)，Kumar 等\cite{kumar2019}引入具有分布无关保证的验证不确定性校准。Kull 等\cite{kull2019dirichlet}将 TS 推广到多类设定下的 Dirichlet 校准。在临床风险模型语境下，Van Calster 等\cite{vancalster2016,vancalster2019}建立了从乌托邦到经验数据的校准层级，并论证校准是预测分析的``阿喀琉斯之踵''。Strodthoff 等\cite{strodthoff2021}在 PTB-XL 上对 ECG 分析的深度学习进行基准测试，并注意到子群体偏移下校准退化，这启发了我们的跨语料库设计。
+
+\subsection{先验偏移估计与迁移校准}
+Lipton 等\cite{lipton2018bbs}引入黑盒偏移估计(Black-Box Shift Estimation, BBSE)，利用混淆矩阵的逆检测和校正标签偏移。Alexandari 等\cite{alexandari2020}证明带偏差校正的最大似然校准在标签偏移适配中难以超越，为我们的 EM 先验偏移方法提供了理论基础。对于迁移校准上界，TransCal \cite{transcal2020}估计可迁移性以自动选择目标域无监督最优 $T$；PseudoCal \cite{pseudocal2020}使用伪标签进行校准迁移；LaSCal \cite{lascal2024}提供具有分布无关保证的标签感知偏移校准。我们的 S1 范式有本质不同：我们仅在\emph{源}校准划分上拟合(无目标标签)，以 S1$'$ 先验偏移适配(EM/BBSE)作为唯一的目标域信号——这是比 TransCal/PseudoCal(可访问目标 logit 或标签)严格更弱的假设。
+
+\subsection{跨域 ECG 校准}
+Barandas 等\cite{barandas2023}在多标签 ECG 分类中评估不确定性量化方法，发现在子群体偏移下集成方法优于单模型方法。Vranken 等\cite{zhang2022}研究 12 导联 ECG 深度学习的不确定性估计，报告了跨采集设备的显著校准漂移。Haekal 等\cite{physiolmeas2026}针对心房颤动检测进行跨数据集验证，采用校准感知概率分析；Patel \& Beedala \cite{medrxiv2026}记录了跨机构 ICU 部署下的校准漂移。TS 的 ID 与 OOD 不对称性已在一般视觉任务中研究\cite{ovadia2019calibration}；我们贡献多种子 ECG 量化以及识别 TS 何时有益(ID)、何时有害(OOD)的边界条件分析。
+
+\subsection{ECG 基础模型与迁移学习(2024--2026)}
+近期工作引入了在数百万条记录上训练的 ECG 基础模型。ECGFounder \cite{ecgfounder2024,song2024ecgfm}在来自 Harvard--Emory 数据库的超过 1000 万条 ECG 上训练，在 80 种诊断上达到专家级性能，并通过微调展示跨域迁移能力。ECG-FM \cite{ecgfm2024}是一个开源的基于 Transformer 的基础模型，使用混合对比和生成式自监督学习在 140 万段 ECG 上预训练，展现出强大的跨数据集泛化能力和标签效率。HeartLang \cite{heartlang2025}将心拍视作词、心律视作句，使用 QRS-Tokenizer 和掩码 ECG 句子预训练学习形态级和心律级表征。Tan 等\cite{transferecg2025}首次对多标签 ECG 分类中迁移学习有效性开展广泛经验研究，发现微调效益随下游数据集增大而递减，且 CNN 比 RNN 迁移更有效。对于 OOD 适配，ADAPTOOD \cite{adaptood2026}通过不确定性估计量化分布偏移严重程度，并以此指导带 LoRA 的选择性层解冻；BeatRhythm-TTA \cite{beatrhythm2026}以 SQI 门控自训练和心拍-心律一致性执行测试时适配。Costa 等\cite{star2025}提出 STAR(正弦时间-幅值重采样，Sinusoidal Time--Amplitude Resampling)，一种保持形态的心拍级增强方法，用于跨源 ECG 泛化。Chen 等\cite{peace2026}提出 PEACE，通过标签条件对比对齐实现成人到儿童 ECG 迁移。这些工作推进了 ECG 迁移与适配，但未涉及迁移模型的\emph{校准}——这正是本研究通过以预注册终点系统量化重校准方法在跨语料库偏移下行为所填补的空白。

@@ -12,7 +12,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from src.models.s4_backbone import ECGMambaBackbone, BiMambaBlock
 from src.models.ecg_classifier import ECGClassifier, AttentionPooling
 from src.models.baselines import ECGResNet1D, ECGInceptionTime, build_backbone
-from src.utils.calibration import ece, bootstrap_ece, compute_all_metrics, fit_temperature, apply_temperature
+from src.utils.calibration import ece, mce, bootstrap_ece, compute_all_metrics, fit_temperature, apply_temperature
+from src.utils.calibration import brier_parts, brier_raw
+
+# R7-ATK-3 修复：brier_parts 与 ece/mce/bootstrap_ece 共用同一份非法 n_bins 列表，
+# 避免两处测试覆盖不一致（R6 遗漏 None/True/2.0/10**18 四个 case）。
+BAD_N_BINS = [0, -1, 1.5, None, True, "10", 2.0, 10**18]
 
 
 class TestBackbone:
@@ -196,6 +201,159 @@ class TestCalibration:
         assert total == pytest.approx(metrics['brier'], abs=1e-12)
         # raw Brier 与分解总量应接近（分箱残差小）
         assert abs(metrics['brier_raw'] - metrics['brier']) < 0.1
+
+    # S3-r2 fix: 直接测试 brier_parts（此前仅通过 compute_all_metrics 间接测试）
+    def test_brier_parts_direct_known_values(self):
+        """直接测试 brier_parts 已知输入的输出值（Murphy 分解精确恒等式）"""
+        # 完美校准：probs=labels → reliability=0, brier_total=0
+        probs = np.array([0.0, 1.0])
+        labels = np.array([0.0, 1.0])
+        total, rel, res, unc = brier_parts(probs, labels, n_bins=10)
+        assert rel == pytest.approx(0.0, abs=1e-12)
+        assert total == pytest.approx(0.0, abs=1e-12)
+        assert unc == pytest.approx(0.25, abs=1e-12)
+        assert res == pytest.approx(0.25, abs=1e-12)
+
+        # 最差校准：probs 与 labels 完全相反 → reliability=1.0
+        probs = np.array([1.0, 0.0])
+        labels = np.array([0.0, 1.0])
+        total, rel, res, unc = brier_parts(probs, labels, n_bins=10)
+        assert rel == pytest.approx(1.0, abs=1e-12)
+        assert total == pytest.approx(1.0, abs=1e-12)
+
+        # 全相同概率、标签各半 → reliability=0, resolution=0, brier=uncertainty
+        probs = np.array([0.5, 0.5, 0.5, 0.5])
+        labels = np.array([0.0, 0.0, 1.0, 1.0])
+        total, rel, res, unc = brier_parts(probs, labels, n_bins=10)
+        assert rel == pytest.approx(0.0, abs=1e-12)
+        assert res == pytest.approx(0.0, abs=1e-12)
+        assert total == pytest.approx(unc, abs=1e-12)
+        assert unc == pytest.approx(0.25, abs=1e-12)
+
+    def test_brier_parts_direct_n_bins_param(self):
+        """直接测试 brier_parts 的 n_bins 参数传递与生效"""
+        rng = np.random.default_rng(42)
+        probs = rng.random(200)
+        labels = (probs > 0.5).astype(float)
+        # 不同 n_bins 产生不同 reliability（分箱粒度影响）
+        _, rel5, _, _ = brier_parts(probs, labels, n_bins=5)
+        _, rel10, _, _ = brier_parts(probs, labels, n_bins=10)
+        _, rel20, _, _ = brier_parts(probs, labels, n_bins=20)
+        # n_bins 越大，reliability 越精细（通常单调递增或至少不全等）
+        assert not (rel5 == rel10 == rel20), "不同 n_bins 应产生不同 reliability"
+        # numpy 整数类型应与 Python int 等价
+        b_np = brier_parts(probs, labels, n_bins=np.int64(10))
+        b_py = brier_parts(probs, labels, n_bins=10)
+        assert b_np == b_py, "numpy int64 应与 Python int 等价"
+        # n_bins=1：所有样本落入同一箱，reliability = |avg_prob - avg_label|^2
+        probs_simple = np.array([0.3, 0.7])
+        labels_simple = np.array([0.0, 1.0])
+        total, rel, res, unc = brier_parts(probs_simple, labels_simple, n_bins=1)
+        avg_p, avg_l = 0.5, 0.5
+        assert rel == pytest.approx((avg_p - avg_l) ** 2, abs=1e-12)
+        assert res == pytest.approx(0.0, abs=1e-12)
+
+    def test_brier_parts_direct_edge_cases(self):
+        """直接测试 brier_parts 边界情况（单元素、二元素、Murphy 恒等式）"""
+        # 单元素：uncertainty = base_rate*(1-base_rate)
+        probs = np.array([0.5])
+        labels = np.array([1.0])
+        total, rel, res, unc = brier_parts(probs, labels, n_bins=10)
+        assert unc == pytest.approx(0.0, abs=1e-12)  # base_rate=1.0 → 1*0=0
+        assert rel == pytest.approx(0.25, abs=1e-12)  # (0.5-1.0)^2
+        assert res == pytest.approx(0.0, abs=1e-12)
+        assert total == pytest.approx(0.25, abs=1e-12)
+
+        # 单元素 label=0
+        probs = np.array([0.5])
+        labels = np.array([0.0])
+        total, rel, res, unc = brier_parts(probs, labels, n_bins=10)
+        assert unc == pytest.approx(0.0, abs=1e-12)
+        assert rel == pytest.approx(0.25, abs=1e-12)
+
+        # Murphy 恒等式对随机输入始终成立（按构造）
+        rng = np.random.default_rng(123)
+        for _ in range(10):
+            n = rng.integers(1, 200)
+            p = rng.random(n)
+            y = rng.integers(0, 2, n).astype(float)
+            total, rel, res, unc = brier_parts(p, y, n_bins=10)
+            assert total == pytest.approx(rel - res + unc, abs=1e-10)
+
+        # 返回值均为 Python float
+        total, rel, res, unc = brier_parts(np.array([0.3]), np.array([0.0]), n_bins=5)
+        assert all(isinstance(v, float) for v in (total, rel, res, unc))
+
+    def test_brier_parts_direct_vs_raw(self):
+        """直接测试 brier_parts 分解总量与 brier_raw 的关系"""
+        rng = np.random.default_rng(456)
+        probs = rng.random(500)
+        labels = (probs > 0.5).astype(float)
+        total, rel, res, unc = brier_parts(probs, labels, n_bins=20)
+        raw = brier_raw(probs, labels)
+        # 分箱越细，分解总量越接近 raw Brier（分箱内概率近似恒定）
+        assert abs(total - raw) < 0.05, f"分解总量 {total} 与 raw {raw} 偏差过大"
+
+    def test_brier_parts_n_bins_validation(self):
+        """测试 brier_parts 的 n_bins 参数验证和生效"""
+        from src.utils.calibration import brier_parts
+        probs = np.random.rand(100)
+        labels = (np.random.rand(100) > 0.5).astype(float)
+        # 直接测试 n_bins 参数生效
+        b5 = brier_parts(probs, labels, n_bins=5)
+        b10 = brier_parts(probs, labels, n_bins=10)
+        assert b5 != b10, "n_bins=5 和 n_bins=10 应产生不同结果"
+        # 测试 numpy 整数类型
+        b_np = brier_parts(probs, labels, n_bins=np.int64(10))
+        assert b_np == b10, "numpy int64 应与 Python int 等价"
+        # 测试 ValueError 守卫（R7-ATK-3：与 ece/mce/bootstrap_ece 共用 BAD_N_BINS）
+        for bad_n_bins in BAD_N_BINS:
+            with pytest.raises(ValueError):
+                brier_parts(probs, labels, n_bins=bad_n_bins)
+        # Test compute_all_metrics guard (R8-5: BAD_N_BINS 循环，移除 TypeError 死分支)
+        for bad_n_bins in BAD_N_BINS:
+            with pytest.raises(ValueError):
+                compute_all_metrics(probs, labels, n_bins=bad_n_bins)
+
+    def test_ece_mce_bootstrap_ece_n_bins_guards(self):
+        """直接测试 ece/mce/bootstrap_ece 的 n_bins 验证守卫（A2 修复）"""
+        from src.utils.calibration import ece, mce, bootstrap_ece
+        probs = np.random.rand(100)
+        labels = (np.random.rand(100) > 0.5).astype(float)
+        # 非法 n_bins（0 / -1 / 1.5 / None / True / "10" / 2.0 / 10**18）应 raise ValueError
+        # R7-ATK-3：与 brier_parts 测试共用 BAD_N_BINS 常量，避免覆盖不一致
+        for bad_n_bins in BAD_N_BINS:
+            with pytest.raises(ValueError):
+                ece(probs, labels, n_bins=bad_n_bins)
+            with pytest.raises(ValueError):
+                mce(probs, labels, n_bins=bad_n_bins)
+            with pytest.raises(ValueError):
+                bootstrap_ece(probs, labels, n_bins=bad_n_bins)
+        # 合法最小值 n_bins=1 不应 raise
+        ece(probs, labels, n_bins=1)
+        mce(probs, labels, n_bins=1)
+        bootstrap_ece(probs, labels, n_bins=1, n_bootstrap=5)
+
+    # N2-r2 fix: 验证 ece/mce 的 ValueError 行为有测试覆盖
+    def test_ece_mce_value_error_propagation(self):
+        """N2-r2: ece/mce 对非法 n_bins 抛 ValueError，调用方不应 try-except。
+
+        ValueError 传播是正确行为——非法 n_bins 是编程错误，应暴露而非静默吞掉。
+        此测试固化该行为契约，防止未来回归（如误加 try-except 吞异常）。
+        """
+        probs = np.array([0.3, 0.7, 0.5])
+        labels = np.array([0.0, 1.0, 0.0])
+        # ece/mce 对非法 n_bins 抛 ValueError（由 _validate_n_bins 守卫）
+        for bad in (0, -1, 1.5, None, True, "10"):
+            with pytest.raises(ValueError, match="n_bins must be"):
+                ece(probs, labels, n_bins=bad)
+            with pytest.raises(ValueError, match="n_bins must be"):
+                mce(probs, labels, n_bins=bad)
+        # 合法 n_bins 不抛异常（边界值 n_bins=1 和常规值 n_bins=100）
+        ece(probs, labels, n_bins=1)
+        mce(probs, labels, n_bins=1)
+        ece(probs, labels, n_bins=100)
+        mce(probs, labels, n_bins=100)
 
     def test_fit_temperature_multiclass(self):
         probs = np.random.rand(50, 5)

@@ -237,6 +237,12 @@ def build_backbone(name: str, in_channels: int, d_model: int,
     if name in ("inceptiontime", "inception", "inception-time"):
         return ECGInceptionTime(in_channels=in_channels, d_model=d_model,
                                 dropout=dropout)
+    if name in ("inceptiontime_lite", "inception_lite", "inception-lite"):
+        # E5 实验：3 blocks 轻量 InceptionTime（~310K 参数，独立架构家族）
+        from .inceptiontime_lite import build_inceptiontime_lite
+        return build_inceptiontime_lite(in_channels=in_channels,
+                                        d_model=d_model,
+                                        dropout=dropout)
     raise ValueError(f"Unknown backbone name: {name!r}")
 
 
@@ -244,4 +250,11 @@ __all__ = [
     "ECGResNet1D",
     "ECGInceptionTime",
     "build_backbone",
+    "ECGInceptionTimeLite",
 ]
+
+# E5 实验：InceptionTime-Lite 暴露到 baselines 命名空间（供 ECGClassifier 按名取用）
+from .inceptiontime_lite import ECGInceptionTimeLite  # noqa: E402,F401
+
+# E5 实验：InceptionTime-Lite 暴露到 baselines 命名空间（供 ECGClassifier 按名取用）
+from .inceptiontime_lite import ECGInceptionTimeLite  # noqa: E402,F401

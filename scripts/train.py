@@ -44,6 +44,9 @@ from src.data.datasets import ECGNPZDataset
 from src.data.splits import patient_wise_split
 from src.data.mapping import SUPERCLASSES
 
+# N1-r2 fix: 显式 n_bins 常量，与 run_e3_brier_dcr_ncv.py 对齐，避免依赖默认值
+N_BINS = 10
+
 
 def set_seed(seed: int, deterministic: bool = False):
     import random
@@ -206,7 +209,7 @@ def evaluate(
             raise ValueError(f"evaluate期望2D概率矩阵，得到ndim={all_probs.ndim}")
         max_probs = all_probs.max(axis=1)
         correct_mask = (all_probs.argmax(axis=1) == all_labels).astype(float)
-        cal_metrics = compute_all_metrics(max_probs, correct_mask, n_bootstrap=0)
+        cal_metrics = compute_all_metrics(max_probs, correct_mask, n_bins=N_BINS, n_bootstrap=0)  # N1-r2 fix: explicit n_bins
         results.update(cal_metrics)
 
     return results
@@ -671,8 +674,8 @@ def main():
     probs_cal = apply_temperature(probs_raw, T)
     max_probs_cal = probs_cal.max(axis=1)
 
-    raw_metrics = compute_all_metrics(max_probs_raw, correct_mask, n_bootstrap=1000)
-    cal_m = compute_all_metrics(max_probs_cal, correct_mask, n_bootstrap=1000)
+    raw_metrics = compute_all_metrics(max_probs_raw, correct_mask, n_bins=N_BINS, n_bootstrap=1000)  # N1-r2 fix: explicit n_bins
+    cal_m = compute_all_metrics(max_probs_cal, correct_mask, n_bins=N_BINS, n_bootstrap=1000)  # N1-r2 fix: explicit n_bins
 
     # 论文主终点：ΔECE配对cluster bootstrap推断（benefit_inference，配对CI）
     # F2修复：n_bootstrap=10000（预注册§7:116 B=10,000，此前2000为违约）；

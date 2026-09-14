@@ -23,6 +23,12 @@ from __future__ import annotations
 import numpy as np
 from scipy.signal import decimate
 
+# P0-1 R8-1修复：seed_strategy 版本标记共享定义（消除 eval_l2_shift.py 与
+# run_e1a_l2_shift_full.py 双点定义的 DRY 违反）。旧结果用 RandomState(42)
+# （legacy_42），新结果用 md5 派生（md5_v1）。is_checkpoint_complete 检查该版本，
+# 不匹配则视为不完整需重跑，避免混用。未来版本升级时两脚本同步。
+SEED_STRATEGY_VERSION = "md5_v1"
+
 LEAD_NAMES = ["I", "II", "III", "aVR", "aVL", "aVF", "V1", "V2", "V3", "V4", "V5", "V6"]
 
 LEAD_SUBSETS = {
@@ -74,7 +80,10 @@ def _synthetic_noise(n_samples: int, noise_type: str, fs: int = 500,
     返回 (n_samples,) 噪声序列，单位与信号相同（归一化后 ~σ=1）。
     """
     if rng is None:
-        rng = np.random.RandomState(42)
+        raise ValueError(
+            "rng must be explicitly provided; RandomState(42) fallback was removed "
+            "to prevent cross-experiment seed collision"
+        )
     t = np.arange(n_samples) / fs
 
     if noise_type == "bwl":
@@ -115,7 +124,10 @@ def shift_noise(signal: np.ndarray, noise_type: str, snr_db: float,
     mixed = BWL(共模) + MA(差模) + EM(差模)，三者等权叠加。
     """
     if rng is None:
-        rng = np.random.RandomState(42)
+        raise ValueError(
+            "rng must be explicitly provided; RandomState(42) fallback was removed "
+            "to prevent cross-experiment seed collision"
+        )
     n_leads, n_samples = signal.shape
     sig_power = np.mean(signal ** 2)
     if sig_power < 1e-12:
@@ -177,10 +189,19 @@ def get_l2_shifts() -> list[dict]:
     return shifts
 
 
-def apply_shift(signal: np.ndarray, shift: dict) -> np.ndarray:
-    """对单条信号施加移位变换。"""
+def apply_shift(signal: np.ndarray, shift: dict,
+                rng: np.random.RandomState | None = None) -> np.ndarray:
+    """对单条信号施加移位变换。
+
+    rng: 随机数生成器，仅 noise 类型使用。传入同一 rng 可确保循环内
+    每条信号获得不同噪声（rng 状态逐次推进）。对 noise 类型 shift，
+    rng=None 会立即 raise ValueError（不再静默回退到 RandomState(42)，
+    以避免跨实验种子碰撞和等长信号获得相同噪声的隐蔽错误）。
+    """
     t = shift["type"]
     p = shift["params"]
+    if rng is None and t == "noise":
+        raise ValueError("rng must be provided for noise shifts")
     if t == "downsample":
         return shift_downsample(signal, p["target_hz"])
     elif t == "leads":
@@ -188,5 +209,5 @@ def apply_shift(signal: np.ndarray, shift: dict) -> np.ndarray:
     elif t == "gain":
         return shift_gain(signal, p["gain"])
     elif t == "noise":
-        return shift_noise(signal, p["noise_type"], p["snr_db"])
+        return shift_noise(signal, p["noise_type"], p["snr_db"], rng=rng)
     return signal
