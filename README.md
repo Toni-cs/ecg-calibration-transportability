@@ -1,6 +1,6 @@
 # When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study
 
-Official code and data-split release for the accompanying article (under review).
+Official code and data-split release for the accompanying article.
 
 Given a calibration fix with a benefit in-distribution (ID), this study measures how much of that benefit survives out-of-distribution (OOD) transfer across three public ECG corpora, decomposes the decay into three interpretable components (slope / intercept / prevalence), and derives a deployment-safety criterion for recalibration before transfer.
 
@@ -108,13 +108,13 @@ Code: MIT (see [LICENSE](LICENSE)). The three databases remain under their respe
 If you use this codebase or the split indices, please cite the accompanying article (see also [CITATION.cff](CITATION.cff)):
 
 ```bibtex
-@article{ecgcalib2026,
-  title   = {When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer?
-             A Multi-Seed Calibration Boundary Study},
-  author  = {Guan, Toni},
-  journal = {Biomedical Signal Processing and Control},
-  note    = {under review},
-  year    = {2026}
+@misc{ecgcalib2026,
+  title  = {When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer?
+            A Multi-Seed Calibration Boundary Study},
+  author = {Guan, Toni},
+  year   = {2026},
+  note   = {Official code and data-split release},
+  url    = {https://github.com/gt17641001169-design/ecg-calibration-transportability}
 }
 ```
 
