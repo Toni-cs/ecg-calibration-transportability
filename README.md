@@ -89,9 +89,9 @@ Two documented properties:
 
 ## Results
 
-Pooled zero-shot transfer gap `G` (random-effects meta-analysis over the 60-experiment grid; patient-level cluster BCa, B = 10,000):
+Pooled OOD calibration benefit (the article primary endpoint D_ECE_OOD = ECE_raw_OOD - ECE_TS_OOD; distinct from the undelivered secondary endpoint G = ECE_S1 - ECE_oracle) under a random-effects meta-analysis over the 60-experiment grid; patient-level cluster BCa, B = 10,000:
 
-| Stratum | n | Pooled G | 95% CI |
+| Stratum | n | Pooled D_ECE_OOD | 95% CI |
 |---|---|---|---|
 | InceptionTime | 30 | 0.0151 | [0.0131, 0.0172] |
 | ResNet-1D | 30 | 0.0158 | [0.0140, 0.0176] |
