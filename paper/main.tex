@@ -1616,10 +1616,20 @@ fixed-effect estimate is CI-width sensitive: ResNet1D is slightly
 negative ($-0.000573$) because narrow-CI studies dominate, while
 DerSimonian--Laird random effects are positive (InceptionTime
 $+0.0151$, ResNet1D $+0.0158$, CrossArchitecture $+0.0148$; unweighted
-$+0.0152$, $+0.0165$, $+0.0159$). This reflects heterogeneity ($\tau^2
-\approx 3\times10^{-5}$, $Q \gg k-1$), not a negative central effect, so
-the count-based proportion (51/60 = 85.0\%) is primary; $\tau^2$ varies
-by 41\% (pooled estimate stable within 3.3\%).  \textbf{Family size.}
+$+0.0152$, $+0.0165$, $+0.0159$). We caution, however, that the
+meta-analytic independence assumption is \emph{not} satisfied here: the
+60 cells share the same three corpora, patient sets, and architectures,
+and their between-cell $Q$ statistics are extreme (InceptionTime
+$Q=94{,}376$, ResNet1D $Q=128{,}578$, cross-architecture $Q=236{,}259$;
+$I^2 \approx 99.98\%$), so both FE and DL confidence intervals are
+spuriously narrow (DL pooled SE $=4\times10^{-4}$-level; $\tau^2$ is
+crushed). The interpretable pooled uncertainty is therefore the
+cluster-robust interval over the 12 pair$\times$architecture strata:
+$\Delta\text{ECE}_{\text{OOD}} = +0.0159$ [$0.0113$, $0.0205$] (t,
+df$=11$; stratum SD $0.0072$, about $1800\times$ the single-experiment
+bootstrap SE). The point estimate $0.0148$--$0.0159$ and the
+count-based proportion (51/60 = 85.0\%) stand; the DL/FE interval
+widths should not be quoted.  \textbf{Family size.}
 The 60 experiments form the robustness-evidence family; amendment A2
 reduces the confirmatory family from the $6 \times 2 \times 13 = 156$
 shift grid to 12 hypotheses (6 pairs $\times$ 2 architectures $\times$ 1
