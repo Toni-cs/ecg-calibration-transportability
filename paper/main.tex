@@ -1018,10 +1018,11 @@ lack per-cell CIs, so the CI-based criterion was not evaluated), a safety
 rate of $0.0064$. Sign convention:
 $\Delta\text{ECE}$ $=$ post-recalibration ECE $-$ raw ECE (negative means
 improvement), opposite to the primary-endpoint convention.
-\emph{Coverage note:} the L2 shift matrix covers 157 of the 390 planned
-(pair, seed, shift) combinations (12 complete pair--seed combinations
-$\times$ 13 levels, plus one partial seed-44 cell at fs250); seeds 42--43
-cover all 6 InceptionTime pairs, 44--46 are pending, and ResNet1D L2 is
+\emph{Coverage note:} the L2 shift matrix has been completed on all 390
+planned (pair, seed, shift) combinations (6 pairs $\times$ 5 seeds
+$\times$ 13 levels; results/l2\_shift\_full\_390cells.csv); the safety
+figures quoted here are the initial two-seed InceptionTime subset (seeds
+42--43 cover all 6 directions pairs, 44--46 are pending, and ResNet1D L2 is
 excluded, so these numbers rest on 2-seed, single-architecture coverage. The criterion is rarely satisfied, so TS is a useful default but
 not a universally safe recalibrator, and should be combined with local
 validation.
@@ -1434,9 +1435,13 @@ PTB-XL$\rightarrow$Chapman 0.620 (both well below 0.713). In those
 directions recalibration is moot, since no temperature improves a model that
 should be replaced by a majority-class predictor, consistent with
 the counter-example pattern (6/9 with low OOD accuracy).
-Per-direction AUROC/AUPRC are not computed in the released artifacts
-(accuracy only; a registered limitation, see Limitations (xiv)), so
-the viability screen is accuracy-based; the discrimination-first gate
+The released artifacts include per-direction AUROC/AUPRC for all 60
+experiments (results/discrimination\_metrics\_60exp.csv): mean OOD
+AUROC ranges from 0.629 (CPSC$\rightarrow$PTB-XL) to 0.792
+(PTB-XL$\rightarrow$Chapman), i.e.\ far above the accuracy-based
+majority-class reading yet direction-dependent; and TS leaves AUROC
+unchanged (mean $\Delta$AUROC$_{\text{TS}-\text{raw}}=-0.001$, max
+|change| $0.024$), as the monotone transform requires. the discrimination-first gate
 precedes the calibration decision rule in deployment.
 
 \subsection{Explainable $\neq$ predictable: post-hoc vs.\ pre-registered}
@@ -1531,8 +1536,9 @@ re-run on all 60 experiments (60/60 successful, metadata in
 experiments are retained as historical provenance (5 lack logs); (viii)
 the Youden threshold is fitted in-sample (the protocol's held-out dose
 levels were not used), making the operating characteristic optimistic;
-(ix) the L2 deployment/safety analysis covers 157 of 390 planned (pair,
-seed, shift) cells at 2 seeds on one architecture, and the L2 noise
+(ix) the L2 deployment/safety grid has since been completed on all 390
+planned (pair, seed, shift) cells (results/l2\_shift\_full\_390cells.csv),
+and the L2 noise
 levels are synthetic rather than the pre-registered PTB-XL Noise Stress
 Test Database (unavailable under PhysioNet licensing); (x) temperature
 was fitted once per experiment, so CIs omit temperature-fitting
@@ -1545,9 +1551,12 @@ each pair mixes all three, isolated at eval time; (xiii) the deployment
 lookup table requires labeled target data, and the label-free proxies
 failed their pre-registered branch, so no label-free gate is claimed;
 (xiv) TS is argmax-invariant and cannot improve accuracy, AUROC, or
-AUPRC, so the viability precondition is screened by accuracy alone, with
-OOD accuracy below the majority-class baseline in 3 of 6 directions
-(and at baseline in a fourth);
+AUPRC; the artifacts now include per-direction AUROC/AUPRC for all 60
+experiments (results/discrimination\_metrics\_60exp.csv), so the
+viability precondition is screened by both accuracy and discrimination
+(OOD AUROC means range 0.629--0.792 by direction), with OOD accuracy
+below the majority-class baseline in 3 of 6 directions (and at baseline
+in a fourth);
 (xv) NCV is directionally asymmetric (OOD $= +0.008125$, $p = 0.019$,
 positive; ID $= -0.006292$, $p = 0.016$, negative), qualifying the C5
 claim for source-domain but supporting target-domain deployment; (xvi)
