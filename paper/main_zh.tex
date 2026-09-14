@@ -1,0 +1,103 @@
+% ============================================================================
+% 论文中文版（对标英文版 main.tex）
+% 文件名: paper/main_zh.tex
+% 用途: 中文对标版本，供中文审稿/汇报使用
+% 编译: xelatex main_zh.tex (需要 ctex 宏包支持)
+% ============================================================================
+\documentclass[12pt,a4paper]{ctexart}
+
+% --- 数学与表格 ---
+\usepackage{amsmath,amssymb,booktabs,graphicx,multirow,array}
+\usepackage{microtype}
+\microtypesetup{expansion=false}
+
+% --- 字体与编码 ---
+\usepackage{fontspec}
+
+% --- 其他 ---
+\usepackage{pifont}
+\usepackage{lineno}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue,
+  pdftitle={跨语料ECG迁移中温度缩放何时有效？多种子校准边界研究},
+  pdfauthor={Zero Token Lab}}
+
+% --- 排版优化 ---
+\emergencystretch=3em
+\tolerance=2000
+\hbadness=10000
+\vbadness=10000
+\widowpenalty=10000
+\clubpenalty=10000
+
+% --- 页面设置 ---
+\usepackage[margin=2.5cm]{geometry}
+\linespread{1.2}
+
+% --- 标题信息 ---
+\title{\heiti\Large 跨语料ECG迁移中温度缩放何时有效？\\多种子校准边界研究}
+\author{Zero Token Lab}
+\date{2026年9月}
+
+\begin{document}
+\maketitle
+
+% ============================================================================
+\begin{abstract}
+\input{zh_abstract}
+\end{abstract}
+
+\noindent\textbf{关键词：} 温度缩放 \quad 模型校准 \quad 心电图 \quad
+数据集偏移 \quad 跨语料迁移 \quad 分布失配
+
+\tableofcontents
+\newpage
+
+% ============================================================================
+\section{引言}
+\label{sec:intro}
+\input{zh_intro}
+
+% ============================================================================
+\section{相关工作}
+\label{sec:related}
+\input{zh_related}
+
+% ============================================================================
+\section{数据与预注册协议}
+\label{sec:data}
+\input{zh_data}
+
+% ============================================================================
+\section{方法}
+\label{sec:methods}
+\input{zh_methods}
+
+% ============================================================================
+\section{结果}
+\label{sec:results}
+\input{zh_results}
+
+% ============================================================================
+\section{讨论}
+\label{sec:discussion}
+\input{zh_discussion}
+
+% ============================================================================
+\section{结论}
+\label{sec:conclusion}
+\input{zh_conclusion}
+
+% ============================================================================
+\section*{数据可用性}
+\input{zh_data_avail}
+
+% ============================================================================
+\section*{补充材料}
+\input{zh_supplementary}
+
+% ============================================================================
+\section*{参考文献}
+\input{zh_bibliography}
+
+\end{document}

@@ -40,7 +40,7 @@
 | 8 | Methods 预注册判据行加"实测 48.3%，分支已触发" | §pre-registered endpoints |
 | 9 | "EM most fragile overall" → "EM 与 Matrix 在 InceptionTime 并列最弱（15/30）；ResNet 上 Matrix 17/30 最弱、EM 19/30"（图注同步） | §method_boundary ×3 |
 | 10 | tab:arch_robust Mean 行 +0.0195/+0.0164/+0.0180 → **+0.0152/+0.0165/+0.0159**；Total Std 0.0148→0.0145 | tab:arch_robust |
-| 11 | 部署 specificity 括号反向纠正（20% 正确排除/80% 误标）+ **in-sample 披露**（Youden 在同批 1230 格搜索；留出重算 3/4 移位类型 Youden≤0） | §deployment |
+| 11 | 部署 specificity 括号反向纠正（20% 正确排除/80% 误标）+ **in-sample 披露**（Youden 在同批 1230 格搜索；留出重算 2/4 移位类型 Youden≤0） | §deployment |
 | 12 | 安全判据标签纠正（声称 CI 判据实为点估计判据 delta_ece<−0.01；L2 无 per-cell CI 故预注册 CI 判据不可算）+ L2 覆盖率披露（157/390、双种子、单架构、ResNet L2 13 格被排除） | §deployment |
 | 13 | tab:trivial 口径修正（1230 为 always-none/always-buy 的格数；always-TS n=157、lookup n=155 并说明 2 格被丢） | tab:trivial |
 | 14 | 反例计数 "all 6 transfer pairs"→"5 of the 6" | §counterexamples |
@@ -59,7 +59,7 @@
    `python scripts/eval_transfer.py --source <src> --target <tgt> --arch <a> --seed <s> --methods ts --bootstrap 10000 --bci-method bca`
    注意 `rerun_bca10000.py` 只重写 ts 且 skip 判据读不存在的键——先修该脚本再跑。
 2. **transfer_result.json 增加溯源字段**（n_boot、bci_method、T、cal split 大小）——修 eval_transfer.py 一行 `meta={...}` 即可，此后所有重跑自动可审计。
-3. **部署判据留出版**：把表4换成 leave-shift-type-out 数字（非留出档选阈值→留出档评估；已预计算：downsample +0.168 / leads2 −0.031 / noise −0.042 / gain −0.143），或按协议 §9 执行专用留出档。
+3. **部署判据留出版**：把表4换成 leave-shift-type-out 数字（非留出档选阈值→留出档评估；已预计算：downsample +0.168 / leads2 −0.031 / noise +0.040 / gain −0.143），或按协议 §9 执行专用留出档。
 4. **OSF 归档落地**：上传协议 v2.1-A1 + A1 修订案 + 当前代码哈希 → 用真实 OSF 链接替换 paper/cover_letter 中的占位语；git commit + tag（当前 150 文件未入库、快照哈希已漂移）。
 5. **登记偏离**（协议 §11.5 追加行）：percentile 操作 CI、两层 bootstrap 未启用、13→8 方法、BBSE 纳入、S2/TOST/次要终点未交付、L2 双种子覆盖、早停 val ECE（协议 §4:82 写死 val NLL）。
 
@@ -82,7 +82,7 @@
 - 主结果：51/60（IT 27/30、RN 24/30）；9 反例（3 新增来自 RN seeds44-46）
 - 脆弱支持剔除后：45/60=75%（IT 24/30、RN 21/30）；退化宽度 6 格（最小 2.1e-5）
 - 边界：29/60=48.3% CI 含 0；28/60 id_ci_lo>0；ID mean +0.0083 vs OOD +0.0159（1.9×）
-- 12 层聚合（pair×arch 均值，SE=sd/√5）：raw 10/12 → BH 9/12 → Bonferroni 8/12；BH-60=51/60（伪 p 层）
+- 12 层聚合（pair×arch 均值，SE=sd/√5）：raw 9/12 → BH 9/12 → Bonferroni 2/12；BH-60=51/60（伪 p 层）
 - 实验级 CI 普查：B=10000-percentile 31 / B=200-percentile 21 / BCa 3（仅 ts，混合溯源）/ 无日志 5
 - 合并：RE-DL 0.014771 [0.014051,0.015490]；FE 病态（IT 0.000406、RN −0.000573，退化 CI 权重垄断）已由论文披露
 - Fisher p=0.4716；0.0064=1/157（点估计判据）；部署留出重算 Youden：+0.168/−0.031/+0.040/−0.143（1230格池正式复算，见 results/deployment_holdout_recompute.csv）

@@ -1,0 +1,4 @@
+correction_method,n_total,n_significant,support_rate,threshold_description,p_value_type
+None (uncorrected),60,51,51/60,p_one_sided < 0.05,one-sided (ΔECE>0)
+BH-FDR (q=0.05),60,51,51/60,"p_i <= (i/n) * q, find max i",one-sided (ΔECE>0)
+Bonferroni,60,51,51/60,p_one_sided < 8.333333e-04,one-sided (ΔECE>0)

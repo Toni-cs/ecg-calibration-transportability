@@ -18,6 +18,34 @@ T_MIN = 0.01  # 温度下界（更宽松的范围）
 T_MAX = 100.0  # 温度上界
 
 
+def _validate_n_bins(n_bins, upper_bound=10**4):
+    """验证 n_bins 参数合法性（公共守卫）。
+
+    供 calibration.py 内 6 处守卫与 scripts/ 中 4 个 n_bins 函数统一调用，
+    避免守卫模式重复散布。R7 修复：上界由 10**6 降至 10**4，
+    与 O(n_bins) Python 循环实现匹配（单次 ece <50ms）。
+    R8-4 修复：calibration.py 内 ece/bootstrap_ece/brier_parts/mce/
+    plot_reliability_diagram/compute_all_metrics 6 处守卫已全部改为调用
+    _validate_n_bins（此前为内联重复守卫，与本 docstring "统一调用" 声称不符）。
+    R8-4 修复：calibration.py 内 ece/bootstrap_ece/brier_parts/mce/
+    plot_reliability_diagram/compute_all_metrics 6 处守卫已全部改为调用
+    _validate_n_bins（此前为内联重复守卫，与本 docstring "统一调用" 声称不符）。
+
+    Args:
+        n_bins: 待验证的分箱数量
+        upper_bound: 上界（默认 10000）
+
+    Returns:
+        int(n_bins)
+
+    Raises:
+        ValueError: n_bins 非 int/np.integer、为 bool、<1 或 > upper_bound
+    """
+    if isinstance(n_bins, bool) or not isinstance(n_bins, (int, np.integer)) or n_bins < 1 or n_bins > upper_bound:
+        raise ValueError(f"n_bins must be a positive integer in [1, {upper_bound}], got {n_bins!r}")
+    return int(n_bins)
+
+
 def to_logit(p: np.ndarray) -> np.ndarray:
     """概率转logit，带数值保护"""
     p = np.clip(p, EPS, 1 - EPS)
@@ -211,10 +239,15 @@ def ece(probs, labels, n_bins: int = 10, adaptive: bool = False) -> float:
     
     Returns:
         ECE值（越小越好）
+    
+    Raises:
+        ValueError: n_bins 非法时由 _validate_n_bins 抛出（N2-r2 fix: 文档化
+            ValueError 行为；调用方不应 try-except，让异常传播以暴露编程错误）
     """
+    n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs, dtype=float)
     labels = np.asarray(labels, dtype=float)
-    
+
     if adaptive:
         # 自适应分箱（等样本量）
         quantiles = np.linspace(0, 1, n_bins + 1)
@@ -546,6 +579,7 @@ def bootstrap_ece(
     Returns:
         (point_estimate, ci_lower, ci_upper)  point_estimate为全样本ECE
     """
+    n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs, dtype=float)
     labels = np.asarray(labels, dtype=float)
     n = len(probs)
@@ -583,7 +617,7 @@ def bootstrap_ece(
     return float(point), float(ci_lower), float(ci_upper)
 
 
-def brier_parts(probs, labels):
+def brier_parts(probs, labels, n_bins: int = 10):
     """Brier Score Murphy分解（精确恒等式）
 
     Brier = Reliability - Resolution + Uncertainty
@@ -592,22 +626,28 @@ def brier_parts(probs, labels):
     此处返回的 brier_total 取 REL - RES + UNC（按构造精确成立），
     raw Brier 由 brier_raw(probs, labels) 单独计算。
 
+    Args:
+        probs: 预测概率
+        labels: 真实标签
+        n_bins: 分箱数量（默认10，与原实现保持一致）
+
     Returns:
         (brier_total, reliability, resolution, uncertainty)
     """
+    n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs, dtype=float)
     labels = np.asarray(labels, dtype=float)
     n = len(probs)
 
     # 分箱计算
-    bins = np.linspace(0, 1, 11)
+    bins = np.linspace(0, 1, n_bins + 1)
     reliability = 0.0
     resolution = 0.0
     base_rate = labels.mean()
     uncertainty = base_rate * (1 - base_rate)
 
-    for i in range(10):
-        if i == 9:  # 最后一个bin包含1.0
+    for i in range(n_bins):
+        if i == n_bins - 1:  # 最后一个bin包含1.0
             mask = (probs >= bins[i]) & (probs <= bins[i + 1])
         else:
             mask = (probs >= bins[i]) & (probs < bins[i + 1])
@@ -645,10 +685,15 @@ def mce(probs, labels, n_bins: int = 10) -> float:
     
     Returns:
         MCE值（越小越好）
+    
+    Raises:
+        ValueError: n_bins 非法时由 _validate_n_bins 抛出（N2-r2 fix: 文档化
+            ValueError 行为；调用方不应 try-except，让异常传播以暴露编程错误）
     """
+    n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs, dtype=float)
     labels = np.asarray(labels, dtype=float)
-    
+
     bin_boundaries = np.linspace(0, 1, n_bins + 1)
     max_error = 0.0
     
@@ -687,6 +732,7 @@ def plot_reliability_diagram(
         title: 图表标题
         save_path: 保存路径（可选）
     """
+    n_bins = _validate_n_bins(n_bins)
     import matplotlib.pyplot as plt
     
     probs = np.asarray(probs)
@@ -753,6 +799,7 @@ def compute_all_metrics(
     Returns:
         字典包含所有指标
     """
+    n_bins = _validate_n_bins(n_bins)
     probs = np.asarray(probs)
     labels = np.asarray(labels)
     
@@ -760,7 +807,7 @@ def compute_all_metrics(
     ece_mean, ece_lower, ece_upper = bootstrap_ece(probs, labels, n_bins, n_bootstrap)
 
     # Brier Score decomposition (Murphy, exact identity) + raw empirical Brier
-    brier, reliability, resolution, uncertainty = brier_parts(probs, labels)
+    brier, reliability, resolution, uncertainty = brier_parts(probs, labels, n_bins=n_bins)
 
     # MCE
     max_ce = mce(probs, labels, n_bins)

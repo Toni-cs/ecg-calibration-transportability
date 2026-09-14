@@ -42,7 +42,7 @@ class TestBin:
 class TestFitApplyMethod:
     def test_none_returns_original(self):
         probs = np.random.rand(10, 3)
-        result = fit_apply_method("none", probs, None, probs)
+        result, params = fit_apply_method("none", probs, None, probs)
         np.testing.assert_array_equal(result, probs)
 
     def test_ts_applies_temperature(self):
@@ -51,9 +51,10 @@ class TestFitApplyMethod:
         fit_labels = np.random.randint(0, 3, 50)
         test_probs = np.random.rand(20, 3)
         test_probs /= test_probs.sum(axis=1, keepdims=True)
-        result = fit_apply_method("ts", fit_probs, fit_labels, test_probs)
+        result, params = fit_apply_method("ts", fit_probs, fit_labels, test_probs)
         assert result.shape == test_probs.shape
         assert np.allclose(result.sum(axis=1), 1.0, atol=1e-6)
+        assert 'T' in params
 
     def test_unknown_method_raises(self):
         probs = np.random.rand(10, 3)

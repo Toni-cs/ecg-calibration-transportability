@@ -307,6 +307,8 @@ H₀: ΔECE_OOD = 0  vs  H₁: ΔECE_OOD > 0（单侧，方向先验：TS 在凸
 - **修订前主检验的探索性结果不进入主报告**：decay 的探索性 pilot 估计仅用于触发修订与功效重估，不作为主结论的证据，与 §7:122 "pilot 结果不进主检验报告"条款一致。
 - **方向先验存档**：温度缩放在凸损失下只可能改善或不变校准（Guo et al. 2017, Kull et al. 2019），单侧 H₁: ΔECE_OOD > 0 的方向先验在修订前已由文献确立，非由 pilot 数据选择方向。
 
+**Type I 膨胀风险注记**：主终点从 decay 重新定位为 ΔECE_OOD 后，效应量从 ΔECE_ID 均值 +0.0083 变为 ΔECE_OOD 均值 +0.0159（约 1.9×）。pilot 数据独立于主检验报告，但 endpoint selection 的 data-dependency 引入未量化的 Type I 膨胀风险。建议读者将主检验 p 值视为 exploratory 而非 confirmatory。
+
 ### A1.1.5 修订前/后对照表
 
 | 项 | 修订前 | 修订后 |

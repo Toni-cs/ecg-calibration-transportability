@@ -1,0 +1,10 @@
+% ============================================================================
+图~\ref{fig:design_overview} 概括了实验设计。
+\subsection{数据集}
+\begin{itemize}
+    \item \textbf{PTB-XL v1.0.3} \cite{wagner2020ptbxl}：官方发布包含 21,837 条记录；下载的 \texttt{ptbxl\_database.csv} 副本包含 21,799 条（源 CSV 中存在 38 条记录的缺失，已作为数据来源局限性予以披露），官方 10 折划分（第 1--8 折为训练集，第 9 折为校准集，第 10 折为测试集）。经单标签映射后，21,522 条记录可映射，277 条被排除（STROBE），对应 18,671 名唯一患者。
+    \item \textbf{Chapman-Shaoxing} \cite{zheng2022ecgarrhythmia,goldberger2000}：20,265 条原始记录；剔除 1 条信号读取错误记录并隔离 21 条非有限值记录（\texttt{qc\_report.json}），得到 20,243 条用于分析的记录；每名患者 1 份 ECG，按患者级别进行 70/10/20 划分。
+    \item \textbf{CPSC2018+2019}：按患者级别划分；HYP 类极为罕见（$n=11$）$\rightarrow$ 主分析在 $\{$NORM, CD, STTC, MI$\}$ 4 类子空间上进行，迁移对的两侧均对称地重新计算。
+\end{itemize}
+\subsection{标签映射与泄漏防护}
+单标签优先级规则固定为（MI $>$ STTC $>$ CD $>$ HYP $>$ NORM）并进行了敏感性分析 \cite{wagner2020ptbxl,reyna2022}。窦性心率/形态语句（SBRAD/STACH/SARRH）被映射为 NORM 而非 STTC，因为 PTB-XL 的 \texttt{scp\_statements.csv} 将其列为心律语句，无 \texttt{diagnostic\_class} 属性。train\slash val\slash cal\slash test 患者 ID 两两不相交（在可复现仓库中作为硬断言）。归一化统计量仅来自训练划分；数据增强仅应用于训练集。
