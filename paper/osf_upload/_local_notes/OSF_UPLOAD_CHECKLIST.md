@@ -24,17 +24,22 @@ the manuscript. Nothing here requires re-running any analysis.
       documents; and deliberately no "Preregistered", since this record is a
       public archival made after analysis and the title should not claim
       otherwise)
-- [ ] Category: *Project*. Add the tags listed in `OSF_PROJECT_DESCRIPTION.md`.
+- [ ] Category: *Project*. Tags are not part of the create dialog; they go on
+      the Metadata page (step 2).
 - [ ] Paste the description block from `OSF_PROJECT_DESCRIPTION.md` into the
-      project description field.
+      project description field. If you skip it here, add it later: left
+      navigation **Metadata**, Edit next to *Description*.
 
-## 2. Add contributors and license
+## 2. Add contributors, license, tags
 
 - [ ] Add **Toni Guan** as a bibliographic contributor, affiliation
       *College of Information Technology, Shenyang Institute of Technology*
       (add an ORCID if you have one; it strengthens the record).
-- [ ] Set the license to **CC-BY-4.0**. If OSF insists on CC0-1.0 for a
+- [ ] Left navigation **Metadata** → **Edit** next to *License* →
+      **CC-BY-4.0** → save. If OSF insists on CC0-1.0 for a
       registration, accept CC0 and note the change here: ______________
+- [ ] Same **Metadata** page, Edit next to *Tags*: ECG, calibration,
+      temperature scaling, domain shift, preregistration, reproducibility.
 
 ## 3. Upload the bundle
 
@@ -63,8 +68,11 @@ SHA256SUMS.txt
 
 ## 4. Make it public and record the DOI
 
-- [ ] Make the project **public**. OSF assigns a DOI of the form
-      `10.17605/OSF.IO/XXXXX`.
+- [ ] Make the project **public**: the **Make Public** toggle sits at the top of
+      the **Overview** page, not in Settings. Confirm the prompt.
+- [ ] Mint the DOI: left navigation **Metadata**, **Edit** next to *DOI*, then
+      **Create**. OSF does not assign one automatically on publication. The
+      identifier reads `10.17605/OSF.IO/XXXXX`.
 - [ ] Write the DOI here: `https://doi.org/____________________`
 - [ ] Optional but stronger: **Register** the project with the *OSF
       Preregistration* template. Use `OSF_REGISTRATION_ANSWERS.md`, which gives
