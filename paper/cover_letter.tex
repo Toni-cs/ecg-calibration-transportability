@@ -75,12 +75,17 @@ clinical deployability).
 Cross-corpus ECG transfer calibration is a critical bottleneck for
 clinical deployment of deep ECG models across institutions with
 different acquisition protocols, lead sets, and label vocabularies.
-Our methodological contribution---an explicit boundary-condition
-characterization of when TS pays off, combined with transparent
-reporting of nine counter-examples and a pre-registered failure
-branch---aligns directly with the journal's scope on biomedical
-signal processing, clinical machine learning reliability, and
-reproducible computational methods in medicine.
+Our contribution is evaluated end-to-end on the raw 12-lead ECG
+signal: deep classifiers trained on one corpus are pushed through an
+eval-time shift ladder (sampling rate, lead availability, noise, gain)
+and a six-direction cross-corpus transfer grid, and the contribution is
+a boundary-condition characterization of when post-hoc recalibration
+pays off at deployment---combined with transparent counter-example
+reporting, a discrimination-aware deployment gate, and a
+pre-registered failure branch. We believe this falls squarely within
+the journal's scope on biomedical signal processing, reliability and
+calibration of clinical biosignal models, and reproducible evaluation
+methodology.
 
 \bigskip
 
