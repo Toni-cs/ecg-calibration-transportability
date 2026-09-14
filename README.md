@@ -91,13 +91,42 @@ Two documented properties:
 
 Pooled OOD calibration benefit (the article primary endpoint D_ECE_OOD = ECE_raw_OOD - ECE_TS_OOD; distinct from the undelivered secondary endpoint G = ECE_S1 - ECE_oracle) under a random-effects meta-analysis over the 60-experiment grid; patient-level cluster BCa, B = 10,000:
 
-| Stratum | n | Pooled D_ECE_OOD | 95% CI |
-|---|---|---|---|
-| InceptionTime | 30 | 0.0151 | [0.0131, 0.0172] |
-| ResNet-1D | 30 | 0.0158 | [0.0140, 0.0176] |
-| **All (cross-architecture)** | **60** | **0.0148** | **[0.0141, 0.0155]** |
+| Stratum | n | Pooled D_ECE_OOD (point) |
+|---|---|---|
+| InceptionTime | 30 | 0.0151 |
+| ResNet-1D | 30 | 0.0158 |
+| **All (cross-architecture)** | **60** | **0.0148** |
 
-Recalibration retains a positive OOD benefit in most settings but is not universally safe: temperature-scaling deployment safety rate is 0.64% across the holdout grid; 381/390 (97.7%) cells remain safe under L2 input shifts.
+**Pooled uncertainty (honest interval).** The 60 grid cells are NOT
+independent studies: they share the same three corpora, patient sets,
+and architectures. The between-cell Q statistics are extreme
+(InceptionTime Q = 94,376; ResNet-1D Q = 128,578; cross-architecture
+Q = 236,259; I-squared ~ 99.98%), so the fixed-effect and
+DerSimonian-Laird random-effects CIs (e.g., [0.0141, 0.0155]) are
+spuriously narrow and must not be quoted. The interpretable pooled
+interval is the cluster-robust one over the 12 pair x architecture
+strata: **D_ECE_OOD = +0.0159 [0.0113, 0.0205]** (t, df = 11; stratum
+SD 0.0072, ~1800x the single-experiment bootstrap SE).
+
+Two safety numbers with DIFFERENT criteria (do not conflate):
+- **Deployment-safety criterion (deployment_metrics.csv, Table 6, TS row):**
+  of the 157 (pair, seed, shift) cells, 96/157 (61%) are *beneficial*
+  (D_ECE < -0.01), but only 1/157 (0.64%) *also* meets the
+  calibration-adequacy bar (post-TS ECE < 0.05). Under this joint
+  criterion, post-hoc TS alone essentially does not reach the
+  deployment bar on the full L2 grid -- recalibrating on a small
+  locally labeled sample (protocol S2) or re-annotation is the
+  practical path; the article reports this explicitly.
+- **L2 input-robustness criterion (l2_shift_full_390cells.csv):**
+  381/390 (97.7%) cells remain "safe" under L2 *input shifts* of the
+  already-calibrated model (same TS mapping re-evaluated under
+  perturbations); this says the fitted temperature is stable under
+  mild input changes, NOT that cells pass the deployment-safety
+  criterion above.
+Bottom line: the OOD calibration benefit (~0.015 ECE points on average)
+is real but small relative to residual miscalibration (raw ECE 0.06-0.35
+in this grid); treat post-hoc recalibration as one component, not a
+standalone fix.
 
 ## License
 
