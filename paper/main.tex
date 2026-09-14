@@ -1680,13 +1680,25 @@ selected per-experiment result artifacts, is publicly available at
 \url{https://github.com/gt17641001169-design/ecg-calibration-transportability}.
 Trained model checkpoints for the 60-experiment transfer grid are
 provided as release assets of the same repository. The repository will
-be archived on Zenodo with a DOI upon acceptance.
+be archived on Zenodo with a DOI upon acceptance. No new raw
+waveforms were collected or generated; the patient-level split
+indices and label-mapping tables released with the code fully
+determine the data configuration used in every experiment.
 
-\section*{Declaration of generative AI and AI-assisted technologies in the manuscript preparation process}
-During the preparation of this work the author used a widely available
-commercial large language model service in order to assist with language
-editing and readability. After using this tool/service, the author
-reviewed and edited the content as needed and takes full responsibility
+\section*{Declaration of generative AI and AI-assisted technologies in
+the writing process}
+During the preparation of this work the author used large language
+model assistants (GLM-series models operated through the OpenCode
+agent framework) in order to assist with language editing and
+readability, to support code development and debugging of the
+released analysis pipeline, and to run structured adversarial
+review passes over draft sections and the internal audit reports.
+No generative AI tool was used to produce experimental data,
+statistical results, or figures: all quantitative results derive
+from the released deterministic pipeline and the archived
+per-experiment artifacts. After using these tools, the author
+reviewed and edited all AI-assisted output, verified every reported
+number against the archived artifacts, and takes full responsibility
 for the content of the published article.
 
 \section*{CRediT authorship contribution statement}
@@ -1694,15 +1706,14 @@ for the content of the published article.
 Formal analysis, Investigation, Data curation, Writing -- original draft,
 Writing -- review \& editing, Visualization, Project administration.
 
-\section*{Data statement}
-This study used only publicly available databases: PTB-XL
-(v1.0.3, PhysioNet), Chapman--Shaoxing (PhysioNet), and CPSC2018+2019
-(PhysioNet Challenge). No new raw waveforms were collected. The patient-level
-split indices generated in this work, the label-mapping tables, the analysis
-code, and the per-experiment result artifacts are openly available at
-\url{https://github.com/gt17641001169-design/ecg-calibration-transportability};
-trained model checkpoints are provided as release assets of the same
-repository.
+\section*{Acknowledgments}
+The author thanks the maintainers of the PTB-XL, Chapman--Shaoxing,
+and CPSC public databases, and the PhysioNet resource, without which
+this study would not have been possible.
+
+\section*{Funding}
+This research did not receive any specific grant from funding
+agencies in the public, commercial, or not-for-profit sectors.
 
 \section*{Declaration of competing interest}
 The author declares no competing financial or personal interests.
