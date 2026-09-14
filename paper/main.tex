@@ -1170,15 +1170,25 @@ Across all 60 seed experiments, the net benefit gain of TS over raw
 predictions (averaged over decision thresholds $t \in \{0.05, 0.10,
 \ldots, 0.40\}$) is positive in 50/60 (83.3\%) of experiments, with
 mean gain $+0.0027$ and range $[-0.001, +0.017]$. The directions with
-the largest net benefit are CPSC$\rightarrow$PTB-XL (mean $+0.011$)
-and PTB-XL$\rightarrow$CPSC (mean $+0.003$), which also have the
-largest $\Delta\text{ECE}_{\text{OOD}}$ (mean $+0.254$ and $+0.260$
-respectively). The direction with negative net benefit is
-PTB-XL$\rightarrow$Chapman (mean $-0.005$), which is also the
-direction with the smallest $\Delta\text{ECE}_{\text{OOD}}$ (mean
-$+0.004$) and is correctly rejected by the discrimination gate (C5).
-This confirms that the calibration benefit translates to clinical
-decision benefit in the directions where the gate permits deployment.
+the largest decision-cost reduction are CPSC$\rightarrow$PTB-XL
+(mean DCR $+0.0625$; net clinical value $+0.0312$) and
+CPSC$\rightarrow$Chapman (mean DCR $+0.0375$; NCV $+0.0188$), which
+also have the largest E3-subsample $\Delta$ECE$_{\text{OOD}}$ (mean
+$+0.137$ and $+0.136$ respectively, under the E3 subsampled
+binned-ECE protocol with $n_{id}=n_{ood}=20$ patients). The direction
+with negative net benefit is Chapman$\rightarrow$CPSC (mean DCR
+$-0.0150$; NCV $-0.0075$), which is correctly rejected by the
+discrimination gate (C5). We note that the decision-benefit ranking
+differs from the main-endpoint $\Delta\text{ECE}_{\text{OOD}}$ ranking
+(which peaks at PTB-XL$\rightarrow$Chapman and PTB-XL$\rightarrow$CPSC,
+means $+0.0240$ and $+0.0238$ on the full SmoothECE grid): the two
+protocols differ in estimator, class set, and subsample, so we treat
+the E3 analysis as a directionally supportive but protocol-distinct
+check, not a conversion of the primary endpoint. What survives is the
+gate-level conclusion: where the discrimination gate permits
+deployment, the calibration benefit does not cost decision
+performance; where it is negative (Chapman$\rightarrow$CPSC), no
+calibration benefit should be deployed at all.
 
 % ============================================================================
 \subsection{Net Clinical Value (NCV) results}
@@ -1437,12 +1447,14 @@ should be replaced by a majority-class predictor, consistent with
 the counter-example pattern (6/9 with low OOD accuracy).
 The released artifacts include per-direction AUROC/AUPRC for all 60
 experiments (results/discrimination\_metrics\_60exp.csv): mean OOD
-AUROC ranges from 0.629 (CPSC$\rightarrow$PTB-XL) to 0.792
-(PTB-XL$\rightarrow$Chapman), i.e.\ far above the accuracy-based
+AUROC ranges from 0.629 (CPSC\\rightarrowChapman) to 0.795
+(PTB-XL\\rightarrowChapman), i.e.\ far above the accuracy-based
 majority-class reading yet direction-dependent; and TS leaves AUROC
 unchanged (mean $\Delta$AUROC$_{\text{TS}-\text{raw}}=-0.001$, max
-|change| $0.024$), as the monotone transform requires. the discrimination-first gate
-precedes the calibration decision rule in deployment.
+|change| $0.024$), as the monotone transform requires. The discrimination-first
+gate---measure target discrimination before investing in
+recalibration---precedes the calibration decision rule in
+deployment.
 
 \subsection{Explainable $\neq$ predictable: post-hoc vs.\ pre-registered}
 % ----------------------------------------------------------------------------
