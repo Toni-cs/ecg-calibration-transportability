@@ -80,6 +80,12 @@ https://github.com/gt17641001169-design/ecg-calibration-transportability
 be redistributed with attribution.
 ```
 
+**Pasting over an earlier draft?** If the box already holds text that mentions
+`v2.1-A1`, or lists file names such as `01_PROTOCOL_v2.1-A1_EN.md`, that is the
+earlier draft — the file names carried version labels then. Clear the box and
+paste the block above instead. The current text names no version, and groups the
+contents by kind rather than enumerating file names.
+
 ---
 
 ## Template (Optional)

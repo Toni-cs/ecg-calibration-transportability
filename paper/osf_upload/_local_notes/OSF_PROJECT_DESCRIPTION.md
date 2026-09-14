@@ -1,8 +1,10 @@
 # Text to paste into the OSF project description
 
-Copy the block below verbatim into the OSF project description field. It is
-written so that the record is accurate whether or not the registration form is
-also completed.
+This file is the description of record — the authoritative wording for the
+deposit. The copy you actually paste into the OSF project description field
+lives in `OSF_PASTE_VALUES.md`, so that there is only ever one file to edit; the
+block below is byte-identical to it. It is written so that the record is
+accurate whether or not the registration form is also completed.
 
 > **Working note — not part of the deposit.** Do not upload this file to OSF.
 
