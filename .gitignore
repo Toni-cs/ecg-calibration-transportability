@@ -1,4 +1,4 @@
-__pycache__/
+﻿__pycache__/
 *.py[cod]
 
 checkpoints/
@@ -6,3 +6,20 @@ results/
 
 tmp_preprocess_smoke_*/
 tmp_audit_*/
+data/
+logs/
+splits/
+paper/*.aux
+paper/*.log
+paper/*.out
+paper/*.spl
+paper/*.toc
+paper/_compile*.log
+paper/main_check.*
+paper/main_zh.aux
+paper/main_zh.log
+paper/main_zh.out
+paper/main_zh.toc
+texput.log
+$!null
+_round9_temp/
