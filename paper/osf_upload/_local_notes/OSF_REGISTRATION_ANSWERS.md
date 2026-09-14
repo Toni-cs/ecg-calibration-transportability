@@ -111,7 +111,7 @@ manuscript's "Pre-registration archival status" paragraph.
 
 | Field | Answer |
 |---|---|
-| **Study type** | Secondary data analysis (no new data collected; three public ECG corpora) |
+| **Study type** | **Simulation study** — the form's own definition ("using existing or synthetic data to assess performance of a model … demonstration of methods … in a controlled context") matches this benchmark verbatim: existing public corpora, fixed seeds, pre-specified shift operators. Do **not** leave this as "Other", and do not pick Non-randomized study (no subjects or treatment assignment) or Descriptive study (registered hypotheses are tested, not merely described). There is no "Archival study" option on the live form. |
 | **Blinding** | No blinding. The study re-analyses public retrospective datasets; there are no human participants and no treatment assignment. Multi-seed train/eval runs (seeds 42–46) provide the robustness evidence. |
 | **Study design** | Six directed cross-corpus transfer pairs among PTB-XL, Chapman-Shaoxing, and CPSC2018+2019, each evaluated on two architectures (InceptionTime, 1D-ResNet-34) × 5 seeds = 60 experiments. Eight recalibration methods, with temperature scaling as the primary method. Patient-level cluster paired bootstrap for all uncertainty estimates. |
 | **Randomization** | Not applicable. Seeds 42–46 are fixed a priori, not randomly drawn. |
