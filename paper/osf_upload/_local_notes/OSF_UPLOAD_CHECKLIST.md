@@ -70,10 +70,11 @@ SHA256SUMS.txt
 
 - [ ] Make the project **public**: the **Make Public** toggle sits at the top of
       the **Overview** page, not in Settings. Confirm the prompt.
-- [ ] Mint the DOI: left navigation **Metadata**, **Edit** next to *DOI*, then
-      **Create**. OSF does not assign one automatically on publication. The
-      identifier reads `10.17605/OSF.IO/XXXXX`.
-- [ ] Write the DOI here: `https://doi.org/____________________`
+- [x] Mint the DOI. Observed on this account: the project DOI was already
+      shown on the **Metadata** page once the project was public
+      (`https://doi.org/10.17605/OSF.IO/53H64`). If yours is absent,
+      **Edit** next to *DOI*, then **Create**.
+- [x] DOI minted and verified public: `https://doi.org/10.17605/OSF.IO/53H64`
 - [ ] Optional but stronger: **Register** the project with the *OSF
       Preregistration* template. Use `OSF_REGISTRATION_ANSWERS.md`, which gives
       the answer for every field. The decisive one is **Existing data →
