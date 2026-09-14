@@ -114,10 +114,18 @@ skeleton. Fill the registration form later using
    step 3 of `OSF_UPLOAD_CHECKLIST.md`. Select those files individually — do
    **not** drag the folder, because that would also publish the four working
    notes in `_local_notes/`.
-3. Set the license under **Settings** to CC-BY-4.0.
-4. Add tags: ECG, calibration, temperature scaling, domain shift, preregistration, reproducibility
-5. Make the project **public** (Settings, then Public). Confirm the DOI resolves.
-6. Send me the DOI and I will run the backfill over the manuscript and cover
+3. Set the license: left navigation **Metadata**, then **Edit** next to
+   *License*, choose CC-BY-4.0, save.
+4. Add tags on the same **Metadata** page (Edit next to *Tags*): ECG,
+   calibration, temperature scaling, domain shift, preregistration,
+   reproducibility.
+5. Make the project public with the **Make Public** toggle at the top of the
+   **Overview** page. It is not in Settings.
+6. Mint the DOI: left navigation **Metadata**, **Edit** next to *DOI*, then
+   **Create**. The DOI reads `10.17605/OSF.IO/XXXXX`. OSF does not mint it
+   automatically on publication — you have to click Create, and the link only
+   exists once the project is public.
+7. Send me the DOI and I will run the backfill over the manuscript and cover
    letter in one command.
 
 ## URL to verify before you publish
