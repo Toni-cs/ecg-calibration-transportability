@@ -7,6 +7,40 @@ gives you an exact option for the truthful answer.
 
 > **Working note — not part of the deposit.** Do not upload this file to OSF.
 
+## How to create the registration (current interface)
+
+**Do these in order. Step 0 is not optional.**
+
+- **Step 0 — clean the record first.** A registration freezes the project as it
+  stands, permanently. If the description still shows literal `**` asterisks or
+  `|` table pipes, fix it *before* registering: Metadata → Description → Edit →
+  clear → paste the plain-text block from `OSF_PASTE_VALUES.md` → Save. Check
+  the public page once. Anything else you want visitors to see — Subjects,
+  contributor affiliation — set it now too.
+- **Step 1.** Project page → left navigation **Registrations** → button
+  **New Registration**.
+- **Step 2.** Template list → **OSF Preregistration** → *Create draft*. Do not
+  pick Open-Ended Registration.
+- **Step 3.** Title: keep exactly what is prefilled —
+  "Protocol and amendments: temperature-scaling calibration transfer across ECG
+  corpora". No version label here either.
+- **Step 4.** License: CC-BY-4.0 if offered. Registrations commonly require
+  CC0-1.0; if CC-BY is not offered, accept CC0 — it is fine for this record.
+- **Step 5.** Subjects/disciplines: whatever you chose on the project's
+  Subjects (e.g. Medicine / Life Sciences), pick the same.
+- **Step 6.** Fill every page from the tables below. The decisive field is
+  under **Sampling plan → Existing data**; nothing else matters if that one is
+  wrong.
+- **Step 7.** Visibility on the final page: **public immediately, no embargo.**
+  The underlying project is already public, so an embargo would only hide the
+  timestamp this registration exists to create.
+- **Step 8.** Click **Register**. OSF warns this cannot be undone — that is the
+  point. The registration gets its own immutable timestamp and a separate DOI
+  of the form `10.17605/OSF.IO/XXXXX`.
+- **Step 9.** Send the registration DOI back; the manuscript and cover letter
+  get updated to cite it (it is the stronger of the two identifiers, because it
+  cannot be edited).
+
 ## The one answer that matters
 
 **Existing data** → select **"Registration following analysis of existing
