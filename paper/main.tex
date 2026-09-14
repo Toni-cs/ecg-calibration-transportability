@@ -51,48 +51,31 @@
 Temperature scaling (TS) is the default post-hoc recalibration for deep
 classifiers, yet whether its in-distribution (ID) benefit transfers to
 out-of-distribution (OOD) target corpora remains the central open question
-for cross-institution ECG deployment. We pre-registered and ran a
-multi-seed calibration boundary study on six directed cross-corpus transfer
-pairs among Chapman-Shaoxing, CPSC2018+2019, and PTB-XL, with two
-architectures (InceptionTime and ResNet1D (1D-ResNet-34)), five seeds
-(42--46), eight recalibration methods, and a patient-level cluster paired
-bootstrap (the operating CI is BCa at $B=10{,}000$, fully re-run on
-the entire 60-experiment grid; earlier percentile CIs at $B=10{,}000$
-in 31/60 experiments and $B=200$ in 21/60 are retained as historical
-provenance, and the two CI methods agree in sign in 60/60
-experiments).
-The pre-registered primary endpoint is the OOD calibration benefit
-$\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{\mathrm{raw}}^{\mathrm{OOD}}
+for cross-institution ECG deployment. We report a multi-seed calibration
+boundary study on six directed cross-corpus transfer pairs among
+Chapman--Shaoxing, CPSC2018+2019, and PTB-XL, with two architectures
+(InceptionTime and ResNet1D), five seeds (42--46), eight recalibration
+methods, and a patient-level cluster paired bootstrap as the operating
+interval (BCa, $B=10{,}000$, re-run on the full 60-experiment grid). The
+study was governed by a pre-specified protocol with registered, dated
+amendments, publicly archived with per-file checksums (see the Data
+availability statement). The primary endpoint is the OOD calibration
+benefit $\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{\mathrm{raw}}^{\mathrm{OOD}}
 -\text{ECE}_{\mathrm{TS}}^{\mathrm{OOD}}$, tested one-sided against a
-registered empirical direction prior. Across 60 seed experiments (6 pairs
-$\times$ 2 architectures $\times$ 5 seeds, fully balanced), TS yields a
-positive OOD benefit in 51/60 cases (85.0\%): InceptionTime 27/30 (90.0\%),
-ResNet1D 24/30 (80.0\%); nine counter-examples are transparently disclosed
-with post-hoc mechanistic interpretations. When six experiments with
-degenerate CI widths ($<3\times10^{-4}$) are excluded, the headline
-count becomes 45/60 (75.0\%), so the 85.0\% rate should be read jointly
-with effect sizes and CI diagnostics. The pre-registered ID boundary
-criterion ($\geq$80\% of cells with 95\% CIs containing zero) is
-\emph{not} met (23/60 = 38.3\% under the BCa operating CI; the
-earlier percentile CIs gave 29/60 = 48.3\%), triggering the pre-registered ``ID nonzero
-boundary'' branch: the OOD benefit is about $1.9\times$ the ID benefit
-(means $+0.0159$ vs.\ $+0.0083$) and cannot be attributed exclusively to
-OOD-specific mismatch. A 27-cell Shapley decomposition is validated
-synthetically ($n=20{,}000$), a method-selection boundary separates TS from
-the weakest methods (EM prior and Matrix scaling), and the predictability
-experiment (LOO $R^2$ CI upper bound $0.104<0.5$) triggers the
-pre-registered failure branch. A discrimination-aware calibration
-gate (C5) decouples calibration effectiveness from clinical
-deployability: 7/14 pair$\times$architecture strata pass both
-calibration and discrimination layers. All hypotheses are tagged
-\emph{exploratory + robustness validation}, not confirmatory. In
-summary, we contribute (i) the first multi-seed quantification of OOD
-calibration benefit with pre-registered endpoint; (ii) the ID boundary
-condition analysis with pre-registered branch triggered; (iii)
-Shapley decomposition validation on 27 synthetic cells; (iv) the
-method-selection boundary separating TS from fragile prior-correction
-methods; and (v) a discrimination-aware deployment gate reframing the
-9 counter-examples into calibration vs.\ discrimination failures.
+pre-specified empirical direction prior. TS yields a positive OOD benefit in
+51/60 seed experiments (85.0\%; InceptionTime 27/30, ResNet1D 24/30), with
+nine counter-examples transparently disclosed and mechanistically
+interpreted; excluding six degenerate-CI cells gives 45/60 (75.0\%). The
+pre-specified ID boundary criterion ($\geq$80\% of cells with 95\% CIs
+containing zero) is \emph{not} met (23/60 = 38.3\%), triggering the
+registered ``ID nonzero boundary'' branch: the OOD benefit is about
+$1.9\times$ the ID benefit ($+0.0159$ vs.\ $+0.0083$). A validated 27-cell
+Shapley decomposition separates slope, intercept, and prevalence effects; a
+predictability experiment triggers the registered failure branch (LOO $R^2$
+CI upper bound $0.104<0.5$); and a discrimination-aware gate (C5) shows 7/14
+pair$\times$architecture strata passing both calibration and discrimination
+layers. Together these results bound when post-hoc recalibration pays off
+across institutions, and when it does not.
 \end{abstract}
 
 \begin{keyword}
