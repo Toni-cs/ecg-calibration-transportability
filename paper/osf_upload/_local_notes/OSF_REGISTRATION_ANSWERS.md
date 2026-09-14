@@ -41,6 +41,51 @@ gives you an exact option for the truthful answer.
   get updated to cite it (it is the stronger of the two identifiers, because it
   cannot be edited).
 
+## Page 2 — Overview (two required fields, one you should fill anyway)
+
+**Research Questions Or Hypotheses** — paste the **Hypotheses** row from the
+Study information table below, verbatim.
+
+**Foreknowledge Of Data Or Evidence** — select the **last** of the eight
+options:
+
+> "Analyses in this plan have been conducted already. At least some of the
+> analyses described in this analysis plan have been conducted by the authors
+> making this a retrospective registration."
+
+The eight choices grade from "data does not yet exist" down to "analyses
+already conducted", and only the last is true here. It is the same admission
+the Sampling plan's Existing-data answer makes; selecting anything above it
+writes a false certification into an immutable record. (Note: the form field
+is called *Foreknowledge*, not *Existing data* — the answer is the same
+honesty, different wording.)
+
+**Explanation Of Foreknowledge And Managing Unintended Influences (Optional)**
+— optional in name only; this is where the honest timeline lives. Paste:
+
+```
+This is a retrospective registration. The study re-analyses three publicly
+available ECG corpora (PTB-XL, Chapman-Shaoxing, CPSC2018+2019); no new data
+were collected. The experiment protocol and its two amendments were authored
+during the study and are dated in their own headers (2026-09-05 and
+2026-09-10); both carried the status "draft pending OSF timestamping" until
+the project deposit and this registration. An internal SHA-256 manifest of
+the working tree was taken on 2026-09-05; of its 14 entries, 10 files have
+changed since that freeze and for 7 the frozen content can no longer be
+recovered from version control, including the protocol document itself. This
+is documented file by file in README_ARCHIVAL_STATUS.md in the registered
+project, and disclosed in the manuscript under "Pre-registration archival
+status". The public timestamp of the protocol record therefore begins with
+the deposit and this registration, not earlier. Steps taken to limit
+unintended influence: the primary endpoint, its direction, the confirmatory
+family size, and the decision branches are fixed in writing in the protocol
+and its dated amendments; the endpoint relocation and family reduction are
+registered as explicit amendments rather than silent changes; all 60
+pre-specified seed experiments are reported, including nine counter-examples;
+and the manuscript repeats this disclosure in its Data availability
+statement.
+```
+
 ## The one answer that matters
 
 **Existing data** → select **"Registration following analysis of existing
