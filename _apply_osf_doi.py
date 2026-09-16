@@ -18,7 +18,7 @@ if len(sys.argv) < 2 or not sys.argv[1].startswith("10."):
 
 DOI = sys.argv[1].strip()
 URL = f"https://doi.org/{DOI}"
-MAIN = "paper/main.tex"
+MAIN = "paper/main_bspc.tex"
 LETTER = "paper/cover_letter.tex"
 
 EDITS = [
@@ -90,4 +90,4 @@ for path in (MAIN, LETTER):
     t = open(path, encoding="utf-8").read()
     print(f"  {path}: {t.count(URL)}")
 print()
-print("next: git add paper/main.tex paper/main.pdf paper/cover_letter.tex paper/cover_letter.pdf && git commit")
+print("next: git add paper/main_bspc.tex paper/main_bspc.pdf paper/cover_letter.tex paper/cover_letter.pdf && git commit")

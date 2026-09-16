@@ -1,57 +1,57 @@
 {
-  "timestamp_utc": "2026-09-05T04:19:46.851339+00:00",
+  "timestamp_utc": "2026-09-16T02:44:47.871553+00:00",
   "project": "DECAL: ECG Calibration Repair ID\u2192OOD Decay Decomposition",
   "target_venue": "BSPC (\u4e2d\u79d1\u9662\u4e8c\u533a)",
   "files": {
     "docs/EXPERIMENT_PROTOCOL.md": {
-      "sha256": "e436c06941942f4d95d189fd0586385b974cfc2c25aff4b5637807a85ff97783",
-      "size_bytes": 25048,
-      "mtime": "2026-09-05T03:40:43.822970+00:00"
+      "sha256": "0e8afa923986aba3f5030133c59b8a87b475c3551b819b0137ab9da66eeb9498",
+      "size_bytes": 52641,
+      "mtime": "2026-09-09T01:33:51.039391+00:00"
     },
-    "paper/main.tex": {
-      "sha256": "86f7c5f04778d24d16455ea73d8c066cfe820fe1d717cbbefbbc92f702bb9d0a",
-      "size_bytes": 27943,
-      "mtime": "2026-09-05T03:57:36.871304+00:00"
+    "paper/main_bspc.tex": {
+      "sha256": "ae24f68ee1721551a38d59f78ed511aea68a3f13fc7d5aaaf8d573af3bcf9937",
+      "size_bytes": 111108,
+      "mtime": "2026-09-16T02:21:31.818520+00:00"
     },
     "scripts/eval_transfer.py": {
-      "sha256": "29ddae7d13fd9279549d9adc8066711828d63634809e500e0353316a7146d6f2",
-      "size_bytes": 17846,
-      "mtime": "2026-09-05T03:46:13.936010+00:00"
+      "sha256": "06860d8b9abd1e1684e8940847f64f1fbdfbdbf4a229bc8fe951a91a8c49522c",
+      "size_bytes": 19312,
+      "mtime": "2026-09-10T06:12:01.636785+00:00"
     },
     "scripts/eval_l2_shift.py": {
-      "sha256": "6eae7e1ed85087af1f2b1378bc732e76d08efea0a2a74efb1c868ac5aebf1c6d",
-      "size_bytes": 8295,
-      "mtime": "2026-09-05T04:16:49.502489+00:00"
+      "sha256": "369d8d959d72895e910b788d0515a105710ea04d1eacd39aa3cd1d06767d4759",
+      "size_bytes": 10585,
+      "mtime": "2026-09-10T04:46:53.571830+00:00"
     },
     "scripts/step2_predictability.py": {
-      "sha256": "183f5cffc08c9d7f2df5bf537c0d9d5e3e29a156ed8b99ba38ec86d672f94805",
-      "size_bytes": 5421,
-      "mtime": "2026-09-05T04:17:41.779798+00:00"
+      "sha256": "ace6a52c32bc50e15bcc5e975c2b587e5e147d35ca18e169b9f7be84e591dec6",
+      "size_bytes": 11431,
+      "mtime": "2026-09-06T10:38:34.105860+00:00"
     },
     "scripts/step3_deployment.py": {
-      "sha256": "580ec33315daa390ad57de851ba8c0999fdc5577ae7f200984c73090d53fcb59",
-      "size_bytes": 5911,
-      "mtime": "2026-09-05T04:16:14.046896+00:00"
+      "sha256": "430241673e4d270f479f1b3b32d60264afc8a9c8f84e56e98d91dca2821f42c9",
+      "size_bytes": 21760,
+      "mtime": "2026-09-06T10:38:34.105860+00:00"
     },
     "scripts/summarize_l2_shifts.py": {
       "sha256": "ff8d537a169e575f59e8bb68281c7f1248358de4f647f88cb8415e8340c713b8",
       "size_bytes": 5235,
-      "mtime": "2026-09-05T03:37:32.443267+00:00"
+      "mtime": "2026-09-05T04:28:32.352459+00:00"
     },
     "src/data/l2_shifts.py": {
-      "sha256": "cb2bf34486e44f2295faa84cb4efccaf4a24698bc8ace26313d7d7dd3fae3a54",
-      "size_bytes": 3609,
-      "mtime": "2026-09-05T03:37:52.500940+00:00"
+      "sha256": "7bea546b0d6b705aeb180fb613d66692fde63c49ee32217e897a84254fff94cd",
+      "size_bytes": 8789,
+      "mtime": "2026-09-10T03:03:09.989067+00:00"
     },
     "src/data/mapping.py": {
-      "sha256": "3f7be5151b4da04b247273ed3993fdbdce25825ae3a8643681f8df359f6196f8",
-      "size_bytes": 29751,
-      "mtime": "2026-09-04T08:23:10.850081+00:00"
+      "sha256": "649bde9e4e13ffd31ab77b9cad8b21d372e495a2fa0cda52d8658b50686b2db2",
+      "size_bytes": 30018,
+      "mtime": "2026-09-09T12:26:34.407877+00:00"
     },
     "src/utils/calibration.py": {
-      "sha256": "2052edcb22431aa0ce8cd038a11414fad03e642f9362609d1df5d4c621dfd5f1",
-      "size_bytes": 30076,
-      "mtime": "2026-09-04T00:14:00.404263+00:00"
+      "sha256": "41f54797a6f03bb7143608274403beee47f537464d5b734bc7828ff68310cb54",
+      "size_bytes": 32237,
+      "mtime": "2026-09-12T14:00:23.473622+00:00"
     },
     "src/utils/calibration_methods.py": {
       "sha256": "254c7d50325dad1cda602590cd282687758d75bede8d615b0973ca40e078ae72",
@@ -69,9 +69,9 @@
       "mtime": "2026-09-02T05:11:05.561670+00:00"
     },
     "src/models/baselines.py": {
-      "sha256": "3f45e0aa3713596dc6329b46643306ff46414bce7a9caff8e3b69c2a3a98824a",
-      "size_bytes": 10780,
-      "mtime": "2026-09-02T05:11:39.244792+00:00"
+      "sha256": "277f68763a4a3d3222c6c8faa51ee3908eb52126e3c7cb4b25296315ebf1c0b3",
+      "size_bytes": 11568,
+      "mtime": "2026-09-09T12:27:44.067105+00:00"
     }
   }
 }

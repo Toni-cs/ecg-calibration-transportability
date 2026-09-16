@@ -1,6 +1,6 @@
-# 论文资料与数据索引（R8 整理后，2026-09-07）
+# 论文资料与数据索引（R8 整理后，2026-09-07；2026-09-16 文件清理后更新）
 
-> 论文：`paper/main.pdf`（11 页，源 `main.tex` + `cover_letter.tex`）
+> 论文：`paper/main_bspc.pdf`（58 页，源 `main_bspc.tex` + `cover_letter.tex`）
 > 当前审计状态：R8 三轮对抗审计完成，21 处论文修复已执行，底层数据已端到端封口。
 > 总索引：`docs/ROUND8_AUDIT_AND_FIXES.md`（审计全文 + 复算口径 + 遗留清单）。
 
@@ -8,10 +8,16 @@
 
 | 文件 | 说明 | 数据来源 |
 |------|------|----------|
-| `main.tex` → `main.pdf` | 投稿正文（60 实验版，R8 修复后） | 全部数字可溯源到 results/ 与 checkpoints/ 的 JSON |
-| `cover_letter.tex` | 投稿信（已撤回裸域名声称） | — |
+| `main_bspc.tex` → `main_bspc.pdf` | **投稿正文（活跃稿，58 页，BSPC 版）** | 全部数字可溯源到 results/ 与 checkpoints/ 的 JSON |
+| `supplementary.tex` → `supplementary.pdf` | 独立附录（S1–S4） | results/ 与 protocol 文档 |
+| `cover_letter.tex` → `cover_letter.pdf` | 投稿信（已撤回裸域名声称） | — |
+| `highlights.tex` | Highlights（5 条，≤85 字符） | — |
 | `generate_figures.py` | 图 1-5 生成脚本 | results/robustness_validation_5seeds.csv、counterexample_analysis、c4_resnet1d_8method.csv |
 | `figures/fig_*.pdf/png` | 已重生成（fig1 图例已改 percentile） | 同上 |
+| `revision/` | 返修清单与选刊论证（2026-09-16） | — |
+| `osf_upload/`、`submission/` | OSF 预注册归档、投稿包 | — |
+
+**2026-09-16 清理**：删除旧主文 `main.tex/main.pdf`（1900 行 / 59 页，仍含已修正的 `rules out` 过度断言与错误 raw ECE 数字，属危险版本）、中间编译 `main_build.*`/`main_check.*`、LaTeX 临时文件、中文版 `main_zh.*` + `zh_*.tex`，共 60 个文件 / 6.0 MB。备份见 `_paper_cleanup_backup_2026-09-16/`。
 
 ## 2. 数据层（data/）——只剩单一有效版本
 
