@@ -9,7 +9,7 @@
 %   - v2.1 更新：6方向 × 2架构（InceptionTime + ResNet1D）× 5seed = 60 实验（完整覆盖）
 % 写作纪律（协议§0）：不得声称"首次证明ECG校准收益ID→OOD衰减"（Ovadia 2019
 %   已知）；4 个独立贡献（OOD 收益量化 / ID 边界 / Shapley 验证 / 方法选择边界）
-%   才是 novelty 核心。5 个独立贡献（OOD 收益量化 / ID 边界 / Shapley 验证 / 方法选择边界 / 判别感知校准门）5 个独立贡献（OOD 收益量化 / ID 边界 / Shapley 验证 / 方法选择边界 / 判别感知校准门）
+%   才是 novelty 核心。5 个独立贡献（OOD 收益量化 / ID 边界 / Shapley 验证 / 方法选择边界 / 判别感知校准门）
 % 透明性声明：本主检验为预注册修订案 A1 后的重新定位（exploratory + 稳健性验证），
 %   非 confirmatory；修订案全文见 docs/PROTOCOL_AMENDMENT_A1_PREREG_RELOCATION.md。
 % ============================================================================
@@ -455,8 +455,8 @@ hypotheses (6 pairs $\times$ 2 architectures $\times$ 1 primary shift
 level) under amendment A2, with the remaining 13 shift levels
 designated as exploratory dose-response. Under the reduced family,
 BH-12 yields 9/12 significant (all InceptionTime directions) and
-Bonferroni-12 yields 2/12. The A2 amendment is archived in
-\texttt{docs/PROTOCOL\_AMENDMENT\_A2\_}\allowbreak\texttt{FAMILY\_REDUCTION.md}.
+Bonferroni-12 yields 2/12. The A2 amendment is publicly archived
+together with the protocol (see Data availability).
 
 \subsection{Decomposition of the benefit decay}
 \label{sec:decomp}
@@ -1694,17 +1694,16 @@ sign-based support/counter-example classification.
 The PTB-XL \cite{wagner2020ptbxl}, Chapman-Shaoxing
 \cite{zheng2022ecgarrhythmia}, and CPSC2018+2019 datasets are publicly
 available via PhysioNet/Kaggle under their respective licenses. The
-pre-registered protocol v2.1-A1, its hash manifest
-(\texttt{docs/osf\_archive\_manifest.json}), the revision A1 document,
-and the full per-experiment result files
+pre-registered protocol and its registered amendments (A1, A2) are
+publicly archived as an immutable record with per-file SHA-256
+checksums at \url{https://doi.org/10.17605/OSF.IO/53H64}; they are
+deliberately not duplicated in the public repository, which stores the
+code, the patient-level split indices, and the results. The full
+per-experiment result files
 (\texttt{checkpoints/transfer/**/}\allowbreak\texttt{transfer\_result.json},
 \texttt{results/*.csv}) are included with the submission as
 supplementary material and are also available in the public repository
 \url{https://github.com/gt17641001169-design/ecg-calibration-transportability}.
-\textbf{Pre-registration archival status.} The protocol, both amendments
-(A1, A2), and a per-file archival-status report are publicly archived at
-\url{https://doi.org/10.17605/OSF.IO/53H64}. \texttt{docs/osf\_archive\_manifest.json} is the internal
-snapshot taken on 2026-09-05; it is not a substitute for the public record.
 
 \section*{Code availability}
 The full pipeline code, preprocessing (reproducible from the
@@ -1855,10 +1854,10 @@ R.~Alaiz-Rodriguez, N.~Chawla, F.~Herrera, ``A unifying view on
 dataset shift in classification,'' \emph{Pattern Recognition},
 45(1):521--530, 2012. doi:10.1016/j.patcog.2011.05.019.
 \bibitem{protocolv21a1} [Pre-registered protocol, publicly archived] ``ECG
-calibration boundary study -- experiment protocol,'' 2026. Hash manifest:
-\texttt{docs/osf\_archive\_manifest.json} (local snapshot; archived at
-\url{https://doi.org/10.17605/OSF.IO/53H64}); revision A1 full text in
-\texttt{docs/PROTOCOL\_AMENDMENT\_A1\_PREREG\_RELOCATION.md}.
+calibration boundary study -- experiment protocol,'' 2026. Immutable
+public archive with per-file SHA-256 checksums:
+\url{https://doi.org/10.17605/OSF.IO/53H64} (including revision A1 full
+text).
 \bibitem{nosek2019prereg} B.~Nosek, C.~Ebersole, A.~DeHaven,
 D.~Mellor, ``The preregistration revolution,'' \emph{PNAS},
 115(11):2600--2606, 2018. doi:10.1073/pnas.1708274114.
