@@ -482,9 +482,10 @@ def build_chapman_datasets(data_dir: str, seed: int, limit: Optional[int] = None
 
 
 def build_cpsc_datasets(data_dir: str, seed: int, limit: Optional[int] = None):
-    """CPSC2018+2019 four-way split (preregistered protocol §2: 4-class reduced subspace, patient-level stratified 70/10/20).
+    """CPSC2018 (CPSC Database + CPSC-Extra) four-way split (preregistered protocol §2: 4-class reduced subspace, patient-level stratified 70/10/20).
 
     - SUBSPACE_CPSC = {NORM, CD, STTC, MI} (4 classes); HYP (n=11) is dropped and counted via filter_subspace.
+    - WARNING: the ORDER of SUBSPACE_CPSC is the integer label encoding -- do not change it alone.
     - patient_wise_split(0.7, 0.1, 0.2) -> train/cal/test (stratified by patient majority label).
     - Val carve: within train, sample an additional 1/7 of patients (-> overall ~60/10/10/20, patient-level).
     - Each record = one patient (patient_id = record name); no strat_fold.

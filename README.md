@@ -28,7 +28,20 @@ Three public databases, unified to five superclasses (`NORM / MI / STTC / CD / H
 |---|---|---|
 | PTB-XL | 21,522 | [PhysioNet v1.0.3](https://physionet.org/content/ptb-xl/1.0.3/) |
 | Chapman–Shaoxing | 20,243 | PhysioNet (Chapman–Shaoxing ECG) |
-| CPSC2018+2019 | 10,285 | [CPSC challenge](https://physionet.org/content/challenge-2018/) |
+| CPSC2018 | 10,285 | [PhysioNet/CinC 2020](https://physionet.org/content/challenge-2018/) |
+
+The CPSC corpus is **CPSC2018 only**, i.e. the union of the *CPSC Database*
+(6,877 records; the public CPSC2018 training set) and the *CPSC-Extra Database*
+(3,453 records; the CPSC2018 recordings not used by the Challenge), both
+distributed via PhysioNet/CinC 2020. It does **not** include CPSC2019, which was
+a QRS/heart-rate *detection* task with no diagnostic labels. 10,297 records are
+read after preprocessing; 10,296 map to a superclass, and 11 of those are HYP,
+leaving 10,285 records in the four-class subspace `{NORM, CD, STTC, MI}` that the
+CPSC experiments use. Note that CPSC2018's own official taxonomy is nine disease
+classes (Normal, AF, I-AVB, LBBB, RBBB, PAC, PVC, STD, STE) with no superclass
+grouping and no MI; the superclass system used here is PTB-XL's, applied as a
+cross-corpus harmonization choice, and the MI class is populated entirely by
+CPSC-Extra's SNOMED annotations.
 
 Raw waveforms are **not redistributed** in this repository (database licenses, size). Download the databases from the sources above, then build the unified NPZ + metadata:
 

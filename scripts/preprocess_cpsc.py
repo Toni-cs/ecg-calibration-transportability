@@ -1,8 +1,33 @@
-"""Preprocess CPSC2018+2019 into the ECGNPZDataset format.
+"""Preprocess CPSC2018 (CPSC Database + CPSC-Extra) into the ECGNPZDataset format.
+
+Corpus identity (corrected 2026-09-16; do NOT describe this corpus as "CPSC2018+2019"):
+  Both subsets handled here belong to CPSC2018. The corpus contains NO CPSC2019 data.
+  - Training_WFDB/ (A0001.hea ...) = **CPSC Database**, the public CPSC2018 training set
+    (6,877 records officially; 9 distinct SNOMED codes measured, one-to-one with the
+    official 9 classes; **MI = 0**)
+  - Training_2/    (Q0001.hea ...) = **CPSC-Extra**, the CPSC2018 records that were NOT
+    used by the official challenge (3,453 records officially; 72 distinct SNOMED codes
+    measured, including MI/HYP)
+  Basis: the PhysioNet/CinC 2020 data description
+  (physionet.org/content/challenge-2020) lists "CPSC Database 6,877" and
+  "CPSC-Extra Database 3,453", the latter described verbatim as
+  "the CPSC2018 data that was not used". The local archives are named
+  china-physiological-signal-challenge-in-2018.zip and
+  china-12lead-ecg-challenge-database.zip (the latter published by the official
+  PhysioNet Kaggle account, described as "The data are from the China Physiological
+  Signal Challenge in 2018 (CPSC2018)").
+  Note: CPSC2019 was a QRS / heart-rate **detection** task with no diagnostic labels
+  and is unrelated to this corpus.
+
+  WARNING: the internal source tag is still spelled "cpsc2019" (legacy naming). That
+  string is baked into the patient_id column of splits/cpsc_seed*.csv and into
+  data/cpsc_processed/*. It **must not be renamed**, or every published split and every
+  trained model will become misaligned.
 
 Inputs:
-  --cpsc2018-root  directory containing Training_WFDB/ (A0001.hea, etc.)
-  --cpsc2019-root  directory containing Training_2/ (Q0001.hea, etc.)
+  --cpsc2018-root  directory containing Training_WFDB/ (= CPSC Database)
+  --cpsc2019-root  directory containing Training_2/ (= CPSC-Extra; flag name kept for
+                   historical compatibility)
   --output-root     output directory
 
 Outputs (same structure as preprocess_chapman.py):
@@ -12,9 +37,11 @@ Outputs (same structure as preprocess_chapman.py):
   - data/*.npy: float32 (12, 5000) 500Hz x 10s
   - preprocess_summary.json: STROBE counts + SNOMED code frequency table + mapping coverage
 
-CPSC2018: 6844 records, 12 leads, 500Hz, 7500 samples (15s) -> truncated to 5000 (10s)
-CPSC2019: 3453 records, 12 leads, 500Hz, 5000 samples (10s)
-Total ~10297 records (after dedup; CPSC2018 and 2019 do not overlap)
+CPSC Database (Training_WFDB): 6,844 extracted (6,877 in the zip; 33 records
+    A6845-A6877 were lost during extraction and still need to be restored),
+    12 leads, 500Hz, 7500 samples (15s) -> truncated to 5000 (10s)
+CPSC-Extra (Training_2):       3,453 records, 12 leads, 500Hz, 5000 samples (10s)
+Total ~10,297 records (the two subsets do not overlap)
 """
 from __future__ import annotations
 
@@ -39,11 +66,14 @@ PRIORITY = ["MI", "STTC", "CD", "HYP", "NORM"]
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Preprocess CPSC2018+2019 into ECGNPZDataset format.")
+        description="Preprocess CPSC2018 (CPSC Database + CPSC-Extra) "
+                    "into the ECGNPZDataset format.")
     parser.add_argument("--cpsc2018-root", type=Path, required=True,
-                        help="Directory containing Training_WFDB/")
+                        help="Directory containing Training_WFDB/ (= CPSC Database)")
     parser.add_argument("--cpsc2019-root", type=Path, required=True,
-                        help="Directory containing Training_2/")
+                        help="Directory containing Training_2/ (= CPSC-Extra, the "
+                             "unused portion of CPSC2018; flag name kept for "
+                             "historical compatibility)")
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--sampling-rate", type=int, default=500)
     parser.add_argument("--signal-length", type=int, default=5000)
@@ -99,6 +129,11 @@ def main() -> None:
     args.output_root.mkdir(parents=True, exist_ok=True)
     data_dir.mkdir(parents=True, exist_ok=True)
 
+    # NOTE: the source strings below become the patient_id prefix (e.g. cpsc2019_Q0001)
+    # and are already baked into splits/cpsc_seed*.csv and data/cpsc_processed/*.
+    # "cpsc2019" is legacy naming; the actual corpus is CPSC-Extra (the unused portion
+    # of CPSC2018). It must NOT be renamed, or every published split and trained model
+    # will become misaligned.
     dirs = []
     d18 = args.cpsc2018_root / "Training_WFDB"
     if d18.exists():
