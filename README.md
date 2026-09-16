@@ -62,7 +62,7 @@ python scripts/validate_decomposition.py --boot 500
 
 Trained checkpoints for the full 60-experiment grid (62 `best_model.pt` + SHA-256 manifest) are provided as assets of [release v1.0.0](https://github.com/gt17641001169-design/ecg-calibration-transportability/releases/tag/v1.0.0).
 
-The preregistered protocol and its registered amendments live in [`docs/`](docs/README.md) (English translations; the Chinese originals are the preregistered record of authority, anchored by the SHA-256 hashes in `docs/osf_archive_manifest.json`).
+The preregistered protocol and its registered amendments (A1, A2) are publicly archived on OSF as an immutable record with per-file SHA-256 checksums: [https://doi.org/10.17605/OSF.IO/53H64](https://doi.org/10.17605/OSF.IO/53H64). They are deliberately not duplicated in this repository — the OSF record is the single authoritative copy.
 
 ## Data splits
 
@@ -85,7 +85,7 @@ Two documented properties:
 | L2 shift sensitivity grid | `scripts/eval_l2_shift.py` | `results/l2_shift_full_390cells.csv` |
 | Three-component decomposition | `src/utils/decomposition.py` | `results/decomposition_validation_n20000.csv` |
 | TS component ablation | `scripts/run_e2_ablation_discrimination.py` | `results/ablation_ts_components.csv` |
-| Preregistered protocol | — | `docs/EXPERIMENT_PROTOCOL.md`, `docs/PROTOCOL_AMENDMENT_*.md`, `docs/osf_archive_manifest.json` |
+| Preregistered protocol | — | OSF archive: [10.17605/OSF.IO/53H64](https://doi.org/10.17605/OSF.IO/53H64) (immutable, per-file SHA-256 checksums) |
 
 ## Results
 
