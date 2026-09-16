@@ -1,6 +1,11 @@
 # data & large artifacts (never redistribute raw waveforms or checkpoints)
-data/
-checkpoints/
+#
+# ⚠️ 目录模式必须用前导斜杠锚定到仓库根（/data/ 而非 data/）。
+#    裸写 "data/" 会匹配**任意层级**下名为 data 的目录，从而把
+#    src/data/（数据映射/划分/Dataset 模块，被 11 个脚本 import）一并忽略，
+#    导致公开仓库不可运行。2026-09-16 修复。
+/data/
+/checkpoints/
 *.npy
 *.npz
 *.pt
@@ -14,13 +19,13 @@ __pycache__/
 .venv/
 
 # logs & temp
-logs/
+/logs/
 *.log
 tmp_*/
 tb_*/
 
 # paper build
-paper/
+/paper/
 *.aux
 *.out
 *.synctex.gz
