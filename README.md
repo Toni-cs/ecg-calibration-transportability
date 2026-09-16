@@ -60,7 +60,7 @@ python scripts/eval_transfer.py \
 python scripts/validate_decomposition.py --boot 500
 ```
 
-Trained checkpoints for the full 60-experiment grid (62 `best_model.pt` + SHA-256 manifest) are provided as assets of [release v1.0.0](https://github.com/gt17641001169-design/ecg-calibration-transportability/releases/tag/v1.0.0).
+Trained checkpoints for the full 60-experiment grid (62 `best_model.pt` + SHA-256 manifest) are provided as assets of [release v1.0.0](https://github.com/Toni-cs/ecg-calibration-transportability/releases/tag/v1.0.0).
 
 The preregistered protocol and its registered amendments (A1, A2) are publicly archived on OSF as an immutable record with per-file SHA-256 checksums: [https://doi.org/10.17605/OSF.IO/53H64](https://doi.org/10.17605/OSF.IO/53H64). They are deliberately not duplicated in this repository — the OSF record is the single authoritative copy.
 
@@ -124,8 +124,8 @@ Two safety numbers with DIFFERENT criteria (do not conflate):
   mild input changes, NOT that cells pass the deployment-safety
   criterion above.
 Bottom line: the OOD calibration benefit (~0.015 ECE points on average)
-is real but small relative to residual miscalibration (raw ECE 0.06-0.35
-in this grid); treat post-hoc recalibration as one component, not a
+is real but small relative to residual miscalibration (raw ECE 0.036-0.469,
+mean 0.273, in this grid); treat post-hoc recalibration as one component, not a
 standalone fix.
 
 ## License
@@ -143,7 +143,7 @@ If you use this codebase or the split indices, please cite the accompanying arti
   author = {Guan, Toni},
   year   = {2026},
   note   = {Official code and data-split release},
-  url    = {https://github.com/gt17641001169-design/ecg-calibration-transportability}
+  url    = {https://github.com/Toni-cs/ecg-calibration-transportability}
 }
 ```
 
@@ -151,4 +151,4 @@ Please also cite the source databases (PTB-XL: Wagner et al., *Scientific Data* 
 
 ## Contact
 
-Questions and issues: please open a [GitHub issue](https://github.com/gt17641001169-design/ecg-calibration-transportability/issues).
+Questions and issues: please open a [GitHub issue](https://github.com/Toni-cs/ecg-calibration-transportability/issues).

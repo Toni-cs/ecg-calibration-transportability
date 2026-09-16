@@ -11,7 +11,7 @@ authors:
 version: v1.0.0
 date-released: "2026-09-13"
 license: MIT
-repository-code: "https://github.com/gt17641001169-design/ecg-calibration-transportability"
+repository-code: "https://github.com/Toni-cs/ecg-calibration-transportability"
 keywords:
   - ECG
   - calibration
