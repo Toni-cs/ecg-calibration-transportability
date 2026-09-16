@@ -1,14 +1,17 @@
 ﻿__pycache__/
 *.py[cod]
 
-checkpoints/
-results/
+# ⚠️ 目录模式必须用前导斜杠锚定到仓库根。
+#    裸写 "data/" 会匹配**任意层级**下名为 data 的目录，把 src/data/
+#    （映射/划分/Dataset 模块）一并忽略。2026-09-16 修复。
+/checkpoints/
+/results/
 
 tmp_preprocess_smoke_*/
 tmp_audit_*/
-data/
-logs/
-splits/
+/data/
+/logs/
+/splits/
 paper/*.aux
 paper/*.log
 paper/*.out
