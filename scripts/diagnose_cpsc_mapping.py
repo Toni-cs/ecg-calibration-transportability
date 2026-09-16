@@ -1,4 +1,10 @@
-"""诊断 CPSC 预处理映射质量：HYP 来源、多标签、skipped、446813000 去向。"""
+"""诊断 CPSC 预处理映射质量：HYP 来源、多标签、skipped、446813000 去向。
+
+注：下面的 source 标签 "cpsc2018"/"cpsc2019" 是**历史内部命名**，与
+preprocess_cpsc.py 中写入 patient_id 前缀的标签一致，故保留。实际语料身份为
+"cpsc2018" = CPSC Database，"cpsc2019" = **CPSC-Extra**（非 CPSC2019）。
+详见 docs/PROTOCOL_AMENDMENT_A3_CORPUS_IDENTITY.md。
+"""
 from __future__ import annotations
 import pathlib, json
 from collections import Counter

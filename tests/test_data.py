@@ -141,6 +141,28 @@ class TestMapping:
         assert set(SUBSPACE_CPSC) == {"NORM", "CD", "STTC", "MI"}
         assert "HYP" not in CPSC_TO_SUPERCLASS.values()
 
+    def test_subspace_cpsc_order_is_pinned(self):
+        """回归测试：钉死 SUBSPACE_CPSC 的**顺序**，而不只是集合。
+
+        该元组的顺序即整数标签编码
+        （label_map = {c: i for i, c in enumerate(SUBSPACE_CPSC)}），
+        60 格主分析模型全部按本顺序训练。2026-09-09 曾把顺序改成
+        ("NORM","MI","STTC","CD") 但未重训模型，导致 CPSC 相关 cell 的
+        MI/CD 标签互换、ΔECE 主终点被污染。此测试用于防止再次发生。
+        """
+        # 1) 精确顺序（不是 set）
+        assert SUBSPACE_CPSC == ("NORM", "CD", "STTC", "MI"), (
+            "SUBSPACE_CPSC 顺序被改动！该顺序是 60 格主分析模型的标签编码，"
+            "改动会使全部 CPSC 相关 checkpoint 与数据语义失配。"
+            "若确需改动，必须重训全部模型并重跑主终点。"
+        )
+        # 2) 派生 label_map 与顺序一致（与 eval_transfer.py:180 的构造方式相同）
+        label_map = {c: i for i, c in enumerate(SUBSPACE_CPSC)}
+        assert label_map == {"NORM": 0, "CD": 1, "STTC": 2, "MI": 3}
+        # 3) 显式声明：本顺序**不等于** SUPERCLASSES[:4]（后者是 ("NORM","MI","STTC","CD")）
+        #    这是历史事实，不是笔误；不要"顺手修正"。
+        assert SUBSPACE_CPSC != tuple(SUPERCLASSES[:4])
+
     def test_filter_subspace(self):
         labels = ["NORM", "CD", "STTC", "HYP", "MI", None]
         rep = filter_subspace(labels, SUBSPACE_CPSC)

@@ -1,8 +1,27 @@
-"""CPSC2018+2019 → ECGNPZDataset 格式预处理。
+"""CPSC2018（CPSC Database + CPSC-Extra）→ ECGNPZDataset 格式预处理。
+
+语料身份（2026-09-16 更正，勿再写作 "CPSC2018+2019"）：
+  本脚本处理的两个子集**都属于 CPSC2018**，语料中**不含 CPSC2019**。
+  - Training_WFDB/ (A0001.hea …) = **CPSC Database**，即 CPSC2018 公开训练集
+    （官方 6877 条；实测 9 个 SNOMED 码，与官方 9 类一一对应，**MI = 0**）
+  - Training_2/    (Q0001.hea …) = **CPSC-Extra**，即 CPSC2018 未被赛题使用的
+    剩余记录（官方 3453 条；实测 72 个 SNOMED 码，含 MI/HYP）
+  依据：PhysioNet/CinC 2020 官方数据说明（physionet.org/content/challenge-2020）
+  列出 "CPSC Database 6,877" 与 "CPSC-Extra Database 3,453"，后者原文为
+  "the CPSC2018 data that was not used"；本地两个 zip 亦名为
+  china-physiological-signal-challenge-in-2018.zip 与
+  china-12lead-ecg-challenge-database.zip（后者由 PhysioNet 官方 Kaggle 账号
+  发布，描述为 "The data are from the China Physiological Signal Challenge
+  in 2018 (CPSC2018)"）。
+  另注：CPSC2019 官方任务是 QRS/心率**检测**，不含疾病分类标签，与本语料无关。
+
+  ⚠️ 代码内部的 source 标签**仍写作 "cpsc2019"**（历史命名）。该字符串已烙进
+  `splits/cpsc_seed*.csv` 的 patient_id 与 `data/cpsc_processed/*`，
+  **不得更改**，否则全部已发布 split 与已训练模型将失配。
 
 输入：
-  --cpsc2018-root  含 Training_WFDB/ 的目录（A0001.hea 等）
-  --cpsc2019-root  含 Training_2/ 的目录（Q0001.hea 等）
+  --cpsc2018-root  含 Training_WFDB/ 的目录（= CPSC Database）
+  --cpsc2019-root  含 Training_2/ 的目录（= CPSC-Extra；参数名保留历史命名）
   --output-root    输出目录
 
 输出（与 preprocess_chapman.py 同构）：
@@ -12,9 +31,10 @@
   - data/*.npy: float32 (12, 5000) 500Hz×10s
   - preprocess_summary.json: STROBE 计数 + SNOMED 码频次表 + 映射覆盖率
 
-CPSC2018: 6844 条，12 导联 500Hz 7500采样(15s) → 截断到 5000(10s)
-CPSC2019: 3453 条，12 导联 500Hz 5000采样(10s)
-合计约 10297 条（去重后；CPSC2018 与 2019 无重叠）
+CPSC Database (Training_WFDB): 6844 条（zip 内 6877，解压丢失 33 条 A6845–A6877，待补）
+    12 导联 500Hz 7500 采样(15s) → 截断到 5000(10s)
+CPSC-Extra (Training_2):       3453 条，12 导联 500Hz 5000 采样(10s)
+合计约 10297 条（两子集无重叠）
 """
 from __future__ import annotations
 
@@ -39,11 +59,14 @@ PRIORITY = ["MI", "STTC", "CD", "HYP", "NORM"]
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Preprocess CPSC2018+2019 into ECGNPZDataset format.")
+        description="Preprocess CPSC2018 (CPSC Database + CPSC-Extra) "
+                    "into ECGNPZDataset format.")
     parser.add_argument("--cpsc2018-root", type=Path, required=True,
-                        help="Directory containing Training_WFDB/")
+                        help="Directory containing Training_WFDB/ (= CPSC Database)")
     parser.add_argument("--cpsc2019-root", type=Path, required=True,
-                        help="Directory containing Training_2/")
+                        help="Directory containing Training_2/ (= CPSC-Extra, the "
+                             "unused portion of CPSC2018; flag name kept for "
+                             "historical compatibility)")
     parser.add_argument("--output-root", type=Path, required=True)
     parser.add_argument("--sampling-rate", type=int, default=500)
     parser.add_argument("--signal-length", type=int, default=5000)
@@ -99,6 +122,10 @@ def main() -> None:
     args.output_root.mkdir(parents=True, exist_ok=True)
     data_dir.mkdir(parents=True, exist_ok=True)
 
+    # 注意：dirs 中的 source 字符串会成为 patient_id 前缀（如 cpsc2019_Q0001），
+    # 并已烙进 splits/cpsc_seed*.csv 与 data/cpsc_processed/*。
+    # "cpsc2019" 是历史命名，实际语料为 CPSC-Extra（CPSC2018 未使用部分）。
+    # **不得重命名**，否则全部已发布 split 与已训练模型失配。
     dirs = []
     d18 = args.cpsc2018_root / "Training_WFDB"
     if d18.exists():

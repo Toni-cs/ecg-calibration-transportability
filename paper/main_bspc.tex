@@ -61,7 +61,7 @@ classifiers, yet whether its in-distribution (ID) benefit transfers to
 out-of-distribution (OOD) target corpora remains the central open question
 for cross-institution ECG deployment. We report a multi-seed calibration
 boundary study on six directed transfer pairs among Chapman--Shaoxing,
-CPSC2018+2019, and PTB-XL, with two architectures (InceptionTime and
+CPSC2018, and PTB-XL, with two architectures (InceptionTime and
 ResNet1D), five seeds (42--46), eight recalibration methods, and a
 patient-level cluster paired bootstrap (BCa, $B=10{,}000$) on the full
 60-experiment grid. The study followed a pre-registered protocol with dated,
@@ -312,10 +312,29 @@ Figure~\ref{fig:design_overview} summarizes the experimental design.
     raw records; 1 signal-read error removed and 21 non-finite records
     quarantined (\texttt{qc\_report.json}), for 20,243 analyzed records;
     1 ECG per patient, patient-wise 70/10/20 split.
-    \item \textbf{CPSC2018+2019}: patient-wise split; HYP class extremely
-    rare ($n=11$) $\rightarrow$ main analysis on the $\{$NORM, CD, STTC,
-    MI$\}$ 4-class subspace, both sides of the pair recomputed
-    symmetrically.
+    \item \textbf{CPSC2018} \cite{liu2018cpsc,physionet2020cpsc}: we use the union
+    of the \emph{CPSC Database} (6,877 records; the public CPSC2018 training
+    set) and the \emph{CPSC-Extra Database} (3,453 records; the CPSC2018
+    recordings not used by the Challenge), both released through
+    PhysioNet/CinC~2020. This is \emph{not} a CPSC2018--2019 union: CPSC2019
+    was a QRS/heart-rate \emph{detection} task and defines no diagnostic
+    labels. Local extraction retains 6,844 of the 6,877 CPSC Database records
+    (33 records, \texttt{A6845}--\texttt{A6877}, were lost during archive
+    extraction; disclosed as a provenance limitation) plus all 3,453
+    CPSC-Extra records. Patient-wise split. Two labeling facts must be stated
+    explicitly. First, CPSC2018's official taxonomy is nine disease classes
+    (Normal, AF, I-AVB, LBBB, RBBB, PAC, PVC, STD, STE) with no superclass
+    grouping; the NORM\slash MI\slash STTC\slash CD superclass system we adopt
+    is PTB-XL's \cite{wagner2020ptbxl}, applied here as a cross-corpus
+    harmonization choice, not a CPSC-defined one. Second, CPSC2018's nine
+    classes contain \emph{no} MI; the MI class in our 4-class subspace is
+    populated entirely by CPSC-Extra's SNOMED annotations (\texttt{164867002},
+    \texttt{164865005}, \texttt{54329005}). A strict official-class-name
+    caliber would therefore reduce the subspace to $\{$NORM, CD, STTC$\}$; we
+    retain MI because it is the only way to keep a myocardial-infarction
+    category on the CPSC side of every transfer pair. HYP is extremely rare
+    ($n=11$) $\rightarrow$ main analysis on the $\{$NORM, CD, STTC, MI$\}$
+    4-class subspace, both sides of the pair recomputed symmetrically.
 \end{itemize}
 \subsection{Label Mapping and Leakage Guard}
 Single-label priority rules are fixed (MI $>$ STTC $>$ CD $>$ HYP $>$ NORM)
@@ -339,7 +358,7 @@ CPSC$\rightarrow$Chapman, CPSC$\rightarrow$PTB-XL,
 PTB-XL$\rightarrow$Chapman, and PTB-XL$\rightarrow$CPSC. The class
 count is \emph{not} uniform across pairs and is fixed per pair before
 any endpoint is computed, as follows. A pair whose source or target is
-CPSC2018+2019 is restricted to the 4-class subspace
+CPSC2018 is restricted to the 4-class subspace
 $\{$NORM, CD, STTC, MI$\}$ (CPSC's HYP class has $n=11$,
 \S\ref{sec:data}), with both sides of the pair recomputed symmetrically:
 this covers Chapman$\rightarrow$CPSC, CPSC$\rightarrow$Chapman,
@@ -488,6 +507,30 @@ designated as exploratory dose-response. Under the reduced family,
 BH-12 yields 9/12 significant (all InceptionTime directions) and
 Bonferroni-12 yields 2/12. The A2 amendment is archived in
 \texttt{docs/PROTOCOL\_AMENDMENT\_A2\_}\allowbreak\texttt{FAMILY\_REDUCTION.md}.
+
+\subsection{Pre-registration amendment A3 (corpus identity and MI provenance)}
+\label{sec:a3}
+A post-hoc audit of the CPSC corpus against the official challenge
+documentation produced two wording corrections and one new disclosure,
+archived as amendment A3
+(\texttt{docs/PROTOCOL\_AMENDMENT\_A3\_}\allowbreak\texttt{CORPUS\_IDENTITY.md}).
+The registered protocol described the third corpus as
+``CPSC2018+2019''; it is in fact \textbf{CPSC2018 only}, comprising the
+CPSC Database (6,877 records) and the CPSC-Extra Database (3,453
+records). CPSC2019 was a QRS/heart-rate \emph{detection} task with no
+diagnostic labels and never entered the corpus. The new disclosure is
+that CPSC2018's official nine-class taxonomy contains no MI, so the MI
+class of our 4-class subspace is populated entirely by CPSC-Extra's
+SNOMED annotations; under a strict official-class-name caliber the
+subspace would reduce to three classes. A3 is a naming and attribution
+correction plus a disclosure: it changes \emph{no} recorded value, no
+split, and no analysis decision. The registered protocol snapshots are
+left byte-identical and A3 is archived separately, so the
+before/after pair required by pre-registration practice is preserved.
+The audit also found that 33 CPSC Database records
+(\texttt{A6845}--\texttt{A6877}) were silently lost when the source
+archive was extracted (6,877 in the archive vs.\ 6,844 on disk),
+disclosed as a provenance limitation.
 
 \subsection{Decomposition of the benefit decay}
 \label{sec:decomp}
@@ -1788,8 +1831,9 @@ affect the sign-based support/counter-example classification.
 % ============================================================================
 \section*{Data availability}
 The PTB-XL \cite{wagner2020ptbxl}, Chapman-Shaoxing
-\cite{zheng2022ecgarrhythmia}, and CPSC2018+2019 datasets are publicly
-available via PhysioNet/Kaggle under their respective licenses. The
+\cite{zheng2022ecgarrhythmia}, and CPSC2018 (CPSC Database and CPSC-Extra)
+\cite{liu2018cpsc,physionet2020cpsc} datasets are publicly
+available via PhysioNet under their respective licenses. The
 pre-registered protocol v2.1-A1, its hash manifest
 (\texttt{docs/osf\_archive\_manifest.json}), the revision A1 document,
 and the full per-experiment result files
@@ -1876,6 +1920,15 @@ doi:10.1038/s41597-020-0495-6.
 ``A large scale 12-lead electrocardiogram database for arrhythmia
 study (Chapman-Shaoxing e-cardiology),'' version 1.0.0,
 \emph{PhysioNet}, 2022. doi:10.13026/wgex-er52.
+\bibitem{liu2018cpsc} F.~Liu, C.~Liu, L.~Zhao, et al., ``An open
+access database for evaluating the algorithms of electrocardiogram
+rhythm and morphology abnormality detection,'' \emph{Journal of
+Medical Imaging and Health Informatics}, 8(7):1368--1373, 2018.
+doi:10.1166/jmihi.2018.2442.
+\bibitem{physionet2020cpsc} E.~A.~P. Alday, A.~Gu, A.~J.~Shah, et al.,
+``Classification of 12-lead ECGs: the PhysioNet/Computing in
+Cardiology Challenge 2020,'' \emph{Physiological Measurement},
+41(12):124003, 2020. doi:10.1088/1361-6579/abc960.
 \bibitem{goldberger2000} A.~L. Goldberger et al., ``PhysioBank,
 PhysioToolkit, and PhysioNet: components of a new research resource
 for complex physiologic signals,'' \emph{Circulation},

@@ -3,7 +3,8 @@
 协议依据（docs/EXPERIMENT_PROTOCOL.md §2, §10-T1）：
 - 单标签优先级规则**固定**并做敏感性分析；多标签sigmoid作第二形式化
 - 映射表逐条给文献依据；对每个歧义映射决策生成替代变体（映射敏感性分析）
-- CPSC2018+2019 HYP 极稀有(n=11) → 主分析降级 {NORM, CD, STTC, MI} 4类子空间
+- CPSC2018（CPSC Database + CPSC-Extra）HYP 极稀有(n=11) → 主分析降级 {NORM, CD, STTC, MI} 4类子空间
+  （语料**不含** CPSC2019；详见 docs/PROTOCOL_AMENDMENT_A3_CORPUS_IDENTITY.md）
 
 码表来源（均为公开可核对的官方文献码表，真实PTB-XL数据未下载）：
 1. PTB-XL v1.0.3 官方 ``scp_statements.csv``（PhysioNet，逐字核对）——
@@ -76,11 +77,30 @@ SUPERCLASSES = ("NORM", "MI", "STTC", "CD", "HYP")
 # ---------------------------------------------------------------------------
 DEFAULT_PRIORITY = ("MI", "STTC", "CD", "HYP", "NORM")
 
-# CPSC 降级子空间（协议§2：无HYP类，主分析两侧对称降级）
-# 与 SUPERCLASSES[:4] 编码顺序一致，消除标签语义错位（F2 修复）：
-# SUPERCLASSES=("NORM","MI","STTC","CD","HYP") 中 MI=1/CD=3，原 SUBSPACE_CPSC
-# 中 CD=1/MI=3 导致 ptbxl→cpsc 与 chapman→cpsc 两个方向的 MI/CD 预测全部算错。
-SUBSPACE_CPSC = ("NORM", "MI", "STTC", "CD")
+# CPSC 降级子空间（协议§2：HYP 极稀有 n=11，主分析两侧对称降级为 4 类）
+#
+# ⚠️ **顺序即编码**：label_map = {c: i for i, c in enumerate(SUBSPACE_CPSC)}，
+#    因此该元组的**顺序**直接决定整数标签语义。改动本行会使全部 CPSC 相关
+#    模型失配（模型输出索引语义不变，标签语义却变了）。
+#
+# 本顺序 ("NORM","CD","STTC","MI") 是 2026-09-04~09-06 训练全部 60 格主分析模型
+# 时实际使用的顺序——4 类迁移的**源数据集也用本常量构建**（eval_transfer.py:101
+# `subspace = SUBSPACE_CPSC if num_classes == 4 else None`），故源/目标两侧天然同序。
+# 它相对 SUPERCLASSES=("NORM","MI","STTC","CD","HYP") 并非规范子序列，但这只是
+# **标签重编号**：两侧同用一套顺序时，准确率/ECE 等指标对类别置换不变，
+# 因此 09-08 产出的主结果自洽且有效（主终点 +0.015863 可逐位复现）。
+#
+# 历史（勿重犯）：2026-09-09 曾改为 ("NORM","MI","STTC","CD")（提交 452b3bf，
+# 注释自称 "F2 修复"），但**未重训模型** → 09-10 重生成的
+# checkpoints/e2_probs_cache/*.npz 目标标签与模型输出语义失配，40 个含 CPSC 的
+# cell 全部 MI/CD 错位：准确率被人为压低 9.6pp（0.5265→0.4308），
+# ΔECE 由 +0.0141 虚增至 +0.1501，温度中位数由 1.076 虚增至 1.836。
+# 2026-09-16 已回退到本行。
+#
+# 若要改用规范顺序，必须**同时重训全部 4 类模型并重跑全部评估**，不可只改本行。
+# 回归测试：tests/test_data.py::TestMapping::test_subspace_cpsc_order_is_pinned
+# 完整裁决：reports/CPSC_OFFICIAL_DEFINITION_VERDICT_2026-09-16.md
+SUBSPACE_CPSC = ("NORM", "CD", "STTC", "MI")
 
 # ---------------------------------------------------------------------------
 # 第1层：PTB-XL官方 diagnostic statements（scp_statements.csv, v1.0.3, 逐字核对）
@@ -329,14 +349,32 @@ CHAPMAN_TO_SUPERCLASS: dict[str, Optional[str]] = {
 }
 
 # ---------------------------------------------------------------------------
-# CPSC2018(2019) 映射（9个2018官方类名 + 2019扩展常见名）
-# CPSC HYP 极稀有(n=11, 全来自CPSC2019单标签LVH/RVH)——按协议§2主分析降级
+# CPSC 官方类名映射表 —— **仅供参照，数据管线不调用本表**（2026-09-16 核实）
+#
+# 语料身份（2026-09-16 更正）：本研究的 CPSC 语料 = CPSC2018 的
+#   CPSC Database（Training_WFDB/A*，6844 条，9 个 SNOMED 码，MI=0）
+# + CPSC-Extra（Training_2/Q*，3453 条，72 个 SNOMED 码，含 MI）
+# **不含 CPSC2019**（CPSC2019 官方任务是 QRS/心率检测，无疾病分类标签）。
+#
+# 实际映射路径：preprocess_cpsc.py 使用 **SCP_TO_SUPERCLASS（SNOMED 数值键）**，
+# 即上表 _SNOMED_DIAGNOSTIC，而非本表。原因：本地 CPSC 原始 .hea 的 #Dx 字段
+# 是 SNOMED 码（如 #Dx: 164867002,427084000），不是官方 9 类名。
+# 全仓 grep 确认：本表仅被 src/data/__init__.py 导出、被 tests/test_data.py 断言，
+# **无任何管线调用**。
+#
+# ⚠️ 由此产生一个必须向审稿人说明的事实：论文 4 类子空间里的 **MI 类
+# （CPSC 测试集 14.7%）全部来自 CPSC-Extra 的 SNOMED 标注**
+# （164867002 陈旧性心梗 ×1168、164865005 心梗 ×376、54329005 前壁心梗 ×62 等），
+# 而 **CPSC2018 官方 9 类中并没有 MI**。若改用本表（官方类名口径），
+# 4 类子空间应退化为 {NORM, CD, STTC}（3 类）。该口径选择须在论文数据章节显式声明。
+#
+# CPSC HYP 极稀有（n=11，全部来自 CPSC-Extra 单标签 LVH/RVH）——按协议§2主分析降级
 # SUBSPACE_CPSC={NORM, CD, STTC, MI}（4类）；HYP 记数后剔除（不支持可靠估计）。
 # ---------------------------------------------------------------------------
 CPSC_TO_SUPERCLASS: dict[str, Optional[str]] = {
     "Normal": "NORM",
     "AF": "STTC",          # 房颤→节律异常（PTB-XL将AF归STTC的同款惯例）
-    "AFLT": "STTC",        # 房扑（CPSC2019扩展）
+    "AFLT": "STTC",        # 房扑（CPSC-Extra 扩展）
     "I-AVB": "CD",         # 一度房室阻滞
     "LBBB": "CD",
     "RBBB": "CD",
@@ -344,11 +382,12 @@ CPSC_TO_SUPERCLASS: dict[str, Optional[str]] = {
     "PVC": "STTC",         # 室早（同上；归STTC使CPSC记录全部落入降级子空间）
     "STD": "STTC",         # ST压低
     "STE": "STTC",         # ST抬高
-    "LAnFB": "CD",         # 左前分支阻滞（CPSC2019扩展）
-    "CLBBB": "CD",         # 完全性左束支阻滞（CPSC2019扩展）
-    "Brady": "STTC",       # 心动过缓（CPSC2019扩展）
-    "OldMI": "MI",         # 陈旧性心梗（CPSC2019扩展；不落入主子空间，见协议
-    #                        §2"HYP优先级记录剔除并单列计数"的对称处理）
+    "LAnFB": "CD",         # 左前分支阻滞（CPSC-Extra 扩展）
+    "CLBBB": "CD",         # 完全性左束支阻滞（CPSC-Extra 扩展）
+    "Brady": "STTC",       # 心动过缓（CPSC-Extra 扩展）
+    "OldMI": "MI",         # 陈旧性心梗（CPSC-Extra 扩展；本表唯一的 MI 来源）
+    #                        注：实际管线走 SNOMED 键，MI 亦来自 _SNOMED_DIAGNOSTIC
+    #                        中的 164867002/164865005/54329005/57054005/426434006
 }
 
 
