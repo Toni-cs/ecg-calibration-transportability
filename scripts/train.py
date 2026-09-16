@@ -495,9 +495,10 @@ def build_chapman_datasets(data_dir: str, seed: int, limit: Optional[int] = None
 
 
 def build_cpsc_datasets(data_dir: str, seed: int, limit: Optional[int] = None):
-    """CPSC2018+2019 四分割（协议§2：4类降级子空间，患者级分层70/10/20）
+    """CPSC2018（CPSC Database + CPSC-Extra）四分割（协议§2：4类降级子空间，患者级分层70/10/20）
 
     - SUBSPACE_CPSC={NORM,CD,STTC,MI}（4类）；HYP(n=11)用filter_subspace剔除并计数
+    - ⚠️ SUBSPACE_CPSC 的**顺序即整数标签编码**，不可单独改动（见 mapping.py 注释）
     - patient_wise_split(0.7, 0.1, 0.2)→train/cal/test（患者多数标签分层）
     - val carve：train内部再抽1/7患者（→总比例≈60/10/10/20，患者级）
     - 每条记录=1患者（patient_id=记录名），无strat_fold
