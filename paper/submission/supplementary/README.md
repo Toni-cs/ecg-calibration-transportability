@@ -3,7 +3,16 @@
 Manuscript: *When Does Temperature Scaling Pay Off in Cross-Corpus ECG
 Transfer? A Multi-Seed Calibration Boundary Study*
 
-Target journal: Biomedical Signal Processing and Control (Elsevier).
+Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
+
+> **Note on `S1_protocol/`.** The protocol documents are byte-identical copies
+> of the versions archived at OSF (DOI `10.17605/OSF.IO/53H64`, sha256
+> `0e8afa92…`). They are reproduced verbatim so that the pre-registered text
+> can be checked against what was actually run, and they are therefore *not*
+> updated when the manuscript's wording changes. In particular they describe
+> the third corpus as "CPSC2018+2019" and name a different target journal;
+> both are superseded by amendment A3 and by this submission respectively.
+> The corrections are recorded in `S1_protocol/PROTOCOL_AMENDMENT_A3_CORPUS_IDENTITY.md`.
 
 ## Contents
 

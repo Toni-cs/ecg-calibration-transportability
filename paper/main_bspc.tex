@@ -1,10 +1,13 @@
 % ============================================================================
-% 论文主文（预注册协议驱动，目标期刊：BSPC 中科院大类医学2区 / JCR Q2）
+% 论文主文（预注册协议驱动，目标期刊：CMPB = Computer Methods and Programs in
+%   Biomedicine，Elsevier，ISSN 0169-2607）
+% 【2026-09-16 定稿】目标期刊由 BSPC 改为 CMPB。
 % 【2026-09-16 更新】CBM 已从候选名单删除：Elsevier 官方公告（2025-11-16）确认
 %   Computers in Biology and Medicine 自 2025-11-17 起 Web of Science Core
 %   Collection 收录被中止，Vol.172(2024) 之后的内容均不检索；投稿将不被 SCI 收录。
 %   另注：中科院期刊分区表已于 2026-09-30 关停，2025-03-20 版为最后一版。
-% 文件名: paper/main_bspc.tex
+% 文件名: paper/main_bspc.tex（**文件名保留**：预注册哈希清单与 40+ 处审计记录引用它；
+%   投稿打包时再复制改名为 main.tex，不要改仓库里的文件名）
 % 状态: v2.0 6方向×2架构稳健性版（基于多seed稳健性验证 + 预注册修订案A1）
 % 依据: docs/EXPERIMENT_PROTOCOL.md v2.1-A1
 %   - 主终点 ΔECE_OOD = ECE_raw_OOD − ECE_TS_OOD（A1.1 重新定位）
@@ -23,9 +26,9 @@
 \microtypesetup{expansion=false}  % disable font expansion (incompatible with elsarticle)
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
-\usepackage{mathptmx}  % BSPC fix: Type 1 Times (URW Nimbus) with correct ToUnicode maps;
+\usepackage{mathptmx}  % submission fix: Type 1 Times (URW Nimbus) with correct ToUnicode maps;
                         % the TrueType Times New Roman subsets corrupted text extraction
-\usepackage{longtable}  % BSPC fix: Table 1 (60 seed rows) must break across pages
+\usepackage{longtable}  % submission fix: Table 1 (60 seed rows) must break across pages
 \usepackage{pifont}
 \usepackage{lineno}
 \usepackage{hyperref}
@@ -41,7 +44,7 @@
 \widowpenalty=10000
 \clubpenalty=10000
 
-\journal{Biomedical Signal Processing and Control}
+\journal{Computer Methods and Programs in Biomedicine}
 
 \title{When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study}
 
@@ -91,8 +94,9 @@ dataset shift \sep cross-corpus transfer \sep distribution mismatch
 
 \end{frontmatter}
 
-% Highlights: submitted as a separate editable file (highlights.tex, per
-% BSPC guide for authors). Compiled copy: highlights.pdf.
+% Highlights: a plain-text fragment (highlights.tex) intended to be pasted into
+% the submission system's Highlights field, per the journal's guide for authors.
+% It carries no LaTeX preamble and is NOT compiled to PDF.
 
 
 % ============================================================================
@@ -609,7 +613,7 @@ ResNet1D achieves 24/30 (80\%).}
 \label{fig:main_results}
 \end{figure}
 
-% --- BSPC submission fix: Table 1 converted from a `table` float to `longtable`
+% --- submission fix: Table 1 converted from a `table` float to `longtable`
 % so all 60 seed rows render (the float version overflowed one page and
 % clipped about half the data). `\\*` keeps each 5-seed multirow block intact.
 {\footnotesize
