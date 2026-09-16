@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 ARCHIVE_FILES = [
     "docs/EXPERIMENT_PROTOCOL.md",
-    "paper/main.tex",
+    "paper/main_bspc.tex",
     "scripts/eval_transfer.py",
     "scripts/eval_l2_shift.py",
     "scripts/step2_predictability.py",

@@ -1,7 +1,7 @@
 Highlights
 
-- Recalibration benefit is measured across six cross-corpus ECG transfer pairs
-- The benefit decays from in-distribution to out-of-distribution in most settings
-- Slope, intercept, and prevalence components expose why recalibration fails
-- Temperature scaling was deployment-safe in only 1 of 157 holdout cells
-- A discrimination-first gate flags corpora where recalibration cannot pay off
+- Pre-registered 6-pair x 2-architecture x 5-seed grid: TS OOD benefit in 51/60
+- Patient-level paired BCa bootstrap; OOD benefit about 1.9x the ID benefit
+- ID boundary criterion fails (38.3% < 80%); registered branch fires
+- Discrimination-aware gate (C5): recalibration is moot below majority-class bar
+- Label-free deployment gates fail their test; lookup table is audit-time only
