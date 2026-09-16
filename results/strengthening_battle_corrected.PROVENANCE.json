@@ -1,0 +1,133 @@
+{
+  "_what": "字段级 provenance 判定：results/strengthening_battle_corrected.json",
+  "_why": "2026-09-09 SUBSPACE_CPSC 顺序改动未重训模型 -> npz(09-10) 标签与 checkpoint 语义失配(MI<->CD 互换) -> 该 JSON 混用两套标签编码",
+  "_authority": "docs/PROTOCOL_AMENDMENT_A3_CORPUS_IDENTITY.md §A3.6; reports/CPSC_OFFICIAL_DEFINITION_VERDICT_2026-09-16.md",
+  "_verified_by": "scripts/reproduce_main_endpoint_both_encodings.py",
+  "generated_for": "污染标记（Task #23）",
+  "n_records_total": 62,
+  "n_records_matched_to_npz": 62,
+  "field_verdicts": {
+    "T": {
+      "caliber": "NEW(污染, 可区分记录逐位命中)",
+      "usable": false,
+      "n_records": 62,
+      "n_distinguishable": 40,
+      "match_old": 22,
+      "match_new": 62,
+      "distinguishable_match_old": 0,
+      "distinguishable_match_new": 40,
+      "max_abs_diff_vs_old": 2.967374355942999,
+      "max_abs_diff_vs_new": 0.0,
+      "corr_vs_old": 0.2998411882408587,
+      "corr_vs_new": 0.9999999999999999,
+      "json_mean": 2.0181497799666084,
+      "npz_old_mean": 1.0597864646029103,
+      "npz_new_mean": 2.0181497799666084
+    },
+    "delta_obs": {
+      "caliber": "NEW-倾向(近似, 可区分记录仅 0/40 逐位命中)",
+      "usable": false,
+      "n_records": 62,
+      "n_distinguishable": 40,
+      "match_old": 0,
+      "match_new": 0,
+      "distinguishable_match_old": 0,
+      "distinguishable_match_new": 0,
+      "max_abs_diff_vs_old": 0.2948980783239566,
+      "max_abs_diff_vs_new": 0.0255900072580955,
+      "corr_vs_old": 0.3438428147983216,
+      "corr_vs_new": 0.9988185135650893,
+      "json_mean": 0.10039949253932821,
+      "npz_old_mean": 0.012374286974867447,
+      "npz_new_mean": 0.10014767830156195
+    },
+    "delta_pred": {
+      "caliber": "UNKNOWN",
+      "reason": "无 npz 对应量；全仓 grep 无 .py 来源，不可从仓库复现",
+      "usable": false
+    },
+    "delta_obs_orig": {
+      "caliber": "OLD(论文口径, 可区分记录逐位命中)",
+      "usable": true,
+      "n_records": 62,
+      "n_distinguishable": 40,
+      "match_old": 60,
+      "match_new": 20,
+      "distinguishable_match_old": 40,
+      "distinguishable_match_new": 0,
+      "max_abs_diff_vs_old": 0.20346927569188453,
+      "max_abs_diff_vs_new": 0.2945100517335959,
+      "corr_vs_old": 0.42541551589707927,
+      "corr_vs_new": 0.13910895238538845,
+      "json_mean": 0.015462190711809841,
+      "npz_old_mean": 0.012374286974867447,
+      "npz_new_mean": 0.10014767830156195
+    },
+    "raw_ood_orig": {
+      "caliber": "OLD(论文口径, 可区分记录逐位命中)",
+      "usable": true,
+      "n_records": 62,
+      "n_distinguishable": 39,
+      "match_old": 60,
+      "match_new": 21,
+      "distinguishable_match_old": 39,
+      "distinguishable_match_new": 0,
+      "max_abs_diff_vs_old": 0.10229686811454249,
+      "max_abs_diff_vs_new": 0.1934718670521446,
+      "corr_vs_old": 0.9857661698940616,
+      "corr_vs_new": 0.8475166185587544,
+      "json_mean": 0.21235335655080106,
+      "npz_old_mean": 0.2113660171926221,
+      "npz_new_mean": 0.27275814633466783
+    },
+    "cal_ood_orig": {
+      "caliber": "OLD(论文口径, 可区分记录逐位命中)",
+      "usable": true,
+      "n_records": 62,
+      "n_distinguishable": 40,
+      "match_old": 60,
+      "match_new": 20,
+      "distinguishable_match_old": 40,
+      "distinguishable_match_new": 0,
+      "max_abs_diff_vs_old": 0.10117240757734204,
+      "max_abs_diff_vs_new": 0.1990602593568352,
+      "corr_vs_old": 0.9874497852844121,
+      "corr_vs_new": 0.6928120712951327,
+      "json_mean": 0.19689116583899124,
+      "npz_old_mean": 0.1989917302177546,
+      "npz_new_mean": 0.17261046803310584
+    }
+  },
+  "temperature_caliber": {
+    "T_in_json_field": {
+      "n": 62,
+      "mean": 2.0181497799666084,
+      "median": 1.5741221640890994
+    },
+    "T_recomputed_OLD_encoding": {
+      "n": 62,
+      "mean": 1.0597864646029103,
+      "median": 1.0745329221585704
+    },
+    "T_recomputed_NEW_encoding": {
+      "n": 62,
+      "mean": 2.0181497799666084,
+      "median": 1.5741221640890994
+    },
+    "note": "JSON 的 T 字段 == NEW 编码拟合值（被污染，中位约 1.84）；论文若要披露 T 统计量，必须用 OLD 编码（中位约 1.08，全部 <1.5）。"
+  },
+  "safe_fields": [
+    "delta_obs_orig",
+    "raw_ood_orig",
+    "cal_ood_orig"
+  ],
+  "contaminated_fields": [
+    "T",
+    "delta_obs",
+    "delta_pred"
+  ],
+  "undetermined_fields": [],
+  "paper_endpoint_field": "delta_obs_orig",
+  "paper_endpoint_reproduced": true,
+  "paper_endpoint_max_abs_diff": 1.11e-16
+}
