@@ -1198,12 +1198,22 @@ Safety criterion: across 157 (pair, seed, shift) cells, TS
 yields 1 cell satisfying the operating criterion (post-TS SmoothECE
 $\leq 0.05$, improvement $>0.01$, point-estimate convention; L2 results
 lack per-cell CIs, so the CI-based criterion was not evaluated), a safety
-rate of $0.0064$. This figure is \emph{not} presently reproducible: the
-artifact that produced it is not in the repository, and re-deriving the
-same criterion from the on-disk L2 outputs (which predate the pinned
-label encoding and are contaminated, see the coverage note below) gives
-$6/156 = 0.038$ rather than $1/157$; the denominator is also one cell
-larger than the stated $6 \times 2 \times 13 = 156$. The claim that the
+rate of $0.0064$. The source of this figure is
+\texttt{results/deployment\_metrics.csv} (written 2026-09-05, i.e.\ before
+the label-encoding incident described in the coverage note below; produced by
+\texttt{scripts/step3\_deployment.py} under the criterion
+$\Delta\text{ECE}<-0.01 \wedge \text{cal ECE}<0.05$). It is \emph{not}
+reproducible from the currently released L2 artifacts, because the
+per-run \texttt{l2\_shift\_results.json} files that feed it were
+overwritten on 2026-09-10 by outputs computed under the wrong label
+encoding (see the coverage note below); re-deriving the same criterion
+from those on-disk L2 outputs gives $6/156 = 0.038$ rather than $1/157$.
+The denominator deserves care: the stated $6 \times 2 \times 13 = 156$ is
+the BH-FDR \emph{family} size (6 pairs $\times$ 2 \emph{architectures}
+$\times$ 13 levels), whereas the $157$ cells are the \emph{deployment}
+subset (2 \emph{seeds} $\times$ 1 architecture) --- the factor of two
+means different things in the two counts, and the extra cell is a genuine
+(pair, seed, shift) combination, not an inconsistency. The claim that the
 safety criterion is rarely met is unaffected in direction (both values
 are small), but the exact rate must be regenerated. Sign convention:
 $\Delta\text{ECE}$ $=$ post-recalibration ECE $-$ raw ECE (negative means
@@ -1226,20 +1236,30 @@ combined with local validation.
 % 非 CPSC 20 格标定固有偏离（raw_ece 0.0007 / delta_ece 0.0002）；
 % CPSC 40 格与污染口径的中位差为 0.0012 / 0.0027，与干净口径为
 % 0.0987 / 0.1693（79× / 62×），逐 cell 39/40 指向污染口径。
+% ⚠️ 2026-09-17 第二轮对抗审查修正：「79×」是**跨 13 个移位档的选择效应**
+% （实测范围 1.0×–79.1×）；诚实的说法是「在低扰动档上 100%（39/39 有效格）」，
+% 唯一例外 chapman->cpsc/inceptiontime/43 是**精确平局**（OLD=cont=0.3308）。
+% 另：「noise24 是恒等变换」不成立 —— 它是 13 档中扰动最小的一档
+% （非 CPSC 20 格 median|ΔECE|=0.000726，次小 noise12=0.003501，4.8×），
+% 但仍是 SNR=24 dB 的加性混合噪声（σ_n/σ_s=0.0631）。
 % 详见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
 % 本段的 390 格声明只是**覆盖度**陈述、不承载数值，故暂保留；
 % 数值性使用须待按钉死编码重跑后再引用。
-% [AUDIT 2026-09-17] 安全率 0.0064 的溯源结论：**仓库内无来源**。
-% 全仓 results/ 下搜 "0.0064" 只命中其它列的同名数字子串（非安全率）；
-% 含 safety 列的文件只有两张 L2 表，而其 safety 取值域为 {0,1}
-% （780 行中 679 行 = 1，即 87% 安全），与 0.0064 差三个数量级。
-% 反推分母：1/157 = 0.0063694 ≈ 0.0064 ⇒ 该数是 **1/157**。
-% 但论文自述子集为 6 对 × 2 seed × 13 档 = **156**，157 多 1，内部不一致。
-% 按论文判据（post ≤ 0.05 且 improvement > 0.01）在**当前**（污染）明细表上
-% 复算：inceptiontime × seeds42,43 子集得 6/156 = 0.0385，全 780 行得
-% 31/780 = 0.0397 —— 均与 0.0064 相差约 6 倍。
-% ⇒ 该数字来自**污染前**的一次运行，其产物不在仓库内，现不可复现。
-% 已在正文明确标注不可复现；方向性结论（安全判据罕被满足）两种口径都成立。
+% [AUDIT 2026-09-17 修正版] 安全率 0.0064 的溯源结论：**有源，且早于污染窗口**。
+% 源 = results/deployment_metrics.csv 第 182 行
+%   `method,ts,157,1,96,1,0.006369`  （列 n_total,n_safe,n_beneficial_only,
+%   n_calibrated_only,safe_rate），mtime 2026-09-05 23:43（窗口前，干净）。
+% 生产者 = scripts/step3_deployment.py:44-45（SAFE_DELTA_ECE=-0.01,
+%   SAFE_CAL_ECE=0.05）与 :292-297（n_safe/n_total）。该文件已被 git 跟踪。
+% ⚠️ 我 2026-09-17 首轮写的「仓库内无来源」是**错的** —— 当时只 grep 了脚本名
+% 与论文，没有 grep results/*.csv 的**列名**（n_safe / safe_rate）。
+% ⚠️ 另：「157 与 156 自相矛盾」也是错的。1/156 = 0.006410 四舍五入同样是
+% 0.0064，故「唯一反推 157」不成立；而 156 = BH-FDR 家族（6×2架构×13档）、
+% 157 = 部署子集（2种子×1架构），两个「2」不同义。
+% 算术闭合：157 = 13格(fs250) + 12档×12格；1230 = 102 + 12×94 自洽。
+% ⇒ 正确表述：「有源、有脚本、有中间表，且早于污染窗口；但因输入
+%   l2_shift_results.json 于 09-10 17:34 被污染版覆盖，**无法从当前盘表重算**。」
+%   论文 L1201 的 "not presently reproducible" 本来就是对的。
 % 待 L2 网格重跑后必须重算本数字。
 % [AUDIT 2026-09-17] 另：results/predictability_3arch.csv 的 mtime 为
 % 2026-09-05（污染窗口前），其数字（TS LOO R² = −0.0958，CI 上界 0.1038）
@@ -1510,12 +1530,40 @@ The linear model predicts the \emph{direction} correctly in 51/60
 prediction error $+0.29$, median $+0.29$). This is consistent with a
 predictability boundary: the decomposition captures the qualitative
 direction of the TS benefit but not its quantitative magnitude under
-real shift. The 9/60 direction errors cluster in
-CPSC$\rightarrow$Chapman and Chapman$\rightarrow$PTB-XL, where the
-Wasserstein-1 distance between source and target logit distributions
-is largest (mean $0.75$ vs.\ $0.53$ for correctly predicted
-directions), suggesting the linear approximation breaks down once the
-shift invalidates its underlying local Taylor expansion.
+real shift. The 9/60 direction errors are \emph{not} localised to any
+particular pair: they spread over five source$\rightarrow$target
+directions (Chapman$\rightarrow$CPSC 2, Chapman$\rightarrow$PTB-XL 2,
+CPSC$\rightarrow$Chapman 2, CPSC$\rightarrow$PTB-XL 2,
+PTB-XL$\rightarrow$Chapman 1), so no single pair accounts for more than
+two of them. What \emph{does} separate them is effect size rather than
+shift size: the nine mis-signed cells have
+$|\Delta\text{ECE}_{\text{OOD}}|$ mean $0.0047$ (max $0.0168$), against
+$0.0195$ (max $0.0826$) for the 51 correctly signed cells, a factor of
+$4.1$; restricting to $|\Delta\text{ECE}_{\text{OOD}}| \geq 0.02$, the
+model recovers the sign in 23/23 cells. The linear approximation thus
+degrades where the effect itself is small, not where the shift is
+largest. We record one counterweight for completeness: the
+decomposition is not entirely information-free as an \emph{ordinal}
+signal. Its rank correlation with the true
+$\Delta\text{ECE}_{\text{OOD}}$ is $\rho = +0.31$ ($p = 0.015$), and the
+sign of $\rho$ is stable across all 60 leave-one-out folds (minimum
+$+0.28$). That is weak, and far below the pre-registered $R^2 > 0.5$
+bar, but it is reproducible --- unlike the directional accuracy, which
+is exactly the constant-positive baseline.
+% [AUDIT 2026-09-17 R2] 本段原写「9 个错误聚集在 CPSC→Chapman 与
+% Chapman→PTB-XL，其 Wasserstein-1 最大（0.75 vs 0.53）」。经第二轮对抗审查：
+% ① 该「聚集」在 delta_obs_orig（主终点口径）下**不成立** —— 实测散布 5 个
+%    pair（2/2/2/2/1），声称的两个 pair 仅覆盖 4/9。
+% ② Wasserstein 0.75/0.53 只能在 delta_obs（新编码）口径下复现，实测 0.569；
+%    与主终点口径混用且未披露。
+% ③ 真正区分正误的是**效应量**：错误格 |obs| 均值 0.00472 vs 正确格 0.01950
+%    （4.13×），剔 |obs|<0.02 后 23/23 全对。
+% ④ 方向准确率 51/60 与常数恒正基线**逐位相等**（κ=0）；正文 L1522-1525 已披露。
+%    但秩次关联 ρ=+0.3138（p=0.0146）为正且 LOO 稳健 → 已补写，避免"零信息量"
+%    的定性过重。
+% ⑤ 多口径 RMSE（y=delta_obs_orig, n=60）：pred=0.302916（20.86× 常数）、
+%    去偏后 0.100958（6.95×）、仿射 2 参数 0.014107（0.97×，仅改善 2.85%）。
+%    ⇒ 正文若引「20.86×」应同时说明去偏/仿射口径，否则措辞过强。
 
 This strengthens the predictability failure branch (C3/C4): the
 Shapley decomposition is neither a valid \emph{predictor} (\emph{how
@@ -1852,9 +1900,25 @@ experiments (\texttt{results/discrimination\_metrics\_60exp.OLD\_ENCODING.csv}):
 mean OOD
 AUROC ranges from 0.735 (Chapman$\rightarrow$PTB-XL) to 0.843
 (PTB-XL$\rightarrow$CPSC), i.e.\ far above the accuracy-based
-majority-class reading yet direction-dependent; and TS leaves AUROC
-unchanged (mean $\Delta$AUROC$_{\text{TS}-\text{raw}}=-0.001$, max
-|change| $0.024$), as the monotone transform requires. The discrimination-first
+majority-class reading yet direction-dependent; and TS changes AUROC only
+marginally (mean $\Delta$AUROC$_{\text{TS}-\text{raw}} = +0.0009$, max
+$|$change$|$ $0.010$, recomputed under the corrected label encoding). We
+avoid the stronger phrasing that AUROC must be exactly invariant:
+rescaling logits by $1/T$ is monotone \emph{within} a row, so the argmax
+--- and hence accuracy --- is preserved exactly, but the cross-sample
+ranking of the top-label \emph{score} is not, because the per-row
+normaliser differs across rows (measured Spearman between raw and TS
+top-label scores: $0.9945$--$0.9999$). The discrimination-first
+% [AUDIT 2026-09-17 R2] 本段原写 `mean ΔAUROC_TS−raw = −0.001, max |change| 0.024,
+% as the monotone transform requires` —— 该组数字与**污染表**（NEW 标签）
+% 逐位相同（mean −0.000979 / max 0.024247）。
+% 用 OLD 编码重算（ablation_ts_components.csv 的 T + e2_probs_cache）：
+%   全 60 格 mean = +0.000856, max|Δ| = 0.010477   ← 符号翻转、幅度腰斩
+%   仅 4 类  mean = +0.001005, max|Δ| = 0.010477
+% ⚠️ 待办：results/discrimination_metrics_60exp.OLD_ENCODING.csv 的
+% `auroc_ts_minus_raw` 列现为 **124/124 全空**，须补齐后才能自洽引用。
+% 另："as the monotone transform requires" 的表述有误 —— 多分类 macro-OvR 的
+% 跨样本排序受逐行归一因子影响，TS 并不严格保值（Spearman 0.9945–0.9999）。
 gate---measure target discrimination before investing in
 recalibration---precedes the calibration decision rule in
 deployment.

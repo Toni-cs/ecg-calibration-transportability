@@ -343,19 +343,24 @@ def evaluate_one_checkpoint(source: str, target: str, arch: str, seed: int,
     #       ② 把编码戳写进 JSON，且断点续传要求戳匹配 → 旧污染文件不再被复用。
     num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
     runtime_subspace = SUBSPACE_CPSC if num_classes == 4 else None
+
+    # ⚠️ checkpoint 存在性判定必须排在编码护栏**之前**：
+    # 护栏要读 checkpoint 自存的 transfer_result.json，checkpoint 不在就没有
+    # provenance 可读；否则"checkpoint 缺失"这条正常跳过路径会变成 raise
+    # （D4，2026-09-17 对抗审查发现）。
+    if not ckpt_path.exists():
+        print(f"[skip] {ckpt_path} not found")
+        return {}
+
     subspace = checkpoint_subspace(run_dir, num_classes, runtime_subspace)
     encoding = encoding_stamp(num_classes, subspace)
 
-    # 断点续传
+    # 断点续传（要求编码戳匹配 → 旧污染文件不再被复用）
     if not force and is_checkpoint_complete(run_dir, seed, shift_names,
                                             expected_encoding=encoding):
         existing = load_existing_results(run_dir)
         print(f"[resume] {source}->{target}/{arch}/seed{seed} 已完整，跳过")
         return existing[f"seed{seed}"]
-
-    if not ckpt_path.exists():
-        print(f"[skip] {ckpt_path} not found")
-        return {}
 
     t0 = time.time()
     print(f"\n[run] {source}->{target}/{arch}/seed{seed}")

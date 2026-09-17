@@ -1,0 +1,81 @@
+{
+  "meta": {
+    "arch": "mamba",
+    "seeds": [
+      42
+    ],
+    "methods": [
+      "ts",
+      "platt",
+      "vector"
+    ],
+    "bootstrap": 10000,
+    "bci_method": "bca",
+    "safe_reliability_threshold": 0.05,
+    "safe_delta_ece": -0.01,
+    "approximation": "ensemble_based_LOCO (softmax avg + merged cal fit)",
+    "generated_at": "2026-09-17T10:33:57"
+  },
+  "records": [
+    {
+      "fold": "holdout_ptbxl",
+      "holdout": "ptbxl",
+      "holdout_geo": "Germany",
+      "sources": "chapman+cpsc",
+      "sources_geo": "USA+China",
+      "seed": 42,
+      "method": "",
+      "scenario": "skipped",
+      "num_classes": 0,
+      "n_target": 0,
+      "n_fit": 0,
+      "ood_acc": "",
+      "label_map": "",
+      "metric": "skip_reason",
+      "value": "",
+      "ci_lo": "",
+      "ci_hi": "",
+      "note": "fatal: [编码护栏] 缺少 checkpoints\\transfer\\chapman_ptbxl\\mamba\\seed42\\transfer_result.json，无法确认该 checkpoint 的标签编码。\n  拒绝在无 provenance 的情况下重算。\n  参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md"
+    },
+    {
+      "fold": "holdout_chapman",
+      "holdout": "chapman",
+      "holdout_geo": "USA",
+      "sources": "ptbxl+cpsc",
+      "sources_geo": "Germany+China",
+      "seed": 42,
+      "method": "",
+      "scenario": "skipped",
+      "num_classes": 0,
+      "n_target": 0,
+      "n_fit": 0,
+      "ood_acc": "",
+      "label_map": "",
+      "metric": "skip_reason",
+      "value": "",
+      "ci_lo": "",
+      "ci_hi": "",
+      "note": "fatal: [编码护栏] checkpoints\\transfer\\ptbxl_chapman\\mamba\\seed42\\transfer_result.json 未记录 `subspace`，无法判定编码。"
+    },
+    {
+      "fold": "holdout_cpsc",
+      "holdout": "cpsc",
+      "holdout_geo": "China",
+      "sources": "ptbxl+chapman",
+      "sources_geo": "Germany+USA",
+      "seed": 42,
+      "method": "",
+      "scenario": "skipped",
+      "num_classes": 0,
+      "n_target": 0,
+      "n_fit": 0,
+      "ood_acc": "",
+      "label_map": "",
+      "metric": "skip_reason",
+      "value": "",
+      "ci_lo": "",
+      "ci_hi": "",
+      "note": "fatal: [编码护栏] 缺少 checkpoints\\transfer\\ptbxl_cpsc\\mamba\\seed42\\transfer_result.json，无法确认该 checkpoint 的标签编码。\n  拒绝在无 provenance 的情况下重算。\n  参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md"
+    }
+  ]
+}

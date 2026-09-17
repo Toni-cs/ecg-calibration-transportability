@@ -9,12 +9,15 @@
 
 然后**用它重建数据集标签**。只要其中任何一处在「checkpoint 是旧编码训练、
 常量已改成新编码」时被调用，标签就会与模型输出的索引语义错位
-（MI↔CD 互换，占 38.3% 样本），而所有指标仍然正常输出、不报错、不警告。
+（MI↔CD 互换，占 CPSC 测试集 38.3% 样本），而所有指标仍然正常输出、
+不报错、不警告。
 
 2026-09-09~09-16 真实发生过一次，波及：
   * `checkpoints/e2_probs_cache/*.npz` —— 全部 62 份，mtime 09-10 12:30~12:40
   * 60 份 `l2_shift_results.json` 与两张 `l2_shift_full_*` 表（09-10~09-12）
   * 派生 `predictability_3arch.csv`
+  * `results/deployment_loco_validation.*`（E1b，09-11，见
+    `_LOCO_CONTAMINATION_NOTICE.md`）
 参见 `results/_L2_SHIFT_CONTAMINATION_NOTICE.md`、
 `results/_ABLATION_TS_COMPONENTS_CONTAMINATION_NOTICE.md` 与
 `reports/NUMBER_PROVENANCE_SWEEP_2026-09-17.md`。
@@ -25,11 +28,23 @@
    全 60 格主分析该文件的 mtime = 2026-09-08，**早于污染窗口**，因此可信。
 2. 运行时编码必须与之逐元素相等，否则 `raise`（绝不静默继续）。
 3. 任何 probs/labels 缓存必须携带编码戳；无戳即拒绝（除非显式放行）。
+
+`strict` 逃生舱
+--------------
+某些脚本加载的是**自己的** checkpoint 目录，那里**本来就没有**
+`transfer_result.json`（例如 `run_e5_inception_lite.py` 的
+`checkpoints/e5_inception_lite/`）。对这些调用点，用
+`checkpoint_subspace(..., strict=False)`：**缺 provenance 时**退回运行时编码
+并发出显式 `warnings.warn`；但**编码不一致时仍然 raise**（不一致永远不可接受）。
+
+⚠️ `strict=False` 只能用于「该目录确实从不写 provenance」的调用点。
+不要用它来绕过真实的不一致。
 """
 
 from __future__ import annotations
 
 import json
+import warnings
 from pathlib import Path
 from typing import Optional, Sequence, Tuple
 
@@ -38,7 +53,9 @@ from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES
 __all__ = [
     "CACHE_STAMP_KEY",
     "checkpoint_subspace",
+    "load_checkpoint_subspace",
     "encoding_stamp",
+    "expected_stamp",
     "assert_cache_encoding",
     "assert_encoding_record",
     "stamp_into",
@@ -54,15 +71,19 @@ RECORD_STAMP_KEY = "label_encoding"
 def encoding_stamp(num_classes: int, subspace: Optional[Sequence[str]]) -> str:
     """把一套标签编码规范化成可直接比较的字符串戳。
 
-    4 类 → 子空间顺序本身（如 ``"NORM|CD|STTC|MI"``）；
-    5 类 → 规范超类顺序 ``SUPERCLASSES``（builder 在 5 类时正是用它）。
+    * ``num_classes == len(SUPERCLASSES)``（5 类）→ 规范超类顺序 ``SUPERCLASSES``
+      （builder 在 5 类时正是用它）。
+    * 否则若给了 ``subspace`` → 子空间顺序本身（如 ``"NORM|CD|STTC|MI"``）。
+    * 否则 → `RuntimeError`（**不能**退回某个默认戳，否则会误判为"已校验"）。
     """
-    if num_classes == 4:
-        if subspace is None:
-            raise ValueError(
-                "[编码护栏] num_classes=4 但 subspace=None，无法生成编码戳。")
+    if num_classes == len(SUPERCLASSES):
+        return "|".join(str(c) for c in SUPERCLASSES)
+    if subspace is not None:
         return "|".join(str(c) for c in subspace)
-    return "|".join(str(c) for c in SUPERCLASSES)
+    raise RuntimeError(
+        f"[编码护栏] 无法生成编码戳：num_classes={num_classes} 且 subspace=None。\n"
+        f"  只有 {len(SUPERCLASSES)} 类可以省略 subspace（走 SUPERCLASSES）。\n"
+        f"  其余类别数必须显式给出 subspace，否则无法证明标签编码。")
 
 
 def expected_stamp(num_classes: int, runtime_subspace: Optional[Sequence[str]]) -> str:
@@ -70,10 +91,28 @@ def expected_stamp(num_classes: int, runtime_subspace: Optional[Sequence[str]]) 
     return encoding_stamp(num_classes, runtime_subspace)
 
 
+def load_checkpoint_subspace(run_dir: Path) -> Optional[Tuple[str, ...]]:
+    """只读取 checkpoint 自存的 `subspace`，**不做任何断言**。
+
+    返回 `None` 表示该目录没有 `transfer_result.json`、或文件里没有
+    `subspace` 字段（例如 5 类 checkpoint、或 toy/临时 run）。
+    """
+    tr = Path(run_dir) / "transfer_result.json"
+    if not tr.exists():
+        return None
+    try:
+        stored = json.loads(tr.read_text(encoding="utf-8")).get("subspace")
+    except (json.JSONDecodeError, OSError):
+        return None
+    return tuple(stored) if stored else None
+
+
 def checkpoint_subspace(
     run_dir: Path,
     num_classes: int,
     runtime_subspace: Optional[Sequence[str]],
+    *,
+    strict: bool = True,
 ) -> Optional[Tuple[str, ...]]:
     """取 checkpoint 自存的标签编码，并断言与运行时常量一致（编码护栏）。
 
@@ -82,6 +121,8 @@ def checkpoint_subspace(
     run_dir : 该 checkpoint 所在目录（须含 `transfer_result.json`）。
     num_classes : 本次评估要用的类别数。
     runtime_subspace : 运行时 `SUBSPACE_CPSC`（`num_classes == 4` 时），否则 None。
+    strict : 见模块 docstring 的「`strict` 逃生舱」。默认 True = 缺 provenance
+        即中断。仅在「该目录从不写 provenance」的调用点传 False。
 
     返回
     ----
@@ -90,28 +131,41 @@ def checkpoint_subspace(
 
     异常
     ----
-    `RuntimeError` —— 缺 `transfer_result.json`、缺 `subspace` 字段，或
-    自存编码 ≠ 运行时编码。三种情形都**必须**中断，因为继续算出来的数是污染值。
-
-    注意：`num_classes != 4` 时直接返回 None，**不**要求 `transfer_result.json`
-    存在（5 类走 `SUPERCLASSES`，不存在该错位风险；且许多实验脚本产出的
-    checkpoint 目录本就没有该文件）。
+    `RuntimeError` ——
+      * `strict=True` 且缺 `transfer_result.json`；
+      * `strict=True` 且文件里没有 `subspace` 字段；
+      * **无论 strict 取值**，自存编码 ≠ 运行时编码（不一致永远不可接受）。
     """
     if num_classes != 4:
         return None
 
     tr = Path(run_dir) / "transfer_result.json"
+
     if not tr.exists():
-        raise RuntimeError(
-            f"[编码护栏] 缺少 {tr}，无法确认该 checkpoint 的标签编码。\n"
-            f"  拒绝在无 provenance 的情况下重算。\n"
-            f"  参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md")
+        if strict:
+            raise RuntimeError(
+                f"[编码护栏] 缺少 {tr}，无法确认该 checkpoint 的标签编码。\n"
+                f"  拒绝在无 provenance 的情况下重算。\n"
+                f"  参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md")
+        warnings.warn(
+            f"[编码护栏·宽松模式] {tr} 不存在，退回运行时编码 "
+            f"{tuple(runtime_subspace)}。\n"
+            f"  该目录从不写 provenance，因此无法用文件自证；"
+            f"若这批 checkpoint 实际是另一套编码训练，结果仍会错位。",
+            RuntimeWarning, stacklevel=2)
+        return tuple(runtime_subspace) if runtime_subspace else None
 
     stored = json.loads(tr.read_text(encoding="utf-8")).get("subspace")
 
     if not stored:
-        raise RuntimeError(
-            f"[编码护栏] {tr} 未记录 `subspace`，无法判定编码。")
+        if strict:
+            raise RuntimeError(
+                f"[编码护栏] {tr} 未记录 `subspace`，无法判定编码。")
+        warnings.warn(
+            f"[编码护栏·宽松模式] {tr} 存在但未记录 `subspace`，"
+            f"退回运行时编码 {tuple(runtime_subspace)}。",
+            RuntimeWarning, stacklevel=2)
+        return tuple(runtime_subspace) if runtime_subspace else None
 
     if tuple(stored) != tuple(runtime_subspace):
         raise RuntimeError(
