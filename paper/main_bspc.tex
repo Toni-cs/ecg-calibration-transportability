@@ -1210,11 +1210,26 @@ $T=1.25$ gives $+0.014$--$+0.035$, $T=1.5$ gives $+0.030$--$+0.061$,
 $T=3.0$ gives $+0.095$--$+0.136$, and $T=4.5$ gives
 $+0.126$--$+0.164$. Observed raw ECE across the 62 raw-stage cells of the
 TS-component ablation (\texttt{results/ablation\_ts\_components.csv},
-\texttt{stage=raw}) ranges $0.036$ to $0.469$ (mean $0.273$), i.e.\
-$2$--$28\times$ the raw ECE
+\texttt{stage=raw}) ranges $0.036$ to $0.357$ (mean $0.211$), i.e.\
+$2$--$21\times$ the raw ECE
 under perfect calibration ($\approx 0.017$); the nine counter-examples
-also show large raw ECE ($0.08$--$0.24$), confirming the negative
-$\Delta\text{ECE}$ reflects genuine TS-induced harm, not metric noise.
+also show raw ECE well above the floor ($0.065$--$0.321$ vs.\
+$\approx 0.017$), so they are not perfect-calibration cases; their
+$\Delta\text{ECE}$ magnitudes ($\leq 0.017$) are nevertheless of the same
+order as the floor, so their signs are treated as exploratory rather than
+confirmatory.
+% [AUDIT 2026-09-17] 此处原为 "$0.036$ to $0.469$ (mean $0.273$)" 与
+% "$2$--$28\times$" 与 "($0.08$--$0.24$), confirming the negative $\Delta$ECE
+% reflects genuine TS-induced harm, not metric noise"。三个数值均取自
+% results/ablation_ts_components.csv，而该 CSV 的标签列是 NEW 编码
+% ("NORM","MI","STTC","CD")、probs 却是 OLD 编码 checkpoint 的输出，
+% 属 probs/labels 错配，故 raw ECE 虚高。已在 OLD 口径下重算（见
+% scripts/recompute_ablation_old_encoding.py 与
+% results/ablation_ts_components.OLD_ENCODING.csv）。旧句 "negative
+% $\Delta$ECE ... harm" 亦自相矛盾：反例的 $\Delta$ECE 为负即 TS 有益，
+% 且度量噪声的方向恰是让 $\Delta$ECE 变负，故不能由"raw ECE 大"推出
+% "非噪声"。本段末尾已按主终点口径重述。核对锚点：论文 case study 的
+% 0.3160 / 0.3144 / 0.0649 均为 OLD 口径值，与本修正自洽。
 For large $T > 3$ (noise floor $0.10$--$0.16$) the floor is
 comparable to the observed $|\Delta\text{ECE}|$ in some seeds, so a
 metric-noise contribution cannot be excluded there; however, its
@@ -1764,8 +1779,8 @@ majority-class baseline in 3 of 6 directions.
 
 A noise floor control
 (\S\ref{sec:noise_floor}) bounds, but does not eliminate, a SmoothECE
-artifact: at moderate temperatures metric noise is $2$--$28\times$ below
-the observed raw ECE ($0.036$--$0.469$, mean $0.273$), whereas for large
+artifact: at moderate temperatures metric noise is $2$--$21\times$ below
+the observed raw ECE ($0.036$--$0.357$, mean $0.211$), whereas for large
 $T>3$ the floor ($0.10$--$0.16$) is comparable to the observed
 $|\Delta\text{ECE}|$ and a metric-noise contribution cannot be excluded
 there. Real-data Shapley cross-fitting
