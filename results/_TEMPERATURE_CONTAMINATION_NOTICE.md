@@ -72,3 +72,15 @@ To regenerate: restore the caches against the original encoding and re-run the
 temperature analysis. The encoding to use is pinned by
 `tests/test_mapping_encoding.py`; the pipeline fix is recorded in the
 supplementary amendment A3.
+
+## See also
+
+The same root cause also corrupts `results/ablation_ts_components.csv`, whose
+`raw`-stage `smooth_ece` column feeds two numeric claims in the manuscript
+(`0.469` / `0.273`, now corrected to `0.357` / `0.211`). See
+`_ABLATION_TS_COMPONENTS_CONTAMINATION_NOTICE.md` for the evidence and the
+corrected table (`ablation_ts_components.OLD_ENCODING.csv`). The corrected
+60-cell `T_global` distribution reported there — median 1.0757, range
+0.9320–1.4982, T ≥ 2 in 0.0% — was obtained by an independent route (refitting
+from the cached probabilities with the labels restored) and agrees with the
+headline statistics above.
