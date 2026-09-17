@@ -52,8 +52,9 @@ $\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{raw}^{OOD}
 -\text{ECE}_{TS}^{OOD}$ in \textbf{51/60 = 85.0\%} of seed experiments
 (InceptionTime 27/30, ResNet1D 24/30), while the remaining
 \textbf{9 counter-examples are transparently disclosed} and
-mechanistically explained case by case (six of nine co-occur with low
-OOD accuracy; seven of nine with a large ID--OOD accuracy gap). The
+mechanistically explained case by case (eight of nine co-occur with low
+OOD accuracy and a large ID--OOD accuracy gap; the ninth is
+over-correction on an already well-calibrated backbone). The
 paper delivers \textbf{five independent contributions}:
 \textbf{C1} (Primary, OOD benefit quantification: 51/60 seed support),
 \textbf{C2} (Boundary condition, pre-registered branch triggered: only
@@ -65,9 +66,10 @@ cells pass at $n=20{,}000$),
 \textbf{C4} (Practical, method-selection boundary: TS robust vs.\ EM
 prior and Matrix scaling weakest, governed by a prior-likelihood
 mismatch mechanism), and
-\textbf{C5} (Clinical, discrimination-aware calibration gate: 7/14
-strata pass both layers, decoupling calibration effectiveness from
-clinical deployability).
+\textbf{C5} (Clinical, discrimination-aware calibration gate: 7/12
+pair$\times$architecture strata pass both layers, reframing the nine
+counter-examples as four calibration failures and five discrimination
+failures).
 
 \bigskip
 
