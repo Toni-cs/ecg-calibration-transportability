@@ -81,7 +81,9 @@ boundary'' branch: the OOD benefit is about $1.9\times$ the ID benefit
 ($+0.0159$ vs.\ $+0.0083$). A validated 27-cell Shapley decomposition
 separates slope, intercept, and prevalence effects; a predictability
 experiment triggers the registered failure branch (LOO $R^2$ CI upper bound
-$0.104<0.5$); and a discrimination-aware gate (C5) shows 7/12
+$0.104<0.5$, although a source-fitted, label-free temperature predicts the
+\emph{sign} of the benefit in 60/60 cells); and a discrimination-aware gate
+(C5) shows 7/12
 pair$\times$architecture strata passing both calibration and discrimination
 layers. Together these results bound when post-hoc recalibration pays off
 across institutions, and when it does not.
@@ -1046,15 +1048,62 @@ predictability claim is made.
 Re-running the LOO
 $R^2$ with three label-free features (fitted temperature $T$,
 Wasserstein-1 distance between source and target logit distributions,
-class-wise entropy difference), all fail against
-$\Delta\text{ECE}_{\text{OOD}}$: $T$ yields $R^2=-0.13$,
-Wasserstein $R^2=-0.06$, entropy $R^2=-0.02$, all three combined
-$R^2=-0.11$. The predictability boundary is \emph{robust}: no
-label-free feature, including $T$, predicts
-$\Delta\text{ECE}_{\text{OOD}}$ above $R^2=0.5$. This strengthens the
-failure branch, and the gate in \S\ref{sec:gate}, based on the sign
-of $\Delta\text{ECE}_{\text{OOD}}$ and the discrimination criterion,
-remains the appropriate actionable criterion.
+class-wise entropy difference) gives a sharper and less favourable
+picture for the boundary. Only $T$ carries signal: under the
+implemented (architecture, pair) folds it reaches LOO $R^2 = +0.340$
+(bootstrap CI $[+0.044, +0.363]$), and under per-cell folds $+0.361$
+(CI $[+0.201, +0.584]$), while the Wasserstein distance ($-0.064$) and
+the entropy difference ($-0.033$) carry none. $T$ is also a perfect
+\emph{directional} predictor:
+$\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}}) = \mathrm{sign}(T-1)$ in
+60/60 cells, against 51/60 ($85\%$) for the constant-positive baseline.
+We therefore do \emph{not} claim that no label-free quantity carries
+information about the endpoint --- $T$ does. The claim we retain is the
+pre-registered one: no label-free feature reaches the LOO $R^2$
+threshold of $0.5$ under the implemented fold unit ($0.363 < 0.5$), so
+the failure branch stands and the three-step chain remains downgraded to
+two steps. Two qualifications are required. First, the verdict is
+fold-unit-sensitive: per-cell folds give a CI upper bound of $0.584$,
+which would \emph{not} trigger the branch, so the downgrade should be
+read as a property of the coarser (architecture, pair) unit as much as
+of the data. Second, $T$'s predictive power is not independent evidence
+of a substantive benefit: $T=1$ is a fixed point of the transform, so
+part of the relation is mechanical, and the sign rule is the direction
+temperature scaling must have by construction
+(Sec.~\ref{sec:noise_mechanism}). The gate in \S\ref{sec:gate}, based on
+the sign of $\Delta\text{ECE}_{\text{OOD}}$ and the discrimination
+criterion, remains the appropriate actionable criterion.
+% [AUDIT 2026-09-17] 本段原文为 "all fail against ΔECE_OOD: $T$ yields
+% $R^2=-0.13$, Wasserstein $R^2=-0.06$, entropy $R^2=-0.02$, all three
+% combined $R^2=-0.11$. The predictability boundary is *robust*: no
+% label-free feature, including $T$, predicts ΔECE_OOD above $R^2=0.5$."
+% 该组数字是**跨标签编码错配**产物：y 用 OLD 编码的 ΔECE_OOD，而 T 取
+% results/temperature_distribution_analysis.csv（NEW 编码拟合）。两种编码的
+% T 相关仅 +0.15，近似独立，故回归退化为噪声。实测复现：
+% LOO R²(留一 cell) = -0.1258，LOO R²(留一 arch,pair) = -0.1310 ≈ 论文的 -0.13；
+% combined 的 -0.1147 ≈ 论文的 -0.11。Wasserstein / entropy 不依赖标签
+% （源/目标 logit 分布统计量），故论文的 -0.06 / -0.02 与实测 -0.064 / -0.033
+% 一致 —— 二者正确，唯 T 被污染，而 combined 因含 T 而整体失效。
+% 同批数据另有 results/predictability_sensitivity.json（n=62），其 y 均值
+% 0.100399 精确等于 NEW 编码的 delta_obs，verdict 为
+% "predictability_boundary_may_fail"；该文件全仓无生成脚本（provenance 缺失），
+% 且基于污染 y，不可引用。
+% 修正口径（y = OLD 编码 ΔECE_OOD，T = results/ablation_ts_components.OLD_ENCODING.csv
+% 的 stage1_ts T_global，二者同编码）：
+%   corr = +0.9753（R² = 0.9512，见 §noise_mechanism 的一致性检查）
+%   LOO R²：留一 cell +0.3610；留一 pair +0.2969；留一 (arch,pair) +0.3396
+%   bootstrap（按 (arch,pair) 聚类，B=4000）：留一 cell [+0.2007,+0.5837]；
+%                                            留一 (arch,pair) [+0.0441,+0.3630]
+%   sign(ΔECE_OOD) = sign(T-1)：60/60（常数恒正基线 51/60 = 85%）
+% 复算脚本：scripts/predictability_corrected.py → results/predictability_corrected.csv
+% （results/ 被 gitignore，需 git add -f）。该脚本内含自洽性互校：对 60 个 cell
+%   断言 smooth_ece(raw) − smooth_ece(stage1_ts) == ood_deltaECE（tol 1e-9），
+%   若两表编码再次错位则直接 SystemExit，不静默出数。
+%   数据源逐格互校示例：chapman_cpsc/inceptiontime/42
+%   0.3474239249443988 − 0.3335284685932505 = 0.0138954563511482 = ood_deltaECE，
+%   编码同一性已闭环。
+% 结论方向未变（失败分支仍成立），但强度与理由必须改：T 的预测力是
+% +0.34 而非 -0.13，且符号 60/60，不能再说 "no label-free feature predicts"。
 
 \begin{table}[t]
 \centering
@@ -1112,9 +1161,14 @@ Every lookup-table input is
 \emph{audit-time} (raw ECE, ID--OOD accuracy gap, per-cell labels),
 requiring target ground-truth labels unavailable in the unlabeled stream. The only label-free proxies examined are the predictability
 experiment's target statistics (predicted-prior $L_1$ distance, logit
-moments); that experiment triggered its pre-registered failure branch
-(LOO $R^2$ CI upper bound $0.104 < 0.5$, Table~\ref{tab:predictability}),
-so no label-free deployable criterion can be claimed. The lookup table is
+moments) plus the source-fitted temperature $T$; that experiment
+triggered its pre-registered failure branch
+(LOO $R^2$ CI upper bound $0.104 < 0.5$, Table~\ref{tab:predictability}).
+$T$ does carry signal (LOO $R^2 = +0.34$; sign of the endpoint correct
+in 60/60 cells), but it is a source-side quantity describing the
+transform being evaluated rather than an independent target-side
+statistic (Sec.~\ref{sec:noise_mechanism}), so no label-free deployable
+criterion can be claimed. The lookup table is
 an \emph{analysis- and audit-time decision aid} for a model owner with
 labeled evaluation data; the actionable deployment path is small-sample
 recalibration: buy $n$ labeled target records and recalibrate locally
@@ -1230,7 +1284,8 @@ $-0.009$ for uniform), which is why the empirical distributions are used.
 The floor is positive in $100\%$ of cells for $T \leq 0.9$ and
 $T \geq 2.0$, and in $90\%$ ($T=1.25$) to $97\%$ ($T=1.5$) of cells in
 between. Observed raw ECE across the 62 raw-stage cells of the
-TS-component ablation (\texttt{results/ablation\_ts\_components.csv},
+TS-component ablation under the corrected label encoding
+(\texttt{results/ablation\_ts\_components.OLD\_ENCODING.csv},
 \texttt{stage=raw}) ranges $0.036$ to $0.357$ (mean $0.211$), i.e.\
 $2$--$21\times$ the raw ECE
 under perfect calibration ($\approx 0.017$); the nine counter-examples
@@ -1423,12 +1478,27 @@ directions), suggesting the linear approximation breaks down once the
 shift invalidates its underlying local Taylor expansion.
 
 This strengthens the predictability failure branch (C3/C4): the
-Shapley decomposition is a valid \emph{diagnostic} (\emph{whether} TS
-will help) but not a valid \emph{predictor} (\emph{how much}). For
-clinical translation, the gate in \S\ref{sec:gate}, using only the
-sign of $\Delta\text{ECE}_{\text{OOD}}$ and the discrimination
-criterion, is the appropriate criterion, not the Shapley-predicted
-magnitude.
+Shapley decomposition is neither a valid \emph{predictor} (\emph{how
+much}) nor a valid \emph{diagnostic} (\emph{whether}). Its 51/60
+direction accuracy coincides exactly with the constant-positive
+baseline (a model that always predicts ``TS helps'' scores 51/60 on
+this grid), so it carries no directional information beyond the prior
+that TS usually helps; the quantity that does recover the direction is
+the source-fitted temperature $T$
+(Sec.~\ref{sec:predictability}). For clinical translation, the gate in
+\S\ref{sec:gate}, using only the sign of
+$\Delta\text{ECE}_{\text{OOD}}$ and the discrimination criterion, is the
+appropriate criterion, not the Shapley-predicted magnitude.
+% [AUDIT 2026-09-17] 本段原称 "the Shapley decomposition is a valid
+% *diagnostic* (whether TS will help) but not a valid *predictor* (how much)"。
+% "valid diagnostic" 不成立：delta_pred 60/60 全正，常数恒正基线亦为 51/60 = 85.0%
+% 且与分解模型**逐位相等**（κ = 0.0000）。另见
+% reports/REAL_SHAPLEY_AUDIT_VERDICT_2026-09-16.md 指控 2（成立）。
+% 同节其余两处数字（方向错误簇 2 方向、Wasserstein 0.75 vs 0.53）经复核
+% **真实且可复现，但复现口径是 delta_obs（新编码）**，而主终点是
+% delta_obs_orig（旧编码）—— 同一段落混用两个互斥口径且未披露，
+% 属报告完整性缺陷（audit 指控 5/6 的真相，定级 major）。
+% 该节的完整重写仍待执行（10 项清单见同一 audit 报告）。
 
 % ============================================================================
 \subsection{Net benefit decision curve summary}
@@ -1753,11 +1823,17 @@ We distinguish \emph{explainable} from \emph{predictable}:
     (Sec.~\ref{sec:predictability}) triggers the failure branch
     (LOO $R^2$ CI upper bound $0.104<0.5$).
 \end{itemize}
-The counter-examples are explainable but not predictable: the
-unsupervised target-domain statistics available at deployment time
-cannot flag them in advance, which is why the predictability
-experiment triggers the failure branch despite mechanistic
-explainability. The two-step chain (decomposition + deployment
+The counter-examples are explainable, and they are also \emph{locatable}
+in advance by one target-label-free statistic: all nine are the cells
+with $T<1$ (Sec.~\ref{sec:counter}). What fails is the stronger
+pre-registered requirement --- a label-free feature that recovers the
+\emph{magnitude} of benefit retention with LOO $R^2$ CI upper bound
+$\geq 0.5$ --- which is why the predictability experiment triggers the
+failure branch despite mechanistic explainability. Note that $T$'s sign
+rule is not a deployable criterion for deciding whether to apply TS: it
+states the direction the transform must have by construction, not
+evidence that the transform helps (Sec.~\ref{sec:noise_mechanism}). The
+two-step chain (decomposition + deployment
 lookup table) provides post-hoc explanation and actionable guidance
 without a pre-registered predictability claim.
 
@@ -1814,8 +1890,12 @@ is an empirical lookup table, not a predictive criterion; (iii)
 real-data Shapley cross-fitting (\S\ref{sec:real_shapley}) shows 85\%
 direction accuracy but systematic magnitude overestimation (mean error
 $+0.29$), and a sensitivity analysis with $T$, Wasserstein-1, and
-entropy features confirms the predictability boundary is robust (all
-$R^2 < 0$); (iv) the 27-cell decomposition validation uses binned ECE,
+entropy features does \emph{not} confirm a robust predictability
+boundary: only $T$ predicts (LOO $R^2=+0.34$, and
+$\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}})=\mathrm{sign}(T-1)$ in
+60/60 cells), so the retained claim is the weaker one that no
+label-free feature reaches $R^2=0.5$ under the implemented fold unit
+(Sec.~\ref{sec:predictability}); (iv) the 27-cell decomposition validation uses binned ECE,
 not the main endpoint's SmoothECE, so quantitative conclusions cannot be
 extrapolated across ECE definitions; (v) the safety criterion is rarely
 satisfied on the full L2 shift matrix (TS safety rate $0.0064$); TS is a
@@ -1880,8 +1960,9 @@ so same-patient across-session stability of $T$ cannot be estimated from
 these data and is deferred to prospective multi-session collection.
 Future work:
 (1) prospective multi-device validation; (2) continuous shift spaces;
-(3) $\pi$-independent recovery estimators (BBSE/EM-class) to upgrade the
-MAPE$_\pi$ to a real estimator test; (4) the ResNet1D deficit on
+(3) $\pi$-independent recovery estimators (BBSE/EM-class): BBSE is now
+delivered on the real grid (Honesty item~1), extension to further
+estimator classes remains; (4) the ResNet1D deficit on
 CPSC$\rightarrow$Chapman and CPSC$\rightarrow$PTB-XL (3/5 each) to test
 for a systematic interaction; (5) confirmatory testing under the A2
 reduction (12 hypotheses, BH-12 $q=0.05$, 9/12 significant,
@@ -1920,8 +2001,11 @@ $T>3$ the floor ($0.10$--$0.16$) is comparable to the observed
 $|\Delta\text{ECE}|$ and a metric-noise contribution cannot be excluded
 there. Real-data Shapley cross-fitting
 (\S\ref{sec:real_shapley}) gives 85\% direction accuracy with magnitude
-overestimation (mean error $+0.29$); $T$, Wasserstein-1, and entropy
-features confirm the boundary (all $R^2 < 0$).
+overestimation (mean error $+0.29$). The predictability boundary holds
+only in the weak sense that no label-free feature reaches $R^2=0.5$
+under the implemented fold unit: the source-fitted temperature $T$ does
+predict ($+0.34$, and the sign of $\Delta\text{ECE}_{\text{OOD}}$ in
+60/60 cells), while Wasserstein-1 and entropy features do not.
 
 The
 fixed-effect estimate is CI-width sensitive: ResNet1D is slightly
@@ -1960,8 +2044,21 @@ affect the sign-based support/counter-example classification.
 % ============================================================================
 \begin{enumerate}
     \item MAPE$_\pi$ is a \textbf{design check} (resampling constant
-    read-back), not an estimator capability test; independent $\pi$
-    recovery (BBSE/EM) is a deferred item (protocol \S13).
+    read-back), not an estimator capability test. The independent $\pi$
+    recovery registered as deferred (protocol \S13, item~7) has since
+    been delivered on the real 60-cell grid: with target labels withheld,
+    BBSE reduces the prior-recovery error from $0.1916$ (source-prior
+    baseline) to $0.1132$ --- a $40.9\%$ relative reduction, better than
+    the baseline in 56/60 cells, positive in 6/6 transfer pairs, with a
+    pair-clustered bootstrap CI of $[+0.048, +0.111]$. EM gives no
+    improvement ($0.1923$). Two limits remain and are reported as such:
+    the absolute error is still $0.113$, and the confusion-matrix
+    condition number exceeds $10^3$ in 5/60 cells and $10^4$ in 1/60, so
+    recovery is numerically boundary-sensitive there. \textbf{This does
+    not repair the decomposition estimator}, which targets a different
+    quantity (the target class prior, not the attribution coefficients)
+    and whose real-data cross-fitting error remains $+0.29$
+    (Sec.~\ref{sec:real_shapley}).
     \item Shapley shares in the \texttt{share\_reliable=False} regime
     are \textbf{not interpretable as shares}; ranking uses absolute-
     value CIs.
