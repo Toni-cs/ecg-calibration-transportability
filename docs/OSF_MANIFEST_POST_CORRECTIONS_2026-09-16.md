@@ -1,5 +1,11 @@
 # OSF 归档清单：清单后更正记录
 
+> ⚠️ **已被取代（2026-09-17）**：本记录写作时只观察到 **2** 个漂移文件；当晚后续提交
+> 使漂移数升至 **6**（新增 `scripts/eval_transfer.py`、`scripts/eval_l2_shift.py`、
+> `scripts/step2_predictability.py`、`scripts/summarize_l2_shifts.py`）。
+> **完整版请见 `docs/OSF_MANIFEST_POST_CORRECTIONS_2026-09-17.md`。**
+> 本文件保留为"当时知道什么"的历史记录，不作修改。
+
 > **清单**：`docs/osf_archive_manifest.json`（时间戳 `2026-09-16T02:44:47Z`，14 个文件）
 > **本记录日期**：2026-09-16
 > **性质**：清单是"某一时刻的快照"。**本记录不修改该快照**，只登记快照之后发生的变化，

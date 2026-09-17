@@ -74,5 +74,5 @@
    "mtime": "2026-09-09T12:27:44.067105+00:00"
   }
  },
- "_post_manifest_corrections": "Snapshot is intentionally NOT rewritten. Two of the 14 recorded files changed after this timestamp (src/data/mapping.py, paper/main_bspc.tex) and target_venue is superseded (now CMPB). See docs/OSF_MANIFEST_POST_CORRECTIONS_2026-09-16.md and run scripts/audit_manifest_drift.py. The 12 remaining hashes, including the pre-registered protocol itself, are unchanged."
+ "_post_manifest_corrections": "Snapshot is intentionally NOT rewritten. Six of the 14 recorded files changed after this timestamp (src/data/mapping.py, scripts/eval_transfer.py, scripts/eval_l2_shift.py, scripts/step2_predictability.py, scripts/summarize_l2_shifts.py, paper/main_bspc.tex) and target_venue is superseded (now CMPB). See docs/OSF_MANIFEST_POST_CORRECTIONS_2026-09-17.md (supersedes the 2026-09-16 record, which observed only 2 of the 6) and run scripts/audit_manifest_drift.py. The 8 remaining hashes, including the pre-registered protocol itself and the metric implementation src/utils/calibration.py, are unchanged."
 }

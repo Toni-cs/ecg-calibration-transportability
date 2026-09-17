@@ -1,4 +1,4 @@
-"""Assemble the BSPC submission supplementary package.
+"""Assemble the CMPB submission supplementary package.
 
 Everything the manuscript promises to submit exists locally but had never been
 assembled. This builds paper/submission/supplementary/ plus an index README and
@@ -29,13 +29,28 @@ for f in [
     "docs/EXPERIMENT_PROTOCOL.md",
     "docs/PROTOCOL_AMENDMENT_A1_PREREG_RELOCATION.md",
     "docs/PROTOCOL_AMENDMENT_A2_FAMILY_REDUCTION.md",
+    "docs/PROTOCOL_AMENDMENT_A3_CORPUS_IDENTITY.md",
+    "docs/OSF_MANIFEST_POST_CORRECTIONS_2026-09-17.md",
     "docs/osf_archive_manifest.json",
 ]:
     if os.path.exists(f):
         put(f, "S1_protocol")
 
 # S2 -- aggregate result tables
+#
+# Two files in results/ must NOT ship: a reviewer opening them would form a
+# wrong picture of the study.
+#   c3_inceptiontime_lite_30exp.csv       header-only stub of an aborted run
+#                                         (0 training / 0 transfer experiments)
+#   deployment_loco_validation_smoke.csv  n=20 smoke run of E1b; the manuscript's
+#                                         LOCO numbers come from the full run
+EXCLUDE_S2 = {
+    "c3_inceptiontime_lite_30exp.csv",
+    "deployment_loco_validation_smoke.csv",
+}
 for f in sorted(glob.glob("results/*.csv")):
+    if os.path.basename(f) in EXCLUDE_S2:
+        continue
     put(f, "S2_result_tables")
 
 # S3 -- per-experiment result files, kept in their transfer/<pair>/<arch>/seed layout
@@ -55,7 +70,7 @@ lines = [
     "Manuscript: *When Does Temperature Scaling Pay Off in Cross-Corpus ECG",
     "Transfer? A Multi-Seed Calibration Boundary Study*",
     "",
-    "Target journal: Biomedical Signal Processing and Control (Elsevier).",
+    "Target journal: Computer Methods and Programs in Biomedicine (Elsevier).",
     "",
     "## Contents",
     "",
@@ -70,13 +85,28 @@ for folder in folders:
 lines += [
     "",
     "### S1_protocol",
-    "`EXPERIMENT_PROTOCOL.md` (protocol v2.1-A1), the A1 endpoint re-location",
-    "amendment, the A2 family-reduction amendment, and",
-    "`osf_archive_manifest.json` -- the file-level SHA-256 manifest taken on",
-    "2026-09-05. See `docs/` in the public repository for the same documents.",
+    "`EXPERIMENT_PROTOCOL.md` (protocol v2.1-A1) and all three dated",
+    "amendments -- A1 (endpoint re-location), A2 (confirmatory-family",
+    "reduction), A3 (corpus identity and MI provenance) -- plus",
+    "`osf_archive_manifest.json`, the file-level SHA-256 manifest taken on",
+    "2026-09-16, together with",
+    "`OSF_MANIFEST_POST_CORRECTIONS_2026-09-17.md`, which records which of the",
+    "manifest's 14 files changed afterwards and why. The manifest is an",
+    "internal pre-audit snapshot and is deliberately NOT rewritten: drift is",
+    "declared in its `_post_manifest_corrections` field rather than silently",
+    "re-hashed. The pre-registered protocol itself is unchanged. See `docs/`",
+    "in the public repository for the same documents.",
     "",
     "### S2_result_tables",
     "Aggregate result tables underlying every number in the main text.",
+    "",
+    "Two files present in the public repository's `results/` directory are",
+    "deliberately excluded here, because they are internal working artefacts",
+    "rather than study results: `c3_inceptiontime_lite_30exp.csv` (a",
+    "header-only stub of an aborted run) and",
+    "`deployment_loco_validation_smoke.csv` (an $n=20$ smoke run of E1b; the",
+    "manuscript's LOCO numbers come from the full run). See `EXCLUDE_S2` in",
+    "`_build_supp.py`.",
     "",
     "### S3_per_experiment",
     "`transfer_result.json` for each cell of the 60-experiment transfer grid,",

@@ -2132,7 +2132,26 @@ is possible within this data regime: all three public corpora are
 cross-sectional and provide a single recording per patient
 (Chapman-Shaoxing reports exactly one ECG per patient, \S\ref{sec:data}),
 so same-patient across-session stability of $T$ cannot be estimated from
-these data and is deferred to prospective multi-session collection.
+these data and is deferred to prospective multi-session collection;
+(xxi) the archived checkpoints are \emph{not} bit-reproducible: training
+ran with cuDNN's non-deterministic kernels enabled, so re-running a
+training job yields different weights and hence slightly different
+calibration endpoints, and the released numbers are reproducible by
+re-executing the evaluation on the released checkpoints and result
+artifacts rather than by retraining from scratch. A post-hoc audit of the
+released checkpoint set found that two of the 60 cells
+(CPSC$\rightarrow$PTB-XL, InceptionTime, seeds 42--43) had been seeded
+from the CPSC$\rightarrow$Chapman model of the same seed instead of being
+trained independently, leaving 58 distinct source models behind the 60
+reported cells. Both cells were retrained independently for this
+submission, so the released grid again rests on 60 independently trained
+source models; the audit, the root cause, and the before/after evidence
+are recorded in the repository
+(\texttt{reports/CHECKPOINT\_INDEPENDENCE\_AUDIT\_2026-09-17.md}). In the
+pre-retrain artifacts the 60 reported cells therefore did not correspond
+to 60 independent training runs; this matters for any statement that
+treats cells as independent replicates, while the primary OOD endpoint,
+being a per-cell paired quantity, is unaffected in kind.
 Future work:
 (1) prospective multi-device validation; (2) continuous shift spaces;
 (3) $\pi$-independent recovery estimators (BBSE/EM-class): BBSE is now
@@ -2268,8 +2287,8 @@ and the full per-experiment result files
 \texttt{results/*.csv}) are included with the submission as
 supplementary material and are also available in the public repository
 \url{https://github.com/Toni-cs/ecg-calibration-transportability}.
-The protocol, both amendments
-(A1, A2), and a per-file archival-status report are publicly archived at
+The protocol, all three amendments
+(A1, A2, A3), and a per-file archival-status report are publicly archived at
 \url{https://doi.org/10.17605/OSF.IO/53H64}. \texttt{docs/osf\_archive\_manifest.json} is the internal
 snapshot taken on 2026-09-05; it is not a substitute for the public record.
 
@@ -2301,7 +2320,9 @@ aid that improved the wording and readability of text the author had
 written. The tool generated no experimental data, results, or
 conclusions, and made no analytical or interpretative decisions; every
 reported number is produced by the author's scripts and is reproducible
-from the public repository. After using the tool, the author reviewed
+from the released checkpoints and result artifacts in the public
+repository (training itself is not bit-reproducible; see
+Limitation~(xxi)). After using the tool, the author reviewed
 and edited all affected code and text as needed and takes full
 responsibility for the content of the published article.
 
