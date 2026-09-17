@@ -38,15 +38,29 @@ for f in [
 
 # S2 -- aggregate result tables
 #
-# Two files in results/ must NOT ship: a reviewer opening them would form a
-# wrong picture of the study.
-#   c3_inceptiontime_lite_30exp.csv       header-only stub of an aborted run
-#                                         (0 training / 0 transfer experiments)
-#   deployment_loco_validation_smoke.csv  n=20 smoke run of E1b; the manuscript's
-#                                         LOCO numbers come from the full run
+# Excluded because a reviewer opening them would form a wrong picture of the
+# study, or because they carry no information the package does not already
+# carry. Nothing here is deleted from the repository.
+#   c3_inceptiontime_lite_30exp.csv              header-only stub of an aborted
+#                                                run (0 training / 0 transfer
+#                                                experiments)
+#   deployment_loco_validation_smoke.csv         n=20 smoke run of E1b; the
+#                                                manuscript quotes the full run
+#   decomposition_validation_n500_20260829.bak.csv   a .bak, byte-identical to
+#                                                decomposition_validation.csv
+#   decomposition_validation_n20000_rerun_20260830.csv  byte-identical to
+#                                                ..._postfix_20260830.csv
+#
+# Deliberately NOT excluded, but explained in the README suffix glossary:
+# the *.OLD_ENCODING.csv and *.CONTAMINATED_INPUTS.csv sidecars are audit
+# provenance (the pre-correction values and the contaminated inputs), and
+# ..._postfix_20260830.csv is an earlier schema export of the same n=20,000
+# experiment, agreeing with the current one on 27/27 passed.
 EXCLUDE_S2 = {
     "c3_inceptiontime_lite_30exp.csv",
     "deployment_loco_validation_smoke.csv",
+    "decomposition_validation_n500_20260829.bak.csv",
+    "decomposition_validation_n20000_rerun_20260830.csv",
 }
 for f in sorted(glob.glob("results/*.csv")):
     if os.path.basename(f) in EXCLUDE_S2:
@@ -100,18 +114,41 @@ lines += [
     "### S2_result_tables",
     "Aggregate result tables underlying every number in the main text.",
     "",
-    "Two files present in the public repository's `results/` directory are",
-    "deliberately excluded here, because they are internal working artefacts",
-    "rather than study results: `c3_inceptiontime_lite_30exp.csv` (a",
-    "header-only stub of an aborted run) and",
-    "`deployment_loco_validation_smoke.csv` (an $n=20$ smoke run of E1b; the",
-    "manuscript's LOCO numbers come from the full run). See `EXCLUDE_S2` in",
-    "`_build_supp.py`.",
+    "**Filename suffixes used in this folder.**",
+    "",
+    "| Suffix | Meaning |",
+    "|---|---|",
+    "| `*.OLD_ENCODING.csv` | the values produced under the pre-correction label",
+    "encoding, kept as audit provenance next to the corrected file of the same",
+    "name. Where both exist, the corrected one (no suffix) is authoritative. |",
+    "| `*.CONTAMINATED_INPUTS.csv` | inputs produced while the label-encoding",
+    "defect was live. Retained so the correction is checkable; not used for any",
+    "reported number. |",
+    "| `*_<YYYYMMDD>.csv` | a dated export of an earlier run or an earlier",
+    "schema. It is not necessarily stale -- check the file before use. |",
+    "",
+    "Four files present in the public repository's `results/` directory are",
+    "deliberately excluded here, because they are working artefacts rather than",
+    "study results or because they duplicate another file byte for byte:",
+    "`c3_inceptiontime_lite_30exp.csv` (a header-only stub of an aborted run),",
+    "`deployment_loco_validation_smoke.csv` (an n=20 smoke run of E1b; the",
+    "manuscript quotes the full run),",
+    "`decomposition_validation_n500_20260829.bak.csv` (a `.bak`, byte-identical",
+    "to `decomposition_validation.csv`) and",
+    "`decomposition_validation_n20000_rerun_20260830.csv` (byte-identical to",
+    "`decomposition_validation_n20000_postfix_20260830.csv`). Nothing is deleted",
+    "from the repository. See `EXCLUDE_S2` in `_build_supp.py`.",
     "",
     "### S3_per_experiment",
-    "`transfer_result.json` for each cell of the 60-experiment transfer grid,",
-    "kept in the `transfer/<pair>/<architecture>/seed<42-46>/` layout of the",
-    "public repository.",
+    "`transfer_result.json` for every cell in the",
+    "`transfer/<pair>/<architecture>/seed<42-46>/` layout of the public",
+    "repository. This folder holds **more than the 60 main-grid cells**: the",
+    "BiMamba backbone contributes 3 further cells (its two OOM-limited",
+    "PTB-XL-to-Chapman seeds and the single grid cell that completed",
+    "before the grid was paused). BiMamba is a toy experiment in the",
+    "supplement, not part of the 60-experiment main grid, and no number in the",
+    "main text is derived from it. Count the files against the pair/architecture",
+    "layout rather than against 60.",
     "",
     "### S4_reliability_diagrams",
     "The 60 per-seed reliability diagrams catalogued in the Supplementary",
