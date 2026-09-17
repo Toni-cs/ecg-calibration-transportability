@@ -107,6 +107,7 @@ sys.path.insert(0, str(_PROJECT_ROOT / "scripts"))
 
 from src.models.ecg_classifier import ECGClassifier  # noqa: E402
 from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES  # noqa: E402
+from src.utils.encoding_guard import checkpoint_subspace  # noqa: E402
 from src.data.l2_shifts import get_l2_shifts, apply_shift  # noqa: E402
 from src.utils.calibration import (  # noqa: E402
     fit_temperature, apply_temperature, brier_parts, brier_raw, smooth_ece,
@@ -260,11 +261,27 @@ def load_checkpoint(
     return model, inferred_d_model, inferred_n_layers, num_classes
 
 
-def build_datasets(pair: str, seed: int, limit: Optional[int] = None):
-    """构建 source 和 target 的四分割数据集，返回 (src_ds, tgt_ds, src_clusters, tgt_clusters, num_classes, subspace)。"""
+def build_datasets(pair: str, seed: int, limit: Optional[int] = None,
+                   run_dir: Optional[Path] = None):
+    """构建 source 和 target 的四分割数据集，返回 (src_ds, tgt_ds, src_clusters, tgt_clusters, num_classes, subspace)。
+
+    编码护栏（2026-09-17）：4 类口径下**必须**提供 `run_dir`（该 checkpoint 所在
+    目录）。标签将按 `run_dir/transfer_result.json` 自存的 `subspace` 重建，并与
+    运行时 `SUBSPACE_CPSC` 断言一致，不符即 raise。原先只用运行时常量，
+    导致 09-11 产出的 3 份温度 CSV 落在污染窗口内。
+    参见 results/_TEMPERATURE_CONTAMINATION_NOTICE.md。
+    """
     source, target = pair.split("_")
     num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    runtime_subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    if num_classes == 4:
+        if run_dir is None:
+            raise RuntimeError(
+                "[编码护栏] build_datasets 在 4 类口径下必须提供 run_dir，"
+                "以便按 checkpoint 自存的 subspace 重建标签。")
+        subspace = checkpoint_subspace(run_dir, num_classes, runtime_subspace)
+    else:
+        subspace = runtime_subspace
 
     src_builder = DATASET_BUILDERS[source]
     tgt_builder = DATASET_BUILDERS[target]
@@ -469,7 +486,9 @@ def process_one(
         model, _, _, num_classes = load_checkpoint(
             pair, arch, seed, save_dir, d_model=d_model, n_layers=n_layers
         )
-        src_ds, tgt_ds, _, _, _, _ = build_datasets(pair, seed, limit=None)
+        src_ds, tgt_ds, _, _, _, _ = build_datasets(
+            pair, seed, limit=None,
+            run_dir=save_dir / pair / arch / f"seed{seed}")
 
         cal_loader = create_dataloader(src_ds["cal"], 64, shuffle=False, num_workers=0)
         id_loader = create_dataloader(src_ds["test"], 64, shuffle=False, num_workers=0)
@@ -618,7 +637,9 @@ def process_shift_sensitivity(
         model, _, _, num_classes = load_checkpoint(
             pair, arch, seed, save_dir, d_model=d_model, n_layers=n_layers
         )
-        src_ds, tgt_ds, _, _, _, _ = build_datasets(pair, seed, limit=None)
+        src_ds, tgt_ds, _, _, _, _ = build_datasets(
+            pair, seed, limit=None,
+            run_dir=save_dir / pair / arch / f"seed{seed}")
     except FileNotFoundError:
         return []
 

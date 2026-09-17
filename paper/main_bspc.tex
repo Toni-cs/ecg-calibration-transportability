@@ -1835,10 +1835,23 @@ PTB-XL$\rightarrow$Chapman 0.620 (both well below 0.713). In those
 directions recalibration is moot, since no temperature improves a model that
 should be replaced by a majority-class predictor, consistent with
 the counter-example pattern (6/9 with low OOD accuracy).
+% AUDIT 2026-09-17（数值溯源清查）：原引 `results/discrimination_metrics_60exp.csv`
+% （mtime 09-10 12:45，落在标签编码污染窗口 09-09~09-16 内）的 0.629–0.795。
+% 实证裁决：该表由 checkpoints/e2_probs_cache/*.npz（全部 62 份，mtime 09-10
+% 12:30~12:40）算出，缓存内 probs 为 OLD 编码（09-08 训练）、labels 为 NEW 编码
+% （09-09 之后写入）⇒ AUROC 被系统性低估。
+% 逐位证据：chapman_cpsc/inceptiontime/seed42 split=cal raw 的 AUROC，
+%   用缓存原样（NEW）标签算 = 0.641959 ← 与 CSV 所载 0.641959 完全相同；
+%   用 swap13（OLD）标签算   = 0.861000 ← 正确值，高 0.219。
+% 已在 OLD 编码下重算：results/discrimination_metrics_60exp.OLD_ENCODING.csv
+% （5 类的 chapman_ptbxl / ptbxl_chapman 两方向逐位不变）。
+% 原 0.629 的方向归属亦有误（0.629 实为 PTB-XL→CPSC，非 CPSC→Chapman）。
+% 修正后：0.629–0.792 → 0.735–0.843（判别力被低估，修正方向对论文有利）。
 The released artifacts include per-direction AUROC/AUPRC for all 60
-experiments (results/discrimination\_metrics\_60exp.csv): mean OOD
-AUROC ranges from 0.629 (CPSC$\rightarrow$Chapman) to 0.795
-(PTB-XL$\rightarrow$Chapman), i.e.\ far above the accuracy-based
+experiments (\texttt{results/discrimination\_metrics\_60exp.OLD\_ENCODING.csv}):
+mean OOD
+AUROC ranges from 0.735 (Chapman$\rightarrow$PTB-XL) to 0.843
+(PTB-XL$\rightarrow$CPSC), i.e.\ far above the accuracy-based
 majority-class reading yet direction-dependent; and TS leaves AUROC
 unchanged (mean $\Delta$AUROC$_{\text{TS}-\text{raw}}=-0.001$, max
 |change| $0.024$), as the monotone transform requires. The discrimination-first
@@ -1899,6 +1912,18 @@ validation}, not confirmatory, to reflect the post-revision status.
 \subsection{Net clinical value: implications of the directional NCV asymmetry}
 \label{sec:ncv_discussion}
 % ----------------------------------------------------------------------------
+% AUDIT 2026-09-17（未解决，需重跑）：下面引用的 NCV/DCR 数值
+% （OOD +0.008125、ID −0.006292、DCR OOD +0.016667）逐位来自
+% results/c1_dcr_ncv_summary.csv（mtime 09-10 12:29，**落在污染窗口内**），
+% 其输入是 checkpoints/transfer/**/e3_probs.npz（全部 60 份，mtime 09-10 12:24）。
+% 两个独立问题：
+%   ① 编码：e3 缓存由 run_e3_brier_dcr_ncv.py 用运行时 SUBSPACE_CPSC（当日=NEW）
+%      重建标签，而 checkpoint 是 OLD 编码 ⇒ 同 discrimination 表的错位模式；
+%   ② 规模：该批 e3 缓存每个 split 只有 **n=20** 条（cal/id/ood 全为 20），
+%      属冒烟规模，而汇总表按 n=60 checkpoints 报统计量 ⇒ 数值不可作主结果。
+% 处置：已加编码护栏（src/utils/encoding_guard.py）并给 e3 缓存加编码戳；
+% 需在全量 n 下重跑 E3 后替换本节数值。见
+% results/_C1_DCR_NCV_SMOKE_NOTICE.md。
 The NCV (Sec.~\ref{sec:ncv_results}) shows a directional asymmetry: OOD
 NCV $= +0.008125$ ($p = 0.019$) is a small but significant positive value
 (recalibration improves decisions on unseen target data more often than it
@@ -1906,8 +1931,14 @@ degrades them); ID NCV $= -0.006292$ ($p = 0.016$) is a small but
 significant negative value (a minor decision-cost penalty on data the
 source model already calibrates well).
 
-Two implications follow. (i) The \textbf{Brier reliability main claim}
-(C1: 51/60 positive) is supported: the positive OOD NCV shows the
+% AUDIT 2026-09-17：原句把 C1 称作 "Brier reliability main claim"，属**标错名**。
+% 本文 §intro 对 C1 的定义是 "Primary OOD benefit"（终点 ΔECE_OOD，51/60 正），
+% 与 Brier reliability 无关。而 Brier reliability 表
+% （results/c1_brier_reliability.csv）自身给出 44/60 为正，并非 51/60。
+% 且该表 n_id=n_ood=20（冒烟规模，mtime 09-10 12:29，窗口内），不可作主结果。
+% 故此处改为按 C1 的真实定义表述，避免审稿人对照补充材料时发现 51/60 ≠ 44/60。
+Two implications follow. (i) The \textbf{primary OOD benefit}
+(C1: 51/60 positive on $\Delta\text{ECE}_{\text{OOD}}$) is supported: the positive OOD NCV shows the
 calibration gain translates into net clinical decision benefit, not a
 metric artifact. (ii) The \textbf{decision-cost
 improvement claim} (C5: 7/12 strata deployable) is partially qualified:
@@ -1969,9 +2000,9 @@ lookup table requires labeled target data, and the label-free proxies
 failed their pre-registered branch, so no label-free gate is claimed;
 (xiv) TS is argmax-invariant and cannot improve accuracy, AUROC, or
 AUPRC; the artifacts now include per-direction AUROC/AUPRC for all 60
-experiments (results/discrimination\_metrics\_60exp.csv), so the
+experiments (results/discrimination\_metrics\_60exp.OLD\_ENCODING.csv), so the
 viability precondition is screened by both accuracy and discrimination
-(OOD AUROC means range 0.629--0.792 by direction), with OOD accuracy
+(OOD AUROC means range 0.735--0.843 by direction), with OOD accuracy
 below the majority-class baseline in 3 of 6 directions (and at baseline
 in a fourth);
 (xv) NCV is directionally asymmetric (OOD $= +0.008125$, $p = 0.019$,

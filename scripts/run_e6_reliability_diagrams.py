@@ -524,6 +524,7 @@ def _load_model_and_extract(args, source: str, target: str,
     from src.utils.calibration import fit_temperature, apply_temperature
     from eval_transfer import _build, DATASET_NUM_CLASSES
     from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES
+    from src.utils.encoding_guard import checkpoint_subspace
     from train import set_seed, evaluate, create_dataloader
 
     pair_dir = _CKPT_ROOT / f"{source}_{target}" / arch / f"seed{seed}"
@@ -535,7 +536,13 @@ def _load_model_and_extract(args, source: str, target: str,
     set_seed(seed)
 
     num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    # 编码护栏（2026-09-17）：本脚本产出的 70 张可靠性图 PDF（mtime 09-12，
+    # 已随补充材料 S4 一起打包）原先用运行时常量重建标签，落在污染窗口内。
+    # 现以 checkpoint 自存的 subspace 为准，不符即 raise。
+    # 参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    subspace = checkpoint_subspace(
+        pair_dir, num_classes,
+        SUBSPACE_CPSC if num_classes == 4 else None)
 
     # 加载 checkpoint
     ckpt = torch.load(ckpt_path, weights_only=False, map_location=device)

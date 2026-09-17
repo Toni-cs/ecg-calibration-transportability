@@ -81,6 +81,7 @@ from src.data.l2_shifts import get_l2_shifts, apply_shift, SEED_STRATEGY_VERSION
 from src.utils.calibration_methods import CALIBRATION_METHODS
 from src.utils.prior_shift import fit_em, fit_bbse
 from src.utils.calibration import smooth_ece, brier_parts, brier_raw
+from src.utils.encoding_guard import checkpoint_subspace, encoding_stamp
 from train import (
     set_seed, evaluate, create_dataloader,
     build_ptbxl_datasets, build_chapman_datasets, build_cpsc_datasets,
@@ -251,10 +252,24 @@ def build_datasets(source: str, target: str, seed: int, subspace):
     return src_ds, tgt_ds
 
 
-def is_checkpoint_complete(run_dir: Path, seed: int, shift_names: list) -> bool:
+def expected_encoding_for(source: str, target: str) -> str:
+    """某方向在当前运行时口径下应有的编码戳（用于断点续传判定）。"""
+    num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
+    runtime_subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    return encoding_stamp(num_classes, runtime_subspace)
+
+
+def is_checkpoint_complete(run_dir: Path, seed: int, shift_names: list,
+                           expected_encoding: str | None = None) -> bool:
     """断点续传检查：l2_shift_results.json 是否已含该 seed 的全部 13 档×所有方法。
 
     判据：
+    0. **编码戳匹配**（2026-09-17 新增）：文件顶层 `label_encoding` 必须等于
+       `expected_encoding`。缺失或不符一律视为不完整 → 强制重跑。
+       这一条是必需的：09-10~09-12 产出的 60 份 JSON 全部是在**新编码**下算出的
+       污染值，而它们同样满足下面 1/2 两条判据。若不加此判据，断点续传会
+       静默复用污染结果，护栏形同虚设。
+       （`expected_encoding=None` 时不检查，仅供不关心编码的清单/巡检使用。）
     1. seed_strategy 版本匹配（P0-1 R5修复 A1+A5）：per-seed __seed_strategy__ 字段
        （seed{N}.__seed_strategy__）必须等于 SEED_STRATEGY_VERSION（"md5_v1"）。
        旧结果（legacy_42 / 缺失）视为不完整，需重跑，避免新旧种子策略混用。
@@ -268,6 +283,9 @@ def is_checkpoint_complete(run_dir: Path, seed: int, shift_names: list) -> bool:
     try:
         data = json.loads(out_path.read_text(encoding="utf-8"))
     except Exception:
+        return False
+    # 判据0：编码戳
+    if expected_encoding is not None and data.get("label_encoding") != expected_encoding:
         return False
     sk = f"seed{seed}"
     if sk not in data:
@@ -317,8 +335,20 @@ def evaluate_one_checkpoint(source: str, target: str, arch: str, seed: int,
     ckpt_path = run_dir / "best_model.pt"
     shift_names = [s["name"] for s in shifts]
 
+    # ---------- 编码护栏 ----------
+    # 必须在断点续传判定**之前**：本脚本原先用运行时的 SUBSPACE_CPSC 重建标签，
+    # 而 checkpoint 是旧编码训练的 → 09-10~09-12 产出的 60 份 l2_shift_results.json
+    # 与两张 l2_shift_full_* 表全部被污染（MI↔CD 互换）。
+    # 现在：① 以 checkpoint 自存 subspace 为准并断言与运行时一致（不符即 raise）；
+    #       ② 把编码戳写进 JSON，且断点续传要求戳匹配 → 旧污染文件不再被复用。
+    num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
+    runtime_subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    subspace = checkpoint_subspace(run_dir, num_classes, runtime_subspace)
+    encoding = encoding_stamp(num_classes, subspace)
+
     # 断点续传
-    if not force and is_checkpoint_complete(run_dir, seed, shift_names):
+    if not force and is_checkpoint_complete(run_dir, seed, shift_names,
+                                            expected_encoding=encoding):
         existing = load_existing_results(run_dir)
         print(f"[resume] {source}->{target}/{arch}/seed{seed} 已完整，跳过")
         return existing[f"seed{seed}"]
@@ -331,8 +361,6 @@ def evaluate_one_checkpoint(source: str, target: str, arch: str, seed: int,
     print(f"\n[run] {source}->{target}/{arch}/seed{seed}")
 
     # 加载模型
-    num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
     model, epoch, dm, nl = load_model(ckpt_path, arch, num_classes, device=device)
     print(f"  loaded ckpt (epoch={epoch}, d_model={dm}, n_layers={nl})")
 
@@ -441,6 +469,9 @@ def evaluate_one_checkpoint(source: str, target: str, arch: str, seed: int,
     existing[sk].update(seed_results)
     # P0-1 R5修复（A1+A5）：写入 per-seed seed_strategy 版本标记，供 is_checkpoint_complete 校验
     existing[sk]["__seed_strategy__"] = SEED_STRATEGY_VERSION
+    # 编码戳（2026-09-17）：顶层记录本文件是在哪套标签编码下算出的。
+    # 下游（step2_predictability.py / is_checkpoint_complete）据此拒绝污染文件。
+    existing["label_encoding"] = encoding
     out_path = run_dir / "l2_shift_results.json"
     out_path.write_text(json.dumps(existing, indent=2, ensure_ascii=False), encoding="utf-8")
 
@@ -593,7 +624,8 @@ def main():
         print("\n[dry-run] 任务清单:")
         for t in tasks:
             complete = is_checkpoint_complete(
-                CKPT_ROOT / f"{t[0]}_{t[1]}" / t[2] / f"seed{t[3]}", t[3], shift_names)
+                CKPT_ROOT / f"{t[0]}_{t[1]}" / t[2] / f"seed{t[3]}", t[3], shift_names,
+                expected_encoding=expected_encoding_for(t[0], t[1]))
             print(f"  {t[0]}->{t[1]} {t[2]} seed{t[3]} "
                   f"{'[complete]' if complete else '[pending]'}")
         return
@@ -605,7 +637,9 @@ def main():
 
     for idx, (source, target, arch, seed) in enumerate(tasks, 1):
         run_dir = CKPT_ROOT / f"{source}_{target}" / arch / f"seed{seed}"
-        if not args.force and is_checkpoint_complete(run_dir, seed, shift_names):
+        if not args.force and is_checkpoint_complete(
+                run_dir, seed, shift_names,
+                expected_encoding=expected_encoding_for(source, target)):
             existing = load_existing_results(run_dir)
             all_results[(source, target, arch, seed)] = existing.get(f"seed{seed}", {})
             n_skip += 1

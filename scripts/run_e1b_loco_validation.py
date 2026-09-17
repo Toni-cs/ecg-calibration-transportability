@@ -117,6 +117,7 @@ from train import (  # noqa: E402
     build_ptbxl_datasets, build_chapman_datasets, build_cpsc_datasets,
 )
 from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES  # noqa: E402
+from src.utils.encoding_guard import checkpoint_subspace  # noqa: E402
 
 # ==========================================================================
 # 实验配置（预注册常量，研究者自由度显式化）
@@ -382,6 +383,18 @@ def run_loco_fold(args, fold: dict, seed: int) -> list[dict]:
     holdout = fold["holdout"]
     sources = fold["sources"]
     num_classes, subspace = _num_classes_and_subspace(sources, holdout)
+
+    # ---------- 编码护栏 ----------
+    # 本折会加载**既有** checkpoint M_{S_i→holdout}，标签必须按它们自存的编码
+    # 重建。原先只用运行时 SUBSPACE_CPSC，导致 09-11 产出的
+    # results/deployment_loco_validation.csv 落在污染窗口内。
+    # 参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    if num_classes == 4:
+        for _s in sources:
+            _run_dir = _ckpt_path_for_pair(
+                _s, holdout, args.arch, seed, args.save_dir).parent
+            checkpoint_subspace(_run_dir, num_classes, subspace)
+
     label_map = ({c: i for i, c in enumerate(subspace)} if subspace
                  else {c: i for i, c in enumerate(SUPERCLASSES)})
 

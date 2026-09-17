@@ -110,6 +110,12 @@ from train import (  # noqa: E402
     set_seed,
 )
 from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES  # noqa: E402
+from src.utils.encoding_guard import (  # noqa: E402
+    CACHE_STAMP_KEY,
+    assert_cache_encoding,
+    checkpoint_subspace,
+    encoding_stamp,
+)
 
 # =====================================================================
 # 配置
@@ -379,19 +385,31 @@ def load_probs_for_checkpoint(
     if not ckpt_path.exists():
         return None
 
+    # ---------- 编码护栏（必须在读缓存之前） ----------
+    # 缓存里存的是「某套编码下的标签」，所以要先确定该用哪套：
+    # 以 checkpoint 自存的 subspace 为准，并与运行时 SUBSPACE_CPSC 断言一致。
+    # 本脚本原先直接用运行时常量重建标签，导致 09-10 重跑的
+    # checkpoints/e2_probs_cache/*.npz（全部 62 份，mtime 09-10 12:30~12:40）
+    # 目标标签与 09-08 的 checkpoint 语义错位（MI↔CD 互换）。
+    # 参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    run_dir = ckpt_path.parent
+    set_seed(seed)
+    num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
+    runtime_subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    subspace = checkpoint_subspace(run_dir, num_classes, runtime_subspace)
+    encoding = encoding_stamp(num_classes, subspace)
+
     # 缓存路径（避免重复前向推理）
     cache_file = CACHE_DIR / f"{source}_{target}_{arch}_seed{seed}.npz"
     if args.use_cache and cache_file.exists():
         d = np.load(cache_file, allow_pickle=True)
+        assert_cache_encoding(cache_file, d, num_classes, subspace,
+                              allow_unstamped=args.allow_unstamped_cache)
         return {
             "cal_probs": d["cal_probs"], "cal_labels": d["cal_labels"],
             "test_probs": d["test_probs"], "test_labels": d["test_labels"],
             "num_classes": int(d["num_classes"]),
         }
-
-    set_seed(seed)
-    num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
 
     # 加载 checkpoint
     ckpt = torch.load(ckpt_path, weights_only=False, map_location=device)
@@ -439,6 +457,8 @@ def load_probs_for_checkpoint(
             cal_probs=result["cal_probs"], cal_labels=result["cal_labels"],
             test_probs=result["test_probs"], test_labels=result["test_labels"],
             num_classes=num_classes,
+            # 编码戳：无此戳的缓存一律被 assert_cache_encoding 拒绝
+            **{CACHE_STAMP_KEY: encoding},
         )
     return result
 
@@ -614,6 +634,9 @@ def main():
     ap.add_argument("--use-cache", action="store_true", default=True,
                     help="缓存前向推理 probs（默认开）")
     ap.add_argument("--no-cache", dest="use_cache", action="store_false")
+    ap.add_argument("--allow-unstamped-cache", action="store_true", default=False,
+                    help="放行不带编码戳的旧缓存（危险：09-10 那批为污染值，"
+                         "仅在你已人工确认其标签编码时才使用）")
     ap.add_argument("--output-ablation", default=str(RESULTS_DIR / "ablation_ts_components.csv"))
     ap.add_argument("--output-discrimination", default=str(RESULTS_DIR / "discrimination_metrics_60exp.csv"))
     args = ap.parse_args()
