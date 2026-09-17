@@ -27,11 +27,25 @@ MAIN_ARCHS = ("inceptiontime", "resnet1d")
 EXPECTED_N = 60          # 6 pairs x 2 archs x 5 seeds
 EXPECTED_SEEDS = (42, 43, 44, 45, 46)
 
-paths = sorted(set(
-    glob.glob("checkpoints/**/transfer_result.json", recursive=True)
-    + glob.glob("results/**/transfer_result.json", recursive=True)
-    + glob.glob("**/transfer_result.json", recursive=True)
-))
+# 只读 checkpoints/transfer/ —— 这是 transfer_result.json 的**唯一权威位置**。
+#
+# 历史教训（2026-09-17）：本脚本原先同时 glob `**/transfer_result.json`（从仓库根
+# 递归），于是把 `paper/submission/supplementary/S3_per_experiment/` 里那份**打包
+# 时的副本**、以及 `checkpoints/_retrain_backup_*/` 里的备份一并读入。去重是
+# `uniq[k] = r`（后者覆盖前者），而 `paper/submission` 在字母序上排在
+# `checkpoints/transfer` 之后 ⇒ **重训前的旧值胜出**，脚本报出 51/60，而权威
+# 主表是 50/60。重训之前两份副本值相同，所以这个缺陷一直不可见。
+#
+# 结论：**绝不要从仓库根递归 glob 结果文件**。只认权威根，并对越界路径硬失败。
+CANONICAL_ROOT = "checkpoints/transfer"
+paths = sorted(glob.glob(f"{CANONICAL_ROOT}/**/transfer_result.json", recursive=True))
+
+_stray = [p for p in paths
+          if not p.replace("\\", "/").startswith(CANONICAL_ROOT + "/")]
+if _stray:
+    raise SystemExit(
+        f"结果文件出现在非权威位置，拒绝继续（请先清理）：{_stray}"
+    )
 print("transfer_result.json 总数:", len(paths))
 
 rows = []
@@ -92,11 +106,21 @@ if not rows:
 main = [r for r in rows if r["arch"] in MAIN_ARCHS]
 print("正式架构记录:", len(main))
 
-# 去重（同 cell 可能多份）
+# 去重：权威根下每个 cell 应当**恰好一份**。
+# 原先的 `uniq[k] = r` 静默覆盖，正是上面那次假 51/60 得以发生的原因 —— 改成硬失败。
 uniq = {}
+_dup = []
 for r in main:
     k = (r["src"], r["tgt"], r["arch"], r["seed"])
+    if k in uniq:
+        _dup.append((k, uniq[k]["path"], r["path"]))
     uniq[k] = r
+if _dup:
+    for k, a, b in _dup:
+        print(f"  ! 同一 cell 多份结果: {k}\n      {a}\n      {b}")
+    raise SystemExit(
+        "权威根下出现重复 cell，拒绝继续 —— 请先确认哪一份是权威的，不要靠排序决定。"
+    )
 print("去重后 cell 数:", len(uniq))
 
 # --- 自校验：必须恰好 60 格，且 seed 集合正确 -------------------------
@@ -114,7 +138,11 @@ print("=== 从 transfer_result.json 复算 OOD ΔECE ===")
 print("n = %d  mean %+.4f  median %+.4f" % (len(v), st.mean(v), st.median(v)))
 print("正值: %d/%d = %.1f%%" % (sum(1 for x in v if x > 0), len(v),
                                  100 * sum(1 for x in v if x > 0) / len(v)))
-print("论文主终点: mean +0.0159, 51/60 = 85.0%")
+print("存档论文值: mean +0.0159, 51/60 = 85.0%")
+print("  ⚠️ 该值产生于 cpsc_ptbxl/inceptiontime/seed{42,43} 与 cpsc_chapman 同 seed")
+print("     共用源模型之时。两格已独立重训（见 reports/CHECKPOINT_INDEPENDENCE_")
+print("     AUDIT_2026-09-17.md），seed43 由 +0.0203 变为 -0.0057 ⇒ 现为 50/60。")
+print("     此处打印实测值；若与上面复算不一致，说明又出现了口径问题。")
 print()
 
 # 与 robustness_validation_5seeds.csv 对照
