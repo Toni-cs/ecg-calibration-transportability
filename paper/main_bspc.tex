@@ -1208,16 +1208,38 @@ per-run \texttt{l2\_shift\_results.json} files that feed it were
 overwritten on 2026-09-10 by outputs computed under the wrong label
 encoding (see the coverage note below); re-deriving the same criterion
 from those on-disk L2 outputs gives $6/156 = 0.038$ rather than $1/157$.
-The denominator deserves care: the stated $6 \times 2 \times 13 = 156$ is
-the BH-FDR \emph{family} size (6 pairs $\times$ 2 \emph{architectures}
-$\times$ 13 levels), whereas the $157$ cells are the \emph{deployment}
-subset (2 \emph{seeds} $\times$ 1 architecture) --- the factor of two
-means different things in the two counts, and the extra cell is a genuine
-(pair, seed, shift) combination, not an inconsistency. The claim that the
-safety criterion is rarely met is unaffected in direction (both values
+The denominator deserves care, because $157$ is prime and therefore not
+a clean product of the grid dimensions. The stated
+$6 \times 2 \times 13 = 156$ is the BH-FDR \emph{family} size (6 pairs
+$\times$ 2 \emph{architectures} $\times$ 13 levels); the $157$ cells are
+the \emph{deployment} snapshot, which covered 6 pairs $\times$ 2
+\emph{seeds} at 12 of the 13 shift levels ($6 \times 2 \times 12 = 144$)
+plus 13 (pair, seed) combinations at \texttt{fs250}: $144 + 13 = 157$.
+One (pair, seed) combination therefore appears at \texttt{fs250} only ---
+a ragged-grid artefact of the two-seed snapshot, not a contradiction with
+the family size. The rate is also not method-specific: $1/157$ is
+identical for \texttt{ts}, \texttt{platt}, \texttt{vector} and
+\texttt{bbse\_prior}, so the operating criterion is met at the same rare
+rate by every recalibrator in the grid. The claim that the
+safety criterion is rarely met is unaffected in direction (all values
 are small), but the exact rate must be regenerated. Sign convention:
 $\Delta\text{ECE}$ $=$ post-recalibration ECE $-$ raw ECE (negative means
 improvement), opposite to the primary-endpoint convention.
+% [AUDIT 2026-09-17 R3] 本段原写「the 157 cells are the deployment subset
+% (2 seeds × 1 architecture)」。第三轮对抗审查（R3-A）指出该分解**算术不可能**：
+% 157 是质数，不可能是 2×1 的倍数。用表 6 自身的边际量做整数约束，唯一解为：
+%   非 fs250 的 12 档：各 12 个 (pair,seed) × 8 方法 − matrix 缺 2 = 94
+%   fs250：            13 个 (pair,seed) × 8 方法 − matrix 缺 2 = 102
+%   每方法 (非 matrix) = 12×12 + 13 = 157；matrix = 12×10 + 11 = 131
+%   合计 12×94 + 102 = 1230 = 7×157 + 131 ✓（三处独立自洽）
+% ⇒ 157 = 144 + 13，是「两种子快照在 fs250 多出 1 个 (pair,seed)」的
+%   残缺网格产物。另：1/157 对 ts/platt/vector/bbse_prior **四法相同**，
+%   安全率并非 TS 独有 —— 已在正文补披露。
+% 洁净性佐证加强：该 CSV **受 git 跟踪**，HEAD blob 与工作区逐字节相同，
+% 提交 dd96647 时间 2026-09-08 21:54:58 < 污染窗口起点 09-09 20:26:34
+% ⇒ 不依赖可被 touch 的 mtime。
+% ⚠️ 磁盘上的 l2_shift_results.json 现为 5 种子全量（ts 有 390 个
+%   (pair,seed,shift)），故 157 **无法**从当前 JSON 重建，只能从本 CSV 读。
 \emph{Coverage note:} the L2 shift matrix has been completed on all 390
 planned (pair, seed, shift) combinations (6 pairs $\times$ 5 seeds
 $\times$ 13 levels; results/l2\_shift\_full\_390cells.csv); the safety
@@ -1423,8 +1445,7 @@ $T \neq 1$ (Sec.~\ref{sec:noise_floor}), so the hypothesis predicts a
 systematically \emph{negative} endpoint. The observed mean is
 $+0.0159$, positive in 51/60 cells.
 
-\paragraph{(ii) Sign flip with $T$.} A fixed-direction artefact cannot
-produce a sign that flips with $T$. In the corrected data
+\paragraph{(ii) Sign pattern with $T$.} In the corrected data
 $T \in [0.932, 1.498]$ (median $1.076$; no cell reaches $T \geq 2$), and
 $\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}}) = \mathrm{sign}(T - 1)$ in
 \emph{60/60} cells: all 51 cells with $T \geq 1$ are positive (mean
@@ -1437,6 +1458,18 @@ cells with $T<1$, including the extreme CPSC$\rightarrow$Chapman /
 ResNet1D / seed~44 case ($T = 0.932$,
 $\Delta\text{ECE}_{\text{OOD}} = -0.0168$), the sharpest sharpening in
 the grid.
+
+We are explicit that this is an \emph{empirical} regularity over the
+range the fits occupy, not a mathematical identity: $\Delta\text{ECE}$
+is computed from the same probabilities that define $T$, but the two are
+not algebraically linked, and the correspondence is falsifiable. Pushing
+a fixed temperature well past the fitted range breaks it --- applying
+$T = 2.0$ to the same 60 cells flips 5 of them negative --- and
+substituting the (mis-encoded) temperatures of the coverage note below
+drops the agreement from 60/60 to 56/62. Its role
+here is therefore \emph{explanatory} (it accounts for the sign of every
+cell) rather than \emph{exclusionary}; the exclusion of the floor
+hypothesis rests on (i), (iii), and the mechanism test below.
 
 \paragraph{(iii) Magnitude strata.} Under an additive floor the endpoint
 should be \emph{smaller} where the floor is larger.
@@ -1896,27 +1929,34 @@ the counter-example pattern (6/9 with low OOD accuracy).
 % 原 0.629 的方向归属亦有误（0.629 实为 PTB-XL→CPSC，非 CPSC→Chapman）。
 % 修正后：0.629–0.792 → 0.735–0.843（判别力被低估，修正方向对论文有利）。
 The released artifacts include per-direction AUROC/AUPRC for all 60
-experiments (\texttt{results/discrimination\_metrics\_60exp.OLD\_ENCODING.csv}):
+experiments (\texttt{results/discrimination\_metrics\_60exp.OLD\_ENCODING.csv},
+which now carries both \texttt{variant=raw} and \texttt{variant=ts} rows):
 mean OOD
 AUROC ranges from 0.735 (Chapman$\rightarrow$PTB-XL) to 0.843
 (PTB-XL$\rightarrow$CPSC), i.e.\ far above the accuracy-based
 majority-class reading yet direction-dependent; and TS changes AUROC only
-marginally (mean $\Delta$AUROC$_{\text{TS}-\text{raw}} = +0.0009$, max
-$|$change$|$ $0.010$, recomputed under the corrected label encoding). We
+marginally (mean $\Delta$AUROC$_{\text{TS}-\text{raw}} = +0.0004$, max
+$|$change$|$ $0.002$, recomputed under the corrected label encoding and
+the corrected source-fitted temperatures). We
 avoid the stronger phrasing that AUROC must be exactly invariant:
 rescaling logits by $1/T$ is monotone \emph{within} a row, so the argmax
 --- and hence accuracy --- is preserved exactly, but the cross-sample
 ranking of the top-label \emph{score} is not, because the per-row
 normaliser differs across rows (measured Spearman between raw and TS
 top-label scores: $0.9945$--$0.9999$). The discrimination-first
-% [AUDIT 2026-09-17 R2] 本段原写 `mean ΔAUROC_TS−raw = −0.001, max |change| 0.024,
-% as the monotone transform requires` —— 该组数字与**污染表**（NEW 标签）
-% 逐位相同（mean −0.000979 / max 0.024247）。
-% 用 OLD 编码重算（ablation_ts_components.csv 的 T + e2_probs_cache）：
-%   全 60 格 mean = +0.000856, max|Δ| = 0.010477   ← 符号翻转、幅度腰斩
-%   仅 4 类  mean = +0.001005, max|Δ| = 0.010477
-% ⚠️ 待办：results/discrimination_metrics_60exp.OLD_ENCODING.csv 的
-% `auroc_ts_minus_raw` 列现为 **124/124 全空**，须补齐后才能自洽引用。
+% [AUDIT 2026-09-17 R3] 本段原写 `mean ΔAUROC_TS−raw = +0.0009, max |change| 0.010`。
+% 第三轮对抗审查（R3-E）判定该组数字**无表支撑且口径错误**：
+%   ① 生成脚本 recompute_discrimination_old_encoding.py 只写 variant=raw 行，
+%      并把 auroc_ts_minus_raw 硬编码为 "" ⇒ 该列 124/124 全空，且**表内
+%      不存在 ts 行**，结构上不可能支撑 TS−raw 差值。已修复：脚本现同时
+%      输出 variant=ts 行（TS 概率由 apply_temperature 从缓存 probs 复原，
+%      无需重跑模型），差值列真实填充，raw 行逐字段零差异。
+%   ② 原 +0.0009/0.010 的两个数不同源：max 0.010477 只能在**用错温度**
+%      （ablation_ts_components.csv 的 T_new）时复现，而 mean 两个口径都对不上。
+%   ③ 正确口径（OLD 标签 + OLD 温度，test split，main 60）：
+%      mean = +0.000355，max|Δ| = 0.001706  ⇒ 正文改为 +0.0004 / 0.002。
+%      （全 62 含 mamba：mean +0.000416，max|Δ| 0.002946。）
+% 独立复算：_attack_scratch/R3VERIFY/verify_r3b.py 的 V3。
 % 另："as the monotone transform requires" 的表述有误 —— 多分类 macro-OvR 的
 % 跨样本排序受逐行归一因子影响，TS 并不严格保值（Spearman 0.9945–0.9999）。
 gate---measure target discrimination before investing in

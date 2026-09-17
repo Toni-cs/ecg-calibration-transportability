@@ -26,7 +26,11 @@
 | BBSE / EM | `src/utils/prior_shift.py` | Lipton et al. (ICML 2018) / Saerens et al. (2002) 的**标准重实现** |
 | `fisher_information_det` | 同上 L139 | 教科书 Fisher 信息行列式 |
 
-**为什么不造**：Pro 代理自己承认的"最强主张"是——*"最关键的一步是把 decomposition estimator 的真实数据 cross-fitting 做完并修好幅度偏差，那是唯一能把这篇从'用方法'推成'给方法'的东西。"* 但同一份真实数据（`results/c3_crossfit_results.csv`）显示该估计器平均误差 **+0.29**，是目标效应量 0.0159 的 **18 倍**。在误差比效应大 18 倍的估计器上包装"新算法"，是把已知硬伤放进标题。
+**为什么不造**：Pro 代理自己承认的"最强主张"是——*"最关键的一步是把 decomposition estimator 的真实数据 cross-fitting 做完并修好幅度偏差，那是唯一能把这篇从'用方法'推成'给方法'的东西。"* 但同一份真实数据显示该估计器平均误差 **+0.29**（mean `delta_pred` − `delta_obs_orig` = **+0.2856**，
+median **+0.2913**，n=60；来源 `results/strengthening_battle_corrected.json`，**不是**
+`results/c3_crossfit_results.csv` —— 后者是 8 种标定法 × 2 架构的 LOO-R² 表，其 `0.29x` 字样
+只是 `decay_mean`/`ci_hi` 的巧合数字。此归属错误由第三轮对抗审查 R3-B 指出并已更正），
+是目标效应量 0.0159 的 **18 倍**。在误差比效应大 18 倍的估计器上包装"新算法"，是把已知硬伤放进标题。
 
 **唯一合理的"准新方法"路径**（若日后确需）：把 BBSE 真正接进 `decompose_benefit` 的 `prev_hat` 路径（现在 `decomposition.py:336-343` 仍是设计常量回读），使 prevalence 腿从"设计常量"升级为"无标签估计"。但**必须先解决下节的能力不足问题**，否则新瓶装旧酒。
 
