@@ -551,9 +551,14 @@ def load_and_evaluate_single(
 
     # 编码护栏（2026-09-17）：加载**既有** checkpoint → 标签必须按它自存的编码
     # 重建，而不是运行时常量。参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    # ⚠️ strict=False：e5 的 checkpoint 目录（checkpoints/e5_inception_lite/）
+    # **从不写** transfer_result.json，因此缺 provenance 是它的正常状态。
+    # 宽松模式只在"文件不存在/无 subspace"时退回运行时编码并告警；
+    # 若文件存在且编码不一致，仍然 raise（D1，2026-09-17 对抗审查发现）。
     subspace = checkpoint_subspace(
         run_dir, num_classes,
-        SUBSPACE_CPSC if num_classes == 4 else None)
+        SUBSPACE_CPSC if num_classes == 4 else None,
+        strict=False)
 
     # 构建数据
     try:
@@ -643,10 +648,13 @@ def eval_transfer_pair(
     num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
     # 编码护栏（2026-09-17）：源模型来自既有的 source checkpoint，
     # 目标标签必须按该 checkpoint 自存的编码重建。
+    # ⚠️ strict=False：e5 的 checkpoint 目录从不写 transfer_result.json
+    # （D1，2026-09-17 对抗审查发现）；编码**不一致**时仍然 raise。
     subspace = checkpoint_subspace(
         Path(args.save_dir) / source / ARCH_NAME / f"seed{seed}",
         num_classes,
-        SUBSPACE_CPSC if num_classes == 4 else None)
+        SUBSPACE_CPSC if num_classes == 4 else None,
+        strict=False)
 
     print(f"\n[迁移] {source}→{target} seed={seed}")
     try:

@@ -354,20 +354,49 @@ def cache_key(pair: str, arch: str, seed: int) -> str:
     return f"{pair}__{arch}__seed{seed}"
 
 
-def load_cache(cache_dir: Optional[Path], pair: str, arch: str, seed: int) -> Optional[dict]:
+def load_cache(cache_dir: Optional[Path], pair: str, arch: str, seed: int,
+               expected_encoding: Optional[str] = None) -> Optional[dict]:
+    """读 probs/labels 缓存。
+
+    `expected_encoding` 非 None 时，缓存必须携带**匹配**的编码戳，否则
+    `RuntimeError`。这是 2026-09-17 对抗审查发现的 F4：该缓存目录原先
+    **零编码校验**，而 09-11 产出的 3 份温度 CSV 正是从这批缓存算出来的。
+    """
+    from src.utils.encoding_guard import CACHE_STAMP_KEY
+
     if cache_dir is None:
         return None
     p = cache_dir / f"{cache_key(pair, arch, seed)}.npz"
     if not p.exists():
         return None
     d = np.load(p, allow_pickle=True)
-    return {k: d[k] for k in d.files}
+    if expected_encoding is not None:
+        have = d[CACHE_STAMP_KEY].item() if CACHE_STAMP_KEY in d.files else None
+        if have is None:
+            raise RuntimeError(
+                f"[编码护栏] {p} 未携带编码戳 `{CACHE_STAMP_KEY}`。\n"
+                f"  该缓存写于护栏上线之前（09-11 那批温度 CSV 的输入），\n"
+                f"  无法从文件本身判定其标签编码。请删掉该缓存后重跑。")
+        if str(have) != str(expected_encoding):
+            raise RuntimeError(
+                f"[编码护栏] {p} 的编码戳与当前口径不符：\n"
+                f"  缓存 = {have}\n"
+                f"  期望 = {expected_encoding}\n"
+                f"  继续使用会得到标签错位的结果。请删掉该缓存后重跑。")
+    return {k: d[k] for k in d.files if k != CACHE_STAMP_KEY}
 
 
-def save_cache(cache_dir: Path, pair: str, arch: str, seed: int, data: dict) -> None:
+def save_cache(cache_dir: Path, pair: str, arch: str, seed: int, data: dict,
+               encoding: Optional[str] = None) -> None:
+    """写 probs/labels 缓存，并写入编码戳（供 `load_cache` 校验）。"""
+    from src.utils.encoding_guard import CACHE_STAMP_KEY
+
     cache_dir.mkdir(parents=True, exist_ok=True)
     p = cache_dir / f"{cache_key(pair, arch, seed)}.npz"
-    np.savez(p, **data)
+    payload = dict(data)
+    if encoding is not None:
+        payload[CACHE_STAMP_KEY] = np.array(str(encoding))
+    np.savez(p, **payload)
 
 
 # =====================================================================
@@ -472,9 +501,29 @@ def process_one(
     """
     source, target = pair.split("_")
     key = cache_key(pair, arch, seed)
+    run_dir = save_dir / pair / arch / f"seed{seed}"
+
+    # ---------- 编码口径（护栏，2026-09-17）----------
+    # checkpoints/e4_cache/*.npz 存的是「某套编码下的标签」，而该目录原先
+    # **零编码校验**（F4，2026-09-17 对抗审查发现）。先按 checkpoint 自存的
+    # provenance 定出期望编码，再据此拒绝无戳/错戳的缓存。
+    # 用 strict=False：若该目录没有 transfer_result.json 则退回运行时编码，
+    # 但**编码不一致仍会 raise**。
+    from src.data.mapping import SUBSPACE_CPSC
+    from src.utils.encoding_guard import checkpoint_subspace, encoding_stamp
+    nc_exp = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
+    if (run_dir / "best_model.pt").exists():
+        expected_encoding = encoding_stamp(
+            nc_exp,
+            checkpoint_subspace(run_dir, nc_exp,
+                                SUBSPACE_CPSC if nc_exp == 4 else None,
+                                strict=False))
+    else:
+        expected_encoding = None   # 无 checkpoint → 缓存也用不上，交给下面报错
 
     # ---------- 加载 probs/labels（优先缓存） ----------
-    cache = load_cache(cache_dir, pair, arch, seed)
+    cache = load_cache(cache_dir, pair, arch, seed,
+                       expected_encoding=expected_encoding)
     if cache is not None:
         cal_probs = cache["cal_probs"]
         cal_labels = cache["cal_labels"]
@@ -507,7 +556,7 @@ def process_one(
                 "cal_probs": cal_probs, "cal_labels": cal_labels,
                 "id_probs": id_probs, "id_labels": id_labels,
                 "ood_probs": ood_probs, "ood_labels": ood_labels,
-            })
+            }, encoding=expected_encoding)
         del model
         if torch.cuda.is_available():
             torch.cuda.empty_cache()

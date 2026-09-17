@@ -482,17 +482,29 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
     cache_path = ckpt_dir / "e3_probs.npz"
     ckpt_path = ckpt_dir / "best_model.pt"
 
-    # --- 编码护栏（必须在读缓存之前） ---
-    # e3_probs.npz 里存的是「某套编码下的标签」，所以要先确定该用哪套。
-    # 全部 60 份 e3_probs.npz 的 mtime = 2026-09-10 12:24，落在污染窗口内，
-    # 而 results/c1_brier_reliability.csv（12:29）正是从它们算出来的。
-    # 参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    # --- 类别数与运行时编码（先算，供下面两处用） ---
     from src.data.mapping import SUBSPACE_CPSC
     from src.utils.encoding_guard import (
         assert_cache_encoding, checkpoint_subspace, encoding_stamp,
     )
     K = get_num_classes(source, target)
     runtime_subspace = SUBSPACE_CPSC if K == 4 else None
+
+    # --- 先判 checkpoint 是否存在 ---
+    # ⚠️ 必须排在编码护栏**之前**：护栏要读 checkpoint 自存的
+    # transfer_result.json，checkpoint 都不在就没有 provenance 可读。
+    # 原实现把护栏放在这里之前，使"checkpoint 缺失"的正常跳过路径变成 raise
+    # （D3，2026-09-17 对抗审查发现）。
+    if not ckpt_path.exists():
+        warnings.warn(f"Checkpoint 不存在: {ckpt_path}")
+        return None
+
+    # --- 编码护栏（必须在读缓存之前） ---
+    # e3_probs.npz 里存的是「某套编码下的标签」，所以要先确定该用哪套。
+    # 全部 60 份 e3_probs.npz 的 mtime = 2026-09-10 12:24，落在污染窗口内，
+    # 而 results/c1_brier_reliability.csv（12:29）正是从它们算出来的。
+    # 参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    # 注意：本调用在下面的 try 之外 → 编码**不一致**会直接 raise，不被吞掉。
     subspace = checkpoint_subspace(ckpt_dir, K, runtime_subspace)
     encoding = encoding_stamp(K, subspace)
 
@@ -513,12 +525,9 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
                 'num_classes': int(data['num_classes']),
             }
         except Exception as e:
+            # 这里只吞「缓存本身不可用」的情形（键缺失 / 文件损坏 / 无编码戳），
+            # 退回重算即为正确动作。编码护栏的**不一致**已在上面 try 之外抛出。
             warnings.warn(f"缓存加载失败 {cache_path}: {e}，将重新计算")
-
-    # --- 检查 checkpoint 是否存在 ---
-    if not ckpt_path.exists():
-        warnings.warn(f"Checkpoint 不存在: {ckpt_path}")
-        return None
 
     # --- 检查数据目录 ---
     src_data = DATA_DIRS.get(source)

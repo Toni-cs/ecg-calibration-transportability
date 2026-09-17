@@ -382,18 +382,63 @@ def run_loco_fold(args, fold: dict, seed: int) -> list[dict]:
 
     holdout = fold["holdout"]
     sources = fold["sources"]
-    num_classes, subspace = _num_classes_and_subspace(sources, holdout)
+    num_classes, runtime_subspace = _num_classes_and_subspace(sources, holdout)
 
-    # ---------- 编码护栏 ----------
-    # 本折会加载**既有** checkpoint M_{S_i→holdout}，标签必须按它们自存的编码
-    # 重建。原先只用运行时 SUBSPACE_CPSC，导致 09-11 产出的
-    # results/deployment_loco_validation.csv 落在污染窗口内。
-    # 参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    # ---------- 编码护栏（自愈式，2026-09-17 重写）----------
+    # 本折加载的是**既有** checkpoint M_{S_i→holdout}。它们输出列的语义由
+    # **训练时**的编码决定，所以标签必须按 checkpoint 自存的 subspace 重建，
+    # 而不是运行时常量。原先用运行时常量 → 09-11 产出的
+    # results/deployment_loco_validation.csv 全表污染：该 CSV 的 `label_map`
+    # 字段自己就写着 NEW 编码，而 checkpoint 自存的是 OLD（mtime 09-08）。
+    # 参见 results/_LOCO_CONTAMINATION_NOTICE.md。
+    #
+    # D2 修复（2026-09-17 对抗审查）：原实现把折级的 num_classes=4 硬套到每个
+    # 源 checkpoint 上，于是 5 类 checkpoint（ptbxl_chapman 等，本来就没有
+    # `subspace` 字段）被误判成"未记录 subspace"而 raise，整折变 FATAL。
+    # 现改为：
+    #   * 按**该 checkpoint 自己的** subspace 长度判断它对本折有无发言权；
+    #   * 缺 provenance → 记入 degraded，**不静默放行**；
+    #   * 与运行时不一致 → 采用 checkpoint 的（自愈）并打印告警；
+    #   * 两个源给出的编码互相矛盾 → 跳过该折（无法同时满足）。
+    from src.utils.encoding_guard import load_checkpoint_subspace
+
+    def _stored_of(src_name):
+        return load_checkpoint_subspace(
+            _ckpt_path_for_pair(src_name, holdout, args.arch, seed,
+                                args.save_dir).parent)
+
+    resolved, degraded, seen = None, [], {}
+    for _s in sources:
+        _stored = _stored_of(_s)
+        seen[_s] = _stored
+        if _stored is None:
+            degraded.append(f"{_s}:无 provenance")
+            continue
+        if len(_stored) != num_classes:
+            continue          # 类别数与折不同（如 5 类 ckpt 用于 4 类折）→ 无发言权
+        if resolved is None:
+            resolved = _stored
+        elif tuple(resolved) != tuple(_stored):
+            return [_skip_record(
+                fold, seed, num_classes,
+                "fatal: 源域 checkpoint 自存编码互相矛盾，无法同时满足："
+                + "; ".join(f"{k}={v}" for k, v in seen.items()))]
+
     if num_classes == 4:
-        for _s in sources:
-            _run_dir = _ckpt_path_for_pair(
-                _s, holdout, args.arch, seed, args.save_dir).parent
-            checkpoint_subspace(_run_dir, num_classes, subspace)
+        if resolved is None:
+            return [_skip_record(
+                fold, seed, num_classes,
+                "fatal: 4 类折但无任何源 checkpoint 提供可用 provenance"
+                f"（{'; '.join(degraded) or '全部为 5 类'}），"
+                "拒绝在无 provenance 时重算")]
+        subspace = resolved
+        if (runtime_subspace is not None
+                and tuple(subspace) != tuple(runtime_subspace)):
+            print(f"  [编码护栏·自愈] 运行时 SUBSPACE_CPSC="
+                  f"{tuple(runtime_subspace)} ≠ checkpoint 自存 "
+                  f"{tuple(subspace)} → 采用 checkpoint 的编码重建标签")
+    else:
+        subspace = None
 
     label_map = ({c: i for i, c in enumerate(subspace)} if subspace
                  else {c: i for i, c in enumerate(SUPERCLASSES)})
