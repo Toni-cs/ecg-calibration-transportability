@@ -39,6 +39,7 @@ sys.path.insert(0, str(_PROJECT_ROOT))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from src.models.ecg_classifier import ECGClassifier  # noqa: E402
+from src.models.mamba_chunked import enable_chunked_scan  # noqa: E402
 from src.utils.calibration import benefit_inference, smooth_ece, smooth_ece_gpu  # noqa: E402
 from src.utils.calibration_methods import CALIBRATION_METHODS  # noqa: E402
 from train import (  # noqa: E402
@@ -111,6 +112,8 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
     model = ECGClassifier(in_channels=12, d_model=args.d_model,
                           n_layers=args.n_layers, num_classes=num_classes,
                           dropout=0.1, backbone_type=args.arch).to(device)
+    if getattr(args, "mamba_chunk", 0) > 0:
+        enable_chunked_scan(model, chunk=args.mamba_chunk, verbose=True)
     run_dir = Path(args.save_dir) / f"{source_name}_{target_name}" / \
         args.arch / f"seed{seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -141,6 +144,8 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
             model = ECGClassifier(in_channels=12, d_model=inferred_d_model,
                                   n_layers=inferred_n_layers, num_classes=num_classes,
                                   dropout=0.1, backbone_type=args.arch).to(device)
+            if getattr(args, "mamba_chunk", 0) > 0:
+                enable_chunked_scan(model, chunk=args.mamba_chunk, verbose=True)
         try:
             model.load_state_dict(sd)
         except RuntimeError as e:
@@ -322,6 +327,11 @@ def main():
     ap.add_argument("--d-model", "--d_model", dest="d_model",
                     type=int, default=64, help="Hidden dimension（--d-model/--d_model 均可）")
     ap.add_argument("--n-layers", type=int, default=2)
+    ap.add_argument("--mamba-chunk", type=int, default=0,
+                    help="mamba 骨干的 SSM 分块长度（0=不分块，用 mambapy 原版 pscan）。"
+                         "L=5000/B=16 时原版峰值 19.7 GB（靠 WDDM 换页，18 s/步）；"
+                         "chunk=500 降到 5.2 GB、1.4 s/步，且数值在 fp32 舍入内等价"
+                         "（chunk==L 时逐位相同）。详见 src/models/mamba_chunked.py")
     ap.add_argument("--lr", type=float, default=1e-3)
     ap.add_argument("--bootstrap", type=int, default=10000,
                     help="预注册B=10,000（默认）；冒烟可加 --bootstrap 200")
