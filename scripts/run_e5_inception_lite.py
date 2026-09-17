@@ -97,6 +97,7 @@ from train import (  # noqa: E402
     build_cpsc_datasets,
 )
 from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES  # noqa: E402
+from src.utils.encoding_guard import checkpoint_subspace  # noqa: E402
 
 
 # ===========================================================================
@@ -393,6 +394,9 @@ def train_single(
     """
     set_seed(seed)
     num_classes = DATASET_NUM_CLASSES[dataset]
+    # 此处是**全新训练**：标签与模型在同一套编码下产生，不存在错位，故直接用
+    # 运行时编码即可（无需编码护栏）。加载既有 checkpoint 的两处
+    # （load_existing / migration_eval）已加护栏。
     subspace = SUBSPACE_CPSC if num_classes == 4 else None
 
     arch_display = arch_override if arch_override else ARCH_NAME
@@ -533,7 +537,6 @@ def load_and_evaluate_single(
     """
     set_seed(seed)
     num_classes = DATASET_NUM_CLASSES[dataset]
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
 
     print(f"\n{'='*60}")
     print(f"[加载] {dataset} seed={seed} arch={ARCH_NAME} n_filters={n_filters}")
@@ -545,6 +548,12 @@ def load_and_evaluate_single(
     if not ckpt_path.exists():
         print(f"[SKIP] checkpoint 不存在: {ckpt_path}")
         return None, {"error": f"checkpoint not found: {ckpt_path}", "skipped": True}
+
+    # 编码护栏（2026-09-17）：加载**既有** checkpoint → 标签必须按它自存的编码
+    # 重建，而不是运行时常量。参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    subspace = checkpoint_subspace(
+        run_dir, num_classes,
+        SUBSPACE_CPSC if num_classes == 4 else None)
 
     # 构建数据
     try:
@@ -632,7 +641,12 @@ def eval_transfer_pair(
     cal_labels = cal_eval["labels"]
 
     num_classes = min(DATASET_NUM_CLASSES[source], DATASET_NUM_CLASSES[target])
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    # 编码护栏（2026-09-17）：源模型来自既有的 source checkpoint，
+    # 目标标签必须按该 checkpoint 自存的编码重建。
+    subspace = checkpoint_subspace(
+        Path(args.save_dir) / source / ARCH_NAME / f"seed{seed}",
+        num_classes,
+        SUBSPACE_CPSC if num_classes == 4 else None)
 
     print(f"\n[迁移] {source}→{target} seed={seed}")
     try:

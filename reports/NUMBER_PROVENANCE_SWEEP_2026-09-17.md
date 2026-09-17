@@ -188,3 +188,184 @@ subspace = SUBSPACE_CPSC if num_classes == 4 else None
 4. **给每个被引数字建立"来源 + 编码"登记**，纳入投稿前检查单。
 5. 复核 `results/deployment_loco_validation.csv`（**09-11**，窗口内，1.08 MB，
    本轮未判定）。
+
+---
+
+# 第二轮（同日续）：根因扩散面、补充材料包、判别力
+
+第一轮把根因定位到 `eval_l2_shift.py` 一处。第二轮发现**这不是一处，是十处**，
+并顺带查清了两个待查项、补充材料包的整包状态、以及一个**论文数值被低估**的问题。
+
+## 8. 根因是「同一句代码在 7 个脚本里重复 10 次」
+
+全仓扫描 `subspace = SUBSPACE_CPSC if num_classes == 4 else None`：
+
+| 脚本 | 行 | 是否复用既有 checkpoint | 判定 |
+|---|---|---|---|
+| `eval_transfer.py` | 102 | 是（`--load-model` 分支） | ❌ 缺陷（**万恶之源**，40 个含 CPSC 的 cell 都经此产出） |
+| `run_e1a_l2_shift_full.py` | 335 | 是 | ❌ 缺陷（两张 `l2_shift_full_*` 的生产者） |
+| `run_e1b_loco_validation.py` | 191 | 是 | ❌ 缺陷 |
+| `run_e2_ablation_discrimination.py` | 394 | 是 | ❌ 缺陷 |
+| `run_e3_brier_dcr_ncv.py` | 528 | 是 | ❌ 缺陷 |
+| `run_e4_temperature_analysis.py` | 267 | 是 | ❌ 缺陷（3 份温度 CSV 的生产者） |
+| `run_e5_inception_lite.py` | 396 | 否（全新训练） | ✅ 无风险（自洽） |
+| `run_e5_inception_lite.py` | 536 | 是 | ❌ 缺陷 |
+| `run_e5_inception_lite.py` | 635 | 是（源模型来自 536） | ❌ 缺陷 |
+| `run_e6_reliability_diagrams.py` | 538 | 是 | ❌ 缺陷（70 张可靠性图的生产者） |
+
+**结论**：这不是"某个脚本写错了"，而是**同一个口径缺陷被复制了 10 份**。
+只要 `SUBSPACE_CPSC` 改动而模型未重训，任何一处被调用都会静默产出污染值 ——
+这正是"六个数字各自独立出错"的机制。
+
+### 8.1 修复方式：抽成唯一实现
+
+新增 `src/utils/encoding_guard.py`（唯一实现），10 处全部改为调用它：
+
+* `checkpoint_subspace(run_dir, num_classes, runtime_subspace)`
+  —— 以 checkpoint 自存的 `transfer_result.json:subspace` 为**唯一权威**，
+  与运行时不一致即 `raise`；`num_classes != 4` 直接返回 `None`。
+* `assert_cache_encoding(...)` —— 缓存必须带 `label_encoding` 戳，无戳即拒绝。
+* `assert_encoding_record(...)` —— 下游消费者校验 JSON 记录的编码戳。
+* `encoding_stamp(num_classes, subspace)` —— 规范化编码戳字符串。
+
+`step2_predictability.py` 作为**下游消费者**，现在要求 `l2_shift_results.json`
+带编码戳，否则 `raise`。
+
+### 8.2 护栏实测
+
+| 测试 | 结果 |
+|---|---|
+| 全部 63 个 checkpoint 目录过 `checkpoint_subspace` | **62 PASS / 1 RAISE**（唯一 RAISE = 正在跑的 `chapman_cpsc/mamba/seed42`，无 `transfer_result.json` ⇒ 正确地拒绝） |
+| `run_e1a --dry-run` | **60/60 `[pending]`**（修复前会因形式检查通过而全部 `[complete]`，静默复用污染 JSON） |
+| `step2_predictability.py` 直接运行 | `raise`（拒绝 09-10~09-12 那批无戳 JSON） |
+| 无戳缓存 / 戳不符缓存 / 无戳 JSON 记录 | 三种均正确 `raise`；`allow_unstamped=True` 可显式放行 |
+| 真实缓存 `chapman_cpsc_resnet1d_seed42.npz` | 正确 `raise` |
+
+**关键设计**：`is_checkpoint_complete()` 新增判据 0（编码戳匹配），
+所以**断点续传不再复用污染文件** —— 这是让护栏真正生效的一环，
+否则形式检查（13 档齐全、字段完整）会放过全部污染 JSON。
+
+## 9. 第一轮两个待查项的裁决
+
+### 9.1 `discrimination_metrics_60exp.csv`（09-10 12:45）→ ❌ 污染
+
+输入是 `checkpoints/e2_probs_cache/*.npz`，**全部 62 份 mtime = 09-10 12:30~12:40**
+（窗口内），probs=OLD / labels=NEW。逐位实证：
+
+```
+chapman_cpsc / inceptiontime / seed42 / split=cal / variant=raw
+  缓存原样（NEW 标签）AUROC = 0.641959   ← 与 CSV 所载 0.641959 逐位相同（差 0.000000）
+  swap13（OLD 标签）  AUROC = 0.861000   ← 正确值，高 0.219
+```
+
+逐方向 OOD AUROC 均值：**0.629–0.792 → 0.735–0.843**
+（chapman→cpsc 0.674→0.755；cpsc→chapman 0.631→0.825；cpsc→ptbxl 0.642→0.804；
+ptbxl→cpsc 0.629→0.843；两个 5 类方向逐位不变）。
+
+**论文暴露**：L1840 "AUROC ranges from 0.629 (CPSC→Chapman) to 0.795"、
+L1974 "OOD AUROC means range 0.629--0.792" —— 后者**精确复现污染表**。
+原句的方向归属亦有误（0.629 实为 PTB-XL→CPSC）。
+
+**已修**：生成修正表 `results/discrimination_metrics_60exp.OLD_ENCODING.csv`
+（`scripts/recompute_discrimination_old_encoding.py`，124 行 = 62 cache × {cal,test}，
+仅 `variant=raw`；40 个 4 类 cache 重编码、22 个 5 类 cache 逐位不变），
+论文 L1840/L1974 已改为 0.735–0.843 并改引修正表。
+
+**注**：`mean ΔAUROC_TS−raw ≈ −0.001` 的声明**仍然有效**（温度缩放是逐样本单调变换，
+与标签编码无关）；"AUROC 对标签置换不变"这一直觉**是错的**（逐类 OvR 依赖列—类对应）。
+
+### 9.2 `c1_brier_reliability.csv` / `c1_dcr_ncv*.csv`（09-10 12:29）→ ❌ 冒烟 + 窗口内
+
+两个独立缺陷：
+
+1. **规模**：输入 `checkpoints/transfer/**/e3_probs.npz`，**全部 60 份 mtime = 09-10 12:24**
+   （窗口内），且每个 split **只有 n=20 条**（`cal/id/ood` 全为 20）。
+   生产者 `--limit` 默认 `None`，该批显然用了很小的 `--limit`（≤83）。
+   `c1_brier_reliability.csv` 亦自报 `n_id=n_ood=20`。
+2. **编码**：同 9.1 的错位模式（运行时 NEW 标签配 OLD checkpoint）。
+
+**论文暴露**（逐位来自 `c1_dcr_ncv_summary.csv`）：
+
+| 数值 | 次数 |
+|---|---|
+| OOD NCV `+0.008125` | 3 |
+| ID NCV `−0.006292` | 1 |
+| DCR OOD `+0.016667` | 1 |
+
+**另发现一处标错名**：论文 L1909 把 C1 称作 "Brier reliability main claim"，
+但 §intro 对 C1 的定义是 "Primary OOD benefit"（终点 `ΔECE_OOD`，51/60 正），
+而 `c1_brier_reliability.csv` 自身给出的是 **44/60 为正**。
+审稿人对照补充材料时会发现 51/60 ≠ 44/60。**已改为按 C1 的真实定义表述。**
+
+通告：`results/_C1_DCR_NCV_SMOKE_NOTICE.md`。
+
+## 10. 新发现：补充材料包整包落在窗口内
+
+`paper/submission/supplementary/`（打包 **09-13 20:06**）共 159 个文件，
+**80 个 mtime 落在窗口内**：
+
+* **16 张 S2 结果表** —— 其中 6 个已确认污染（`ablation_ts_components.csv`、
+  两张 `l2_shift_full_*`、温度族 3 件）、3 个本轮确认（`discrimination_metrics_60exp.csv`、
+  `c1_brier_reliability*`、`c1_dcr_ncv*`）、1 个待裁决
+  （`deployment_loco_validation.csv`，09-11，n_target=2120 **全量**但由带缺陷脚本产出）、
+  2 个冒烟/空占位（`deployment_loco_validation_smoke.csv` n=20、
+  `c3_inceptiontime_lite_30exp.csv` **0 数据行**）。
+* **70 张 S4 可靠性图 PDF**（09-12）—— 生产者 `run_e6_reliability_diagrams.py`
+  带同一缺陷 ⇒ 4 类方向的曲线画在错位标签上。
+
+**`SHA256SUMS.txt`（09-13）把这些污染值钉进了哈希清单。**
+
+**好消息**：`S3_per_experiment/**/transfer_result.json` 共 60 份
+**mtime 全部 = 09-08**（窗口前），其自存的 `subspace` 是窗口前的权威编码记录，
+也是本轮全部裁决的立论基础。`EXPERIMENT_PROTOCOL.md` 虽 mtime 09-09，
+但**哈希与 manifest 钉住的 `0e8afa92…` 逐位一致**（内容未变）。
+
+通告：`results/_SUPPLEMENTARY_WINDOW_NOTICE.md`。
+
+## 11. 新发现：`osf_archive_manifest.json` 漂移 5 处
+
+manifest 钉住 14 个文件，**5 个已漂移**（4 个是本轮/上轮有意修改，1 个是 09-16 的编码回退）：
+
+| 文件 | pinned | now |
+|---|---|---|
+| `paper/main_bspc.tex` | `ae24f68ee172` | `6ea10b785d24` |
+| `scripts/eval_transfer.py` | `06860d8b9abd` | `24178dd2da1a` |
+| `scripts/eval_l2_shift.py` | `369d8d959d72` | `603e48d1cf55` |
+| `scripts/step2_predictability.py` | `ace6a52c32bc` | `62a811ec02c4` |
+| `src/data/mapping.py` | `649bde9e4e13` | `df56ae645fb5` |
+
+仍应**加 `post_manifest_corrections` 字段记录"清单后改动"**，而非静默重生成。
+
+## 12. 第二轮已执行的修复
+
+| 动作 | 产物 |
+|---|---|
+| 新增共享编码护栏 | `src/utils/encoding_guard.py` |
+| 10 处缺陷点全部接入护栏 | `eval_transfer.py` / `eval_l2_shift.py` / `run_e1a_l2_shift_full.py` / `run_e1b_loco_validation.py` / `run_e2_ablation_discrimination.py` / `run_e3_brier_dcr_ncv.py` / `run_e4_temperature_analysis.py` / `run_e5_inception_lite.py`(×2) / `run_e6_reliability_diagrams.py` |
+| 断点续传加编码戳判据 | `run_e1a_l2_shift_full.py::is_checkpoint_complete`（判据 0） |
+| 写 JSON 时落编码戳 | `eval_transfer.py`、`eval_l2_shift.py`、`run_e1a_l2_shift_full.py` |
+| 缓存读写两侧加戳 | `run_e2_ablation_discrimination.py`（+ `--allow-unstamped-cache`）、`run_e3_brier_dcr_ncv.py` |
+| 下游消费者要求戳 | `step2_predictability.py` |
+| 判别表 OLD 编码修正版 | `results/discrimination_metrics_60exp.OLD_ENCODING.csv` + `scripts/recompute_discrimination_old_encoding.py` |
+| 论文 AUROC 范围修正 | `paper/main_bspc.tex` L1840、L1974（0.629–0.792 → 0.735–0.843） |
+| 论文 C1 标错名修正 | `paper/main_bspc.tex` L1909 |
+| 三份新通告 | `_DISCRIMINATION_CONTAMINATION_NOTICE.md`、`_C1_DCR_NCV_SMOKE_NOTICE.md`、`_SUPPLEMENTARY_WINDOW_NOTICE.md` |
+
+编译 **65 页，0 undefined refs**。
+
+## 13. 第二轮后的待办（按优先级）
+
+1. **重跑 L2 网格**（60 cell × 13 档 × 8 方法，需 GPU）→ 重生
+   `l2_shift_results.json`、两张 `l2_shift_full_*`、`predictability_3arch.csv`，
+   并重算论文所有引用处（含摘要 `0.104`、安全率 `0.0064`）。
+   *护栏上线后重跑是安全的：旧 JSON 无戳，`is_checkpoint_complete` 会判为不完整。*
+2. **重跑 E3（全量 n）** → 替换 OOD/ID NCV 与 DCR 三个数值。
+3. **重跑 E2/ablation** → 用 `--no-cache` 清掉 09-10 那批无戳缓存，
+   重生 `ablation_ts_components.csv` 与 `discrimination_metrics_60exp.csv` 全 variant。
+4. **裁决 `deployment_loco_validation.csv`**（09-11，全量，带缺陷脚本）。
+5. **重跑 E4 温度族 + E6 可靠性图**（各 3 件 / 70 张）。
+6. **重新组装补充材料包并重签 `SHA256SUMS.txt`**；移除
+   `c3_inceptiontime_lite_30exp.csv`（空）与 `deployment_loco_validation_smoke.csv`（n=20）。
+7. **`osf_archive_manifest.json` 加 `post_manifest_corrections`**（现有 5 处漂移）。
+8. 投稿前检查单：**每个被引数字登记"来源文件 + 编码戳 + 规模(n)"三项**。
+

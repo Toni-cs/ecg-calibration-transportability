@@ -17,10 +17,17 @@
 from __future__ import annotations
 import csv
 import json
+import sys
 from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from src.data.mapping import SUBSPACE_CPSC  # noqa: E402
+from src.utils.encoding_guard import assert_encoding_record  # noqa: E402
+
+DATASET_NUM_CLASSES = {"ptbxl": 5, "chapman": 5, "cpsc": 4}
 
 PAIRS = [
     "ptbxl_chapman", "ptbxl_cpsc",
@@ -41,15 +48,28 @@ def load_l2_data():
     """加载多架构 L2 移位结果。
 
     返回 list[dict]，每行含 arch, pair, seed, shift, method, delta_ece, 各特征。
+
+    ⚠️ 编码护栏（2026-09-17）：`l2_shift_results.json` 必须携带顶层
+    `label_encoding` 戳，且与当前运行时口径一致。缺失或不符一律 raise。
+    理由：09-10~09-12 产出的那 60 份 JSON 是在**新编码**下算出的污染值
+    （MI↔CD 互换），它们同样满足"档位齐全、字段完整"的形式检查 —— 只靠形式
+    检查无法识别，必须靠编码戳。参见
+    results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
     """
     data = []
     for arch in ARCHS:
         for pair in PAIRS:
+            src, tgt = pair.split("_")
+            num_classes = min(DATASET_NUM_CLASSES[src], DATASET_NUM_CLASSES[tgt])
+            subspace = SUBSPACE_CPSC if num_classes == 4 else None
             for seed in SEEDS:
                 p = ROOT / "checkpoints/transfer" / pair / arch / f"seed{seed}" / "l2_shift_results.json"
                 if not p.exists():
                     continue
-                d = json.loads(p.read_text(encoding="utf-8"))[f"seed{seed}"]
+                whole = json.loads(p.read_text(encoding="utf-8"))
+                assert_encoding_record(whole, num_classes, subspace,
+                                       where=str(p.relative_to(ROOT)))
+                d = whole[f"seed{seed}"]
                 for shift in SHIFTS:
                     if shift not in d:
                         continue

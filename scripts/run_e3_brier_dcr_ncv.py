@@ -482,10 +482,26 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
     cache_path = ckpt_dir / "e3_probs.npz"
     ckpt_path = ckpt_dir / "best_model.pt"
 
+    # --- 编码护栏（必须在读缓存之前） ---
+    # e3_probs.npz 里存的是「某套编码下的标签」，所以要先确定该用哪套。
+    # 全部 60 份 e3_probs.npz 的 mtime = 2026-09-10 12:24，落在污染窗口内，
+    # 而 results/c1_brier_reliability.csv（12:29）正是从它们算出来的。
+    # 参见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    from src.data.mapping import SUBSPACE_CPSC
+    from src.utils.encoding_guard import (
+        assert_cache_encoding, checkpoint_subspace, encoding_stamp,
+    )
+    K = get_num_classes(source, target)
+    runtime_subspace = SUBSPACE_CPSC if K == 4 else None
+    subspace = checkpoint_subspace(ckpt_dir, K, runtime_subspace)
+    encoding = encoding_stamp(K, subspace)
+
     # --- 尝试从缓存加载 ---
     if not regen and cache_path.exists():
         try:
             data = np.load(cache_path, allow_pickle=False)
+            assert_cache_encoding(cache_path, data, K, subspace,
+                                  allow_unstamped=False)
             return {
                 'cal_probs': data['cal_probs'],
                 'cal_labels': data['cal_labels'],
@@ -523,9 +539,6 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
     except ImportError as e:
         warnings.warn(f"无法导入训练依赖: {e}")
         return None
-
-    K = get_num_classes(source, target)
-    subspace = SUBSPACE_CPSC if K == 4 else None
 
     builders = {
         "ptbxl": build_ptbxl_datasets,
@@ -613,6 +626,8 @@ def load_or_compute_probs(pair: str, arch: str, seed: int,
             id_probs=id_probs, id_labels=id_labels,
             ood_probs=ood_probs, ood_labels=ood_labels,
             T=np.array([T]), num_classes=np.array([K]),
+            # 编码戳：无此戳的缓存一律被 assert_cache_encoding 拒绝
+            label_encoding=np.array(encoding),
         )
     except Exception as e:
         warnings.warn(f"缓存保存失败: {e}")

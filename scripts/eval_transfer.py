@@ -47,6 +47,7 @@ from train import (  # noqa: E402
     build_ptbxl_datasets, build_chapman_datasets, build_cpsc_datasets,
 )
 from src.data.mapping import SUBSPACE_CPSC, SUPERCLASSES  # noqa: E402
+from src.utils.encoding_guard import checkpoint_subspace, encoding_stamp  # noqa: E402
 
 DATASET_BUILDERS = {
     "ptbxl": build_ptbxl_datasets,
@@ -99,7 +100,23 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
     # ---------- num_classes / subspace 推断（协议§2：涉及CPSC→4类对称降级） ----------
     num_classes = min(DATASET_NUM_CLASSES[source_name],
                       DATASET_NUM_CLASSES[target_name])
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    runtime_subspace = SUBSPACE_CPSC if num_classes == 4 else None
+
+    run_dir = Path(args.save_dir) / f"{source_name}_{target_name}" / \
+        args.arch / f"seed{seed}"
+    run_dir.mkdir(parents=True, exist_ok=True)
+    ckpt_path = run_dir / "best_model.pt"
+    reusing_ckpt = bool(args.load_model and ckpt_path.exists())
+
+    # ---------- 编码护栏 ----------
+    # 复用既有 checkpoint 时，标签必须按**该 checkpoint 自存的**编码重建；
+    # 若它自存的 subspace ≠ 运行时 SUBSPACE_CPSC 则 raise（而不是静默算出污染值）。
+    # 这正是 2026-09-10 那批产物被污染的入口：checkpoint 是 09-08 的旧编码，
+    # 而常量在 09-09 被改成新编码后未重训模型。详见
+    # results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+    # 全新训练则不存在错位（标签与模型在同一套编码下产生），直接用运行时编码。
+    subspace = (checkpoint_subspace(run_dir, num_classes, runtime_subspace)
+                if reusing_ckpt else runtime_subspace)
 
     # ---------- 源模型训练（train/val/cal/test） ----------
     src_ds, src_clusters = _build(source_name, source_dir, seed, args.limit,
@@ -114,13 +131,9 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
                           dropout=0.1, backbone_type=args.arch).to(device)
     if getattr(args, "mamba_chunk", 0) > 0:
         enable_chunked_scan(model, chunk=args.mamba_chunk, verbose=True)
-    run_dir = Path(args.save_dir) / f"{source_name}_{target_name}" / \
-        args.arch / f"seed{seed}"
-    run_dir.mkdir(parents=True, exist_ok=True)
     cfg = {"epochs": args.epochs, "lr": args.lr, "lr_min": 1e-6,
            "weight_decay": 1e-4, "patience": 10, "save_dir": str(run_dir)}
-    ckpt_path = run_dir / "best_model.pt"
-    if args.load_model and ckpt_path.exists():
+    if reusing_ckpt:
         ckpt = torch.load(ckpt_path, weights_only=False, map_location=device)
         ckpt_nc = ckpt.get("num_classes")
         if ckpt_nc is not None and ckpt_nc != num_classes:
@@ -183,6 +196,9 @@ def run_pair(args, source_name, source_dir, target_name, target_dir,
         "subspace": list(subspace) if subspace else None,
         "label_map": {c: i for i, c in enumerate(subspace)} if subspace
                      else {c: i for i, c in enumerate(SUPERCLASSES)},
+        # 编码戳：供下游（encoding_guard.assert_encoding_record）证明本结果的标签编码。
+        "label_encoding": encoding_stamp(num_classes, subspace),
+        "reused_checkpoint": bool(reusing_ckpt),
         "n_id": int(len(id_probs)), "n_ood": int(len(ood_probs)),
         "id_acc": float((id_probs.argmax(1) == id_labels).mean()),
         "ood_acc": float((ood_probs.argmax(1) == ood_labels).mean()),

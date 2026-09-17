@@ -25,6 +25,21 @@ DATASET_BUILDERS = {"ptbxl": build_ptbxl_datasets, "chapman": build_chapman_data
 DATASET_NUM_CLASSES = {"ptbxl": 5, "chapman": 5, "cpsc": 4}
 
 
+# 编码护栏已抽到共享模块（2026-09-17）：同一缺陷在 7 个脚本里重复了 10 次，
+# 必须只有一份实现，否则修了这里、漏了那里。见 src/utils/encoding_guard.py。
+# 本脚本原先只用运行时的 `SUBSPACE_CPSC` 重建标签，于是当该常量在两次改动之间
+# 变化、而 checkpoint 是旧编码训练的时候，标签与 probs 错位（MI↔CD 互换，
+# 占 38.3% 样本），全部指标被静默污染。2026-09-09~09-16 真实发生过一次：
+# 本脚本产出的 60 个 `l2_shift_results.json`（09-10~09-13）与两张
+# `l2_shift_full_*` 表（09-12）全部中招，经验判定见
+# `scripts/verify_l2_shift_encoding.py` 与
+# `results/_L2_SHIFT_CONTAMINATION_NOTICE.md`。
+from src.utils.encoding_guard import (  # noqa: E402
+    checkpoint_subspace,
+    encoding_stamp,
+)
+
+
 def _maxprob(p):
     return np.asarray(p).max(axis=1)
 
@@ -82,7 +97,8 @@ def main():
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     num_classes = min(DATASET_NUM_CLASSES[args.source], DATASET_NUM_CLASSES[args.target])
-    subspace = SUBSPACE_CPSC if num_classes == 4 else None
+    # 注：这里**故意不**预先用运行时常量算 subspace —— 它必须等读到 checkpoint
+    # 之后由编码护栏（见下方循环内的 checkpoint_subspace 调用）确定。
     all_shifts = get_l2_shifts()
     if args.shifts:
         shifts = [s for s in all_shifts if s["name"] in args.shifts]
@@ -119,6 +135,16 @@ def main():
                               num_classes=num_classes, dropout=0.1, backbone_type=args.arch).to(device)
         model.load_state_dict(sd)
         print(f"Loaded {ckpt_path.name} (epoch {ckpt.get('epoch','?')}, d_model={inferred_d_model}, n_layers={inferred_n_layers})")
+
+        # 编码护栏：以 checkpoint 自存的 subspace 为准，且必须与运行时一致。
+        # 见 checkpoint_subspace() 的 docstring 与
+        # results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+        subspace = checkpoint_subspace(
+            run_dir, num_classes,
+            SUBSPACE_CPSC if num_classes == 4 else None)
+        # 编码戳：写进 JSON 顶层，供下游（step2_predictability.py）与断点续传
+        # （is_checkpoint_complete）证明/校验本文件是在哪套标签编码下算出的。
+        encoding = encoding_stamp(num_classes, subspace)
 
         src_builder = DATASET_BUILDERS[args.source]
         tgt_builder = DATASET_BUILDERS[args.target]
@@ -197,6 +223,7 @@ def main():
             existing[sk].update(seed_results)
             existing[sk]["__seed_strategy__"] = SEED_STRATEGY_VERSION  # 续传也写入
             all_results = existing
+        all_results["label_encoding"] = encoding
         out_path.write_text(json.dumps(all_results, indent=2, ensure_ascii=False), encoding="utf-8")
         print(f"Saved to {out_path}")
 
