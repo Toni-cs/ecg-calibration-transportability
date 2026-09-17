@@ -1199,25 +1199,47 @@ $\Delta\text{ECE}_{\text{OOD}}$ is an artifact of SmoothECE's
 sensitivity to temperature scaling $T$ under perfect calibration
 ($\text{ECE}_{\text{raw}} = 0$, observed $\Delta\text{ECE}$ purely
 metric noise). For perfectly calibrated predictions
-($T_{\text{true}}=1$), we apply $T \in \{1.0, 1.25, 1.5\}$ and compute
-$\Delta\text{ECE}_{\text{noise}} = \text{SmoothECE}(\text{TS}) - \text{SmoothECE}(\text{raw})$
-across three confidence distributions (uniform, normal-skewed,
-bimodal) at $n=2{,}000$.
+($T_{\text{true}}=1$) we apply $T$ and compute
+$\Delta\text{ECE}_{\text{noise}} = \text{SmoothECE}(\text{TS}) - \text{SmoothECE}(\text{raw})$.
 
-The noise floor grows with $T$ and is distribution-dependent: $T=1.0$
-gives $\Delta\text{ECE}_{\text{noise}} = 0$ (exact cancellation),
-$T=1.25$ gives $+0.014$--$+0.035$, $T=1.5$ gives $+0.030$--$+0.061$,
-$T=3.0$ gives $+0.095$--$+0.136$, and $T=4.5$ gives
-$+0.126$--$+0.164$. Observed raw ECE across the 62 raw-stage cells of the
+The floor is strongly \emph{distribution-dependent}: for flat or wide
+confidence distributions it is essentially zero, or slightly negative at
+moderate $T$. We therefore do not evaluate it on synthetic
+distributions. Instead we use the empirical top-label confidence
+distribution of each of the 60 main-grid cells
+(\texttt{checkpoints/e2\_probs\_cache/*.npz}), relabel each cell as
+perfectly calibrated by resampling $y \sim \mathrm{Bernoulli}(c)$ at its
+own confidence $c$ (three draws per cell), and report the band across
+cells. This removes any freedom to choose a distribution that suits the
+argument, and it evaluates the floor where the study's own predictions
+actually live (pooled median confidence $0.79$, with $30\%$ of samples
+above $0.9$). The synthetic three-distribution sweep (uniform,
+normal-skewed, bimodal at $n=2{,}000$) is retained as a sensitivity
+analysis.
+
+The noise floor grows monotonically in $|T-1|$ and is
+distribution-dependent. Evaluated on the 60 main-grid cells --- median
+across cells, with the cross-cell range in parentheses --- $T=1.0$ gives
+exactly $0$ (exact cancellation); $T=1.25$ gives $+0.0138$
+($-0.0115$ to $+0.0294$); $T=1.5$ gives $+0.0389$ ($-0.0047$ to
+$+0.0597$); $T=3.0$ gives $+0.1260$ ($+0.0404$ to $+0.1605$); and
+$T=4.5$ gives $+0.1582$ ($+0.0605$ to $+0.2129$). The synthetic sweep
+agrees in magnitude for high-confidence distributions ($T=1.5$:
+$+0.039$ to $+0.055$) but not in sign for flat ones ($T=1.25$:
+$-0.009$ for uniform), which is why the empirical distributions are used.
+The floor is positive in $100\%$ of cells for $T \leq 0.9$ and
+$T \geq 2.0$, and in $90\%$ ($T=1.25$) to $97\%$ ($T=1.5$) of cells in
+between. Observed raw ECE across the 62 raw-stage cells of the
 TS-component ablation (\texttt{results/ablation\_ts\_components.csv},
 \texttt{stage=raw}) ranges $0.036$ to $0.357$ (mean $0.211$), i.e.\
 $2$--$21\times$ the raw ECE
 under perfect calibration ($\approx 0.017$); the nine counter-examples
 also show raw ECE well above the floor ($0.065$--$0.321$ vs.\
-$\approx 0.017$), so they are not perfect-calibration cases; their
-$\Delta\text{ECE}$ magnitudes ($\leq 0.017$) are nevertheless of the same
-order as the floor, so their signs are treated as exploratory rather than
-confirmatory.
+$\approx 0.017$), so they are not perfect-calibration cases. At their own
+fitted temperatures ($T \in [0.93, 1.00]$) the floor is $\leq 0.013$,
+comparable to their $|\Delta\text{ECE}|$ ($\leq 0.017$), but its
+direction is opposite to theirs, so they are not floor artifacts; their
+common mechanism is given in Sec.~\ref{sec:noise_mechanism}.
 % [AUDIT 2026-09-17] 此处原为 "$0.036$ to $0.469$ (mean $0.273$)" 与
 % "$2$--$28\times$" 与 "($0.08$--$0.24$), confirming the negative $\Delta$ECE
 % reflects genuine TS-induced harm, not metric noise"。三个数值均取自
@@ -1240,23 +1262,35 @@ confirmatory.
 % 温度 CSV（中位 1.836、50% 的 cell $T\geq 2$）。已按修正温度重述。
 % 见 scripts/noise_floor_mechanism_test.py。
 %
-% [AUDIT 2026-09-17] 本小节的锚点表（$T=1.25\to+0.014$--$+0.035$ 等）在仓库内
-% **没有生成脚本**（从未提交），故不可从仓库复现。scripts/noise_floor_signed.py
-% 用显式三种置信分布独立重算，复现出同样的定性结构（$T=1$ 恰为 0、随 $|T-1|$
-% 单调增、恒为正）与同样的符号，但具体数值不同（原文三种分布未记录）。
-% 故新增的 §\ref{sec:noise_mechanism} **只依赖符号**（符号在所有设定下稳健），
-% 数值区间仅作指示性使用。建议投稿前重生成该表或补记录分布定义。
+% [AUDIT 2026-09-17] 本小节的锚点表原先在仓库内**没有生成脚本**（从未提交），
+% 三个下游脚本各自硬编码，无法复现、无法审计。现已由
+% scripts/noise_floor_signed.py 重生成，曲线写入 results/noise_floor_curve.csv
+% （results/ 被 gitignore，需 git add -f），下游读 CSV 而不再硬编码。
+%
+% 设计同时变更：原用三种**合成**分布（uniform / normal-skewed / bimodal）。
+% 实测发现底噪**符号依赖置信分布形状** —— uniform / normal-skewed 在
+% T=1.1~1.5 给出**负**底噪（-0.009 / -0.007），即该情形下度量噪声会把主终点
+% 推正，会直接打穿方向论证。而本研究模型的真实 top-label 置信度是高置信为主的
+% （主网格 60 格合并：中位 0.793、均值 0.752、30% 的样本 >0.9）。
+% 故主实验改用**本研究主网格 60 个 cell 的真实置信分布**（各 cell 以
+% y~Bernoulli(c) 重采样构造完美校准数据，每格 3 次），消除"挑分布凑结论"的
+% 空间；合成分布保留为敏感性分析并如实披露。新表与旧表量级一致
+% （T=1.25 中位 +0.0138 vs 旧下界 +0.014；T=3.0 中位 +0.1260 vs 旧 0.095~0.136），
+% 说明旧表本与真实置信分布相符。
+% ⚠️ cell 集合已**钉死**（排除 mamba）：BiMamba 30 格网格在跑，会不断往
+% e2_probs_cache 里加 cell，不排除则同一脚本两次运行给出不同曲线。
 The direction of the floor is what matters for the endpoint, and it is
 fixed. In the primary convention ($\Delta\text{ECE}_{\text{OOD}} =
 \text{ECE}_{\text{raw}} - \text{ECE}_{\text{post}}$) the floor inflates
 $\text{ECE}_{\text{post}}$ and therefore contributes \emph{negatively}.
-Because the identity is the minimiser of ECE under perfect calibration,
-any $T \neq 1$ raises ECE, so the floor is positive in the noise
-convention for $T<1$ as well as $T>1$, and the idealised endpoint is
-$-\text{floor}(T) \leq 0$. A purely attenuating artefact cannot generate
-the positive endpoint observed in 51/60 experiments. We test this and
-three further implications of the floor hypothesis in
-Sec.~\ref{sec:noise_mechanism}.
+The identity is the minimiser of ECE under perfect calibration, so the
+floor is positive in the noise convention on both sides of $T=1$: in
+$100\%$ of cells for $T \leq 0.9$ and $T \geq 2.0$, and in $90$--$97\%$
+of cells for $1.1 \leq T \leq 1.5$. The idealised endpoint is therefore
+$-\text{floor}(T) \leq 0$ almost everywhere, and a predominantly
+attenuating artefact cannot generate the positive endpoint observed in
+51/60 experiments. We test this and three further implications of the
+floor hypothesis in Sec.~\ref{sec:noise_mechanism}.
 
 % ============================================================================
 \subsection{Noise-floor mechanism test}
@@ -1269,8 +1303,9 @@ source-fitted temperature $T$ recovered per cell from the TS-component
 ablation under the corrected label encoding.
 
 \paragraph{(i) Direction.} The floor contributes negatively to
-$\Delta\text{ECE}_{\text{OOD}}$ for every $T \neq 1$, so the hypothesis
-predicts a systematically \emph{negative} endpoint. The observed mean is
+$\Delta\text{ECE}_{\text{OOD}}$ in $90$--$100\%$ of cells at every
+$T \neq 1$ (Sec.~\ref{sec:noise_floor}), so the hypothesis predicts a
+systematically \emph{negative} endpoint. The observed mean is
 $+0.0159$, positive in 51/60 cells.
 
 \paragraph{(ii) Sign flip with $T$.} A fixed-direction artefact cannot
@@ -1289,21 +1324,29 @@ $\Delta\text{ECE}_{\text{OOD}} = -0.0168$), the sharpest sharpening in
 the grid.
 
 \paragraph{(iii) Magnitude strata.} Under an additive floor the endpoint
-should be \emph{smaller} where the floor is larger. Splitting at
-$\text{floor}_{\text{hi}}(T) \geq$ the mean effect ($T \geq 1.115$,
-13/60 cells), the endpoint is $+0.0328$ (13/13 positive) above the split
-versus $+0.0112$ (38/47 positive) below it --- the opposite ordering.
-Since the floor attenuates, the 13 values are lower bounds on the true
-effect.
+should be \emph{smaller} where the floor is larger.
+$\text{floor}_{\text{hi}}(T)$ reaches the mean effect only for
+$T \geq 1.25$ (4/60 cells); those cells give $+0.0442$ (4/4 positive)
+against $+0.0138$ (47/56 positive) elsewhere. Restricting to the
+$T \geq 1$ branch --- 51 cells, all positive, so the sign flip of (ii)
+cannot confound the comparison --- and splitting at the median floor
+($0.0078$) gives $+0.0117$ (26/26) below and $+0.0276$ (25/25) above:
+the endpoint is \emph{larger} where the floor is larger, the opposite of
+an additive artefact. Since the floor attenuates, these values are lower
+bounds. This stratum comparison is nevertheless weaker evidence than
+(i)--(ii), because $\text{floor}_{\text{hi}}$ is monotone in $T$ on this
+side while the endpoint's growth with $T$ is partly mechanical.
 
 \paragraph{(iv) Negative control and additivity.} The independent
 ablation channel (same SmoothECE family) changes by $-0.0124$ on average
 and changes sign across cells ($-0.083$ to $+0.093$), so the metric has
-no systematic positive push. The floor ($0.014$--$0.164$) is also
-$13$--$147\times$ the median per-cell bootstrap CI width ($0.0011$); an
-additive bias of that size would swamp the signal rather than halve it,
-so the floor is not a cell-level additive offset and we do not subtract
-it per cell.
+no systematic positive push. The floor at the cells' own temperatures
+spans $0.0001$ to $0.0595$, up to $54\times$ the median per-cell
+bootstrap CI width ($0.0011$); an additive bias of that size would swamp
+the signal, yet subtracting the mid-band floor at each cell's own
+temperature leaves $+0.0140$, i.e.\ $88\%$ of the original $+0.0159$. The
+floor is therefore not a cell-level additive offset, and we do not
+subtract it per cell.
 
 \paragraph{Consistency check.} The endpoint also rises with $T$ (OLS
 slope $+0.181$, $R^2 = 0.951$ over the 60 cells). We report this but do
@@ -1312,11 +1355,12 @@ by construction, so part of this relation is mechanical. Its role here
 is that its sign is \emph{opposite} to the floor's contribution, which is
 the direction test of (i)--(ii).
 
-\emph{Caveats.} The floor is computed under idealised confidence
-distributions at $n = 2{,}000$ and is not a calibrated model of real ECE
-noise; the stratified cells in (iii) are few. The conclusion is
-exclusionary, not causal: the floor cannot account for the primary
-finding, but this does not by itself establish a causal mechanism.
+\emph{Caveats.} The floor is computed on idealised perfectly-calibrated
+relabellings of our own confidence distributions, so it is not a
+calibrated model of real ECE noise; the extreme stratum in (iii) has only
+4 cells. The conclusion is exclusionary, not causal: the floor cannot
+account for the primary finding, but this does not by itself establish a
+causal mechanism.
 
 % ============================================================================
 \subsection{Discrimination-aware calibration gate (C5)}
