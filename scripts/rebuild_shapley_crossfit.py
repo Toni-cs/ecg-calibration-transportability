@@ -3,13 +3,27 @@
 背景：论文 §real_shapley 报告了 real-data Shapley cross-fitting，但生成脚本在
 仓库与全部 git 历史中均不存在，导致该节无法端到端复现（审计判定：provenance 缺陷）。
 
-本脚本从原始 npz 重建该实验，产出可审计的结果，并明确区分三个 ΔECE 口径：
+本脚本从原始 npz 重建该实验，产出可审计的结果，并明确区分两个 ΔECE 口径：
   - delta_obs_orig : raw_ood_orig - cal_ood_orig（SmoothECE 口径，论文主终点）
-  - delta_obs      : binned-ECE 口径，随 T 膨胀 → 度量伪信号（勿用于论文结论）
   - delta_pred     : Shapley 三分量之和（decompose_benefit 的 delta_total）
+
+⚠️ 已知口径缺陷（2026-09-18 定位，尚未修）
+------------------------------------------
+本脚本目前调用 `decompose_benefit(..., slope=1.0, intercept=0.0)`。`inject_transform`
+在 (1.0, 0.0) 下是**恒等变换**，所以 `shap_s` 与 `shap_b` 在结构上恒为 0，
+`delta_pred` 退化为「仅先验项 `shap_pi`」。**该 delta_pred 不是三分量分解，
+不得用作论文数字。** 正确做法是传入非平凡的 (slope, intercept)（参见
+`scripts/validate_decomposition.py:255` 与 `tests/test_decomposition.py` 的用法），
+但真实数据上该取什么值属研究设计决策，见 `REAL_SHAPLEY_AUDIT_VERDICT` 的重写清单。
+
+`delta_obs_orig` 列**不受**该缺陷影响：它在干净缓存上逐格复现主终点
+`results/robustness_validation_5seeds.csv`（60/60，max|Δ| = 4.7e-07，即主表
+6 位小数的舍入界），是一条独立的交叉验证通路。
 
 用法：
   /c/python/python.exe -X faulthandler scripts/rebuild_shapley_crossfit.py
+  # 退化结果默认拒绝落盘；确需落盘时：
+  /c/python/python.exe scripts/rebuild_shapley_crossfit.py --allow-degenerate-injection
 """
 import csv
 import json
@@ -32,6 +46,9 @@ OUT_JSON = os.path.join(ROOT, "results", "rebuild_shapley_crossfit.json")
 
 ARCHS = ("inceptiontime", "resnet1d")
 SEEDS = (42, 43, 44, 45, 46)
+
+#: 允许落盘「退化注入」结果（见 main() 中的守卫）。默认拒绝。
+ALLOW_DEGENERATE = "--allow-degenerate-injection" in sys.argv
 
 
 def _toplabel_binary(probs, labels):
@@ -155,6 +172,27 @@ def main():
     if not rows:
         print("[FATAL] no cells reconstructed")
         return 1
+
+    # ---- 退化注入守卫（2026-09-18 加入）----
+    # 本脚本调用 decompose_benefit(slope=1.0, intercept=0.0)。inject_transform 在
+    # (1.0, 0.0) 下是**恒等变换**，因此 s/b 两个 Shapley 分量在结构上恒为 0，
+    # delta_pred 退化成「仅先验项」。这样产出的 delta_pred 不是三分量分解，
+    # 不得用于论文。此前该退化被静默写出（2026-09-16 的产物即受此影响）。
+    s_all = [r["shap_s"] for r in rows]
+    b_all = [r["shap_b"] for r in rows]
+    degenerate = (max(abs(v) for v in s_all) < 1e-12
+                  and max(abs(v) for v in b_all) < 1e-12)
+    if degenerate:
+        print("\n" + "!" * 72)
+        print("!! 退化注入：shap_s 与 shap_b 全为 0（slope=1.0, intercept=0.0")
+        print("!! 使 inject_transform 成为恒等变换）。delta_pred == shap_pi，")
+        print("!! 不是三分量分解，不得作为论文数字。")
+        print("!! 修好口径（传非平凡的 slope/intercept）后重跑；")
+        print("!! 确需落盘退化结果时显式加 --allow-degenerate-injection。")
+        print("!" * 72)
+        if not ALLOW_DEGENERATE:
+            print("\n[拒绝落盘] 未写 %s / %s" % (OUT_CSV, OUT_JSON))
+            return 1
 
     # ---- 落盘 ----
     os.makedirs(os.path.dirname(OUT_CSV), exist_ok=True)
