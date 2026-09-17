@@ -35,27 +35,56 @@ OOD 域全部不同（目标域不同），seed43 同型。
 **这个模式本身就是佐证**：前 6 个方法只用**源域 cal** 拟合 → 同一模型 + 同一 cal split ⇒ 结果必然逐位相同；
 `em_prior`/`bbse_prior` 要**目标域先验** → 依赖目标 ⇒ 不同。若这两个文件只是「碰巧相似」，不可能在前 6 个方法上逐位相等。
 
-## 三、为什么会这样（根因）
+## 三、为什么会这样（根因，两层）
 
-`scripts/train.py:596` 调用 `set_seed(args.seed)`，而 `set_seed` 的签名是
-`set_seed(seed, deterministic: bool = False)`（第 51 行），`deterministic` **默认 False**：
+### 第一层：只有 cpsc 源**可能**共享
+
+`eval_transfer.py:139-142` 在复用检查点时会校验类别数，不匹配直接 `raise`：
 
 ```python
-def set_seed(seed: int, deterministic: bool = False):
-    ...
-    if deterministic:
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
+ckpt_nc = ckpt.get("num_classes")
+if ckpt_nc is not None and ckpt_nc != num_classes:
+    raise RuntimeError(f"Checkpoint num_classes={ckpt_nc} ≠ 当前 num_classes={num_classes}。...")
 ```
 
-⇒ **cuDNN 非确定性开启**。同配置两次训练会得到**不同权重**，因此：
+而 `num_classes = min(源库类别数, 目标库类别数)`（`eval_transfer.py:101-102`）。按 pair 的实际 K：
 
-- 其余 8 组（inceptiontime 44–46、resnet1d 全部）「同一 (arch, 源库, K, seed)」的检查点**互不相同** —— 符合非确定性的预期。
-- 而 seed42/43 那两组**逐位相同**，非确定性**无法**产生 —— 只能是**拷贝**（同一秒 16:11:51、同一字节数）。
-  ⇒ 这是一次**复用/拷贝**，不是「训练一次共享给所有目标」的设计。
+| 源 | 目标 A | 目标 B | 两个目标的 K | 能否共享同一源模型 |
+|---|---|---|---|---|
+| **cpsc** | chapman (K=4) | ptbxl (K=4) | **都是 4** | ✅ **能** |
+| chapman | cpsc (K=4) | ptbxl (K=5) | 4 vs 5 | ❌ 不能 |
+| ptbxl | chapman (K=5) | cpsc (K=4) | 5 vs 4 | ❌ 不能 |
 
-> 顺带一个独立发现：**归档的检查点不是逐位可复现的**。任何重跑都不会重现它们。
-> 这应在论文的可复现性声明里如实写出，或改用 `deterministic=True` 重训（代价：速度下降、且现有结果全部作废）。
+⇒ **只有 cpsc 源存在共享的可能**。这也正好解释了「为什么只有 cpsc 源出现重复」。
+
+### 第二层：共享是**有意为之**，但只做了一半
+
+`scripts/launch_seed43_transfers.py` 给两个 cpsc 任务都传了 **`--load-model`**（「复用已训练
+`best_model.pt` 跳过重训」）：
+
+```python
+(common + ["--source","cpsc", ..., "--target","ptbxl",   ..., "--load-model"], "cpsc_ptbxl_seed43"),
+(common + ["--source","cpsc", ..., "--target","chapman", ..., "--load-model"], "cpsc_chapman_seed43"),
+```
+
+而 `eval_transfer.py` 的 `--load-model` **只在自己 `run_dir` 里找检查点**（第 105-109 行），
+不跨 target。所以要让 `--load-model` 生效，必须先**手工把 cpsc 源模型拷到另一个 target 的 run_dir**。
+
+证据链完整：
+- 两个文件 mtime **精确到纳秒相同**（`16:11:51.0685109009`）——两次训练不可能同纳秒完成 ⇒ 拷贝；
+- inode 不同 ⇒ 不是硬链接，是实体拷贝；
+- `--load-model` 的存在 ⇒ 拷贝是**有意的**。
+
+**但只对 seed 42/43 做了，seed 44–46 没做**（那两格是分别训练的）。⇒ **网格构造口径不自洽**：
+同一个源（cpsc）、同一个 K（4）、同样两个目标，6 个格子里 4 个共享、6 个不共享。
+
+### 附带发现：训练不可逐位复现
+
+`scripts/train.py:596` 调 `set_seed(args.seed)`，而 `set_seed(seed, deterministic: bool = False)`
+（第 51 行）的 `deterministic` **默认 False** ⇒ **cuDNN 非确定性开启**。
+所以「分别训练」的格子之间权重必然不同 —— 这也反过来说明 seed42/43 那两组的逐位相同
+**只可能**来自拷贝。投稿的可复现性声明应如实写明，或改用 `deterministic=True` 重训
+（代价：慢、且现有结果全部作废）。
 
 ## 四、影响评估
 
@@ -68,19 +97,44 @@ def set_seed(seed: int, deterministic: bool = False):
 
 量级很小（ID 终点本就是对照项，不是主主张），但**属于必须披露或修复的事实**。
 
-## 五、修复方案（推荐 B）
+## 五、修复：已执行「重训」方案
 
-**A. 披露**：在 Methods/Limitations 写明「inceptiontime 源为 cpsc 的 seed42/43 两格共享同一源检查点，
-其 ID 域终点逐位相同」。诚实，但会被审稿人追问「为什么」。
+**决策**：重训 `cpsc_ptbxl/inceptiontime/seed{42,43}`，使 60 格对应 **60 个不同的源模型**。
+（保留 `cpsc_chapman` 侧不动；两侧对称，任选一侧即可。）
 
-**B. 重训那 2 个检查点**（推荐）：
-1. 删除 `cpsc_ptbxl/inceptiontime/seed{42,43}/best_model.pt`（保留 chapman 侧）；
-2. 重训这两格（`scripts/train.py` + `scripts/eval_transfer.py`），因为非确定性，新权重必然与旧的不同 ⇒ 独立性恢复；
-3. 重算受影响的 2 格的主终点，更新 60 格汇总与 ID 均值；
-4. 重签相关哈希与补充材料。
-代价：2 次训练 + 2 次评估，约 0.5–1 h。
+理由：论文的分析单元是 (pair, arch, seed) 格。两对格子共享模型会让 ID 对照终点的
+有效样本量变成 58 而论文写 60，CI 会偏窄。重训 2 个检查点即可恢复「60 格 = 60 模型」。
 
-**C. 开启 `deterministic=True` 全量重训**：最彻底，但作废现有 60 格全部结果，不建议在投稿前做。
+**为什么不选「披露」**：披露虽诚实，但会留下「为什么同源同种子有两个格子 ID 值逐位相同」
+这个审稿人必然会问的问题，且掩盖了口径不自洽。重训成本低（2 次训练），收益是干净。
+
+**为什么不反向统一（把 44–46 也改成共享）**：那会作废 6 个已训练模型，改动面更大，
+且「源模型应目标无关」这一点在两种做法下都成立（训练数据完全相同，只是随机性不同）。
+
+**执行步骤**（2026-09-17 晚）：
+
+1. 停掉正在跑的污染重跑链（E3 已完成，E1a 刚启动）；
+2. 备份：`results/_pre_retrain_baseline_20260917/`（E3 四个 CSV）、
+   `checkpoints/_retrain_backup_20260917/seed{42,43}/`（旧 ckpt + 旧 transfer_result.json）、
+   `results/robustness_validation_5seeds.csv.bak_pre_retrain`（主表，主终点唯一来源）；
+3. 删除 `cpsc_ptbxl/inceptiontime/seed{42,43}/` 下的 **全部** 产物 —— 不只是 `best_model.pt`，
+   还包括旧模型派生的缓存 `e3_probs.npz`、`e6_probs.npz`、`l2_shift_results.json`
+   （漏删会让下游读到旧模型的缓存）；
+4. 重训：`scripts/retrain_cpsc_ptbxl_it_seed42_43.py`，口径严格复刻被替换的 `transfer_result.json`：
+   `--arch inceptiontime --source cpsc --target ptbxl --seeds 42 43`、
+   `--epochs 50 --gpu-inference --bootstrap 10000 --bci-method bca --n-jobs 8`、
+   8 个方法（ts/platt/isotonic/vector/matrix/dirichlet/em_prior/bbse_prior）；
+5. 重建主表：`generate_robustness_report_v2.py`（它才是 60 格 480 行表的写出者；
+   `generate_robustness_report.py` 是只覆盖 10 格的旧版，勿用）；
+6. 重跑污染重跑链（E3 → E1a → E2 → E4 → E6 → E1b）。
+
+**验收（关键）**：重跑 E3 后与 `_pre_retrain_baseline_20260917/` 逐行比对 ——
+**应当只有 `cpsc_ptbxl/inceptiontime/seed{42,43}` 相关行发生变化，其余 58 格逐位不变**。
+若不止 2 格变化，说明重训引入了额外扰动，必须停下排查。
+
+**其他方案（未采用，留档）**：
+- *A. 仅披露*：在 Methods/Limitations 写明 4 格共享同一源检查点、ID 终点逐位相同。成本最低但留隐患。
+- *C. `deterministic=True` 全量重训*：最彻底，但作废现有 60 格全部结果，投稿前不可行。
 
 ## 六、本次审计中我自己犯的一个错（记录以免重犯）
 
