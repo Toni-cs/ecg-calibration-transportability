@@ -1,0 +1,14 @@
+# ECG-Lab 可预测性分析（修正口径，单一编码）
+# y,"ood_deltaECE (OLD encoding, robustness_validation_5seeds.csv method=ts)"
+# T,"T_global (OLD encoding, ablation_ts_components.OLD_ENCODING.csv stage1_ts)"
+# wass/ent,strengthening_battle_corrected.json（标签无关）
+# n,60
+# ridge alpha,1.0,# bootstrap B,4000,# cluster,"(arch,pair)"
+# sign_accuracy,1.000000,# const_positive_baseline,0.850000
+# verdict,失败分支触发
+
+feature_set,corr,r2_corr2,loo_cell,loo_pair,loo_arch_pair,ci_arch_pair_lo,ci_arch_pair_hi,ci_cell_lo,ci_cell_hi
+T,0.975297,0.951205,0.361030,0.296871,0.339577,0.044126,0.362966,0.200683,0.583676
+wasserstein,-0.148550,0.022067,-0.049747,-0.155437,-0.063536,-0.493091,0.083103,-0.086650,0.110111
+entropy_diff,-0.189503,0.035911,-0.020490,-0.070201,-0.032524,-0.271049,0.022020,-0.045629,0.079163
+T+wass+ent,nan,nan,0.361614,0.258362,0.337785,-0.100652,0.377927,0.220992,0.585802
