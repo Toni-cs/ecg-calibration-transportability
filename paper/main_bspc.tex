@@ -504,6 +504,8 @@ before/after protocol hashes. The pilot results do not enter the
 main test report. All hypotheses in this paper are tagged
 \emph{exploratory + robustness validation}, not confirmatory.
 
+\subsection{Pre-registration amendment A2 (confirmatory-family reduction)}
+\label{sec:a2}
 The original
 BH-FDR family of 156 comparisons (6 pairs $\times$ 2 architectures
 $\times$ 13 shift levels) is reduced to a confirmatory family of 12
@@ -2156,7 +2158,14 @@ are recorded in the repository
 pre-retrain artifacts the 60 reported cells therefore did not correspond
 to 60 independent training runs; this matters for any statement that
 treats cells as independent replicates, while the primary OOD endpoint,
-being a per-cell paired quantity, is unaffected in kind.
+being a per-cell paired quantity, is unaffected in kind; (xxii) the
+noise-floor control is idealised and exclusionary: the floor is computed
+on perfectly-calibrated relabellings of our own confidence
+distributions rather than on a calibrated model of real ECE noise, its
+most extreme temperature stratum contains only 4 cells, and its
+conclusion is that the floor cannot account for the primary finding
+rather than that a causal mechanism has been established (see the
+Caveats in Sec.~\ref{sec:noise_mechanism}).
 Future work:
 (1) prospective multi-device validation; (2) continuous shift spaces;
 (3) $\pi$-independent recovery estimators (BBSE/EM-class): BBSE is now
