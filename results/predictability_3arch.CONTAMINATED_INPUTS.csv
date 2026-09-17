@@ -1,0 +1,39 @@
+# ECG-Lab §8.5 可预测性分析（多架构）
+# 架构,"inceptiontime, resnet1d"
+# 注: mamba 架构数据见补充材料（后续补齐）
+# 数据点数,6110
+# LOO 折数,2 架构 x 6 对 = 12 折
+
+## 表1 分架构 LOO-pair R²
+arch,method,r2
+inceptiontime,ts,-0.326962
+inceptiontime,platt,-0.078687
+inceptiontime,isotonic,-0.102886
+inceptiontime,vector,-0.018302
+inceptiontime,matrix,0.064824
+inceptiontime,dirichlet,0.013590
+inceptiontime,em_prior,-0.162634
+inceptiontime,bbse_prior,-0.044833
+resnet1d,ts,-0.464940
+resnet1d,platt,-0.101213
+resnet1d,isotonic,-0.092194
+resnet1d,vector,-0.010749
+resnet1d,matrix,-0.061981
+resnet1d,dirichlet,-0.081371
+resnet1d,em_prior,-0.114657
+resnet1d,bbse_prior,0.051872
+
+"## 表2 多架构合并 LOO-(arch,pair) R²"
+method,r2,ci_lo,ci_hi,verdict
+ts,0.032106,-0.720552,0.291882,失败分支
+platt,0.165619,-0.489101,0.398842,失败分支
+isotonic,0.162323,-0.416719,0.364475,失败分支
+vector,0.154222,-0.283739,0.325690,失败分支
+matrix,0.030850,-0.296473,0.103682,失败分支
+dirichlet,-0.003010,-0.259683,0.046352,失败分支
+em_prior,0.094668,-0.445373,0.340017,失败分支
+bbse_prior,0.090459,-0.128100,0.208561,失败分支
+
+## 表3 主判据（全方法合并）
+r2,ci_lo,ci_hi,verdict
+0.032106,-0.720552,0.291882,失败分支

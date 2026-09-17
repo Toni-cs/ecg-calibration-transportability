@@ -1198,7 +1198,14 @@ Safety criterion: across 157 (pair, seed, shift) cells, TS
 yields 1 cell satisfying the operating criterion (post-TS SmoothECE
 $\leq 0.05$, improvement $>0.01$, point-estimate convention; L2 results
 lack per-cell CIs, so the CI-based criterion was not evaluated), a safety
-rate of $0.0064$. Sign convention:
+rate of $0.0064$. This figure is \emph{not} presently reproducible: the
+artifact that produced it is not in the repository, and re-deriving the
+same criterion from the on-disk L2 outputs (which predate the pinned
+label encoding and are contaminated, see the coverage note below) gives
+$6/156 = 0.038$ rather than $1/157$; the denominator is also one cell
+larger than the stated $6 \times 2 \times 13 = 156$. The claim that the
+safety criterion is rarely met is unaffected in direction (both values
+are small), but the exact rate must be regenerated. Sign convention:
 $\Delta\text{ECE}$ $=$ post-recalibration ECE $-$ raw ECE (negative means
 improvement), opposite to the primary-endpoint convention.
 \emph{Coverage note:} the L2 shift matrix has been completed on all 390
@@ -1209,6 +1216,39 @@ figures quoted here are from the initial two-seed InceptionTime subset
 single-architecture coverage. The criterion is rarely satisfied, so TS is
 a useful default but not a universally safe recalibrator, and should be
 combined with local validation.
+% [AUDIT 2026-09-17] 溯源告警：磁盘上的 L2 产物
+% （l2_shift_full_390cells.csv / _780cells_detail.csv /
+%   checkpoints/transfer/*/*/seed*/l2_shift_results.json）
+% 生成于 2026-09-10~09-13，落在 SUBSPACE_CPSC 的 NEW 编码窗口内，
+% 且 scripts/eval_l2_shift.py 读的是**运行时**常量而非 checkpoint 自存的
+% label_map，故含 CPSC 的 40 个 cell 受 MI↔CD 错配污染。
+% 经验判定（scripts/verify_l2_shift_encoding.py）：以 noise24 为近恒等档，
+% 非 CPSC 20 格标定固有偏离（raw_ece 0.0007 / delta_ece 0.0002）；
+% CPSC 40 格与污染口径的中位差为 0.0012 / 0.0027，与干净口径为
+% 0.0987 / 0.1693（79× / 62×），逐 cell 39/40 指向污染口径。
+% 详见 results/_L2_SHIFT_CONTAMINATION_NOTICE.md。
+% 本段的 390 格声明只是**覆盖度**陈述、不承载数值，故暂保留；
+% 数值性使用须待按钉死编码重跑后再引用。
+% [AUDIT 2026-09-17] 安全率 0.0064 的溯源结论：**仓库内无来源**。
+% 全仓 results/ 下搜 "0.0064" 只命中其它列的同名数字子串（非安全率）；
+% 含 safety 列的文件只有两张 L2 表，而其 safety 取值域为 {0,1}
+% （780 行中 679 行 = 1，即 87% 安全），与 0.0064 差三个数量级。
+% 反推分母：1/157 = 0.0063694 ≈ 0.0064 ⇒ 该数是 **1/157**。
+% 但论文自述子集为 6 对 × 2 seed × 13 档 = **156**，157 多 1，内部不一致。
+% 按论文判据（post ≤ 0.05 且 improvement > 0.01）在**当前**（污染）明细表上
+% 复算：inceptiontime × seeds42,43 子集得 6/156 = 0.0385，全 780 行得
+% 31/780 = 0.0397 —— 均与 0.0064 相差约 6 倍。
+% ⇒ 该数字来自**污染前**的一次运行，其产物不在仓库内，现不可复现。
+% 已在正文明确标注不可复现；方向性结论（安全判据罕被满足）两种口径都成立。
+% 待 L2 网格重跑后必须重算本数字。
+% [AUDIT 2026-09-17] 另：results/predictability_3arch.csv 的 mtime 为
+% 2026-09-05（污染窗口前），其数字（TS LOO R² = −0.0958，CI 上界 0.1038）
+% 与论文一致；但其输入 l2_shift_results.json 已被 09-10~09-13 的污染版
+% 覆盖，故**在仓库内已不可复现**。实测重跑（污染输入）得 +0.0321 / 上界
+% 0.2919 —— 失败分支的判定不变（两者上界均 < 0.5），但引用的 0.104 需改。
+% 当前处置：predictability_3arch.csv 恢复为 09-05 历史版（论文数字的存档），
+% 污染重跑版并存为 predictability_3arch.CONTAMINATED_INPUTS.csv。
+% 待 L2 重跑后以「同一次运行、同一编码」的权威产物替换。
 
 At the 10th-percentile raw-ECE
 threshold, net benefit is $0.1209$ versus $0.0999$ for treating all cells;
