@@ -1558,8 +1558,11 @@ for each, we estimate $(\hat{s}, \hat{b})$ on the source calibration
 split and predict $\Delta\text{ECE}_{\text{OOD}}$ on the target test
 split.
 
-The linear model predicts the \emph{direction} correctly in 51/60
-(85\%) but systematically \emph{overestimates} the magnitude (mean
+The linear model's sign agrees with the observed sign in 51/60
+(85\%), but that count is \emph{not} evidence of skill: a constant
+``TS helps'' predictor scores exactly the same 51/60 on this grid, so
+the agreement carries no directional information beyond the prior. The
+model also systematically \emph{overestimates} the magnitude (mean
 prediction error $+0.29$, median $+0.29$). This is consistent with a
 predictability boundary: the decomposition captures the qualitative
 direction of the TS benefit but not its quantitative magnitude under
@@ -2062,8 +2065,10 @@ fully balanced); BiMamba is a toy experiment ($n=60$, supplement) after
 memory exhaustion on an RTX 5060 (8~GB); (ii) the predictability failure
 branch is triggered (three-step to two-step); the deployment criterion
 is an empirical lookup table, not a predictive criterion; (iii)
-real-data Shapley cross-fitting (\S\ref{sec:real_shapley}) shows 85\%
-direction accuracy but systematic magnitude overestimation (mean error
+real-data Shapley cross-fitting (\S\ref{sec:real_shapley}) is unusable
+as either a predictor or a diagnostic: its 51/60 sign agreement is
+exactly what a constant ``TS helps'' predictor scores (so it carries no
+directional information) and it overestimates the magnitude (mean error
 $+0.29$), and a sensitivity analysis with $T$, Wasserstein-1, and
 entropy features does \emph{not} confirm a robust predictability
 boundary: only $T$ predicts (LOO $R^2=+0.34$, and
@@ -2194,8 +2199,9 @@ the observed raw ECE ($0.036$--$0.357$, mean $0.211$), whereas for large
 $T>3$ the floor ($0.10$--$0.16$) is comparable to the observed
 $|\Delta\text{ECE}|$ and a metric-noise contribution cannot be excluded
 there. Real-data Shapley cross-fitting
-(\S\ref{sec:real_shapley}) gives 85\% direction accuracy with magnitude
-overestimation (mean error $+0.29$). The predictability boundary holds
+(\S\ref{sec:real_shapley}) fails as a diagnostic as well as a
+predictor---its 51/60 sign agreement is exactly the constant-positive
+baseline---and overestimates the magnitude (mean error $+0.29$). The predictability boundary holds
 only in the weak sense that no label-free feature reaches $R^2=0.5$
 under the implemented fold unit: the source-fitted temperature $T$ does
 predict ($+0.34$, and the sign of $\Delta\text{ECE}_{\text{OOD}}$ in
