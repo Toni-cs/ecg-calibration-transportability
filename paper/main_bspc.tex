@@ -1230,15 +1230,93 @@ confirmatory.
 % 且度量噪声的方向恰是让 $\Delta$ECE 变负，故不能由"raw ECE 大"推出
 % "非噪声"。本段末尾已按主终点口径重述。核对锚点：论文 case study 的
 % 0.3160 / 0.3144 / 0.0649 均为 OLD 口径值，与本修正自洽。
-For large $T > 3$ (noise floor $0.10$--$0.16$) the floor is
-comparable to the observed $|\Delta\text{ECE}|$ in some seeds, so a
-metric-noise contribution cannot be excluded there; however, its
-\emph{direction} (TS increases ECE under perfect calibration) is
-opposite to the positive $\Delta\text{ECE}_{\text{OOD}}$ in 51/60
-experiments, so it cannot explain the positive findings. The primary
-endpoint is therefore a real effect, not a SmoothECE artifact, with
-the caveat that for large-$T$ experiments the noise floor is
-non-negligible.
+% [AUDIT 2026-09-17] 此处原为 "For large $T>3$ (noise floor $0.10$--$0.16$)
+% the floor is comparable to the observed $|\Delta\text{ECE}|$ in some seeds,
+% so a metric-noise contribution cannot be excluded there; ... with the caveat
+% that for large-$T$ experiments the noise floor is non-negligible."
+% 该对冲描述的是 **$T>3$ 区间**，而修正编码下 60 个 cell 的拟合温度最大仅
+% 1.4982（中位 1.0757），$T\geq 2$ 为 0 个 —— 该区间在正确数据里不存在。
+% 原句建立在 results/temperature_distribution_analysis.csv 之上，那是受污染的
+% 温度 CSV（中位 1.836、50% 的 cell $T\geq 2$）。已按修正温度重述。
+% 见 scripts/noise_floor_mechanism_test.py。
+%
+% [AUDIT 2026-09-17] 本小节的锚点表（$T=1.25\to+0.014$--$+0.035$ 等）在仓库内
+% **没有生成脚本**（从未提交），故不可从仓库复现。scripts/noise_floor_signed.py
+% 用显式三种置信分布独立重算，复现出同样的定性结构（$T=1$ 恰为 0、随 $|T-1|$
+% 单调增、恒为正）与同样的符号，但具体数值不同（原文三种分布未记录）。
+% 故新增的 §\ref{sec:noise_mechanism} **只依赖符号**（符号在所有设定下稳健），
+% 数值区间仅作指示性使用。建议投稿前重生成该表或补记录分布定义。
+The direction of the floor is what matters for the endpoint, and it is
+fixed. In the primary convention ($\Delta\text{ECE}_{\text{OOD}} =
+\text{ECE}_{\text{raw}} - \text{ECE}_{\text{post}}$) the floor inflates
+$\text{ECE}_{\text{post}}$ and therefore contributes \emph{negatively}.
+Because the identity is the minimiser of ECE under perfect calibration,
+any $T \neq 1$ raises ECE, so the floor is positive in the noise
+convention for $T<1$ as well as $T>1$, and the idealised endpoint is
+$-\text{floor}(T) \leq 0$. A purely attenuating artefact cannot generate
+the positive endpoint observed in 51/60 experiments. We test this and
+three further implications of the floor hypothesis in
+Sec.~\ref{sec:noise_mechanism}.
+
+% ============================================================================
+\subsection{Noise-floor mechanism test}
+\label{sec:noise_mechanism}
+% ----------------------------------------------------------------------------
+The control above quantifies the floor; it does not by itself decide
+whether the floor \emph{drives} the endpoint. We therefore test four
+implications of the ``floor artefact'' hypothesis, using the
+source-fitted temperature $T$ recovered per cell from the TS-component
+ablation under the corrected label encoding.
+
+\paragraph{(i) Direction.} The floor contributes negatively to
+$\Delta\text{ECE}_{\text{OOD}}$ for every $T \neq 1$, so the hypothesis
+predicts a systematically \emph{negative} endpoint. The observed mean is
+$+0.0159$, positive in 51/60 cells.
+
+\paragraph{(ii) Sign flip with $T$.} A fixed-direction artefact cannot
+produce a sign that flips with $T$. In the corrected data
+$T \in [0.932, 1.498]$ (median $1.076$; no cell reaches $T \geq 2$), and
+$\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}}) = \mathrm{sign}(T - 1)$ in
+\emph{60/60} cells: all 51 cells with $T \geq 1$ are positive (mean
+$+0.0195$) and all 9 cells with $T < 1$ are negative (mean $-0.0047$).
+This is the direction temperature scaling is expected to have --- $T>1$
+softens an over-confident target and lowers its ECE, while $T<1$ sharpens
+it and raises ECE --- and it supplies a unified mechanism for the nine
+counter-examples of Sec.~\ref{sec:counter}: they are exactly the nine
+cells with $T<1$, including the extreme CPSC$\rightarrow$Chapman /
+ResNet1D / seed~44 case ($T = 0.932$,
+$\Delta\text{ECE}_{\text{OOD}} = -0.0168$), the sharpest sharpening in
+the grid.
+
+\paragraph{(iii) Magnitude strata.} Under an additive floor the endpoint
+should be \emph{smaller} where the floor is larger. Splitting at
+$\text{floor}_{\text{hi}}(T) \geq$ the mean effect ($T \geq 1.115$,
+13/60 cells), the endpoint is $+0.0328$ (13/13 positive) above the split
+versus $+0.0112$ (38/47 positive) below it --- the opposite ordering.
+Since the floor attenuates, the 13 values are lower bounds on the true
+effect.
+
+\paragraph{(iv) Negative control and additivity.} The independent
+ablation channel (same SmoothECE family) changes by $-0.0124$ on average
+and changes sign across cells ($-0.083$ to $+0.093$), so the metric has
+no systematic positive push. The floor ($0.014$--$0.164$) is also
+$13$--$147\times$ the median per-cell bootstrap CI width ($0.0011$); an
+additive bias of that size would swamp the signal rather than halve it,
+so the floor is not a cell-level additive offset and we do not subtract
+it per cell.
+
+\paragraph{Consistency check.} The endpoint also rises with $T$ (OLS
+slope $+0.181$, $R^2 = 0.951$ over the 60 cells). We report this but do
+not rely on it: $T = 1$ is a fixed point at which the endpoint vanishes
+by construction, so part of this relation is mechanical. Its role here
+is that its sign is \emph{opposite} to the floor's contribution, which is
+the direction test of (i)--(ii).
+
+\emph{Caveats.} The floor is computed under idealised confidence
+distributions at $n = 2{,}000$ and is not a calibrated model of real ECE
+noise; the stratified cells in (iii) are few. The conclusion is
+exclusionary, not causal: the floor cannot account for the primary
+finding, but this does not by itself establish a causal mechanism.
 
 % ============================================================================
 \subsection{Discrimination-aware calibration gate (C5)}
@@ -1431,6 +1509,19 @@ PTB-XL$\rightarrow$CPSC has zero). We transparently disclose all nine
 rather than excluding them, because the protocol requires all seed
 results to be reported and each has an identifiable post-hoc mechanism
 supporting the qualified claim.
+
+All nine share a single mechanism, stated in
+Sec.~\ref{sec:noise_mechanism}: they are exactly the nine cells whose
+source-fitted temperature is $T < 1$. Because the temperature is fitted
+on the source calibration split, $T<1$ means the source model was
+\emph{under}-confident there; applying that temperature to the target
+sharpens an already over-confident distribution and raises its ECE. The
+counter-example set is therefore identified by a quantity available
+\emph{before} the target is scored, and
+$\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}}) = \mathrm{sign}(T-1)$ holds
+in all 60 cells. The per-cell accounts below give the accompanying
+discriminative and raw-ECE context; where a paragraph attributes the
+failure to ``over-correction'', that is the $T<1$ regime.
 
 \begin{figure}[htbp]
 \centering
