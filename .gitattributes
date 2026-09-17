@@ -10,3 +10,9 @@ paper/osf_upload/** -text
 # had no rule here and its SHA256SUMS.txt was itself CRLF, so
 # `sha256sum -c SHA256SUMS.txt` failed on all 155 lines.
 paper/submission/** -text
+
+# Shell scripts must keep LF. With core.autocrlf=true a checkout converts them
+# to CRLF and bash then fails with `$'\r': command not found` on the shebang
+# line and every command. scripts/rerun_contaminated_chain.sh is a long-running
+# serial job that must survive a fresh clone.
+*.sh text eol=lf
