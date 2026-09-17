@@ -2,3 +2,11 @@
 # Without this, core.autocrlf=true rewrites LF to CRLF on checkout and every
 # line in paper/osf_upload/SHA256SUMS.txt stops verifying.
 paper/osf_upload/** -text
+
+# Same argument for the submission's supplementary package: it ships its own
+# SHA256SUMS.txt and `sha256sum -c` must pass on a fresh checkout. With
+# core.autocrlf=true (this machine) a text-mode checkout rewrites every CSV
+# to CRLF, changing every recorded hash. Verified 2026-09-17: the package
+# had no rule here and its SHA256SUMS.txt was itself CRLF, so
+# `sha256sum -c SHA256SUMS.txt` failed on all 155 lines.
+paper/submission/** -text

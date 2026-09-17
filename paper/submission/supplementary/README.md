@@ -14,12 +14,30 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 > both are superseded by amendment A3 and by this submission respectively.
 > The corrections are recorded in `S1_protocol/PROTOCOL_AMENDMENT_A3_CORPUS_IDENTITY.md`.
 
+> **Note on the encoding-paired tables in `S2_result_tables/`.** Between
+> 2026-09-09 and 2026-09-16 the CPSC sub-space label encoding changed from
+> `(NORM, CD, STTC, MI)` to `(NORM, MI, STTC, CD)`, which is exactly a
+> 1↔3 swap. Two result tables were regenerated afterwards and are shipped
+> **alongside** their original, wrong-encoding versions so that the
+> difference is auditable rather than hidden:
+>
+> | file | status |
+> |---|---|
+> | `ablation_ts_components.csv` | **original (wrong encoding)** — retained for audit |
+> | `ablation_ts_components.OLD_ENCODING.csv` | **authoritative** — defines the primary endpoint (`raw − stage1_ts`), reproduces `ΔECE_OOD = +0.0159` |
+> | `discrimination_metrics_60exp.csv` | **original (wrong encoding)** — retained for audit |
+> | `discrimination_metrics_60exp.OLD_ENCODING.csv` | **authoritative** — carries `variant=raw` **and** `variant=ts` rows; source of the paper's mean/max ΔAUROC_TS−raw |
+>
+> Where the two disagree, the `.OLD_ENCODING.csv` file is the one the
+> manuscript cites. `raw` rows of the discrimination pair are bit-identical
+> between the two releases' schemas only in the `.OLD_ENCODING` version.
+
 ## Contents
 
 | Folder | Contents | Files |
 |---|---|---|
 | `S1_protocol/` | see below | 4 |
-| `S2_result_tables/` | see below | 29 |
+| `S2_result_tables/` | see below | 31 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed42/` | see below | 1 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed43/` | see below | 1 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed44/` | see below | 1 |
