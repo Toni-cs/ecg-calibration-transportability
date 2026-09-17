@@ -1,0 +1,11 @@
+{
+  "verdict": "CONTAMINATED",
+  "near_identity_shift": "noise24",
+  "non_cpsc_residual_median": 0.0007256909130549521,
+  "cpsc_d_clean_median": 0.09873382690237793,
+  "cpsc_d_contaminated_median": 0.0012486243473330966,
+  "cpsc_cells_matching_contaminated": 39,
+  "cpsc_cells_total": 40,
+  "generated_at_mtime": "2026-09-12 22:05 (inside the 09-09..09-16 encoding window)",
+  "note": "eval_l2_shift.py reads the runtime SUBSPACE_CPSC, not the checkpoint's stored label_map; the tuple was NEW during the window."
+}
