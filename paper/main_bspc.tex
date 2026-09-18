@@ -128,7 +128,7 @@ is empirically small; on a shifted target the source-fit temperature is
 mismatched to the target logits and a non-trivial benefit can remain.
 This asymmetry is \emph{empirical}, not a theorem: ECE is not invariant
 under confidence-shifting monotone maps, and TS can \emph{increase} ECE
-where the model is under-confident (nine negative cells in our data). It
+where the model is under-confident (ten negative cells in our data). It
 motivates the pre-registered primary endpoint
 $\Delta\text{ECE}_{\text{OOD}}$ over the originally planned decay
 $\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$ (revision A1,
@@ -446,7 +446,7 @@ on a shifted target it is mismatched and a non-trivial benefit is
 often retained \cite{guo2017calibration,ovadia2019calibration}. This
 direction prior is empirical, \emph{not} a theorem: TS applied to an
 under-confident target can increase ECE, and our own data contain
-nine negative cells. The choice was made before the pilot results,
+ten negative cells. The choice was made before the pilot results,
 which only triggered the endpoint re-location (revision A1). The
 one-sided test is the pre-registered choice, archived before
 multi-seed unblinding.
@@ -1457,8 +1457,8 @@ $\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}}) = \mathrm{sign}(T - 1)$ in
 $+0.0195$) and all 10 cells with $T < 1$ are negative (mean $-0.0048$).
 This is the direction temperature scaling is expected to have --- $T>1$
 softens an over-confident target and lowers its ECE, while $T<1$ sharpens
-it and raises ECE --- and it supplies a unified mechanism for the nine
-counter-examples of Sec.~\ref{sec:counter}: they are exactly the nine
+it and raises ECE --- and it supplies a unified mechanism for the ten
+counter-examples of Sec.~\ref{sec:counter}: they are exactly the ten
 cells with $T<1$, including the extreme CPSC$\rightarrow$Chapman /
 ResNet1D / seed~44 case ($T = 0.932$,
 $\Delta\text{ECE}_{\text{OOD}} = -0.0168$), the sharpest sharpening in
@@ -1866,7 +1866,7 @@ not calibration-room shortage. The counter-examples are local,
 explainable random variation; the other 50 experiments support the OOD
 benefit, including PTB-XL$\rightarrow$CPSC at 10/10.
 
-The 15.0\% rate exceeds the 5\% threshold common in clinical safety
+The 16.7\% rate exceeds the 5\% threshold common in clinical safety
 deployment. As a methodological boundary investigation, not a clinical
 deployment guide, the relevant criterion is whether the effect is
 detectable and the mechanism explainable, not a zero failure rate. All 9
@@ -2097,7 +2097,7 @@ not the main endpoint's SmoothECE, so quantitative conclusions cannot be
 extrapolated across ECE definitions; (v) the safety criterion is rarely
 satisfied on the full L2 shift matrix (TS safety rate $0.0064$); TS is a
 useful default, not universally safe; (vi) ten counter-examples of 60
-experiments (15.0\%) are transparently disclosed, with a frequent post-hoc pattern
+experiments (16.7\%) are transparently disclosed, with a frequent post-hoc pattern
 (low OOD accuracy, non-positive decay, elevated OOD raw ECE) but no
 post-hoc exclusion; (vii) the operating CI is BCa at $B=10{,}000$,
 re-run on all 60 experiments (60/60 successful, metadata in
