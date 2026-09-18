@@ -85,7 +85,7 @@ $0.104<0.5$, although a source-fitted, label-free temperature predicts the
 \emph{sign} of the benefit in 60/60 cells); and a discrimination-aware gate
 (C5) shows 7/12
 pair$\times$architecture strata passing both calibration and discrimination
-layers. Together these results bound when post-hoc recalibration pays off
+layers at the stratum-mean level. Together these results bound when post-hoc recalibration pays off
 across institutions, and when it does not.
 \end{abstract}
 
@@ -183,14 +183,16 @@ Five independent contributions:
     \item[\textbf{C5} (Clinical, discrimination-aware calibration gate):]
     A two-layer gate decouples calibration effectiveness (C1:
     $\Delta\text{ECE}_{\text{OOD}}>0$) from clinical viability
-    (accuracy $\geq$ source-domain baseline). Across 12
-    pair$\times$architecture strata, 7/12 pass both layers; 5/12 fail
+    (accuracy $\geq$ the target majority-class baseline). Across 12
+    pair$\times$architecture strata, 7/12 pass both layers at the
+    stratum-mean level; 5/12 fail
     the discrimination layer, including directions with positive
     $\Delta\text{ECE}_{\text{OOD}}$ but accuracy below baseline (e.g.,
     PTB-XL$\rightarrow$Chapman ResNet1D: $\Delta\text{ECE}=+0.029$,
     $\text{acc}=0.657 < 0.713$). The gate reframes the 10/60
-    counter-examples: 4/9 calibration failures (C1 rejects) and
-    5/9 discrimination failures (C5 rejects despite C1 passing).
+    counter-examples: all ten fail the calibration layer
+    ($\Delta\text{ECE}_{\text{OOD}} \leq 0$), and seven of them also
+    fall below the target majority-class baseline.
 \end{description}
 
 Prior ECG calibration studies report the phenomenon
@@ -830,7 +832,8 @@ family), all disclosed.
 \subsection{Method-selection boundary: 8 methods $\times$ 6 pairs}
 \label{sec:method_boundary}
 % ----------------------------------------------------------------------------
-Table~\ref{tab:methods} reports the 8-method $\times$ 6-pair support
+Table~\ref{tab:methods} and Figure~\ref{fig:method_boundary} report the
+8-method $\times$ 6-pair support
 rate over 5 seeds on InceptionTime. TS achieves 26/30 (86.7\%) with
 3/6 directions at 5/5; BBSE achieves 22/30 (73.3\%) with 3/6 at 5/5.
 EM prior adaptation and Matrix scaling are the most fragile on
@@ -1527,28 +1530,38 @@ clinically useless. We define a two-layer gate:
     \item \textbf{Layer 1 (Calibration):} $\Delta\text{ECE}_{\text{OOD}} > 0$
     (C1 criterion).
     \item \textbf{Layer 2 (Discrimination):} $\text{acc}_{\text{OOD}} \geq
-    \text{acc}_{\text{source baseline}}$, the source majority-class
-    accuracy.
+    \text{acc}_{\text{majority}}$, the target-corpus majority-class
+    accuracy (CPSC $0.528$; PTB-XL $0.411$; Chapman-Shaoxing $0.713$;
+    the two $K{=}5$ pairs use $0.399$ and $0.696$ instead, which
+    changes no gate verdict).
 \end{enumerate}
 
 Across 12 pair$\times$architecture strata (6 pairs $\times$ 2
-architectures),
-7/12 pass both layers and are deployable: CPSC$\rightarrow$PTB-XL,
-PTB-XL$\rightarrow$CPSC, CPSC$\rightarrow$Chapman (both architectures
-each), and Chapman$\rightarrow$CPSC (InceptionTime only). The other
-5/12 fail Layer 2: Chapman$\rightarrow$PTB-XL,
-PTB-XL$\rightarrow$Chapman, and Chapman$\rightarrow$CPSC ResNet1D,
-where OOD accuracy falls below the source baseline despite positive
+architectures), 7/12 pass both layers at the stratum-mean level and are
+deployable: CPSC$\rightarrow$PTB-XL, PTB-XL$\rightarrow$CPSC, and
+Chapman$\rightarrow$PTB-XL (both architectures each), plus
+Chapman$\rightarrow$CPSC ResNet1D. The other 5/12 fail Layer 2:
+Chapman$\rightarrow$CPSC InceptionTime,
+CPSC$\rightarrow$Chapman (both architectures), and
+PTB-XL$\rightarrow$Chapman (both architectures), where the mean OOD
+accuracy falls below the target majority-class baseline despite positive
 $\Delta\text{ECE}_{\text{OOD}}$ in some seeds. The strongest rejection
 is PTB-XL$\rightarrow$Chapman ResNet1D ($\Delta\text{ECE}=+0.029$ but
 $\text{acc}=0.657 < 0.713$): TS improves calibration but
-discrimination has degraded too far to be clinically actionable.
+discrimination has degraded too far to be clinically actionable. The
+gate is a stratum-level summary: at the per-cell level only 24/60 cells
+pass both layers, and only one of the 12 strata passes in all five
+seeds, so ``deployable'' means the stratum mean clears both layers, not
+that every seed does.
 
-This gate reframes the 10/60 counter-examples: 4 are calibration
-failures (Layer 1 rejects, $\Delta\text{ECE} \leq 0$) and 5 are
-discrimination failures (Layer 1 passes, Layer 2 rejects). It
-supplements C1 by also asking whether discrimination is sufficient
-for the recalibrated predictions to be clinically useful.
+This gate reframes the counter-example set: all ten cells with
+$\Delta\text{ECE}_{\text{OOD}} \leq 0$ are Layer-1 rejections, and seven
+of them also fail Layer 2. Symmetrically, 26 further cells pass Layer 1
+yet fail Layer 2, and 24 of 60 pass both, so the gate separates
+calibration failures from discrimination failures rather than merely
+re-labelling the counter-examples. It supplements C1 by also asking
+whether discrimination is sufficient for the recalibrated predictions
+to be clinically useful.
 
 % ============================================================================
 \subsection{Real-data Shapley cross-fitting and predictability boundary}
@@ -1744,7 +1757,8 @@ CPSC$\to$Chapman (right). OOD target-test set, ResNet1D, seed~42.}
 \subsection{OOD benefit seed variation and the ten counter-examples}
 \label{sec:counter}
 % ----------------------------------------------------------------------------
-The 50/60 robustness rate is driven by ten counter-examples across
+The 50/60 robustness rate is driven by ten counter-examples
+(Figure~\ref{fig:counterexamples}) across
 5 of the 6 transfer pairs and both architectures (Chapman$\rightarrow$CPSC 2,
 Chapman$\rightarrow$PTB-XL 2, CPSC$\rightarrow$Chapman 2,
 CPSC$\rightarrow$PTB-XL 3, PTB-XL$\rightarrow$Chapman 1; only
@@ -1869,9 +1883,11 @@ benefit, including PTB-XL$\rightarrow$CPSC at 10/10.
 The 16.7\% rate exceeds the 5\% threshold common in clinical safety
 deployment. As a methodological boundary investigation, not a clinical
 deployment guide, the relevant criterion is whether the effect is
-detectable and the mechanism explainable, not a zero failure rate. All 9
-counter-examples have identifiable mechanisms (8 ``low OOD accuracy +
-large gap'', 1 ``over-correction''), and the expected benefit is positive
+detectable and the mechanism explainable, not a zero failure rate. All
+ten counter-examples have identifiable mechanisms (seven ``low OOD
+accuracy + large gap'', three further seed-level temperature
+mis-transfers, one of which (CE6) is an over-correction case), and the
+expected benefit is positive
 ($0.833 \times 0.01946 - 0.167 \times 0.00482 = +0.0154 > 0$).
 
 % ----------------------------------------------------------------------------
@@ -1935,7 +1951,7 @@ above baseline); CPSC$\rightarrow$Chapman 0.619 and
 PTB-XL$\rightarrow$Chapman 0.620 (both well below 0.713). In those
 directions recalibration is moot, since no temperature improves a model that
 should be replaced by a majority-class predictor, consistent with
-the counter-example pattern (6/9 with low OOD accuracy).
+the counter-example pattern (7/10 with OOD accuracy $\leq 0.50$).
 % AUDIT 2026-09-17（数值溯源清查）：原引 `results/discrimination_metrics_60exp.csv`
 % （mtime 09-10 12:45，落在标签编码污染窗口 09-09~09-16 内）的 0.629–0.795。
 % 实证裁决：该表由 checkpoints/e2_probs_cache/*.npz（全部 62 份，mtime 09-10
@@ -2208,8 +2224,9 @@ criterion, triggering the pre-registered branch; the OOD benefit is
 $1.9\times$ the ID benefit. \textbf{(C3)} Shapley decomposition: 27/27
 cells pass at $n=20{,}000$ (21/27 at $n=500$). \textbf{(C4)} Method
 selection: TS robust (50/60), EM prior and Matrix scaling fragile (15/30
-each). \textbf{(C5)} Gate: 7/12 strata pass both layers, reframing the 9
-counter-examples as 4 calibration and 5 discrimination failures. The
+each). \textbf{(C5)} Gate: 7/12 strata pass both layers (stratum-mean),
+reframing the counter-examples as ten Layer-1 rejections, seven of which
+also fail the discrimination layer. The
 predictability failure branch is triggered (three-step chain becomes
 two-step), and all hypotheses are exploratory + robustness validation,
 not confirmatory; protocol v2.1-A1 applies. TS needs local
@@ -2369,6 +2386,17 @@ this study would not have been possible.
 \section*{Funding}
 This research did not receive any specific grant from funding
 agencies in the public, commercial, or not-for-profit sectors.
+
+\section*{Ethics statement}
+This study is a retrospective, secondary analysis of three publicly
+available and de-identified ECG databases (PTB-XL, Chapman--Shaoxing,
+and CPSC2018 via PhysioNet). No new human or animal data were collected,
+no participants were recruited, and no identifiable information was
+accessed; all analyses were performed on data released for open research
+use under the licences recorded in the Data availability statement. As
+the work involved only pre-existing, publicly available, de-identified
+records, with no intervention on or interaction with human subjects, it
+did not require separate ethical approval.
 
 \section*{Declaration of competing interest}
 The author declares no competing financial or personal interests.

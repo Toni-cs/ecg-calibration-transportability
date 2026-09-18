@@ -24,7 +24,7 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 > | file | status |
 > |---|---|
 > | `ablation_ts_components.csv` | **original (wrong encoding)** — retained for audit |
-> | `ablation_ts_components.OLD_ENCODING.csv` | **authoritative** — defines the primary endpoint (`raw − stage1_ts`), reproduces `ΔECE_OOD = +0.0159` |
+> | `ablation_ts_components.OLD_ENCODING.csv` | **authoritative** — label-restored ablation table; its `raw` stage supplies the paper's raw-ECE range (`0.036`–`0.357`, mean `0.211`) |
 > | `discrimination_metrics_60exp.csv` | **original (wrong encoding)** — retained for audit |
 > | `discrimination_metrics_60exp.OLD_ENCODING.csv` | **authoritative** — carries `variant=raw` **and** `variant=ts` rows; source of the paper's mean/max ΔAUROC_TS−raw |
 >
@@ -36,7 +36,7 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 
 | Folder | Contents | Files |
 |---|---|---|
-| `S1_protocol/` | see below | 4 |
+| `S1_protocol/` | see below | 6 |
 | `S2_result_tables/` | see below | 31 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed42/` | see below | 1 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed43/` | see below | 1 |
@@ -101,12 +101,14 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed45/` | see below | 1 |
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed46/` | see below | 1 |
 | `S4_reliability_diagrams/` | see below | 60 |
+| **Total** | matches `SHA256SUMS.txt` | **159** |
 
 ### S1_protocol
 `EXPERIMENT_PROTOCOL.md` (protocol v2.1-A1), the A1 endpoint re-location
-amendment, the A2 family-reduction amendment, and
+amendment, the A2 family-reduction amendment, the A3 corpus-identity
+amendment, `OSF_MANIFEST_POST_CORRECTIONS_2026-09-16.md`, and
 `osf_archive_manifest.json` -- the file-level SHA-256 manifest taken on
-2026-09-05. See `docs/` in the public repository for the same documents.
+2026-09-16. See `docs/` in the public repository for the same documents.
 
 ### S2_result_tables
 Aggregate result tables underlying every number in the main text.

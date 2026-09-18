@@ -1,7 +1,12 @@
 {
  "timestamp_utc": "2026-09-16T02:44:47.871553+00:00",
  "project": "DECAL: ECG Calibration Repair ID→OOD Decay Decomposition",
- "target_venue": "BSPC (中科院二区)",
+ "target_venue": "CMPB (Computer Methods and Programs in Biomedicine, Elsevier)",
+ "osf_project_doi": "10.17605/OSF.IO/53H64",
+ "osf_project_url": "https://osf.io/53h64/",
+ "osf_registration_doi": "10.17605/OSF.IO/WJZ3Y",
+ "osf_registration_url": "https://osf.io/wjz3y/",
+ "osf_doi_note": "Both DOIs above were verified to resolve on 2026-09-18 (HTTP 200 through doi.org). The OSF registration metadata page displays a Registration DOI of 10.17605/OSF.IO/NGJE2Y, but that DOI does NOT resolve (HTTP 404 through doi.org on 2026-09-18) and must not be cited. The only registration under project 53h64 is GUID wjz3y (OSF Preregistration, registered 2026-09-14, public, title matches); its DOI is 10.17605/OSF.IO/WJZ3Y. The manuscript and cover letter cite the project DOI 10.17605/OSF.IO/53H64, which resolves.",
  "files": {
   "docs/EXPERIMENT_PROTOCOL.md": {
    "sha256": "0e8afa923986aba3f5030133c59b8a87b475c3551b819b0137ab9da66eeb9498",

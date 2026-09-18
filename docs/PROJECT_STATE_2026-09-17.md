@@ -24,13 +24,15 @@
 
 ## 2. 论文
 
-- 活跃稿 `paper/main_bspc.tex` → **66 页 / 0 undefined references / 2 Overfull**（pdflatex 两遍）。
+- 活跃稿 `paper/main_bspc.tex` → **68 页 / 0 undefined references / 0 warning / 2 Overfull**（pdflatex 两遍，2026-09-18 复验）。
 - **文件名不要改**：预注册哈希清单与 40+ 处审计记录引用 `main_bspc.tex`；投稿若需 `main.tex`，打包时复制改名。
 - `\journal{}` 与 `paper/cover_letter.tex` **均已是 CMPB**（早期笔记「仍写 BSPC」已过期）。
 - 目标期刊 **CMPB**（Computer Methods and Programs in Biomedicine, Elsevier）。
   中科院分区表已于 **2026-09-30 关停**，2025-03-20 版为最后一版。
   **CBM（Computers in Biology and Medicine）已从 WoS 除名（2025-11-17 起），绝不能投。**
-- OSF 预注册 DOI：`10.17605/OSF.IO/53H64`。
+- OSF DOI（2026-09-18 实测解析）：**项目** `10.17605/OSF.IO/53H64` ✅ 200 → `osf.io/53h64/`；
+  **注册** `10.17605/OSF.IO/WJZ3Y` ✅ 200 → `osf.io/wjz3y/`（`OSF Preregistration`，2026-09-14，公开）。
+  ⚠️ OSF 注册元数据页显示的 `10.17605/OSF.IO/NGJE2Y` **不解析（doi.org 404）**，**不得引用**。
 - ⚠️ `sec:coverage` 标签**不存在**（有的是 `sec:counter`/`sec:noise_floor`/`sec:noise_mechanism`）。
 - ⚠️「仅 2 种架构」的表述散布 **~20 处**：
   L67, 141, 150, 176, 213, 389, 508, 510, 600, 625, 633, 746, 764, 836, 891, 926, 1036, 1214, 1530, 1532。
@@ -39,9 +41,9 @@
 
 ## 3. 主终点与关键量（均已独立复算）
 
-- **ΔECE_OOD = +0.015863**（60 cells，51/60 为正）。ID 对照 **+0.008264**（47/60）。
+- **ΔECE_OOD = +0.015414**（60 cells，**50/60** 为正 = 83.3%，中位 +0.017043）。ID 对照 **+0.008264**（47/60）。
   源：`results/robustness_validation_5seeds.csv`，`method=ts`。
-  ⚠️ **重训 2 格后此值会微移，必须重算并同步更新论文。**
+  ✅ 重训 2 格后**已重算并同步更新论文**。旧值 +0.015863 / 51/60 **已作废**。
 - 拟合温度（**OLD 口径**）中位 **1.075689**，范围 0.9320–1.4982，**T≥2 占 0.0%**。
   `corr(ΔECE, T) = +0.9753` ⚠️ **机械结果，不可当作证据引用**。
 - 9 个反例的 CI 是**整段为负（`ci_hi < 0`）**，不是「下界 < 0」（`ood_significant` 才是 `ci_lo > 0`）。
@@ -103,9 +105,11 @@
   本地 `kaggle_cpsc2018/` = CPSC Database（6844 条，**丢失 33 条 A6845–A6877**，MI 计数 0）；
   `kaggle_cpsc2019/` = **CPSC-Extra**（3453 条，MI 1515）⇒ **语料里根本没有 CPSC2019**。
 - **协议快照字节不变**：`docs/EXPERIMENT_PROTOCOL.md` 被 manifest 钉住，**不得直接修改**；改动一律另立修订案（A1/A2/A3）。
-- **三个 ΔECE 字段的真实身份**：`delta_obs_orig` = +0.015863 ✅ 有效；`delta_obs` = +0.106843 ❌
-  （NEW 编码的伪信号）；`delta_pred` = +0.301460 ⚠️ 无 provenance。论文的 "+0.29" 是正确的；
-  但 **"85% 方向准确率"零信息量**（常数恒正基线也是 51/60，与分解模型**逐位相等**，κ = 0）。
+- **三个 ΔECE 字段的真实身份**：`delta_obs_orig` = **+0.015414** ✅ 有效（在干净缓存上以独立代码路径
+  复现主表 60/60，max|Δ| = 4.66e-07）；`delta_obs` = +0.106843 ❌（NEW 编码的伪信号）；
+  `delta_pred` = +0.184788 ⚠️ **退化**（`decompose_benefit(slope=1.0, intercept=0.0)` 的注入是恒等变换，
+  `shap_s ≡ shap_b ≡ 0`）⇒ **论文 §real_shapley 的 +0.29 / +0.31 / 20.86× 目前不可复现**（任务 #49）。
+  另 **"85% 方向准确率"零信息量**（常数恒正基线也是 50/60，与分解模型**逐位相等**，κ = 0）。
 - ⚠️ **`sign(ΔECE) = sign(T−1)` 在 60/60 成立，是「可证伪的经验规律」，不是逻辑等价**：
   固定 `T = 2.0` 会让 5/62 翻转为负；换成 NEW 温度会掉到 56/62。论文 §(ii) 的原句已删。
   仍然成立的是：`T* > 1` 对 60/60（其中 41 格右删失于**人为上界 2.0**）；
