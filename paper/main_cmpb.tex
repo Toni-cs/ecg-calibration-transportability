@@ -185,6 +185,18 @@ Five independent contributions:
     The mechanism is prior-likelihood mismatch: EM fits a target prior that
     amplifies shift-induced miscalibration when the source confusion matrix
     is ill-conditioned.
+    A semantics recheck
+    (\texttt{results/robustness\_val\_8method\_perbranch\_recheck.csv},
+    recomputed from the cached probability arrays by
+    \texttt{scripts/recheck\_method\_semantics.py} with per-branch
+    correctness) reproduces the TS endpoint exactly (60/60) and confirms
+    C4 under the corrected semantics with a strengthened EM claim: the
+    EM OOD mean is $-0.0378$ per-branch (vs.\ $-0.0040$ under the
+    historical shared-correctness implementation that produced the
+    delivered 8-method rows), BBSE stays the positive counterpoint
+    ($+0.0270 \to +0.0172$), and the remaining parametric recalibrators
+    shift by at most $0.003$ with no qualitative change. The TS
+    primary-endpoint figures quoted throughout are unaffected.
     \item[\textbf{C5} (Clinical, discrimination-aware calibration gate):]
     A two-layer gate decouples calibration effectiveness (C1:
     $\Delta\text{ECE}_{\text{OOD}}>0$) from clinical viability
@@ -1287,39 +1299,33 @@ safety criterion (post-TS SmoothECE $\leq 0.05$ and $\Delta\text{ECE}$ CI
 lower bound $>0$, primary-endpoint convention). Comparators: always-none,
 always-TS, always-buy-$n$-labels.
 
-Sensitivity / specificity (Table~\ref{tab:deploy_sens}):
-Youden's $J$ is maximized at raw ECE $=0.172$, yielding sensitivity
-$0.823$, specificity $0.377$, $J=0.200$. Pool provenance: these rows are
-computed on the post-retrain \emph{checkpoint-level deployment pool}
-($n\approx 3{,}015$ row evaluations implied by the seeded TP/sens
-arithmetic of
-Table~\ref{tab:deploy_sens}; regenerated 2026-10-09,
-\texttt{results/deployment\_holdout\_recompute.csv}), \emph{not} on the
-completed 780-evaluation L2 grid quoted elsewhere in this section; an
-earlier draft mis-stated the pool (TP $=1{,}015$ at threshold $0.172$ is
-arithmetically impossible on a 780-row grid), and a 780-grid
-recomputation is queued for the next revision. Sensitivity is moderate (82\% of
-beneficial cases caught) and specificity modest (38\% of non-beneficial
-cases excluded; 62\% falsely flagged), reflecting the asymmetric cost
-structure: missing a beneficial recalibration costs more than an
-unnecessary one.
-\emph{Caveat:} the threshold is searched on the same pool
-used
+Sensitivity / specificity (Table~\ref{tab:deploy_sens}; recomputed on the
+delivered 780-cell grid by
+\texttt{scripts/recompute\_deployment\_780grid.py}, output
+\texttt{results/deployment\_780grid\_recompute.csv}; beneficial class
+$=\Delta\text{ECE}_{\text{OOD}}<-0.01$, the strict deployment-metrics
+convention, P=368 / N=412 --- matching \texttt{deployment\_metrics.csv}
+exactly): Youden's $J$ is maximized at raw ECE $=0.206$, yielding
+sensitivity $0.772$, specificity $0.534$, $J=+0.306$. Sensitivity is
+moderate (77\% of beneficial cases caught; 47\% false-positive
+flagging), reflecting the asymmetric cost structure: missing a
+beneficial recalibration costs more than an unnecessary one.
+\emph{Caveat:} the threshold is searched on the same 780 evaluations used
 for reporting (in-sample). A leave-shift-type-out recomputation (threshold
 selected excluding the held-out dose level, evaluated on it) yields
-$J=+0.42$ (downsampling), $J=+0.14$ (lead drop), $J=+0.16$
-(noise), and $J=+0.08$ (gain); the frozen threshold $0.127$ achieves
-$J=+0.124$ (sensitivity $0.946$, specificity $0.179$) across the four
-held-out dose levels
-(\texttt{results/deployment\_holdout\_recompute.csv}; checkpoint-level
-deployment pool, 2026-10-09): the criterion
-generalizes across held-out shift types, with the in-sample optimum
-mildly optimistic. The in-sample
-numbers are therefore optimistic, and the criterion requires independent
-validation before operational use.
+$J=+0.367$ (downsampling), $J=+0.446$ (lead drop), $J=+0.384$
+(noise), and $J=+0.285$ (gain); the frozen pool-era threshold $0.127$
+achieves $J=+0.158$ (sensitivity $0.929$, specificity $0.228$) across the
+four held-out dose levels: the criterion generalizes across held-out
+shift types, every leave-type-out $J$ exceeds the in-sample optimum (the
+in-sample search is conservative on this grid), and independent
+validation outside this corpus remains required before operational use.
 
 Every lookup-table input is
-\emph{audit-time} (raw ECE, ID--OOD accuracy gap, per-cell labels),
+\emph{audit-time}: the single-variable rule of
+Table~\ref{tab:deploy_sens}/\ref{tab:trivial} routes on the delivered-grid
+raw ECE only (the pool-era lookup additionally used the ID--OOD accuracy
+gap and per-cell labels), and all such inputs
 requiring target ground-truth labels unavailable in the unlabeled stream. The only label-free proxies examined are the predictability
 experiment's target statistics (predicted-prior $L_1$ distance, logit
 moments) plus the source-fitted temperature $T$; that experiment
@@ -1344,19 +1350,24 @@ remains future work
 
 \begin{table}[t]
 \centering
-\caption{Deployment criterion sensitivity / specificity at varying
-thresholds (raw ECE $>$ threshold $\rightarrow$ predict ``deploy TS'').
-Optimal Youden $J=0.200$ at threshold $0.172$.}
+\caption{Deployment criterion sensitivity / specificity on the delivered
+780-cell L2 grid (both architectures; beneficial $=$
+$\Delta\text{ECE}_{\text{OOD}}<-0.01$; P=368, N=412, matching
+\texttt{deployment\_metrics.csv}). Threshold search over the same grid
+(in-sample) and leave-shift-type-out validation; single audit-time input
+(raw ECE $>$ threshold $\rightarrow$ predict ``deploy TS''). Generated by
+\texttt{scripts/recompute\_deployment\_780grid.py}.}
 \label{tab:deploy_sens}
-\begin{tabular}{rrrrr}
+\begin{tabular}{lrrrr}
 \toprule
-Threshold & Sensitivity & Specificity & TP & FP \\
+Scheme & Threshold & Sensitivity & Specificity & $J$ \\
 \midrule
-$0.073$ & $0.994$ & $0.081$ & 1225 & 1639 \\
-$0.102$ & $0.966$ & $0.146$ & 1191 & 1522 \\
-$0.172$ & $0.823$ & $0.377$ & 1015 & 1111 \\
-$0.213$ & $0.699$ & $0.471$ & 862 & 943 \\
-$0.321$ & $0.350$ & $0.738$ & 432 & 468 \\
+in-sample                & 0.206 & 0.772 & 0.534 & $+0.306$ \\
+leave-out downsample (fs125)  & 0.209 & 0.667 & 0.700 & $+0.367$ \\
+leave-out lead drop (leads2)  & 0.206 & 0.960 & 0.486 & $+0.446$ \\
+leave-out noise (noise0)      & 0.206 & 0.778 & 0.606 & $+0.384$ \\
+leave-out gain (gain2.0)      & 0.206 & 0.871 & 0.414 & $+0.285$ \\
+frozen pool-era (0.127)  & 0.127 & 0.929 & 0.228 & $+0.158$ \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -1400,22 +1411,21 @@ audit-time labels, see above); on the completed grid, always-TS delivers
 mean $\Delta\text{ECE}$ $-0.0089$ over the 780 evaluations ($-0.0092$,
 sd $0.0108$, $n=390$ on the inceptiontime tree), and the
 target-label upper bound is always-buy-$n$-labels ($-0.25$, dominated by
-the prior-shift methods' heavy tails); the lookup table captures most of
-the TS benefit without target labels (established on the pre-repair pool;
-the lookup-table row of Table~\ref{tab:trivial} is pending recomputation
-on the delivered post-retrain artifacts).
+the prior-shift methods' heavy tails); the single-variable lookup rule
+routes 476 of 780 evaluations (61\%) and captures $\approx$80\% of the
+always-TS total benefit ($-5.52$ of $-6.94$ summed $\Delta$ECE), i.e.
+most of the TS benefit without target labels
+(\texttt{results/deployment\_780grid\_recompute.csv}).
 
 \begin{table}[t]
 \centering
 \caption{Trivial strategy comparison. Mean $\Delta\text{ECE}$; negative $=$
-beneficial (ECE reduction). always-none spans all 780 (method, shift)
-evaluations; always-TS is evaluated on the 390 inceptiontime-evaluated
-(pair, seed, shift) cells with complete results and lookup-table on a
-matched analysis subset. The lookup-table row is pending recomputation on
-the delivered post-retrain artifacts (the pre-repair pool values it
-summarized are no longer re-derivable); it is flagged ``--'' rather than
-reporting stale numbers. The lookup table captures most of the TS benefit
-without target labels.}
+beneficial (ECE reduction). always-none and always-TS span all 780
+(method, shift) evaluations; lookup-table routes a row to TS iff its
+audit-time raw ECE exceeds the 780-grid in-sample-optimal threshold
+$0.206$ (476/780 = 61\% of rows routed;
+\texttt{scripts/recompute\_deployment\_780grid.py} on
+\texttt{results/l2\_shift\_full\_780cells\_detail.csv}).}
 \label{tab:trivial}
 \begin{tabular}{lrrr}
 \toprule
@@ -1424,7 +1434,7 @@ Strategy & Mean $\Delta\text{ECE}$ & Std & $n$ \\
 always-none            & $\phantom{-}0.0000$  & $0.0000$ & 780 \\
 always-TS              & $-0.0089$            & $0.0116$ & 780  \\
 always-buy-$n$-labels  & $-0.25$              & $0.15$ & 1230 \\
-lookup-table           & --                    & -- & 366  \\
+lookup-table           & $-0.0116$            & $0.0116$ & 476  \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -2430,7 +2440,8 @@ cells pass at $n=20{,}000$ (at $n=500$: seed-42 readout 21/27; four-seed
 rerun all-pass 12/27 and majority 22/27). \textbf{(C4)} Method
 selection: TS the most consistent recalibrator among the delivered
 methods (45/60, point$=$CI), EM
-prior harmful on average ($-0.0040$) and Matrix scaling fragile (24/60
+prior harmful on average ($-0.0040$; per-branch recheck $-0.0378$, which
+strengthens the claim) and Matrix scaling fragile (24/60
 overall). \textbf{(C5)} Gate: 5/12 strata pass both layers
 (per-seed majority, none on all five seeds),
 reframing the counter-examples as fifteen Layer-1 rejections, seven of which
