@@ -586,6 +586,37 @@ The audit also found that 33 CPSC Database records
 archive was extracted (6,877 in the archive vs.\ 6,844 on disk),
 disclosed as a provenance limitation.
 
+\subsection{Pre-registration amendment A4 (mapping-sensitivity gate operationalization)}
+\label{sec:a4}
+The registered protocol (\S10 of
+\texttt{docs/EXPERIMENT\_PROTOCOL.md}) promises a preregistered
+mapping-sensitivity analysis for every ambiguous CPSC label-mapping
+decision, with a failure clause that downgrades the corresponding
+claims in the discussion. Cross-adversarial review on 2026-10-11
+established two facts about this promise: (i) it was never executed and
+never registered as a deviation; (ii) as written, the gate's criterion
+is defined on the secondary endpoint $G$ = ECE$_{\text{S1}}$ $-$
+ECE$_{\text{oracle}}$, which the paper's own Limitations acknowledge as
+undelivered on real data (Limitations xviii) --- so the registered gate
+was unexecutable as written. Amendment A4
+(\texttt{docs/PROTOCOL\_AMENDMENT\_A4\_}\allowbreak\texttt{MAPPING\_SENSITIVITY.md},
+2026-10-11) re-operationalizes the gate on the delivered primary
+endpoint: the variant battery (per ambiguous mapping decision;
+V1 = STE$\rightarrow$MI re-mapping, V2 = multi-label priority-collapse
+variations, V3 = corpus-scope reduction --- excluded with its reason
+recorded) must reproduce the cross-pair ordering of delivered
+$\Delta\text{ECE}_{\text{OOD}}$ means (Kendall $\tau \geq 0.8$) with the
+confirmatory counts unchanged (BH-12 = 7/12, Bonferroni-12 = 6/12),
+otherwise the corresponding cross-corpus claims are downgraded exactly
+per the original clause. Two scope facts are registered with the gate:
+only the 40 CPSC-involving cells can change under a label-mapping
+variant (the 20 ptbxl$\leftrightarrow$chapman cells carry no CPSC-mapped
+labels and serve as fixed ordering anchors), and the battery cost is
+estimated at 2--5 GPU-days for two variants. \textbf{A4 defines the
+criterion before any variant result exists} (anti-HARKing, same
+discipline as A1.1.4); as of A4's date the battery has \emph{not} been
+executed, and A4 changes no recorded value.
+
 \subsection{Pre-registration archival status}
 \label{sec:archival-status}
 Two internal SHA--256 manifests exist and should not be conflated.
@@ -2561,9 +2592,12 @@ and the full per-experiment result files
 \texttt{results/*.csv}) are included with the submission as
 supplementary material and are also available in the public repository
 \url{https://github.com/Toni-cs/ecg-calibration-transportability}.
-The protocol, all three amendments
-(A1, A2, A3), and a per-file archival-status report are publicly archived at
-\url{https://doi.org/10.17605/OSF.IO/53H64}. The registration is
+The protocol, the amendments
+(A1, A2, A3, A4), and a per-file archival-status report are publicly
+archived at
+\url{https://doi.org/10.17605/OSF.IO/53H64}; amendments A3 and A4 also
+ship in the repository (\texttt{docs/}) and the OSF deposit upload for
+them is queued (see \texttt{PREREGISTRATION\_ALIGNMENT.md}, finding F2). The registration is
 \emph{retrospective}: the protocol and its study-period amendments were
 authored during the study and dated in their own headers, then deposited
 and registered afterward. The registered analysis plan records that its
