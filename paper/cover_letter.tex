@@ -4,7 +4,7 @@
 %   Manuscript     : When Does Temperature Scaling Pay Off in Cross-Corpus ECG
 %                    Transfer? A Multi-Seed Calibration Boundary Study
 %   Note           : keep the journal name, the contribution list, and the
-%                    operating-CI wording in sync with main_bspc.tex, which is
+%                    operating-CI wording in sync with main_cmpb.tex, which is
 %                    the authoritative source for every number quoted here.
 % ============================================================================
 
@@ -49,28 +49,30 @@ bootstrap (the operating CI is BCa at $B=10{,}000$, fully re-run on the
 entire 60-experiment grid) and eight recalibration methods. TS yields a
 positive OOD calibration benefit
 $\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{raw}^{OOD}
--\text{ECE}_{TS}^{OOD}$ in \textbf{50/60 = 83.3\%} of seed experiments
-(InceptionTime 26/30, ResNet1D 24/30), while the remaining
-\textbf{10 counter-examples are transparently disclosed} and
+-\text{ECE}_{TS}^{OOD}$ in \textbf{45/60 = 75.0\%} of seed experiments
+(InceptionTime 24/30, ResNet1D 21/30), while the remaining
+\textbf{15 counter-examples are transparently disclosed} and
 mechanistically explained case by case (seven co-occur with low
-OOD accuracy and a large ID--OOD accuracy gap; the remainder are
+OOD accuracy and a large ID--OOD accuracy drop; the remainder are
 seed-level temperature mis-transfers, one of which is
 over-correction on an already well-calibrated backbone). The
 paper delivers \textbf{five independent contributions}:
-\textbf{C1} (Primary, OOD benefit quantification: 50/60 seed support),
+\textbf{C1} (Primary, OOD benefit quantification: 45/60 seed support),
 \textbf{C2} (Boundary condition, pre-registered branch triggered: only
-23/60 = 38.3\% of cells have BCa 95\% CIs containing zero, below the
+30/60 = 50.0\% of cells have BCa 95\% CIs containing zero, below the
 $\geq$80\% criterion, so the ``ID nonzero boundary'' branch applies and
 C1 is reported with this qualifier),
 \textbf{C3} (Methodological, Shapley decomposition validation: 27/27
 cells pass at $n=20{,}000$),
-\textbf{C4} (Practical, method-selection boundary: TS robust vs.\ EM
-prior and Matrix scaling weakest, governed by a prior-likelihood
+\textbf{C4} (Practical, method-selection boundary: TS the most
+consistent recalibrator \emph{among the eight delivered methods} vs.\
+EM prior, which is negative on average,
+and Matrix scaling, governed by a prior-likelihood
 mismatch mechanism), and
-\textbf{C5} (Clinical, discrimination-aware calibration gate: 7/12
-pair$\times$architecture strata pass both layers at the stratum-mean
-level, reframing the counter-examples as ten Layer-1 rejections, seven
-of which also fail the discrimination layer).
+\textbf{C5} (Clinical, discrimination-aware calibration gate: 5/12
+pair$\times$architecture strata pass both layers under the per-seed
+majority criterion, reframing the counter-examples as fifteen Layer-1
+rejections, seven of which also fail the discrimination layer).
 
 \bigskip
 
@@ -96,7 +98,7 @@ methodology.
 All hypotheses in this manuscript are tagged
 \emph{exploratory + robustness validation}, not confirmatory,
 consistent with the open-science best practices of
-Nosek et al.\ (2018). The ten counter-examples (16.7\% of the
+Nosek et al.\ (2018). The fifteen counter-examples (25\% of the
 experiment grid) are disclosed in full in the main
 text and supplements; no non-supporting result is omitted or
 post-hoc excluded. Three pre-registration amendments are recorded with
