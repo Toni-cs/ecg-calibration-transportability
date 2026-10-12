@@ -34,10 +34,28 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 
 ## Contents
 
+> **Scope updates (2026-10-11/12 regeneration + review closing).** New entries
+> in `S2_result_tables/`:
+> `robustness_val_8method_perbranch_recheck.csv` (per-branch correctness
+> recheck of the delivered 8-method table — read
+> `results/_EIGHT_METHOD_SEMANTICS_NOTICE.md` in the repository before
+> quoting non-`ts` rows),
+> `deployment_780grid_recompute.csv` (the manuscript's deployment
+> sensitivity/specificity and lookup-table rows recomputed on the delivered
+> 780-cell grid), plus the refreshed `real_prior_recovery_summary.json`
+> (generator reconstructed in the repository; pair-cluster CI fields are
+> intentionally `null` from the table alone).
+>
+> `S2_result_tables/archive_pre_retrain/` holds the three pre-retrain
+> decomposition legacy tables **kept for provenance only** — do not quote
+> them as current readouts (see its README and the repository's
+> `results/archive/README.md`). `S0_manuscript/` carries the compiled PDFs.
+
 | Folder | Contents | Files |
 |---|---|---|
+| `S0_manuscript/` | the compiled manuscript PDF, supplementary PDF, cover-letter PDF (latest regeneration wave) | 3 |
 | `S1_protocol/` | see below | 6 |
-| `S2_result_tables/` | see below | 31 |
+| `S2_result_tables/` | see below | 46 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed42/` | see below | 1 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed43/` | see below | 1 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed44/` | see below | 1 |
@@ -101,7 +119,7 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed45/` | see below | 1 |
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed46/` | see below | 1 |
 | `S4_reliability_diagrams/` | see below | 60 |
-| **Total** | matches `SHA256SUMS.txt` | **159** |
+| **Total** | matches `SHA256SUMS.txt` | **177** (+ this README) |
 
 ### S1_protocol
 `EXPERIMENT_PROTOCOL.md` (protocol v2.1-A1), the A1 endpoint re-location

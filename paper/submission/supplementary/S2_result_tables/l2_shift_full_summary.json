@@ -1,0 +1,33 @@
+{
+  "total_390_cells": 390,
+  "target_390_cells": 390,
+  "total_780_evals": 780,
+  "target_780_evals": 780,
+  "n_safe_cells": 348,
+  "safe_rate_overall": 0.8923076923076924,
+  "n_done": 16,
+  "n_skip": 44,
+  "n_fail": 0,
+  "elapsed_sec": 7752.540025234222,
+  "methods": [
+    "ts",
+    "platt",
+    "isotonic",
+    "vector",
+    "matrix",
+    "dirichlet",
+    "em_prior",
+    "bbse_prior"
+  ],
+  "archs": [
+    "resnet1d",
+    "inceptiontime"
+  ],
+  "seeds": [
+    42,
+    43,
+    44,
+    45,
+    46
+  ]
+}
