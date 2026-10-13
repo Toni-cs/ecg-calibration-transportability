@@ -1094,6 +1094,21 @@ PTB-XL$\rightarrow$CPSC  & 3/5 & 2/5 & 5/10 & five counter-examples \\
 }
 \end{table}
 
+The 8-method boundary is bounded further by a sample-level recalibrator
+from the 2020s methods literature: adaptive temperature scaling
+(ATS, Robey et al.~\cite{robey2021adaptive}, Model-Based Temperature
+Scaling, AISTATS 2021 -- a per-sample $T(x)$ head fitted on the
+source-cal split and applied unchanged to the target). On the identical
+60-cell caches under the same per-branch correctness convention, ATS
+delivers a mean OOD benefit of $+0.0190$ with 47/60 positive cells
+(vs.\ $+0.0093$ and 45/60 for global TS), and beats global TS on 41/60
+cells (pearson $r=0.646$ with global-TS deltas; per-cell $T$ band
+$[0.33, 4.07]$, mean 1.107). The restricting factor stays the
+deployment bar: 0/60 ATS cells meet the strict post-calibration
+criteria (SmoothECE $\leq 0.05$ AND $\Delta\text{ECE}<0$), the same
+ceiling that kept global TS at 0 on this grid. Full per-cell
+deliverable: \texttt{results/samplelevel\_ts\_60cells.csv}.
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\columnwidth]{figures/fig_arch_comparison.pdf}
@@ -2189,6 +2204,14 @@ practical comparison is the alternative path: fifty labeled target
 records under S2 deliver $+0.150$, an order of magnitude above the
 zero-shot gain --- which is why the actionable recommendation is
 buy-$n$ recalibration, with post-hoc TS as the budget-free baseline.
+    The deployment-safety bar (post-TS SmoothECE $=0.05$; protocol
+    \S9) is likewise a \emph{pre-registered, author-set operating
+    value}, not a literature- or regulator-derived margin; this paper
+    treats $0.05$ as a declared operating point, and bounds its
+    dependence through the delivered multi-metric sensitivity checks
+    (Brier Murphy decomposition, classwise-ECE, NLL, reliability
+    diagrams; Sec.~\ref{sec:s2}) and the DCA/Youden sweeps of the
+    deployment section.
 
 % ----------------------------------------------------------------------------
 \subsection{Calibration is not discrimination: the clinical viability precondition}
@@ -2440,6 +2463,10 @@ materiality or equivalence margin: the $+0.0093$ mean gain
 ($\approx0.9$ SmoothECE percentage points) is statistically resolvable
 but clinically uninterpretable without a domain-stated MDE (Materiality
 paragraph above).
+The deployment bar (SmoothECE
+$=0.05$) is similarly a pre-registered author-set operating
+value, with the multi-metric sensitivity checks delivered as
+secondary provenance (Materiality paragraph above).
 Future work:
 (1) prospective multi-device validation; (2) continuous shift spaces;
 (3) $\pi$-independent recovery estimators (BBSE/EM-class): BBSE is now
@@ -2834,6 +2861,9 @@ MICCAI 2026).
 \bibitem{star2025} N.~Nemati, ``Comparative analysis of data
 augmentation for clinical ECG classification with STAR (Sinusoidal
 Time--Amplitude Resampling),'' \emph{arXiv preprint} 2510.24740, 2025.
+\bibitem{robey2021adaptive} A.~Robey, B.~Chugg, P.~Rodriguez,
+``Model-based temperature scaling,'' \emph{AISTATS}, 2021,
+PMLR 130:1249--1257. arXiv:2101.04538.
 \bibitem{song2024ecgfm} J.~Song, J.-H.~Jang, B.~T.~Lee, D.~Hong,
 J.~Kwon, Y.-Y.~Jo, ``Foundation models for electrocardiograms,''
 \emph{arXiv preprint} 2407.07110, 2024.
