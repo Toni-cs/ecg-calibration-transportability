@@ -78,6 +78,19 @@ manuscript) and the delivered set, superseding stale readouts elsewhere.
    `results/README.md` now points at it, and the main text's C4 already
    discloses the recheck. Full regeneration of the delivered non-TS rows
    remains queued on lab-tree compute (see C.1).
+7. **Sample-level (adaptive) TS baseline (A24; closes review A item #3s
+   sharpest demand).** scripts/samplelevel_ts.py +
+   results/samplelevel_ts_60cells.csv (Robey et al., AISTATS 2021 -- a
+   per-sample T(x) head fitted on the source-cal split and applied
+   unchanged to the target; per-branch correctness convention;
+   deterministic per-cell seed). Headline: mean OOD benefit +0.0190 with
+   47/60 positive cells; beats global TS on 41/60 cells (pearson r
+   0.646 with global-TS deltas; T band [0.33, 4.07], mean 1.107).
+   Deployment bar: 0/60 strict post-calibration criteria met -- the
+   same ceiling that keeps global TS there, answering would a smarter
+   post-hoc method reach the bar with delivered data instead of
+   speculation. Paper gains one paragraph + citation robey2021adaptive
+   (full-work commit ca830d1, main 84 pp).
 
 ## C. Still queued (compute-bound or user-side only)
 
