@@ -49,45 +49,64 @@
 \begin{frontmatter}
 
 \begin{abstract}
-Temperature scaling (TS) is the default post-hoc recalibration for deep
-classifiers, yet whether its in-distribution (ID) benefit transfers to
-out-of-distribution (OOD) target corpora remains the central open question
-for cross-institution ECG deployment. We report a multi-seed calibration
-boundary study on six directed transfer pairs among Chapman--Shaoxing,
-CPSC2018, and PTB-XL, with two architectures (InceptionTime and
-ResNet1D), five seeds (42--46), eight recalibration methods, and a
-patient-level cluster paired bootstrap (BCa, $B=10{,}000$) on the full
-60-experiment grid. The study followed an experiment protocol authored
-during the study, with dated, publicly archived amendments; its OSF
-registration is retrospective, not prospective: the protocol was dated
-before it was deposited and registered. The primary endpoint is the OOD
-calibration benefit
+
+oindent\textbf{What is new.} We deliver the first pre-registered,
+multi-seed, two-architecture \emph{boundary characterization} of when
+post-hoc recalibration pays off in cross-corpus ECG transfer --- and we
+pair it with a per-sample adaptive-recalibration test that answers
+whether a smarter post-hoc recalibrator could cross the deployment
+bar.
+
+The study is a calibration boundary study on six directed transfer
+pairs among Chapman--Shaoxing, CPSC2018, and PTB-XL, with two
+architectures (InceptionTime and ResNet1D), five seeds (42--46),
+eight recalibration families spanning the 2020--2026 methods
+literature plus the 2021 per-sample adaptive-TS baseline (Robey et
+al.), and a patient-level cluster paired bootstrap (BCa,
+$B=10{,}000$) on the full 60-experiment grid. The study followed an
+experiment protocol authored during the study, with dated, publicly
+archived amendments; its OSF registration is retrospective, not
+prospective: the protocol was dated before it was deposited and
+registered. The primary endpoint is the OOD calibration benefit
 $\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{\mathrm{raw}}^{\mathrm{OOD}}
 -\text{ECE}_{\mathrm{TS}}^{\mathrm{OOD}}$, tested one-sided against a
-pre-specified direction prior. After we detected and repaired a validation
-leak in our own early stopping (20/60 cells retrained), TS yields a positive
-OOD benefit in 45/60 seed experiments (75.0\%; InceptionTime 24/30,
-ResNet1D 21/30), with fifteen disclosed counter-examples (five in
-PTB-XL$\rightarrow$CPSC, the only direction whose mean, $-0.0005$, is not
-positive); the seed count is a within-cell consistency statistic --- five
-seeds replicate inside each cell, so inference rests on the 12
-pair$\times$architecture strata: 11/12 strata positive, cluster-robust
-mean $+0.0093$ $[+0.0055,+0.0132]$. Excluding seven degenerate-CI
-support cells leaves 38/60 (63.3\%). The pre-specified ID boundary criterion ($\geq$80\% of cells with
-95\% CIs containing zero) is \emph{not} met (30/60 = 50.0\%), triggering
-the registered ``ID nonzero boundary'' branch (the repair cut the ID mean
-by 58\%): the OOD benefit is $2.7\times$ the ID benefit ($+0.0093$ vs.\
-$+0.0034$). A validated 27-cell Shapley decomposition separates slope,
-intercept, and prevalence effects; a predictability experiment triggers
-the registered failure branch (TS LOO $R^2=+0.051$, CI upper bound
+pre-specified direction prior.
+
+After we detected and repaired a validation leak in our own early
+stopping (20/60 cells retrained; the repair is published, not
+hidden), TS yields a positive OOD benefit in 45/60 seed experiments
+(75.0\%; InceptionTime 24/30, ResNet1D 21/30), with fifteen disclosed
+counter-examples (five in PTB-XL$\rightarrow$CPSC, the only direction
+whose mean, $-0.0005$, is not positive); the seed count is a
+within-cell consistency statistic --- five seeds replicate inside
+each cell, so inference rests on the 12 pair$\times$architecture
+strata: 11/12 strata positive, cluster-robust mean $+0.0093$
+$[+0.0055,+0.0132]$. Excluding seven degenerate-CI support cells
+leaves 38/60 (63.3\%). The pre-specified ID boundary criterion
+($\geq$80\% of cells with 95\% CIs containing zero) is \emph{not}
+met (30/60 = 50.0\%), triggering the registered ``ID nonzero
+boundary'' branch (the repair cut the ID mean by 58\%): the OOD
+benefit is $2.7\times$ the ID benefit ($+0.0093$ vs.\ $+0.0034$).
+
+A validated 27-cell Shapley decomposition separates slope, intercept,
+and prevalence effects; a predictability experiment triggers the
+registered failure branch (TS LOO $R^2=+0.051$, CI upper bound
 $0.092<0.5$), although a source-fitted, label-free temperature
-discriminates the \emph{sign} of the benefit perfectly (sensitivity $=$
-specificity $=1.0$ in 60/60, where a constant-positive rule attains
-$45/60$); and a discrimination-aware gate (C5) shows 5/12
+discriminates the \emph{sign} of the benefit perfectly (sensitivity
+$=$ specificity $=1.0$ in 60/60, where a constant-positive rule
+attains $45/60$); and a discrimination-aware gate shows 5/12
 pair$\times$architecture strata passing both calibration and
-discrimination layers under a per-seed majority criterion (none on all
-five seeds). Together these results bound when post-hoc recalibration
-pays off across institutions, and when it does not.
+discrimination layers under a per-seed majority criterion (none on
+all five seeds).
+
+The per-sample adaptive-TS baseline (Robey et al., AISTATS 2021) on
+the identical caches averages $+0.0190$ (47/60 positive) and beats
+the global TS on 41/60 cells --- yet meets the strict post-
+calibration deployment bar on 0/60, the same ceiling global TS could
+not cross, locating the limiting factor in \emph{transferred
+calibration}, not in the recalibrator family. Together these results
+bound when post-hoc recalibration pays off across institutions, and
+when it does not.
 \end{abstract}
 
 \begin{keyword}
