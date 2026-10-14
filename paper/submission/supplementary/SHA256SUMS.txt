@@ -2,8 +2,10 @@
 # full regeneration history: waves 2026-10-08/09/10 + 2026-10-11 refresh +
 # 2026-10-13 sample-level TS + abstract-integrity pull-forward.
 # adaptations: A3 A4 ledger addendum present; abstract is 'what is new' first.
+# 2026-10-14 addition: S2 entry samplelevel_ts_60cells.csv (ATS per-cell
+# deliverable cited in the manuscript; all pre-existing entries unchanged).
 # Verify: sha256sum -c SHA256SUMS.txt
-727425f4e42ec7513d4786c25c9ffdf7469276a7f3e18aa90a4591e441acec58 *README.md
+2e251b935ad56f3a67b7c33593ca41989532ccc59ef03c2b297abdfad489e921 *README.md
 9cecdad46e5ee556233e18bbede1ac22df167bf32bf1a1e1082464250b7d9c1c *S0_manuscript/cover_letter.pdf
 da2aa32a1046374c3881f0fe6b4d30b2a62e094bff11f098b00fbd8a474cdf4c *S0_manuscript/main_cmpb.pdf
 fc25da9e725646f5f22f3190bdfcc22f89a474d6ef69d7653b800b00846fbf52 *S0_manuscript/supplementary.pdf
@@ -55,6 +57,7 @@ abd69df5ce6aa09c141c67105d3b2e779782df22707df6860fee4f9d9a65a4ee *S2_result_tabl
 118fe9528912efbe4c90cb45d7e4e09de7869408ce134c515cd13037b0ad93c8 *S2_result_tables/rebuild_shapley_slopeT.json
 8d0fda8b9ede845624886e91257e2edfa543bf622fa2e2ca0b8177e459a4eceb *S2_result_tables/robustness_val_8method_perbranch_recheck.csv
 548317143be25254d90ef1b525140fe1b3cae26a3ab71545d56250d41058d746 *S2_result_tables/robustness_validation_5seeds.csv
+58339362c81cf684b33f6624346418d9d444d0c337c2a5b8c170474634d613f2 *S2_result_tables/samplelevel_ts_60cells.csv
 b41ade5f99fb22c2bda85fd2608cd7dd02170310a8bf74eaf78bcf6bc48147b0 *S2_result_tables/s2_dose_response.csv
 83d3875d9ab0e7625074e15d7da7c032e4624b09d297e35e66853811f88bdc44 *S2_result_tables/s2_dose_response_summary.json
 de0de6936f35e54e32aa670dbafc99b598c4f3cbfabce5924623abfa25e27e1c *S2_result_tables/temperature_distribution_analysis.csv

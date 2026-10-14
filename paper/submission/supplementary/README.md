@@ -55,7 +55,7 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 |---|---|---|
 | `S0_manuscript/` | the compiled manuscript PDF, supplementary PDF, cover-letter PDF (latest regeneration wave) | 3 |
 | `S1_protocol/` | see below | 6 |
-| `S2_result_tables/` | see below | 46 |
+| `S2_result_tables/` | see below | 47 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed42/` | see below | 1 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed43/` | see below | 1 |
 | `S3_per_experiment/chapman_cpsc/inceptiontime/seed44/` | see below | 1 |
@@ -130,6 +130,9 @@ amendment, `OSF_MANIFEST_POST_CORRECTIONS_2026-09-16.md`, and
 
 ### S2_result_tables
 Aggregate result tables underlying every number in the main text.
+`samplelevel_ts_60cells.csv` is the per-cell deliverable for the
+sample-level (adaptive-TS, Robey et al. 2021) baseline cited in the
+manuscript; added 2026-10-14, hash-matched to the public repository copy.
 
 ### S3_per_experiment
 `transfer_result.json` for each cell of the 60-experiment transfer grid,
