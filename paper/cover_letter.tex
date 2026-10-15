@@ -52,8 +52,9 @@ $\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{raw}^{OOD}
 -\text{ECE}_{TS}^{OOD}$ in \textbf{45/60 = 75.0\%} of seed experiments
 (InceptionTime 24/30, ResNet1D 21/30), while the remaining
 \textbf{15 counter-examples are transparently disclosed} and
-mechanistically explained case by case (seven co-occur with low
-OOD accuracy and a large ID--OOD accuracy drop; the remainder are
+mechanistically explained case by case (seven have OOD accuracy
+$\leq 0.50$, seven have an ID--OOD accuracy drop $\geq 0.18$, and six
+satisfy both; the remainder are
 seed-level temperature mis-transfers, one of which is
 over-correction on an already well-calibrated backbone). The
 paper delivers \textbf{five independent contributions}:
@@ -99,8 +100,11 @@ All hypotheses in this manuscript are tagged
 \emph{exploratory + robustness validation}, not confirmatory,
 consistent with the open-science best practices of
 Nosek et al.\ (2018). The fifteen counter-examples (25\% of the
-experiment grid) are disclosed in full in the main
-post-hoc excluded. Four pre-registration amendments are recorded with
+experiment grid) are disclosed in full in the manuscript: the 60-seed
+results table reports every per-seed $\Delta$ECE with its 95\% CI
+lower bound and every counter-example's OOD accuracy, and each
+counter-example is mechanistically explained case by case. Four
+pre-registration amendments are recorded with
 reason and date: A1 re-locates the primary endpoint (protocol
 v2.0 $\rightarrow$ v2.1-A1), A2 reduces the confirmatory family
 from 156 to 12 hypotheses, re-designating the L2 shift levels as

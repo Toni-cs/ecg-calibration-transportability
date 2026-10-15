@@ -57,8 +57,10 @@
 
 \begin{abstract}
 
-oindent\textbf{What is new.} We deliver the first pre-registered,
-multi-seed, two-architecture \emph{boundary characterization} of when
+oindent\textbf{What is new.} We deliver the first pre-registered
+(study-period protocol, retrospectively registered; see the
+``Pre-registration archival status'' section), multi-seed,
+two-architecture \emph{boundary characterization} of when
 post-hoc recalibration pays off in cross-corpus ECG transfer --- and we
 pair it with a per-sample adaptive-recalibration test that answers
 whether a smarter post-hoc recalibrator could cross the deployment
@@ -67,8 +69,9 @@ bar.
 The study is a calibration boundary study on six directed transfer
 pairs among Chapman--Shaoxing, CPSC2018, and PTB-XL, with two
 architectures (InceptionTime and ResNet1D), five seeds (42--46),
-eight recalibration families spanning the 2020--2026 methods
-literature plus the 2021 per-sample adaptive-TS baseline (Robey et
+eight recalibration families from the classic post-hoc recalibration
+and label-shift-correction literature (delivered set dating 1999--2020)
+plus the 2021 per-sample adaptive-TS baseline (Robey et
 al.), and a patient-level cluster paired bootstrap (BCa,
 $B=10{,}000$) on the full 60-experiment grid. The study followed an
 experiment protocol authored during the study, with dated, publicly
@@ -101,7 +104,10 @@ registered failure branch (TS LOO $R^2=+0.051$, CI upper bound
 $0.092<0.5$), although a source-fitted, label-free temperature
 discriminates the \emph{sign} of the benefit perfectly (sensitivity
 $=$ specificity $=1.0$ in 60/60, where a constant-positive rule
-attains $45/60$); and a discrimination-aware gate shows 5/12
+attains $45/60$; the sign rule is the mechanical, directional
+consequence of the transform discussed in the body, not independent
+evidence of a substantive benefit); and a discrimination-aware gate
+shows 5/12
 pair$\times$architecture strata passing both calibration and
 discrimination layers under a per-seed majority criterion (none on
 all five seeds).
@@ -228,7 +234,7 @@ Five independent contributions:
     $\Delta\text{ECE}_{\text{OOD}}>0$) from clinical viability
     (accuracy $\geq$ the target majority-class baseline). Across 12
     pair$\times$architecture strata, 5/12 pass both layers under a
-    per-seed majority criterion; 6/12 fail, seven through the
+    per-seed majority criterion; 7/12 fail, six through the
     discrimination layer, including directions with positive
     $\Delta\text{ECE}_{\text{OOD}}$ but accuracy below baseline (e.g.,
     PTB-XL$\rightarrow$Chapman InceptionTime: $\Delta\text{ECE}=+0.013$,
@@ -640,8 +646,10 @@ variant (the 20 ptbxl$\leftrightarrow$chapman cells carry no CPSC-mapped
 labels and serve as fixed ordering anchors), and the battery cost is
 estimated at 2--5 GPU-days for two variants. \textbf{A4 defines the
 criterion before any variant result exists} (anti-HARKing, same
-discipline as A1.1.4); as of A4's date the battery has \emph{not} been
-executed, and A4 changes no recorded value.
+discipline as A1.1.4); as of submission the battery remains
+unexecuted --- and, per amendment A4's own fallback clause, the
+cross-corpus claims retain their current disclosure strength until it
+is run --- and A4 changes no recorded value.
 
 \subsection{Pre-registration archival status}
 \label{sec:archival-status}
@@ -686,7 +694,13 @@ shifted by one rounding step when BCa was re-run (largest:
 CPSC$\rightarrow$Chapman InceptionTime seed~44, $+0.0160\rightarrow+0.0167$).
 Where the frozen registration, the interim retraining, or earlier
 manuscript drafts differ from this manuscript, the manuscript values are
-the current post-retraining ones.
+the current post-retraining ones. The frozen record's ID-boundary
+response likewise carries the figure set current at the freeze:
+23/60 = 38.3\% of seed cells with 95\% CIs containing zero under the
+BCa operating CI, which moved to the delivered 30/60 = 50.0\% across
+the two retraining events above; the branch trigger itself --- the
+registered $\geq$80\% criterion is \emph{not} met --- is unchanged by
+that evolution (Sec.~\ref{sec:boundary}).
 
 \subsection{Post-registration repair: PTB-XL early-stopping validation leak}
 \label{sec:repair}
@@ -1006,8 +1020,10 @@ CPSC$\rightarrow$PTB-XL   & RN & $+0.0104$ & $-0.0042$ & $+0.0294$ & 0/5 \\
 The ID benefit is small but \emph{not} zero: across 60 TS experiments,
 $\Delta\text{ECE}_{\text{ID}}$ has mean $+0.0034$ (vs.\ OOD mean
 $+0.0093$, a $2.7\times$ ratio); $42/60 = 70.0\%$ of point estimates
-are positive, $24/60$ have 95\% CI lower bounds $>0$ (BCa), and
-$30/60 = 50.0\%$ contain zero, far below the pre-registered
+are positive, $24/60$ have 95\% CI lower bounds $>0$ (BCa), $30/60 =
+50.0\%$ contain zero, and the remaining six have CI upper bounds $<0$
+--- TS significantly worsens ID calibration in those six cells ---
+far below the pre-registered
 $\geq$80\% criterion. We therefore \emph{trigger} the pre-registered ``ID
 nonzero boundary'' branch (protocol A1.4.2): TS, fitted on the source
 calibration split, also improves ID calibration in many cells; the
@@ -1074,10 +1090,10 @@ ill-conditioned cells.}
 Method & Total & Full/6 & $\Delta\text{ECE}_{\text{OOD}}$ mean & Neg.\ dirs \\
 \midrule
 TS         & 24/30 & 1/6 & $+0.0098$ & 0 \\
-Platt      & 19/30 & 1/6 & $+0.0088$ & 0 \\
-Isotonic   & 12/30 & 0/6 & $+0.0009$ & 1 \\
+Platt      & 19/30 & 1/6 & $+0.0088$ & 1 \\
+Isotonic   & 12/30 & 0/6 & $+0.0009$ & 3 \\
 Vector     & 17/30 & 0/6 & $+0.0084$ & 1 \\
-Matrix     & 11/30 & 0/6 & $+0.0041$ & 2 \\
+Matrix     & 11/30 & 0/6 & $+0.0041$ & 3 \\
 Dirichlet  & 16/30 & 0/6 & $+0.0067$ & 2 \\
 EM prior   & 11/30 & 0/6 & $-0.0198$ & 2 \\
 BBSE prior & 23/30 & 3/6 & $+0.0399$ & 1 \\
@@ -1232,11 +1248,16 @@ agreement under repeats: all-four-seed pass-rate is 12/27 cells,
 majority ($\geq 3/4$) is 22/27, per-seed single-seed passes are
 21/22/21/22 --- the quoted 21/27 is the seed-42 readout, and the
 $n=500$ estimator is substantially less repeatable than the
-pre-registered $n=20{,}000$ gate. Three entangled cases (narrow\_band,
-tiny\_slope, deep\_intercept) with
-$\det\in\{2.4\times10^{-7}, 3.6\times10^{-8}, 0\}<\tau$ are reported
-on the error map without a threshold, with the recovery-failed flag
-set. Bootstrap CIs on absolute Shapley values and share-reliable
+pre-registered $n=20{,}000$ gate. Three degenerate configurations
+(narrow\_band, tiny\_slope, deep\_intercept) are exercised in the
+released demonstration code (\texttt{entangle\_demo\_cases} in
+\texttt{src/utils/decomposition.py}, invoked by
+\texttt{scripts/validate\_decomposition.py}): the demonstration run
+prints $\det\in\{2.4\times10^{-7},\ 3.6\times10^{-8},\ 0\}<\tau$ with
+$\tau=10^{-6}$, sets the entanglement flag on all three cases and the
+recovery-failed flag on the deep-intercept case; these det anchors
+appear in the demonstration output, not in any shipped figure or CSV.
+Bootstrap CIs on absolute Shapley values and share-reliable
 flags for uninterpretable shares ($|\Delta_{\text{total}}|<3/\sqrt{n}$)
 are reported.
 
@@ -1280,10 +1301,10 @@ class-wise entropy difference) in the corrected encoding world
 \texttt{results/predictability\_corrected\_v2.csv}; same source as the
 discrimination experiment below) gives a sharper and less favourable
 picture for the boundary. Only $T$ carries signal: under the
-implemented (architecture, pair) folds it reaches LOO $R^2 = +0.203$
-(bootstrap CI $[+0.010, +0.210]$), and under per-cell folds $+0.229$
-(CI $[+0.170, +0.278]$), while the Wasserstein distance ($-0.086$) and
-the entropy difference ($-0.027$) carry none. $T$ is also a perfect
+implemented (architecture, pair) folds it reaches LOO $R^2 = +0.350$
+(bootstrap CI $[+0.058, +0.371]$), and under per-cell folds $+0.372$
+(CI $[+0.216, +0.590]$), while the Wasserstein distance ($-0.074$) and
+the entropy difference ($-0.034$) carry none. $T$ is also a perfect
 \emph{directional} predictor, which we report as a formal
 discrimination experiment rather than a raw sign count: the rule
 ``call the benefit positive iff $T_{\text{src}}>1$'' (the
@@ -1315,11 +1336,13 @@ We therefore do \emph{not} claim that no label-free quantity carries
 information about the endpoint --- $T$ does. The claim we retain is the
 pre-registered one: no label-free feature reaches the LOO $R^2$
 threshold of $0.5$ under the implemented fold unit and the registered
-ridge estimator ($0.203 < 0.5$), so
+ridge estimator ($0.350 < 0.5$; CI upper bound $+0.371 < 0.5$), so
 the failure branch stands and the three-step chain remains downgraded to
 two steps. Two qualifications are required. First, the verdict is
-estimator-sensitive, not fold-unit-sensitive: per-cell folds give a CI
-upper bound of $+0.278$, also below the threshold, but a plain-OLS
+unit-sensitive, not only estimator-sensitive: per-cell folds give an
+$R^2$ of $+0.372$ with CI upper bound $+0.590$, which crosses the
+threshold, so the fold-unit generality is not established and the
+branch rests on the implemented (architecture, pair) unit --- but a plain-OLS
 refit at the same folds reaches $\approx+0.94$ --- the registered
 ridge $\alpha{=}1$ shrinks the slope on the near-constant fitted $T$
 range $[0.932, 1.181]$ (the shrinkage factor is $\approx 0.1$), so the
@@ -1373,8 +1396,9 @@ Sensitivity / specificity (Table~\ref{tab:deploy_sens}; recomputed on the
 delivered 780-cell grid by
 \texttt{scripts/recompute\_deployment\_780grid.py}, output
 \texttt{results/deployment\_780grid\_recompute.csv}; beneficial class
-$=\Delta\text{ECE}_{\text{OOD}}<-0.01$, the strict deployment-metrics
-convention, P=368 / N=412 --- matching \texttt{deployment\_metrics.csv}
+$=\Delta\text{ECE}_{\text{OOD}}<-0.01$ in the strict deployment-metrics
+convention (post $-$ raw sign; negative $=$ beneficial, opposite to the
+primary-endpoint raw $-$ TS convention), P=368 / N=412 --- matching \texttt{deployment\_metrics.csv}
 exactly): Youden's $J$ is maximized at raw ECE $=0.206$, yielding
 sensitivity $0.772$, specificity $0.534$, $J=+0.306$. Sensitivity is
 moderate (77\% of beneficial cases caught; 47\% false-positive
@@ -1387,8 +1411,10 @@ $J=+0.367$ (downsampling), $J=+0.446$ (lead drop), $J=+0.384$
 (noise), and $J=+0.285$ (gain); the frozen pool-era threshold $0.127$
 achieves $J=+0.158$ (sensitivity $0.929$, specificity $0.228$) across the
 four held-out dose levels: the criterion generalizes across held-out
-shift types, every leave-type-out $J$ exceeds the in-sample optimum (the
-in-sample search is conservative on this grid), and independent
+shift types, with three of four leave-type-out $J$ above the in-sample
+optimum $+0.306$ (downsampling, lead drop, noise; the gain/offset
+family does not, $+0.285$, so the in-sample search is not uniformly
+conservative on this grid), and independent
 validation outside this corpus remains required before operational use.
 
 Every lookup-table input is
@@ -1403,7 +1429,8 @@ triggered its pre-registered failure branch
 (LOO $R^2$ CI upper bound $0.092 < 0.5$; the largest upper bound across
 all eight methods is $+0.378$, still below $0.5$,
 Table~\ref{tab:predictability}).
-$T$ does carry signal (LOO $R^2 = +0.203$ under the registered ridge
+$T$ does carry signal (LOO $R^2 = +0.051$ at the registered freeze,
+$+0.350$ on the delivered full-grid recompute, both under the registered ridge
 protocol, $\approx+0.94$ under plain OLS --- an $\alpha{=}1$ shrinkage
 disclosed in Sec.~\ref{sec:predictability}; sign of the endpoint correct
 in 60/60 SmoothECE cells, 59/60 on the auxiliary reliability caliber),
@@ -1422,7 +1449,9 @@ remains future work
 \centering
 \caption{Deployment criterion sensitivity / specificity on the delivered
 780-cell L2 grid (both architectures; beneficial $=$
-$\Delta\text{ECE}_{\text{OOD}}<-0.01$; P=368, N=412, matching
+$\Delta\text{ECE}_{\text{OOD}}<-0.01$ in the post $-$ raw sign
+convention, opposite to the primary endpoint's raw $-$ TS; P=368,
+N=412, matching
 \texttt{deployment\_metrics.csv}). Threshold search over the same grid
 (in-sample) and leave-shift-type-out validation; single audit-time input
 (raw ECE $>$ threshold $\rightarrow$ predict ``deploy TS''). Generated by
@@ -1483,7 +1512,8 @@ sd $0.0108$, $n=390$ on the inceptiontime tree), and the
 target-label upper bound is always-buy-$n$-labels ($-0.25$, dominated by
 the prior-shift methods' heavy tails); the single-variable lookup rule
 routes 476 of 780 evaluations (61\%) and captures $\approx$80\% of the
-always-TS total benefit ($-5.52$ of $-6.94$ summed $\Delta$ECE), i.e.
+always-TS total benefit ($-5.54$ of $-6.97$ summed $\Delta$ECE; exact
+$-5.5370$ of $-6.9729$), i.e.
 most of the TS benefit without target labels
 (\texttt{results/deployment\_780grid\_recompute.csv}).
 
@@ -1495,7 +1525,10 @@ beneficial (ECE reduction). always-none and always-TS span all 780
 audit-time raw ECE exceeds the 780-grid in-sample-optimal threshold
 $0.206$ (476/780 = 61\% of rows routed;
 \texttt{scripts/recompute\_deployment\_780grid.py} on
-\texttt{results/l2\_shift\_full\_780cells\_detail.csv}).}
+\texttt{results/l2\_shift\_full\_780cells\_detail.csv}). The
+always-buy-$n$-labels row is a historical sizing reference from the
+archived pool-era reference grid, not part of the delivered 780-cell
+comparison on which the other rows are computed.}
 \label{tab:trivial}
 \begin{tabular}{lrrr}
 \toprule
@@ -1609,11 +1642,12 @@ $T=4.5$ gives $+0.1452$ ($+0.0363$ to $+0.2054$); the floor dips
 non-positive in the $1.1$--$1.5$ band (the median turning negative at
 $T\approx1.1$), which is the numerically delicate region. The synthetic
 sweep
-agrees in magnitude for high-confidence distributions ($T=1.5$:
-$+0.039$ to $+0.055$) but not in sign for flat ones ($T=1.25$:
-$-0.009$ for uniform), which is why the empirical distributions are used.
-The floor is positive in $100\%$ of cells for $T \leq 0.9$ and
-$T \geq 2.0$, and in $84\%$ ($T=1.25$) to $91\%$ ($T=1.4$--$1.5$) of
+agrees in magnitude for high-confidence distributions ($T=1.5$: up to $+0.055$ for the bimodal high-confidence
+distribution; flat ones stay near zero) but not in sign for flat ones
+($T=1.25$: $-0.009$ for uniform), which is why the empirical
+distributions are used. The floor is positive in $100\%$ of cells for
+$T \leq 0.9$ and $T \geq 2.0$, in $50\%$ at $T=1.1$, and in $90\%$
+($T=1.25$) to $95\%$ ($T=1.4$--$1.5$) of
 cells in
 between. Observed raw ECE across the 60 main-grid cells of the
 TS-component ablation under the corrected label encoding
@@ -1635,8 +1669,9 @@ fixed. In the primary convention ($\Delta\text{ECE}_{\text{OOD}} =
 $\text{ECE}_{\text{post}}$ and therefore contributes \emph{negatively}.
 The identity is the minimiser of ECE under perfect calibration, so the
 floor is positive in the noise convention on both sides of $T=1$: in
-$100\%$ of cells for $T \leq 0.9$ and $T \geq 2.0$, and in $84$--$91\%$
-of cells for $1.1 \leq T \leq 1.5$. The idealised endpoint is therefore
+$100\%$ of cells for $T \leq 0.9$ and $T \geq 2.0$, in $50\%$ at
+$T=1.1$, and in $90$--$95\%$
+of cells for $1.25 \leq T \leq 1.5$. The idealised endpoint is therefore
 $-\text{floor}(T) \leq 0$ almost everywhere, and a predominantly
 attenuating artefact cannot generate the positive endpoint observed in
 45/60 experiments. We test this and three further implications of the
@@ -1742,25 +1777,29 @@ clinically useless. We define a two-layer gate:
     accuracy measured on the same OOD evaluation set as
     $\text{acc}_{\text{OOD}}$ (CPSC $0.528$; PTB-XL $0.409$;
     Chapman-Shaoxing $0.713$; the two $K{=}5$ pairs use $0.399$ and
-    $0.696$ instead, which changes no gate verdict).
+    $0.696$ instead, which changes no gate verdict; the deployed
+    baseline is the target majority-class baseline per amendment A2
+    (reconciles the registered schema's wording variance).
 \end{enumerate}
 
 Across 12 pair$\times$architecture strata (6 pairs $\times$ 2
-architectures), 7/12 pass both layers at the stratum-mean level and are
+architectures), 6/12 pass both layers at the stratum-mean level and are
 deployable: CPSC$\rightarrow$PTB-XL, PTB-XL$\rightarrow$CPSC, and
 Chapman$\rightarrow$PTB-XL (both architectures each), plus
 Chapman$\rightarrow$CPSC ResNet1D. Here ``stratum-mean level'' means
 each threshold is applied to the stratum mean of its own metric (mean
 $\Delta\text{ECE}_{\text{OOD}} > 0$ and mean
 $\text{acc}_{\text{OOD}} \geq \text{acc}_{\text{majority}}$); a
-per-seed majority reading of the same two thresholds gives 6/12 (the
-discrimination layer separately) or 5/12 (both jointly) instead of
-6/12 at the stratum-mean level. At the
+per-seed majority reading of the same two thresholds gives 11/12 for
+the calibration layer separately, 6/12 for the discrimination layer
+separately, and 5/12 for both layers jointly (each clearing on at
+least three of five seeds; 4/12 under the stricter reading that both
+layers pass on the same $\geq 3/5$ seeds). At the
 stratum-mean level Layer 1 is cleared by 11 of the 12 strata; the sole
 Layer-1 rejection (PTB-XL$\rightarrow$CPSC ResNet1D, mean
-$\Delta\text{ECE}_{\text{OOD}}=-0.0018$) is also the stratum with the
-least residual raw miscalibration on the fresh grid (raw OOD ECE
-$0.159$), and the remaining stratum verdicts are driven by Layer 2.
+$\Delta\text{ECE}_{\text{OOD}}=-0.0018$; raw OOD ECE $0.159$ on the
+recompute grid) leaves the remaining stratum verdicts driven by
+Layer 2.
 The other strata fail Layer 2:
 Chapman$\rightarrow$CPSC InceptionTime,
 CPSC$\rightarrow$Chapman (both architectures), and
@@ -1861,7 +1900,8 @@ predictions (averaged over decision thresholds $t \in \{0.05, 0.10,
 \ldots, 0.40\}$) is positive in 31/60 (51.7\%) of experiments, with
 mean DCR $+0.000526$ (a seed-cell $t$ over replicated cells --- a
 provenance-only caliber; the equal-weight 12-stratum reading is
-$t=2.40$, $p=0.037$, BH-adjusted $0.074$, and the registered
+$t=2.40$, $p=0.035$ (two-sided, $df=11$; not surviving
+Bonferroni-2 at $0.071$ as a secondary), and the registered
 patient-level BCa CI $[+0.000280, +0.000775]$ excludes zero ---
 Sec.~\ref{sec:ncv_results}) and a narrow range
 $[-0.003, +0.004]$. The directions with
@@ -1912,7 +1952,7 @@ $[+0.000280, +0.000775]$, likewise excluding zero. Per-cell support is
 \emph{rare}: 9/60 cells carry a patient-level BCa CI strictly above
 zero (31/60 are point-positive), and at the stratum level 7/12 strata
 are point-positive with 4/12 strata CIs above zero. The ID reference
-side is flat: NCV $+0.000041$, CI $[-0.000065, +0.000148]$ and DCR
+side is flat: NCV $+0.000040$, CI $[-0.000065, +0.000148]$ and DCR
 $+0.000093$, CI $[-0.000143, +0.000327]$ both cover zero ($p = 0.46$ /
 $0.43$) --- no ID decision-cost penalty.
 
@@ -1921,8 +1961,9 @@ disagree in strength. The patient-weighted pooled bootstrap above
 pools all target patients, weight $\propto$ cell size; the
 equal-weight 12-stratum $t$ (each of the 12 pair$\times$architecture
 strata counting once; $df=11$) reads NCV $+0.000238$ ($t=2.33$,
-$p=0.042$) and DCR $+0.000526$ ($t=2.40$, $p=0.037$, BH-adjusted
-$0.074$ across the two secondaries --- non-surviving). The patient
+$p=0.040$, two-sided) and DCR $+0.000526$ ($t=2.40$, $p=0.035$);
+the secondaries survive BH-2 ($0.040$) but not Bonferroni-2
+($0.071$/$0.080$) at $q=0.05$. The patient
 level is the \emph{registered} unit and is delivered above; the
 stratum-$t$ reading is kept as the conservative robustness check
 because it makes the between-stratum spread, which the pooled
@@ -1955,7 +1996,8 @@ configuration (ResNet1D, seed~42). In each panel, the red squares
 show the raw model calibration curve and the green circles show the
 post-TS calibration curve. The diagonal dashed line indicates perfect
 calibration. Grey bars (right axis) show the sample count per bin.
-Error bars are bootstrap 95\% percentile CIs (1000 resamples).
+Error bars are bootstrap 95\% percentile CIs (1000 resamples;
+display-level, not a registered inference unit).
 
 \begin{figure}[t]
 \centering
@@ -2342,7 +2384,7 @@ validation}, not confirmatory, to reflect the post-revision status.
 % ----------------------------------------------------------------------------
 The NCV (Sec.~\ref{sec:ncv_results}) shows a directional asymmetry: OOD
 NCV $= +0.000238$ (registered-unit patient-level BCa CI excludes zero;
-equal-weight stratum-$t$ unit reads $p = 0.042$, marginal) is a small
+equal-weight stratum-$t$ unit reads $p = 0.040$, marginal) is a small
 positive value
 (recalibration improves decisions on unseen target data more often than it
 degrades them); ID NCV $= +0.000040$ ($p \approx 0.48$) is near-null
@@ -2381,7 +2423,8 @@ $+0.164$; RMSE $16.4\times$ the constant predictor), and its rank
 correlation with the true benefit is negligible
 ($\rho=+0.095$, LOO-stable but order $0.01$ in $R^2$), and a sensitivity analysis with $T$, Wasserstein-1, and
 entropy features does \emph{not} confirm a robust predictability
-boundary: only $T$ carries signal (LOO $R^2=+0.203$ under the
+boundary: only $T$ carries signal (LOO $R^2=+0.051$ at the registered
+freeze, $+0.350$ on the delivered full-grid recompute; under the
 registered ridge protocol, $\approx+0.94$ under plain OLS ---
 disclosed; and
 $\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}})=\mathrm{sign}(T-1)$ in
@@ -2432,7 +2475,7 @@ below the majority-class baseline in 3 of 6 directions (and at baseline
 in a fourth);
 (xv) NCV is directionally asymmetric (OOD $= +0.000238$; registered-unit
 patient-level BCa CI excludes zero, per-cell support 9/60, stratum
-point-positive 7/12; equal-weight stratum-$t$ reads $p=0.042$;
+point-positive 7/12; equal-weight stratum-$t$ reads $p=0.040$;
 ID $= +0.000040$, near-null), with the OOD NCV an order of
 magnitude smaller than the pre-retrain estimate, moderating the
 clinical-decision translation of C5; (xvi)
@@ -2549,7 +2592,8 @@ with the true benefit ($\rho=+0.095$). The predictability boundary holds
 only in the weak sense that no label-free feature reaches $R^2=0.5$
 under the implemented fold unit and registered ridge estimator: the
 source-fitted temperature $T$ does
-predict ($+0.203$ under the registered protocol; $\approx+0.94$ under
+predict ($+0.051$ registered freeze, $+0.350$ delivered full-grid
+recompute; $\approx+0.94$ under
 plain OLS, disclosed; and the sign of $\Delta\text{ECE}_{\text{OOD}}$ in
 60/60 SmoothECE cells, 59/60 on the auxiliary reliability caliber),
 while Wasserstein-1 and entropy features do not.

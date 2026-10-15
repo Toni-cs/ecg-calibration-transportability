@@ -17,20 +17,28 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 > **Note on the encoding-paired tables in `S2_result_tables/`.** Between
 > 2026-09-09 and 2026-09-16 the CPSC sub-space label encoding changed from
 > `(NORM, CD, STTC, MI)` to `(NORM, MI, STTC, CD)`, which is exactly a
-> 1↔3 swap. Two result tables were regenerated afterwards and are shipped
-> **alongside** their original, wrong-encoding versions so that the
-> difference is auditable rather than hidden:
+> 1↔3 swap. Two result tables ship in encoding-paired pairs: the unmarked
+> member is the current, manuscript-cited regeneration (post-retrain
+> caches, corrected label encoding), and the `.OLD_ENCODING.csv` member
+> is the label-restored 2026-09-16 artifact from the pre-retrain
+> checkpoints, retained so that the release lineage is auditable:
 >
 > | file | status |
 > |---|---|
-> | `ablation_ts_components.csv` | **original (wrong encoding)** — retained for audit |
-> | `ablation_ts_components.OLD_ENCODING.csv` | **authoritative** — label-restored ablation table; its `raw` stage supplies the paper's raw-ECE range (`0.036`–`0.357`, mean `0.211`) |
-> | `discrimination_metrics_60exp.csv` | **original (wrong encoding)** — retained for audit |
-> | `discrimination_metrics_60exp.OLD_ENCODING.csv` | **authoritative** — carries `variant=raw` **and** `variant=ts` rows; source of the paper's mean/max ΔAUROC_TS−raw |
+> | `ablation_ts_components.csv` | **authoritative, manuscript-cited** — the paper's raw-ECE range (`0.062`–`0.357`, mean `0.205`) is its `stage=raw` rows over the 60 main-grid cells |
+> | `ablation_ts_components.OLD_ENCODING.csv` | pre-retrain-era artifact — retained for release-lineage comparison only; **not** manuscript-cited. Its all-62 `stage=raw` subset (60 grid cells + 2 BiMamba extras) is the source of the superseded `0.036`–`0.357`, mean `0.211` figure quoted in earlier manuscript drafts |
+> | `discrimination_metrics_60exp.csv` | **authoritative, manuscript-cited** — carries `variant=raw` **and** `variant=ts` rows on the post-retrain caches; source of the paper's mean/max ΔAUROC_TS−raw (`+0.0002` / `0.0014`) and per-cell OOD AUROC (`0.695`–`0.886`, mean `0.802`) |
+> | `discrimination_metrics_60exp.OLD_ENCODING.csv` | pre-retrain-era artifact — retained for release-lineage comparison only |
 >
-> Where the two disagree, the `.OLD_ENCODING.csv` file is the one the
-> manuscript cites. `raw` rows of the discrimination pair are bit-identical
-> between the two releases' schemas only in the `.OLD_ENCODING` version.
+> Where the two files of a pair disagree, the unmarked file is the one
+> the manuscript cites. The two `discrimination_metrics_60exp` files
+> differ under both encodings: over the 124 `variant=raw` rows shared by
+> the two schemas (62 grid cells × 2 splits), 44 rows differ in all six
+> metrics — exactly the 22 cells retrained on 2026-09-17 (checkpoint
+> independence) and 2026-10-07 (validation-leak repair); the same holds
+> for the `variant=ts` rows (124 compared, 44 differ, same 22 cells).
+> The `.OLD_ENCODING` version is retained for release-lineage comparison
+> only; it is not the metric source for any manuscript-cited number.
 
 ## Contents
 
@@ -119,7 +127,7 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed45/` | see below | 1 |
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed46/` | see below | 1 |
 | `S4_reliability_diagrams/` | see below | 60 |
-| **Total** | matches `SHA256SUMS.txt` | **177** (+ this README) |
+| **Total** | matches `SHA256SUMS.txt` | **178** (+ this README; the manifest additionally lists this README, 179 entries in total) |
 
 ### S1_protocol
 `EXPERIMENT_PROTOCOL.md` (protocol v2.1-A1), the A1 endpoint re-location
@@ -127,6 +135,10 @@ amendment, the A2 family-reduction amendment, the A3 corpus-identity
 amendment, `OSF_MANIFEST_POST_CORRECTIONS_2026-09-16.md`, and
 `osf_archive_manifest.json` -- the file-level SHA-256 manifest taken on
 2026-09-16. See `docs/` in the public repository for the same documents.
+Amendment A4 (mapping-sensitivity gate operationalization, 2026-10-11)
+is deposited with the OSF project (project 53h64, Files, 2026-10-11,
+per-file SHA-256 verified) and is intentionally NOT mirrored in this
+folder.
 
 ### S2_result_tables
 Aggregate result tables underlying every number in the main text.
@@ -135,9 +147,12 @@ sample-level (adaptive-TS, Robey et al. 2021) baseline cited in the
 manuscript; added 2026-10-14, hash-matched to the public repository copy.
 
 ### S3_per_experiment
-`transfer_result.json` for each cell of the 60-experiment transfer grid,
-kept in the `transfer/<pair>/<architecture>/seed<42-46>/` layout of the
-public repository.
+`transfer_result.json` for each cell of the 60-experiment transfer grid
+plus two extra exploratory BiMamba cells under
+`ptbxl_chapman/mamba/seed<42-43>/` (62 files in total), kept in the
+`transfer/<pair>/<architecture>/seed<NN>/` layout of the public
+repository; the 22 retrained cells (2026-09-17 / 2026-10-07) were
+repopulated from the repository of record on 2026-10-15.
 
 ### S4_reliability_diagrams
 The 60 per-seed reliability diagrams catalogued in the Supplementary
