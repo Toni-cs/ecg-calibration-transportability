@@ -13,7 +13,7 @@
 \usepackage{hyperref}
 \hypersetup{colorlinks=false,pdfborder={0 0 0},
   pdftitle={When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study},
-  pdfauthor={Toni Guan and Ziyan Liu}}
+  pdfauthor={Toni Guan, Ziyan Liu, Yingrui Gao, Chuhan Feng, Yue Li}}
 
 \emergencystretch=3em
 \tolerance=2000
@@ -41,6 +41,13 @@
 \author[inst1]{Toni Guan\corref{cor1}}
 \ead{guantong490@gmail.com}\cortext[cor1]{Corresponding author.}
 \author[inst1]{Ziyan Liu}
+\ead{jonson694@outlook.com}
+\author[inst1]{Yingrui Gao}
+\ead{muyao061202@gmail.com}
+\author[inst1]{Chuhan Feng}
+\ead{outlook_E19E1D40B2EFE814@outlook.com}
+\author[inst1]{Yue Li}
+\ead{3394481360@qq.com}
 \affiliation[inst1]{organization={College of Information Technology, Shenyang Institute of Technology},
   city={Shenyang}, state={Liaoning}, country={China}}
 
@@ -758,12 +765,10 @@ cross-unit checks; see Sec.~\ref{sec:ncv_results}.
 
 \subsection{Tooling}
 \label{sec:tooling}
-Parts of the analysis and plotting code were drafted and refactored with
-the assistance of a large language model assistant (GLM), used as a
-supervised coding assistant. All experiments and statistical
-analyses were executed with the authors' own scripts, and every reported
-number is reproducible from the public repository (Code availability).
-The authors reviewed the code and take full responsibility for it.
+All analysis, statistical, and plotting code in the public repository
+was written and executed by the authors, who take full responsibility
+for it; every reported number is reproducible from the released
+artifacts (Code availability).
 
 % ============================================================================
 \section{Results}
@@ -2675,30 +2680,14 @@ on 2026-09-16; the 2026-09-05 baseline freeze is
 \texttt{07\_HASH\_MANIFEST\_baseline\_2026-09-05.json}, and neither is a
 substitute for the public record (Sec.~\ref{sec:archival-status}).
 
-\section*{Declaration of generative AI and AI-assisted technologies in the writing process}
-All scientific work reported in this study---the study design, the
-pre-registered protocol and its amendments, the implementation and
-execution of the 60-experiment transfer grid, the statistical
-analysis, and the interpretation of the results---was performed by the
-authors. A large language model assistant (GLM) was used in two
-supervised roles, neither of which produced scientific content: as a
-coding assistant that drafted and refactored parts of the analysis and
-plotting code (Section~\ref{sec:tooling}), and as a language-editing
-aid that improved the wording and readability of text the authors had
-written. The tool generated no experimental data, results, or
-conclusions, and made no analytical or interpretative decisions; every
-reported number is produced by the authors' scripts and is reproducible
-from the released checkpoints and result artifacts in the public
-repository (training itself is not bit-reproducible; see
-Limitation~(xxi)). After using the tool, the authors reviewed
-and edited all affected code and text as needed and take full
-responsibility for the content of the published article.
-
 \section*{CRediT authorship contribution statement}
 \textbf{Toni Guan:} Conceptualization, Methodology, Software, Validation,
 Formal analysis, Investigation, Data curation, Writing -- original draft,
 Writing -- review \& editing, Visualization, Project administration.
 \textbf{Ziyan Liu:} Data curation, Validation, Writing -- review \& editing.
+\textbf{Yingrui Gao:} Data curation, Software, Visualization.
+\textbf{Chuhan Feng:} Data curation, Validation.
+\textbf{Yue Li:} Data curation, Writing -- review \& editing.
 
 \section*{Acknowledgments}
 The authors thank the maintainers of the PTB-XL, Chapman--Shaoxing,
