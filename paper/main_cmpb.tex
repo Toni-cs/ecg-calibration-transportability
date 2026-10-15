@@ -12,7 +12,7 @@
 \usepackage{lineno}
 \usepackage{hyperref}
 \hypersetup{colorlinks=false,pdfborder={0 0 0},
-  pdftitle={When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study},
+  pdftitle={A Deployment-Safety-Oriented Framework for ECG Model Calibration Transferability: A 60-Experiment Boundary Validation Across Three Public Corpora},
   pdfauthor={Toni Guan, Ziyan Liu, Yingrui Gao, Chuhan Feng, Yue Li}}
 
 \emergencystretch=3em
@@ -36,7 +36,9 @@
 
 \journal{Computer Methods and Programs in Biomedicine}
 
-\title{When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer? A Multi-Seed Calibration Boundary Study}
+\title{A Deployment-Safety-Oriented Framework for ECG Model
+Calibration Transferability: A 60-Experiment Boundary Validation
+Across Three Public Corpora}
 
 \author[inst1]{Toni Guan\corref{cor1}}
 \ead{guantong490@gmail.com}\cortext[cor1]{Corresponding author.}
@@ -57,17 +59,22 @@
 
 \begin{abstract}
 
-oindent\textbf{What is new.} We deliver the first pre-registered
-(study-period protocol, retrospectively registered; see the
-``Pre-registration archival status'' section), multi-seed,
-two-architecture \emph{boundary characterization} of when
-post-hoc recalibration pays off in cross-corpus ECG transfer --- and we
-pair it with a per-sample adaptive-recalibration test that answers
-whether a smarter post-hoc recalibrator could cross the deployment
-bar.
+oindent\textbf{What is new.} Cross-corpus ECG deployment is a decision
+problem, not a calibration exercise. We deliver three reusable method
+components, validated end-to-end by a 60-experiment temperature-scaling
+boundary study: (i) a three-component Shapley decomposition of the
+transfer benefit $\Delta\text{ECE}$ into slope, intercept, and
+prevalence effects (27/27 cells at the pre-registered $n=20{,}000$
+readout); (ii) a two-layer deployment-safety gate S1/S2 --- S1: a
+positive calibration benefit $\Delta\text{ECE}_{\mathrm{OOD}}>0$; S2:
+OOD accuracy at or above the target majority-class baseline; (iii) a
+pre-registered applicability-boundary protocol (ID criterion
+$\geq$80\% of CIs containing zero, amendment chain A1--A4) that fixes
+what may be claimed before analysis. The temperature-scaling instance
+is the validation carrier, not the contribution.
 
-The study is a calibration boundary study on six directed transfer
-pairs among Chapman--Shaoxing, CPSC2018, and PTB-XL, with two
+The validation vehicle is the 60-experiment grid: six directed transfer
+pairs among PTB-XL, Chapman--Shaoxing, and CPSC2018, with two
 architectures (InceptionTime and ResNet1D), five seeds (42--46),
 eight recalibration families from the classic post-hoc recalibration
 and label-shift-correction literature (delivered set dating 1999--2020)
@@ -98,19 +105,19 @@ met (30/60 = 50.0\%), triggering the registered ``ID nonzero
 boundary'' branch (the repair cut the ID mean by 58\%): the OOD
 benefit is $2.7\times$ the ID benefit ($+0.0093$ vs.\ $+0.0034$).
 
-A validated 27-cell Shapley decomposition separates slope, intercept,
-and prevalence effects; a predictability experiment triggers the
+Component (i) validates as designed: a 27-cell Shapley decomposition
+separates slope, intercept, and prevalence effects; a predictability
+experiment triggers the
 registered failure branch (TS LOO $R^2=+0.051$, CI upper bound
 $0.092<0.5$), although a source-fitted, label-free temperature
 discriminates the \emph{sign} of the benefit perfectly (sensitivity
 $=$ specificity $=1.0$ in 60/60, where a constant-positive rule
 attains $45/60$; the sign rule is the mechanical, directional
 consequence of the transform discussed in the body, not independent
-evidence of a substantive benefit); and a discrimination-aware gate
-shows 5/12
-pair$\times$architecture strata passing both calibration and
-discrimination layers under a per-seed majority criterion (none on
-all five seeds).
+evidence of a substantive benefit); and the S1/S2 deployment-safety gate (component ii) shows
+6/12 pair$\times$architecture strata passing both layers at the
+stratum-mean level (5/12 under a per-seed majority; none on all five
+seeds), reframing the fifteen disclosed counter-examples.
 
 The per-sample adaptive-TS baseline (Robey et al., AISTATS 2021) on
 the identical caches averages $+0.0190$ (47/60 positive) and beats
@@ -119,7 +126,8 @@ calibration deployment bar on 0/60, the same ceiling global TS could
 not cross, locating the limiting factor in \emph{transferred
 calibration}, not in the recalibrator family. Together these results
 bound when post-hoc recalibration pays off across institutions, and
-when it does not.
+when it does not; all three components ship as public method
+artifacts, reusable independently of the temperature-scaling instance.
 \end{abstract}
 
 \begin{keyword}
