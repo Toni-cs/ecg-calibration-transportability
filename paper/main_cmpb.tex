@@ -1784,9 +1784,10 @@ clinically useless. We define a two-layer gate:
 
 Across 12 pair$\times$architecture strata (6 pairs $\times$ 2
 architectures), 6/12 pass both layers at the stratum-mean level and are
-deployable: CPSC$\rightarrow$PTB-XL, PTB-XL$\rightarrow$CPSC, and
-Chapman$\rightarrow$PTB-XL (both architectures each), plus
-Chapman$\rightarrow$CPSC ResNet1D. Here ``stratum-mean level'' means
+deployable: CPSC$\rightarrow$PTB-XL (both architectures),
+Chapman$\rightarrow$PTB-XL (both architectures),
+PTB-XL$\rightarrow$CPSC InceptionTime, and Chapman$\rightarrow$CPSC
+ResNet1D. Here ``stratum-mean level'' means
 each threshold is applied to the stratum mean of its own metric (mean
 $\Delta\text{ECE}_{\text{OOD}} > 0$ and mean
 $\text{acc}_{\text{OOD}} \geq \text{acc}_{\text{majority}}$); a
@@ -2270,6 +2271,14 @@ practical comparison is the alternative path: fifty labeled target
 records under S2 deliver $+0.150$, an order of magnitude above the
 zero-shot gain --- which is why the actionable recommendation is
 buy-$n$ recalibration, with post-hoc TS as the budget-free baseline.
+One qualification on that last clause: among the budget-free
+zero-shot paths themselves, the source-cal-fitted per-sample adaptive
+temperature scaling of Robey et al.\ (2021) dominates global TS on the
+identical 60 cells (mean $+0.0190$ vs.\ $+0.0093$; 47/60 positive;
+41/60 direct wins) and would be the natural budget-free default at the
+equal 0/60 deployment-bar ceiling; global TS is retained there as the
+canonical single-parameter reference of the registered primary
+endpoint, not as the budget-free recommendation.
     The deployment-safety bar (post-TS SmoothECE $=0.05$; protocol
     \S9) is likewise a \emph{pre-registered, author-set operating
     value}, not a literature- or regulator-derived margin; this paper
@@ -2481,9 +2490,11 @@ magnitude smaller than the pre-retrain estimate, moderating the
 clinical-decision translation of C5; (xvi)
 InceptionTime was downgraded from $n_{\text{filters}}=48$ to 32 for GPU
 memory (RTX 5060, 8~GB), potentially attenuating OOD benefits, with 48
-as future work; (xvii) this work is from a single-author
-study, limiting independent review and audit, partially mitigated by the
-pre-registration protocol and public repository; (xviii) the secondary
+as future work; (xvii) the computational analysis was performed by the first
+author as a single analysis chain, limiting independent review and
+audit of the analysis itself, with co-authors contributing validation,
+data curation, and review (CRediT statement), partially mitigated by
+the pre-registration protocol and public repository; (xviii) the secondary
 endpoint $G$ (recoverable loss versus an oracle recalibrator) is
 \emph{not delivered}: \texttt{fit\_oracle}/\texttt{apply\_oracle} are
 implemented but were never executed on real data, so $G$ is undefined in
@@ -2607,7 +2618,10 @@ meta-analytic independence assumption is \emph{not} satisfied here: the
 60 cells share the same three corpora, patient sets, and architectures,
 and their between-cell $Q$ statistics are extreme
 ($I^2 \approx 99.98\%$), so both FE and DL confidence intervals are
-spuriously narrow. The interpretable pooled uncertainty is therefore the
+spuriously narrow; the 12-stratum $t$ interval inherits the same
+non-independence --- strata share the three corpora and the two
+architectures --- so it is approximate. The interpretable
+pooled uncertainty is therefore the
 cluster-robust interval over the 12 pair$\times$architecture strata:
 $\Delta\text{ECE}_{\text{OOD}} = +0.0093$ [$+0.0055$, $+0.0132$] (t,
 df$=11$; stratum SD $0.0060$, versus a narrowest-cell single-experiment
@@ -2643,8 +2657,13 @@ affect the sign-based support/counter-example classification.
     (\texttt{scripts/real\_prior\_recovery.py}): with target labels withheld,
     BBSE reduces the prior-recovery error from $0.1916$ (source-prior
     baseline) to $0.1109$ --- a $42.1\%$ relative reduction, better than
-    the baseline in 56/60 cells, positive in 6/6 transfer pairs, with a
-    pair-clustered bootstrap CI of $[+0.048, +0.115]$. EM gives much
+    the baseline in 56/60 cells, positive in 6/6 transfer pairs. No
+    pair-clustered bootstrap CI is quoted: it is not recomputable from
+    the released per-cell CSV alone (no patient-level cluster labels;
+    \texttt{cluster\_ci\_note} in
+    \texttt{results/real\_prior\_recovery\_summary.json}); the superseded
+    2026-09-27 archive interval is retained for provenance only.
+    EM gives much
     weaker improvement ($0.1326$; BBSE wins in 33/60 cells). Two limits
     remain and are reported as such:
     the absolute error is still $0.111$, and the confusion-matrix
