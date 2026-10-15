@@ -1,7 +1,7 @@
 Highlights
 
-- Pre-registered 6-pair x 2-architecture x 5-seed grid: TS OOD benefit in 50/60
-- Patient-level paired BCa bootstrap; OOD benefit about 1.9x the ID benefit
-- ID boundary criterion fails (38.3% < 80%); registered branch fires
+- Pre-registered 6-pair x 2-architecture x 5-seed grid: TS OOD benefit in 45/60
+- Patient-level paired BCa bootstrap; OOD benefit 2.7x the residual ID benefit
+- ID boundary criterion fails (50.0% < 80%); registered branch fires
 - Discrimination-aware gate (C5): recalibration is moot below majority-class bar
-- Label-free deployment gates fail their test; lookup table is audit-time only
+- Label-free deployment gates fail their test; TS needs local validation

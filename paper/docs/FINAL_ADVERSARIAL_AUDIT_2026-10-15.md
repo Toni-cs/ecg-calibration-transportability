@@ -74,6 +74,22 @@ clean verdict") over experiment AND paper rigor.
    disclosure was removed at the author's explicit instruction; Elsevier policy
    otherwise requires disclosure of AI use in the writing process.
 
+## ADDENDUM 2026-10-15 (round 2 — author authorized full remediation)
+Item as instructed ("全部改好" + "你来给他们分一下他们做了什么"):
+- Residual 1 closed: all six ancillary unsourced sub-claims removed/reworded
+  (three "59/60 auxiliary" clauses, pooled-confidence 0.79/30%>0.9 parenthetical,
+  both "≈0.021" anchors incl. the 3--17x ratio, "T=2.0 flips 7 / 60/60 -> 56/62"
+  falsification demonstrations). Verified parents (60/60 SmoothECE sign rule,
+  noise-floor medians/bands) retained unchanged.
+- Residual 2 closed: highlights bullet 5 (both highlights.txt and highlights.tex)
+  now reads "TS needs local validation" — the manuscript-supported wording
+  (main L2531 "TS needs local validation", L2424 "no label-free gate is claimed").
+- Residual 3 closed: CRediT apportioned per the author's instruction to assign
+  roles — see manuscript CRediT block; roles are the listed CRediT taxonomy
+  categories, all five authors' consent to the final wording required at
+  submission (Elsevier co-author confirmation step).
+- Recompiled main (85~pp -> paged again), manifest entry updated, 179/179 OK.
+
 ## Verification state at close
 - Package manifest: 179/179 OK (reverified after every file change).
 - Release verifier: 12/12 checks PASS, exit 0.

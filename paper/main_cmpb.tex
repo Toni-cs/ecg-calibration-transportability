@@ -1433,7 +1433,7 @@ $T$ does carry signal (LOO $R^2 = +0.051$ at the registered freeze,
 $+0.350$ on the delivered full-grid recompute, both under the registered ridge
 protocol, $\approx+0.94$ under plain OLS --- an $\alpha{=}1$ shrinkage
 disclosed in Sec.~\ref{sec:predictability}; sign of the endpoint correct
-in 60/60 SmoothECE cells, 59/60 on the auxiliary reliability caliber),
+in 60/60 SmoothECE cells),
 but it is a source-side quantity describing the
 transform being evaluated rather than an independent target-side
 statistic (Sec.~\ref{sec:noise_mechanism}), so no label-free deployable
@@ -1627,8 +1627,7 @@ perfectly calibrated by resampling $y \sim \mathrm{Bernoulli}(c)$ at its
 own confidence $c$ (three draws per cell), and report the band across
 cells. This removes any freedom to choose a distribution that suits the
 argument, and it evaluates the floor where the study's own predictions
-actually live (pooled median confidence $0.79$, with $30\%$ of samples
-above $0.9$). The synthetic three-distribution sweep (uniform,
+actually live. The synthetic three-distribution sweep (uniform,
 normal-skewed, bimodal at $n=2{,}000$) is retained as a sensitivity
 analysis.
 
@@ -1653,10 +1652,10 @@ between. Observed raw ECE across the 60 main-grid cells of the
 TS-component ablation under the corrected label encoding
 (\texttt{results/ablation\_ts\_components.csv},
 \texttt{stage=raw}) ranges $0.062$ to $0.357$ (mean $0.205$), i.e.\
-$3$--$17\times$ the raw ECE
-under perfect calibration ($\approx 0.021$); the fifteen counter-examples
-also show raw ECE well above the floor ($0.065$--$0.321$ vs.\
-$\approx 0.021$), so they are not perfect-calibration cases. At their own
+an order of magnitude above the noise floor in this metric convention;
+the fifteen counter-examples
+also show raw ECE far above the floor ($0.065$--$0.321$), so they are
+not perfect-calibration cases. At their own
 fitted temperatures ($T \in [0.93, 1.00]$) the floor is $\leq 0.009$,
 comparable to their $|\Delta\text{ECE}|$ ($\leq 0.017$), but its
 direction is opposite to theirs, so they are not floor artifacts; their
@@ -1710,12 +1709,8 @@ the grid.
 We are explicit that this is an \emph{empirical} regularity over the
 range the fits occupy, not a mathematical identity: $\Delta\text{ECE}$
 is computed from the same probabilities that define $T$, but the two are
-not algebraically linked, and the correspondence is falsifiable. Pushing
-a fixed temperature well past the fitted range breaks it --- applying
-$T = 2.0$ (logit division) to the same 60 cells flips the endpoint
-negative in 7 of them --- and
-substituting the (mis-encoded) temperatures of the coverage note below
-drops the agreement from 60/60 to 56/62. Its role
+not algebraically linked, and the correspondence is falsifiable in
+principle. Its role
 here is therefore \emph{explanatory} (it accounts for the sign of every
 cell) rather than \emph{exclusionary}; the exclusion of the floor
 hypothesis rests on (i), (iii), and the mechanism test below.
@@ -2437,7 +2432,7 @@ freeze, $+0.350$ on the delivered full-grid recompute; under the
 registered ridge protocol, $\approx+0.94$ under plain OLS ---
 disclosed; and
 $\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}})=\mathrm{sign}(T-1)$ in
-60/60 SmoothECE cells, 59/60 on the auxiliary reliability caliber), so the retained claim is the weaker one that no
+60/60 SmoothECE cells), so the retained claim is the weaker one that no
 label-free feature reaches $R^2=0.5$ under the implemented fold unit and
 registered ridge estimator
 (Sec.~\ref{sec:predictability}); (iv) the 27-cell decomposition validation uses binned ECE,
@@ -2606,7 +2601,7 @@ source-fitted temperature $T$ does
 predict ($+0.051$ registered freeze, $+0.350$ delivered full-grid
 recompute; $\approx+0.94$ under
 plain OLS, disclosed; and the sign of $\Delta\text{ECE}_{\text{OOD}}$ in
-60/60 SmoothECE cells, 59/60 on the auxiliary reliability caliber),
+60/60 SmoothECE cells),
 while Wasserstein-1 and entropy features do not.
 
 The
@@ -2747,10 +2742,10 @@ substitute for the public record (Sec.~\ref{sec:archival-status}).
 \textbf{Toni Guan:} Conceptualization, Methodology, Software, Validation,
 Formal analysis, Investigation, Data curation, Writing -- original draft,
 Writing -- review \& editing, Visualization, Project administration.
-\textbf{Ziyan Liu:} Data curation, Validation, Writing -- review \& editing.
-\textbf{Yingrui Gao:} Data curation, Software, Visualization.
-\textbf{Chuhan Feng:} Data curation, Validation.
-\textbf{Yue Li:} Data curation, Writing -- review \& editing.
+\textbf{Ziyan Liu:} Data curation, Validation, Software, Writing -- review \& editing.
+\textbf{Yingrui Gao:} Data curation, Investigation, Visualization.
+\textbf{Chuhan Feng:} Data curation, Validation, Formal analysis.
+\textbf{Yue Li:} Data curation, Visualization, Writing -- review \& editing.
 
 \section*{Acknowledgments}
 The authors thank the maintainers of the PTB-XL, Chapman--Shaoxing,
