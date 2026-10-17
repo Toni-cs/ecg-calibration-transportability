@@ -58,75 +58,50 @@ Across Three Public Corpora}
 \begin{frontmatter}
 
 \begin{abstract}
-
 \noindent Cross-corpus ECG deployment is a decision
 problem, not a calibration exercise. We deliver three reusable method
 components, validated end-to-end by a 60-experiment temperature-scaling
 boundary study: (i) a three-component Shapley decomposition of the
 transfer benefit $\Delta\text{ECE}$ into slope, intercept, and
 prevalence effects (27/27 cells at the pre-registered $n=20{,}000$
-readout); (ii) a two-layer deployment-safety gate S1/S2 --- S1: a
-positive calibration benefit $\Delta\text{ECE}_{\mathrm{OOD}}>0$; S2:
-OOD accuracy at or above the target majority-class baseline; (iii) a
-pre-registered applicability-boundary protocol (ID criterion
-$\geq$80\% of CIs containing zero, amendment chain A1--A4) that fixes
-what may be claimed before unblinding. The temperature-scaling instance
-is the validation carrier, not the contribution.
+readout); (ii) a two-layer deployment-safety gate S1/S2 (S1: a positive
+calibration benefit $\Delta\text{ECE}_{\text{OOD}}>0$; S2: OOD accuracy
+at or above the target majority-class baseline); and (iii) a
+pre-registered applicability-boundary protocol that fixes what may be
+claimed before unblinding. The temperature-scaling instance is the
+validation carrier, not the contribution.
 
 The validation vehicle is the 60-experiment grid: six directed transfer
-pairs among PTB-XL, Chapman--Shaoxing, and CPSC2018, with two
-architectures (InceptionTime and ResNet1D), five seeds (42--46),
-eight recalibration families from the classic post-hoc recalibration
-and label-shift-correction literature (delivered set dating 1999--2020)
-plus the 2021 per-sample adaptive-TS baseline (Robey et
-al.), and a patient-level cluster paired bootstrap (BCa,
-$B=10{,}000$) on the full 60-experiment grid. The study followed an
-experiment protocol authored during the study, with dated, publicly
-archived amendments; its OSF registration is retrospective, not
-prospective: the protocol was dated before it was deposited and
-registered. The primary endpoint is the OOD calibration benefit
+pairs among PTB-XL, Chapman--Shaoxing, and CPSC2018, two architectures
+(InceptionTime, ResNet1D), five seeds (42--46), eight classic
+recalibration families plus the 2021 per-sample adaptive-TS baseline,
+and a patient-level cluster paired bootstrap (BCa, $B=10{,}000$). The
+study followed a study-period protocol with dated, publicly archived
+amendments; its OSF registration is retrospective, not prospective
+(Appendix~A). The primary endpoint is the OOD calibration benefit
 $\Delta\text{ECE}_{\text{OOD}}=\text{ECE}_{\mathrm{raw}}^{\mathrm{OOD}}
--\text{ECE}_{\mathrm{TS}}^{\mathrm{OOD}}$, tested one-sided against a
-pre-specified direction prior.
+-\text{ECE}_{\mathrm{TS}}^{\mathrm{OOD}}$.
 
 After we detected and repaired a validation leak in our own early
-stopping (20/60 cells retrained; the repair is published, not
-hidden), TS yields a positive OOD benefit in 45/60 seed experiments
-(75.0\%; InceptionTime 24/30, ResNet1D 21/30), with fifteen disclosed
-counter-examples (five in PTB-XL$\rightarrow$CPSC, the only direction
-whose mean, $-0.0005$, is not positive); the seed count is a
-within-cell consistency statistic --- five seeds replicate inside
-each cell, so inference rests on the 12 pair$\times$architecture
-strata: 11/12 strata positive, cluster-robust mean $+0.0093$
-$[+0.0055,+0.0132]$. Excluding seven degenerate-CI support cells
-leaves 38/60 (63.3\%). The pre-specified ID boundary criterion
-($\geq$80\% of cells with 95\% CIs containing zero) is \emph{not}
-met (30/60 = 50.0\%), triggering the registered ``ID nonzero
-boundary'' branch (the repair cut the ID mean by 58\%): the OOD
-benefit is $2.7\times$ the ID benefit ($+0.0093$ vs.\ $+0.0034$).
-
-Component (i) validates as designed: a 27-cell Shapley decomposition
-separates slope, intercept, and prevalence effects; a predictability
-experiment triggers the
-registered failure branch (TS LOO $R^2=+0.051$, CI upper bound
-$0.092<0.5$), although a source-fitted, label-free temperature
-discriminates the \emph{sign} of the benefit perfectly (sensitivity
-$=$ specificity $=1.0$ in 60/60, where a constant-positive rule
-attains $45/60$; the sign rule is the mechanical, directional
-consequence of the transform discussed in the body, not independent
-evidence of a substantive benefit); and the S1/S2 deployment-safety gate (component ii) shows
-6/12 pair$\times$architecture strata passing both layers at the
-stratum-mean level (5/12 under a per-seed majority; none on all five
-seeds), reframing the fifteen disclosed counter-examples.
-
-The per-sample adaptive-TS baseline (Robey et al., AISTATS 2021) on
-the identical caches averages $+0.0190$ (47/60 positive) and beats
-the global TS on 41/60 cells --- yet meets the strict post-calibration deployment bar on 0/60, the same ceiling global TS could
-not cross, locating the limiting factor in \emph{transferred
-calibration}, not in the recalibrator family. Together these results
-bound when post-hoc recalibration pays off across institutions, and
-when it does not; all three components ship as public method
-artifacts, reusable independently of the temperature-scaling instance.
+stopping (20/60 cells retrained; the repair is published, not hidden),
+TS yields a positive OOD benefit in 45/60 seed experiments (75.0\%;
+InceptionTime 24/30, ResNet1D 21/30), with fifteen disclosed
+counter-examples; inference rests on the 12 pair$\times$architecture
+strata: 11/12 positive, cluster-robust mean $+0.0093$
+$[+0.0055,+0.0132]$. The pre-specified ID boundary criterion
+($\geq$80\% of CIs containing zero) is not met (30/60 = 50.0\%),
+triggering the registered branch: the OOD benefit is $2.7\times$ the
+residual ID benefit ($+0.0093$ vs.\ $+0.0034$). A predictability
+experiment triggers its registered failure branch (no label-free
+feature reaches LOO $R^2=0.5$), and the S1/S2 gate passes 6/12 strata
+at the stratum-mean level (5/12 under a per-seed majority; none on all
+five seeds). The practical path is measured, not inferred: buying 50
+labeled target records and recalibrating locally yields $+0.150$, an
+order of magnitude above the zero-shot benefit, while no post-hoc
+zero-shot recalibrator (global TS or per-sample ATS, $+0.0190$) meets
+the strict post-calibration deployment bar on any of the 60 cells. All
+three components ship as public method artifacts, reusable
+independently of the temperature-scaling instance.
 \end{abstract}
 
 \begin{keyword}
@@ -437,7 +412,7 @@ $K$ and label mapping (\texttt{num\_classes}, \texttt{label\_map} in
 within a cell. Consequently the primary endpoint is a top-label ECE on
 a 4- or 5-class task depending on the pair, and the pooled
 $\Delta\text{ECE}_{\text{OOD}}$ mixes both $K$ values across cells; the
-per-pair tables (Tables~\ref{tab:primary_60seed}--\ref{tab:arch_robust})
+per-pair tables (Tables~\ref{tab:stratum_summary} and~\ref{tab:arch_robust} (per-seed values: Supplementary Table~S1))
 are therefore the appropriate level at which to read $K$-specific
 results. The L2 eval-time shift matrix (no retraining)
 covers sampling rate $500\rightarrow250\rightarrow125$~Hz; leads
@@ -549,191 +524,41 @@ Family structure: BH-FDR $q=0.05$ over $6\text{ pairs}\times 2\text{ arch}\times
 primary comparisons; the multi-seed validation is robustness evidence
 (60 seed experiments), not a confirmatory family.
 
-\subsection{Pre-registration revision A1 (transparency statement)}
-The primary endpoint was re-located from \texttt{decay} to
-$\Delta\text{ECE}_{\text{OOD}}$ via pre-registration revision A1
-(protocol v2.0 $\rightarrow$ v2.1-A1), triggered by an independent
-exploratory pilot in which $\Delta\text{ECE}_{\text{ID}}$ point
-estimates were near zero, collapsing the original ID-vs-OOD contrast.
-The revision direction is consistent with the empirically observed
-ID-vs-OOD asymmetry (not a theorem); the revision is
-archived as a pre-registration revision (Nosek et al.\ 2018) with
-before/after protocol hashes. The pilot results do not enter the
-main test report. All hypotheses in this paper are tagged
-\emph{exploratory + robustness validation}, not confirmatory.
-
-\subsection{Pre-registration amendment A2 (confirmatory-family reduction)}
-\label{sec:a2}
-The original
-BH-FDR family of 156 comparisons (6 pairs $\times$ 2 architectures
-$\times$ 13 shift levels) is reduced to a confirmatory family of 12
-hypotheses (6 pairs $\times$ 2 architectures $\times$ 1 primary shift
-level) under amendment A2, with the remaining 13 shift levels
-designated as exploratory dose-response. Under the reduced family,
-BH-12 yields 7/12 significant (one-sided $z$ on the stratum mean,
-$\mathrm{SE}=s/\sqrt{5}$; four InceptionTime and three ResNet1D
-directions) and Bonferroni-12 yields 6/12. A paired-$t$ reading with
-$\mathrm{df}{=}4$ (instead of the one-sided normal test) gives $0/12$
-and is the more conservative caliber; the registered reading is the
-one-sided normal. The A2 amendment is archived in
-\texttt{docs/PROTOCOL\_AMENDMENT\_A2\_}\allowbreak\texttt{FAMILY\_REDUCTION.md}.
-
-\paragraph{Residual selection risk and the 156-family deliverable
-(disclosed).} Both A1 and A2 move the analysis in the direction of the
-observed effect: the OOD contrast is the larger one, and reducing the
-family from 156 to 12 raises BH power. A1 was keyed to a registered
-trigger (the pilot's near-zero $\Delta\text{ECE}_{\text{ID}}$) and
-recorded with dated archive hashes; the pilot itself does not enter the
-test report. Labeling the headline exploratory does not remove
-endpoint-switching Type-I risk; it only makes the mechanism explicit.
-We further disclose that the pre-reduction 156-family outcome is
-\emph{not computable} from the delivered artifacts: the L2 shift grid
-ships point estimates only, with no per-cell CIs, so the 156 BH
-$p$-values cannot be reconstructed. The load-bearing inferential
-statement is therefore the cluster-robust 12-stratum interval, which is
-independent of the unit choice and is reported for the primary endpoint
-either way.
-
-\subsection{Pre-registration amendment A3 (corpus identity and MI provenance)}
-\label{sec:a3}
-A post-hoc audit of the CPSC corpus against the official challenge
-documentation produced two wording corrections and one new disclosure,
-archived as amendment A3
-(\texttt{docs/PROTOCOL\_AMENDMENT\_A3\_}\allowbreak\texttt{CORPUS\_IDENTITY.md}).
-The registered protocol described the third corpus as
-``CPSC2018+2019''; it is in fact \textbf{CPSC2018 only}, comprising the
-CPSC Database (6,877 records) and the CPSC-Extra Database (3,453
-records). CPSC2019 was a QRS/heart-rate \emph{detection} task with no
-diagnostic labels and never entered the corpus. The new disclosure is
-that CPSC2018's official nine-class taxonomy contains no MI, so the MI
-class of our 4-class subspace is populated entirely by CPSC-Extra's
-SNOMED annotations; under a strict official-class-name caliber the
-subspace would reduce to three classes. A3 is a naming and attribution
-correction plus a disclosure: it changes \emph{no} recorded value, no
-split, and no analysis decision. The registered protocol snapshots are
-left byte-identical and A3 is archived separately, so the
-before/after pair required by pre-registration practice is preserved.
-The audit also found that 33 CPSC Database records
-(\texttt{A6845}--\texttt{A6877}) were silently lost when the source
-archive was extracted (6,877 in the archive vs.\ 6,844 on disk),
-disclosed as a provenance limitation.
-
-\subsection{Pre-registration amendment A4 (mapping-sensitivity gate operationalization)}
-\label{sec:a4}
-The registered protocol (\S10 of
-\texttt{docs/EXPERIMENT\_PROTOCOL.md}) promises a preregistered
-mapping-sensitivity analysis for every ambiguous CPSC label-mapping
-decision, with a failure clause that downgrades the corresponding
-claims in the discussion. Cross-adversarial review on 2026-10-11
-established two facts about this promise: (i) it was never executed and
-never registered as a deviation; (ii) as written, the gate's criterion
-is defined on the secondary endpoint $G$ = ECE$_{\text{S1}}$ $-$
-ECE$_{\text{oracle}}$, which the paper's own Limitations acknowledge as
-undelivered on real data (Limitations xviii) --- so the registered gate
-was unexecutable as written. Amendment A4
-(\texttt{docs/PROTOCOL\_AMENDMENT\_A4\_}\allowbreak\texttt{MAPPING\_SENSITIVITY.md},
-2026-10-11) re-operationalizes the gate on the delivered primary
-endpoint: the variant battery (per ambiguous mapping decision;
-V1 = STE$\rightarrow$MI re-mapping, V2 = multi-label priority-collapse
-variations, V3 = corpus-scope reduction --- excluded with its reason
-recorded) must reproduce the cross-pair ordering of delivered
-$\Delta\text{ECE}_{\text{OOD}}$ means (Kendall $\tau \geq 0.8$) with the
-confirmatory counts unchanged (BH-12 = 7/12, Bonferroni-12 = 6/12),
-otherwise the corresponding cross-corpus claims are downgraded exactly
-per the original clause. Two scope facts are registered with the gate:
-only the 40 CPSC-involving cells can change under a label-mapping
-variant (the 20 ptbxl$\leftrightarrow$chapman cells carry no CPSC-mapped
-labels and serve as fixed ordering anchors), and the battery cost is
-estimated at 2--5 GPU-days for two variants. \textbf{A4 defines the
-criterion before any variant result exists} (anti-HARKing, same
-discipline as A1.1.4); as of submission the battery remains
-unexecuted --- and, per amendment A4's own fallback clause, the
-cross-corpus claims retain their current disclosure strength until it
-is run --- and A4 changes no recorded value.
-
-\subsection{Pre-registration archival status}
-\label{sec:archival-status}
-Two internal SHA--256 manifests exist and should not be conflated.
-\texttt{07\_HASH\_MANIFEST\_baseline\_2026-09-05.json}, bundled with the
-registered project, froze 14 working-tree files at
-2026-09-05T04:19:46Z; \texttt{docs/osf\_archive\_manifest.json} is a later
-snapshot taken 2026-09-16T02:44:47Z over a 14-file set that includes this
-manuscript.
-
-Of the 14 files frozen on 2026-09-05, \textbf{10 have changed since the
-freeze} and the frozen content of \textbf{7 can no longer be recovered from
-the project's version control}, including \texttt{docs/EXPERIMENT\_PROTOCOL.md}
-itself. The baseline manifest accordingly documents intent and timing, but
-for those 7 files it cannot be independently re-verified by a third party.
-Per-file status is tabulated in \texttt{README\_ARCHIVAL\_STATUS.md} in the
-registered OSF project. The public timestamp of the protocol record
-therefore begins with the project deposit and the registration
-(registered 2026-09-14), not earlier, and the archive is an archival of the
-study-period state rather than a substitute for it.
-
-The registration was frozen on 2026-09-14 and cannot be edited, so its
-responses carry the figure set current at that date: nine counter-examples,
-51/60 positive cells, and 45/60 after excluding six degenerate-CI cells.
-Two retraining events are reflected in this manuscript. On 2026-09-17, two
-cells (\texttt{cpsc\_ptbxl/inceptiontime}, seeds 42--43) were found to have
-reused the CPSC$\rightarrow$Chapman checkpoint instead of an independently
-trained model and were retrained, moving seed~43 from $+0.020283$ to
-$-0.005657$ and giving the interim figure set (ten counter-examples, 50/60,
-mean $+0.015414$, InceptionTime 26/30). On 2026-10-07, an audit of the
-PTB-XL training pipeline found that its early-stopping validation patients
-remained in the training loader; the stem fix was verified with
-\texttt{export\_splits.py}-level cross-checks, all twenty cells trained
-from a PTB-XL source were retrained, and every downstream result family
-was recomputed (Sec.~\ref{sec:repair}; Limitation~(xi)). The
-values reported here --- fifteen counter-examples, 45/60 (38/60 excluding
-seven degenerate-CI support cells), mean $+0.009339$ with InceptionTime
-24/30 --- therefore differ from the frozen registration by both events.
-The other 40 cells' point estimates agree with the 2026-09-17 evaluation
-exactly (0/40 disagree at four decimal places); a few CI lower endpoints
-shifted by one rounding step when BCa was re-run (largest:
-CPSC$\rightarrow$Chapman InceptionTime seed~44, $+0.0160\rightarrow+0.0167$).
-Where the frozen registration, the interim retraining, or earlier
-manuscript drafts differ from this manuscript, the manuscript values are
-the current post-retraining ones. The frozen record's ID-boundary
-response likewise carries the figure set current at the freeze:
-23/60 = 38.3\% of seed cells with 95\% CIs containing zero under the
-BCa operating CI, which moved to the delivered 30/60 = 50.0\% across
-the two retraining events above; the branch trigger itself --- the
-registered $\geq$80\% criterion is \emph{not} met --- is unchanged by
-that evolution (Sec.~\ref{sec:boundary}).
-
-\subsection{Post-registration repair: PTB-XL early-stopping validation leak}
-\label{sec:repair}
-During the 2026-10-07 audit of the released training pipeline, the PTB-XL
-\texttt{build\_ptbxl\_datasets} stem was found to keep its carved
-early-stopping validation records inside the training loader
-(\texttt{pos['train']} used the full folds-1--8 record list while the
-leakage assertion checked a different, already-reduced variable). The
-consequence is a model-selection failure, not test leakage: \emph{all
-endpoint evaluations remained clean} (cal and test are fold-9/10 patients,
-patient-disjoint from folds 1--8 under the pre-registered assertion), but
-the early-stopping monitor observed pseudo-low ECE on a training subset,
-selected earlier checkpoints (epochs 6--12 vs.\ 12--18 after the fix),
-and thereby surfaced checkpoints with higher raw OOD miscalibration
-(OOD raw ECE 0.176 vs.\ 0.140 across the 18 unaffected-architecture
-retrained cells). The stem was fixed
-(\texttt{np.setdiff1d(train\_pos, val\_pos)}), the leakage assertion was
-re-pointed to the produced splits, a four-part verification was passed
-(21{,}397 row-level split-diff changes confined to validation rows;
-builder/export cross-validation 20/20 MATCH; a new regression test
-\texttt{tests/test\_ptbxl\_val\_holdout.py}; full suite 189 passed), the
-splits CSVs were regenerated in place, and the twenty PTB-XL-source cells
-were retrained from scratch (2026-10-07; separate output tree
-\texttt{checkpoints/transfer\_valleak\_p0c}, swapped into the canonical
-tree only after per-cell SHA-256 and schema verification; the pre-repair
-tree is preserved under
-\texttt{checkpoints/\_PRE\_VALLEAK\_BACKUP\_20261007}). Every downstream
-result family was then recomputed against the retrained checkpoints
-(Sec.~\ref{sec:results}), and the mechanism of the headline shift is
-quantified in Sec.~\ref{sec:noise_mechanism}. This
-deviation is added to the protocol deviation register (A2 list, item
-after (xix)); it was \emph{not} covered by the 09-17 deviation entries.
-
+\subsection{Protocol provenance and deviations (summary)}
+\label{sec:provenance-summary}
+Four study-period amendments and two post-registration repairs shape the
+delivered record; Appendix~\ref{app:provenance} carries the full dated
+texts, manifests, and verification details. What follows is the
+one-paragraph-per-event map.
+\paragraph{A1 (endpoint relocation, before unblinding).} The primary
+endpoint was re-located from the registered decay contrast to
+$\Delta\text{ECE}_{\text{OOD}}$, with the ID boundary criterion
+($\geq$80\% of cells with 95\% CIs containing zero) and its failure
+branch fixed in the same amendment (Appendix~\ref{app:provenance}).
+\paragraph{A2 (confirmatory-family reduction).} The confirmatory family
+was reduced from the $6\times2\times13=156$ shift grid to 12
+pair$\times$architecture hypotheses; all 13 L2 shift levels are
+exploratory dose--response.
+\paragraph{A3 (corpus identity).} The third corpus is CPSC2018 only
+(CPSC Database 6,877 $+$ CPSC-Extra 3,453, both via PhysioNet/CinC
+2020); CPSC2019 never entered the corpus. CPSC2018's official taxonomy
+has no MI superclass, so the MI class of the four-class subspace is
+populated entirely by CPSC-Extra SNOMED annotations.
+\paragraph{A4 (mapping-sensitivity gate).} The registered mapping gate
+was re-operationalized on the delivered primary endpoint (cross-pair
+ordering Kendall $\tau \geq 0.8$; confirmatory counts unchanged); as of
+submission the variant battery remains unexecuted and the registered
+fallback clause applies --- no recorded value changes.
+\paragraph{Checkpoint retrain (2026-09-17).} Two cells
+(CPSC$\rightarrow$PTB-XL, InceptionTime, seeds 42--43) had reused a
+checkpoint instead of an independently trained model and were retrained;
+the root-cause audit is in the repository.
+\paragraph{Validation-leak repair (2026-10-07).} Early-stopping
+validation patients were found to remain in the PTB-XL training loader;
+the fix was verified at the split-export level, all twenty PTB-XL-source
+cells were retrained, and every downstream result family was recomputed.
+The delivered values differ from the frozen registration by both events;
+every registered branch verdict is unchanged (Appendix~\ref{app:provenance}).
 \subsection{Decomposition of the benefit decay}
 \label{sec:decomp}
 We decompose the retained benefit into slope / intercept / prevalence
@@ -817,8 +642,9 @@ the multi-corpus setting).
 \label{sec:primary}
 % ----------------------------------------------------------------------------
 Figure~\ref{fig:main_results} visualizes the shift-dose response;
-Table~\ref{tab:primary_60seed} reports the primary endpoint
-$\Delta\text{ECE}_{\text{OOD}}$ for TS across 60 seed experiments
+Table~\ref{tab:stratum_summary} reports the primary endpoint
+$\Delta\text{ECE}_{\text{OOD}}$ at the stratum level (per-seed values:
+Supplementary Table~S1) across 60 seed experiments
 (6 pairs $\times$ 2 architectures $\times$ 5 seeds, balanced). The
 primary test $H_0:\Delta\text{ECE}_{\text{OOD}}=0$ vs
 $H_1:\Delta\text{ECE}_{\text{OOD}}>0$ is supported in 45/60 (75.0\%)
@@ -843,117 +669,36 @@ ResNet1D achieves 21/30 (70.0\%).}
 % multirow/merged-row structure overlapped the IT/RN labels whenever the
 % 60-row grid crossed a page break; pairs are now \multicolumn subheader
 % lines and the Arch label is repeated per row (immune to pagination).
-{\footnotesize
-\renewcommand{\arraystretch}{0.92}
-\begin{longtable}{llrrrc}
-\caption{Pre-registered primary endpoint $\Delta\text{ECE}_{\text{OOD}}$
-for TS across 60 seed experiments (6 pairs $\times$ 2 architectures
-$\times$ 5 seeds, $B=10{,}000$, BCa operating CI). Architecture
-abbreviation: IT $=$ InceptionTime, RN $=$ ResNet1D. Class count $K=4$
-for the four pairs involving CPSC and $K=5$ for the two CPSC-free pairs; see
-\S\ref{sec:shiftmatrix}. ``Support'' = 95\% CI lower bound $>0$. Fifteen
-counter-examples are transparently disclosed. Twenty rows (the two
-PTB-XL-source pairs, one per architecture per seed) were retrained under
-the repaired split semantics; the other 40 rows are untouched. Full
-5-seed coverage on both architectures for all 6 directions.}
-\label{tab:primary_60seed}\\
+\begin{table}[tb]
+\centering
+\caption{Stratum-level summary of the pre-registered primary endpoint
+$\Delta\text{ECE}_{\text{OOD}}$ for TS (12 pair$\times$architecture
+strata, 5 seeds each; per-seed values in Supplementary Table~S1).
+``Support'' $=$ seeds with 95\% CI lower bound $>0$; ``CI$\cap$0'' $=$
+seeds whose 95\% CI contains zero; ``all$+$'' $=$ all five seed point
+estimates positive. Architecture abbreviation: IT $=$ InceptionTime,
+RN $=$ ResNet1D. The 45/60 support count and the cluster-robust mean
+$+0.0093$ $[+0.0055,+0.0132]$ aggregate these strata.}
+\label{tab:stratum_summary}
+\begin{tabular}{llrrcc}
 \toprule
-Arch & Seed & $\Delta\text{ECE}_{\text{ID}}$ & $\Delta\text{ECE}_{\text{OOD}}$ & CI lower & Support \\
+Transfer pair & Arch & Mean $\Delta\text{ECE}_{\text{OOD}}$ & Support & CI$\cap$0 & all$+$ \\
 \midrule
-\endfirsthead
-\multicolumn{6}{l}{\footnotesize\itshape Table~\thetable\ (continued)}\\
-\toprule
-Arch & Seed & $\Delta\text{ECE}_{\text{ID}}$ & $\Delta\text{ECE}_{\text{OOD}}$ & CI lower & Support \\
-\midrule
-\endhead
+Chapman$\rightarrow$CPSC & IT & $+0.0100$ & 4/5 & 0 & no \\
+Chapman$\rightarrow$CPSC & RN & $+0.0143$ & 4/5 & 0 & no \\
+Chapman$\rightarrow$PTB-XL & IT & $+0.0121$ & 4/5 & 0 & no \\
+Chapman$\rightarrow$PTB-XL & RN & $+0.0177$ & 4/5 & 0 & no \\
+CPSC$\rightarrow$Chapman & IT & $+0.0145$ & 5/5 & 0 & yes \\
+CPSC$\rightarrow$Chapman & RN & $+0.0023$ & 3/5 & 0 & no \\
+CPSC$\rightarrow$PTB-XL & IT & $+0.0079$ & 4/5 & 0 & no \\
+CPSC$\rightarrow$PTB-XL & RN & $+0.0106$ & 3/5 & 0 & no \\
+PTB-XL$\rightarrow$Chapman & IT & $+0.0134$ & 4/5 & 0 & no \\
+PTB-XL$\rightarrow$Chapman & RN & $+0.0102$ & 5/5 & 0 & yes \\
+PTB-XL$\rightarrow$CPSC & IT & $+0.0007$ & 3/5 & 0 & no \\
+PTB-XL$\rightarrow$CPSC & RN & $-0.0018$ & 2/5 & 0 & no \\
 \bottomrule
-\endfoot
-\multicolumn{6}{@{}l@{}}{Chap$\rightarrow$CPSC (K{=}4)}\\\addlinespace[1pt]
-IT & 42 & $+0.0075$ & $+0.0139$ & $+0.0135$ & \checkmark \\*
-IT & 43 & $+0.0012$ & $+0.0101$ & $+0.0099$ & \checkmark \\*
-IT & 44 & $+0.0104$ & $+0.0186$ & $+0.0181$ & \checkmark \\*
-IT & 45 & $+0.0019$ & $-0.0056$ & $-0.0058$ & \ding{55} \\*
-IT & 46 & $+0.0044$ & $+0.0130$ & $+0.0126$ & \checkmark \\
-\addlinespace
-RN & 42 & $+0.0002$ & $+0.0205$ & $+0.0200$ & \checkmark \\*
-RN & 43 & $+0.0003$ & $-0.0006$ & $-0.0006$ & \ding{55} \\*
-RN & 44 & $-0.0007$ & $+0.0078$ & $+0.0075$ & \checkmark \\*
-RN & 45 & $-0.0016$ & $+0.0271$ & $+0.0263$ & \checkmark \\*
-RN & 46 & $-0.0024$ & $+0.0169$ & $+0.0163$ & \checkmark \\
-\addlinespace
-\midrule
-\multicolumn{6}{@{}l@{}}{Chap$\rightarrow$PTB-XL (K{=}5)}\\\addlinespace[1pt]
-IT & 42 & $+0.0004$ & $-0.0025$ & $-0.0035$ & \ding{55} \\*
-IT & 43 & $+0.0005$ & $+0.0095$ & $+0.0068$ & \checkmark \\*
-IT & 44 & $+0.0055$ & $+0.0136$ & $+0.0106$ & \checkmark \\*
-IT & 45 & $-0.0128$ & $+0.0238$ & $+0.0208$ & \checkmark \\*
-IT & 46 & $+0.0048$ & $+0.0162$ & $+0.0141$ & \checkmark \\
-\addlinespace
-RN & 42 & $-0.0031$ & $+0.0309$ & $+0.0291$ & \checkmark \\*
-RN & 43 & $+0.0128$ & $+0.0291$ & $+0.0284$ & \checkmark \\*
-RN & 44 & $+0.0059$ & $+0.0172$ & $+0.0168$ & \checkmark \\*
-RN & 45 & $-0.0010$ & $-0.0036$ & $-0.0036$ & \ding{55} \\*
-RN & 46 & $-0.0042$ & $+0.0149$ & $+0.0140$ & \checkmark \\
-\addlinespace
-\midrule
-\multicolumn{6}{@{}l@{}}{CPSC$\rightarrow$Chap (K{=}4)}\\\addlinespace[1pt]
-IT & 42 & $+0.0029$ & $+0.0065$ & $+0.0061$ & \checkmark \\*
-IT & 43 & $-0.0012$ & $+0.0209$ & $+0.0203$ & \checkmark \\*
-IT & 44 & $+0.0164$ & $+0.0182$ & $+0.0167$ & \checkmark \\*
-IT & 45 & $+0.0091$ & $+0.0245$ & $+0.0242$ & \checkmark \\*
-IT & 46 & $+0.0014$ & $+0.0024$ & $+0.0024$ & \checkmark \\
-\addlinespace
-RN & 42 & $-0.0002$ & $-0.0010$ & $-0.0012$ & \ding{55} \\*
-RN & 43 & $+0.0038$ & $+0.0096$ & $+0.0094$ & \checkmark \\*
-RN & 44 & $-0.0152$ & $-0.0168$ & $-0.0170$ & \ding{55} \\*
-RN & 45 & $+0.0137$ & $+0.0181$ & $+0.0145$ & \checkmark \\*
-RN & 46 & $+0.0017$ & $+0.0017$ & $+0.0016$ & \checkmark \\
-\addlinespace
-\midrule
-\multicolumn{6}{@{}l@{}}{CPSC$\rightarrow$PTB-XL (K{=}4)}\\\addlinespace[1pt]
-IT & 42 & $+0.0028$ & $+0.0058$ & $+0.0056$ & \checkmark \\*
-IT & 43 & $-0.0038$ & $-0.0057$ & $-0.0058$ & \ding{55} \\*
-IT & 44 & $+0.0158$ & $+0.0195$ & $+0.0190$ & \checkmark \\*
-IT & 45 & $+0.0052$ & $+0.0197$ & $+0.0193$ & \checkmark \\*
-IT & 46 & $+0.0002$ & $+0.0002$ & $+0.0002$ & \checkmark \\
-\addlinespace
-RN & 42 & $+0.0114$ & $+0.0150$ & $+0.0148$ & \checkmark \\*
-RN & 43 & $+0.0048$ & $-0.0050$ & $-0.0051$ & \ding{55} \\*
-RN & 44 & $-0.0032$ & $-0.0049$ & $-0.0049$ & \ding{55} \\*
-RN & 45 & $+0.0130$ & $+0.0176$ & $+0.0173$ & \checkmark \\*
-RN & 46 & $+0.0261$ & $+0.0302$ & $+0.0295$ & \checkmark \\
-\addlinespace
-\midrule
-\multicolumn{6}{@{}l@{}}{PTB-XL$\rightarrow$Chap (K{=}5)}\\\addlinespace[1pt]
-IT & 42 & $+0.0183$ & $+0.0254$ & $+0.0212$ & \checkmark \\*
-IT & 43 & $+0.0046$ & $+0.0125$ & $+0.0119$ & \checkmark \\*
-IT & 44 & $-0.0025$ & $-0.0033$ & $-0.0034$ & \ding{55} \\*
-IT & 45 & $+0.0062$ & $+0.0108$ & $+0.0099$ & \checkmark \\*
-IT & 46 & $+0.0162$ & $+0.0217$ & $+0.0190$ & \checkmark \\
-\addlinespace
-RN & 42 & $+0.0036$ & $+0.0128$ & $+0.0118$ & \checkmark \\*
-RN & 43 & $+0.0020$ & $+0.0065$ & $+0.0060$ & \checkmark \\*
-RN & 44 & $-0.0008$ & $+0.0070$ & $+0.0062$ & \checkmark \\*
-RN & 45 & $+0.0125$ & $+0.0190$ & $+0.0175$ & \checkmark \\*
-RN & 46 & $+0.0040$ & $+0.0058$ & $+0.0057$ & \checkmark \\
-\addlinespace
-\midrule
-\multicolumn{6}{@{}l@{}}{PTB-XL$\rightarrow$CPSC (K{=}4)}\\\addlinespace[1pt]
-IT & 42 & $+0.0052$ & $-0.0083$ & $-0.0089$ & \ding{55} \\*
-IT & 43 & $+0.0002$ & $+0.0006$ & $+0.0005$ & \checkmark \\*
-IT & 44 & $+0.0161$ & $+0.0209$ & $+0.0198$ & \checkmark \\*
-IT & 45 & $-0.0056$ & $-0.0123$ & $-0.0132$ & \ding{55} \\*
-IT & 46 & $+0.0002$ & $+0.0024$ & $+0.0022$ & \checkmark \\
-\addlinespace
-RN & 42 & $-0.0057$ & $-0.0069$ & $-0.0079$ & \ding{55} \\*
-RN & 43 & $+0.0018$ & $+0.0024$ & $+0.0021$ & \checkmark \\*
-RN & 44 & $+0.0019$ & $+0.0063$ & $+0.0060$ & \checkmark \\*
-RN & 45 & $-0.0036$ & $-0.0057$ & $-0.0059$ & \ding{55} \\*
-RN & 46 & $-0.0022$ & $-0.0048$ & $-0.0051$ & \ding{55} \\
-\addlinespace
-
-\end{longtable}
-}
+\end{tabular}
+\end{table}
 
 
 Aggregate: 45/60 supported (75.0\%; InceptionTime 24/30 $=$
@@ -1525,7 +1270,7 @@ threshold, net benefit is $0.0096$ versus $0.0089$ for treating all cells;
 by the 90th percentile it rises to $0.0112$: on the completed post-retrain
 grid the benefit concentrates \emph{outside} the low-raw-ECE end, and the
 DCA qualifier becomes directional rather than causal
-(\texttt{results/l2\_shift\_full\_780cells\_detail.csv}).
+(Appendix~\ref{app:artifact-index}).
 
 Trivial strategy comparison (Table~\ref{tab:trivial}): the
 lookup-table strategy remains a clinical analysis construct (it requires
@@ -1538,7 +1283,7 @@ routes 476 of 780 evaluations (61\%) and captures $\approx$80\% of the
 always-TS total benefit ($-5.54$ of $-6.97$ summed $\Delta$ECE; exact
 $-5.5370$ of $-6.9729$), i.e.
 most of the TS benefit without target labels
-(\texttt{results/deployment\_780grid\_recompute.csv}).
+(Appendix~\ref{app:artifact-index}).
 
 \begin{table}[t]
 \centering
@@ -1645,7 +1390,7 @@ confidence distributions it is essentially zero, or slightly negative at
 moderate $T$. We therefore do not evaluate it on synthetic
 distributions. Instead we use the empirical top-label confidence
 distribution of each of the 60 main-grid cells
-(\texttt{checkpoints/e2\_probs\_cache/*.npz}), relabel each cell as
+(Appendix~\ref{app:artifact-index}), relabel each cell as
 perfectly calibrated by resampling $y \sim \mathrm{Bernoulli}(c)$ at its
 own confidence $c$ (three draws per cell), and report the band across
 cells. This removes any freedom to choose a distribution that suits the
@@ -2013,9 +1758,9 @@ reliability curve, comparing model confidence against empirical accuracy
 before and after temperature scaling. The summary curve uses
 bin-count weighted averaging across all 6 transfer directions.
 
-Figures~\ref{fig:rel-ptbxl-chapman}--\ref{fig:rel-cpsc-chapman}
-show the per-direction reliability diagrams for the representative
-configuration (ResNet1D, seed~42). In each panel, the red squares
+The per-direction reliability diagrams for the representative
+configuration (ResNet1D, seed~42) are given in the Supplementary
+Materials (\S2). In each panel there, the red squares
 show the raw model calibration curve and the green circles show the
 post-TS calibration curve. The diagonal dashed line indicates perfect
 calibration. Grey bars (right axis) show the sample count per bin.
@@ -2033,35 +1778,6 @@ direction variability.}
 \label{fig:reliability-summary}
 \end{figure}
 
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_ptbxl_chapman.pdf}
-\hfill
-\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_ptbxl_cpsc.pdf}
-\caption{Reliability diagrams for PTB-XL$\to$Chapman (left) and
-PTB-XL$\to$CPSC (right). OOD target-test set, ResNet1D, seed~42.}
-\label{fig:rel-ptbxl-chapman}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_chapman_ptbxl.pdf}
-\hfill
-\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_chapman_cpsc.pdf}
-\caption{Reliability diagrams for Chapman$\to$PTB-XL (left) and
-Chapman$\to$CPSC (right). OOD target-test set, ResNet1D, seed~42.}
-\label{fig:rel-chapman-ptbxl}
-\end{figure}
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_cpsc_ptbxl.pdf}
-\hfill
-\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_cpsc_chapman.pdf}
-\caption{Reliability diagrams for CPSC$\to$PTB-XL (left) and
-CPSC$\to$Chapman (right). OOD target-test set, ResNet1D, seed~42.}
-\label{fig:rel-cpsc-chapman}
-\end{figure}
 
 
 % ============================================================================
@@ -2640,6 +2356,245 @@ the moderate calibration sample and low SmoothECE variance; they do not
 affect the sign-based support/counter-example classification.
 
 % ============================================================================
+\appendix
+
+\section{Protocol provenance and deviations (full record)}
+\label{app:provenance}
+
+This appendix consolidates, verbatim, the four study-period
+amendments and the two post-registration repairs whose summary maps
+to one paragraph each in Sec.~\ref{sec:provenance-summary}. Labels
+are unchanged from their in-text versions so that every internal
+cross-reference remains stable.
+
+\subsection{Pre-registration revision A1 (transparency statement)}
+The primary endpoint was re-located from \texttt{decay} to
+$\Delta\text{ECE}_{\text{OOD}}$ via pre-registration revision A1
+(protocol v2.0 $\rightarrow$ v2.1-A1), triggered by an independent
+exploratory pilot in which $\Delta\text{ECE}_{\text{ID}}$ point
+estimates were near zero, collapsing the original ID-vs-OOD contrast.
+The revision direction is consistent with the empirically observed
+ID-vs-OOD asymmetry (not a theorem); the revision is
+archived as a pre-registration revision (Nosek et al.\ 2018) with
+before/after protocol hashes. The pilot results do not enter the
+main test report. All hypotheses in this paper are tagged
+\emph{exploratory + robustness validation}, not confirmatory.
+
+\subsection{Pre-registration amendment A2 (confirmatory-family reduction)}
+\label{sec:a2}
+The original
+BH-FDR family of 156 comparisons (6 pairs $\times$ 2 architectures
+$\times$ 13 shift levels) is reduced to a confirmatory family of 12
+hypotheses (6 pairs $\times$ 2 architectures $\times$ 1 primary shift
+level) under amendment A2, with the remaining 13 shift levels
+designated as exploratory dose-response. Under the reduced family,
+BH-12 yields 7/12 significant (one-sided $z$ on the stratum mean,
+$\mathrm{SE}=s/\sqrt{5}$; four InceptionTime and three ResNet1D
+directions) and Bonferroni-12 yields 6/12. A paired-$t$ reading with
+$\mathrm{df}{=}4$ (instead of the one-sided normal test) gives $0/12$
+and is the more conservative caliber; the registered reading is the
+one-sided normal. The A2 amendment is archived in
+\texttt{docs/PROTOCOL\_AMENDMENT\_A2\_}\allowbreak\texttt{FAMILY\_REDUCTION.md}.
+
+\paragraph{Residual selection risk and the 156-family deliverable
+(disclosed).} Both A1 and A2 move the analysis in the direction of the
+observed effect: the OOD contrast is the larger one, and reducing the
+family from 156 to 12 raises BH power. A1 was keyed to a registered
+trigger (the pilot's near-zero $\Delta\text{ECE}_{\text{ID}}$) and
+recorded with dated archive hashes; the pilot itself does not enter the
+test report. Labeling the headline exploratory does not remove
+endpoint-switching Type-I risk; it only makes the mechanism explicit.
+We further disclose that the pre-reduction 156-family outcome is
+\emph{not computable} from the delivered artifacts: the L2 shift grid
+ships point estimates only, with no per-cell CIs, so the 156 BH
+$p$-values cannot be reconstructed. The load-bearing inferential
+statement is therefore the cluster-robust 12-stratum interval, which is
+independent of the unit choice and is reported for the primary endpoint
+either way.
+
+\subsection{Pre-registration amendment A3 (corpus identity and MI provenance)}
+\label{sec:a3}
+A post-hoc audit of the CPSC corpus against the official challenge
+documentation produced two wording corrections and one new disclosure,
+archived as amendment A3
+(\texttt{docs/PROTOCOL\_AMENDMENT\_A3\_}\allowbreak\texttt{CORPUS\_IDENTITY.md}).
+The registered protocol described the third corpus as
+``CPSC2018+2019''; it is in fact \textbf{CPSC2018 only}, comprising the
+CPSC Database (6,877 records) and the CPSC-Extra Database (3,453
+records). CPSC2019 was a QRS/heart-rate \emph{detection} task with no
+diagnostic labels and never entered the corpus. The new disclosure is
+that CPSC2018's official nine-class taxonomy contains no MI, so the MI
+class of our 4-class subspace is populated entirely by CPSC-Extra's
+SNOMED annotations; under a strict official-class-name caliber the
+subspace would reduce to three classes. A3 is a naming and attribution
+correction plus a disclosure: it changes \emph{no} recorded value, no
+split, and no analysis decision. The registered protocol snapshots are
+left byte-identical and A3 is archived separately, so the
+before/after pair required by pre-registration practice is preserved.
+The audit also found that 33 CPSC Database records
+(\texttt{A6845}--\texttt{A6877}) were silently lost when the source
+archive was extracted (6,877 in the archive vs.\ 6,844 on disk),
+disclosed as a provenance limitation.
+
+\subsection{Pre-registration amendment A4 (mapping-sensitivity gate operationalization)}
+\label{sec:a4}
+The registered protocol (\S10 of
+\texttt{docs/EXPERIMENT\_PROTOCOL.md}) promises a preregistered
+mapping-sensitivity analysis for every ambiguous CPSC label-mapping
+decision, with a failure clause that downgrades the corresponding
+claims in the discussion. Cross-adversarial review on 2026-10-11
+established two facts about this promise: (i) it was never executed and
+never registered as a deviation; (ii) as written, the gate's criterion
+is defined on the secondary endpoint $G$ = ECE$_{\text{S1}}$ $-$
+ECE$_{\text{oracle}}$, which the paper's own Limitations acknowledge as
+undelivered on real data (Limitations xviii) --- so the registered gate
+was unexecutable as written. Amendment A4
+(\texttt{docs/PROTOCOL\_AMENDMENT\_A4\_}\allowbreak\texttt{MAPPING\_SENSITIVITY.md},
+2026-10-11) re-operationalizes the gate on the delivered primary
+endpoint: the variant battery (per ambiguous mapping decision;
+V1 = STE$\rightarrow$MI re-mapping, V2 = multi-label priority-collapse
+variations, V3 = corpus-scope reduction --- excluded with its reason
+recorded) must reproduce the cross-pair ordering of delivered
+$\Delta\text{ECE}_{\text{OOD}}$ means (Kendall $\tau \geq 0.8$) with the
+confirmatory counts unchanged (BH-12 = 7/12, Bonferroni-12 = 6/12),
+otherwise the corresponding cross-corpus claims are downgraded exactly
+per the original clause. Two scope facts are registered with the gate:
+only the 40 CPSC-involving cells can change under a label-mapping
+variant (the 20 ptbxl$\leftrightarrow$chapman cells carry no CPSC-mapped
+labels and serve as fixed ordering anchors), and the battery cost is
+estimated at 2--5 GPU-days for two variants. \textbf{A4 defines the
+criterion before any variant result exists} (anti-HARKing, same
+discipline as A1.1.4); as of submission the battery remains
+unexecuted --- and, per amendment A4's own fallback clause, the
+cross-corpus claims retain their current disclosure strength until it
+is run --- and A4 changes no recorded value.
+
+\subsection{Pre-registration archival status}
+\label{sec:archival-status}
+Two internal SHA--256 manifests exist and should not be conflated.
+\texttt{07\_HASH\_MANIFEST\_baseline\_2026-09-05.json}, bundled with the
+registered project, froze 14 working-tree files at
+2026-09-05T04:19:46Z; \texttt{docs/osf\_archive\_manifest.json} is a later
+snapshot taken 2026-09-16T02:44:47Z over a 14-file set that includes this
+manuscript.
+
+Of the 14 files frozen on 2026-09-05, \textbf{10 have changed since the
+freeze} and the frozen content of \textbf{7 can no longer be recovered from
+the project's version control}, including \texttt{docs/EXPERIMENT\_PROTOCOL.md}
+itself. The baseline manifest accordingly documents intent and timing, but
+for those 7 files it cannot be independently re-verified by a third party.
+Per-file status is tabulated in \texttt{README\_ARCHIVAL\_STATUS.md} in the
+registered OSF project. The public timestamp of the protocol record
+therefore begins with the project deposit and the registration
+(registered 2026-09-14), not earlier, and the archive is an archival of the
+study-period state rather than a substitute for it.
+
+The registration was frozen on 2026-09-14 and cannot be edited, so its
+responses carry the figure set current at that date: nine counter-examples,
+51/60 positive cells, and 45/60 after excluding six degenerate-CI cells.
+Two retraining events are reflected in this manuscript. On 2026-09-17, two
+cells (\texttt{cpsc\_ptbxl/inceptiontime}, seeds 42--43) were found to have
+reused the CPSC$\rightarrow$Chapman checkpoint instead of an independently
+trained model and were retrained, moving seed~43 from $+0.020283$ to
+$-0.005657$ and giving the interim figure set (ten counter-examples, 50/60,
+mean $+0.015414$, InceptionTime 26/30). On 2026-10-07, an audit of the
+PTB-XL training pipeline found that its early-stopping validation patients
+remained in the training loader; the stem fix was verified with
+\texttt{export\_splits.py}-level cross-checks, all twenty cells trained
+from a PTB-XL source were retrained, and every downstream result family
+was recomputed (Sec.~\ref{sec:repair}; Limitation~(xi)). The
+values reported here --- fifteen counter-examples, 45/60 (38/60 excluding
+seven degenerate-CI support cells), mean $+0.009339$ with InceptionTime
+24/30 --- therefore differ from the frozen registration by both events.
+The other 40 cells' point estimates agree with the 2026-09-17 evaluation
+exactly (0/40 disagree at four decimal places); a few CI lower endpoints
+shifted by one rounding step when BCa was re-run (largest:
+CPSC$\rightarrow$Chapman InceptionTime seed~44, $+0.0160\rightarrow+0.0167$).
+Where the frozen registration, the interim retraining, or earlier
+manuscript drafts differ from this manuscript, the manuscript values are
+the current post-retraining ones. The frozen record's ID-boundary
+response likewise carries the figure set current at the freeze:
+23/60 = 38.3\% of seed cells with 95\% CIs containing zero under the
+BCa operating CI, which moved to the delivered 30/60 = 50.0\% across
+the two retraining events above; the branch trigger itself --- the
+registered $\geq$80\% criterion is \emph{not} met --- is unchanged by
+that evolution (Sec.~\ref{sec:boundary}).
+
+\subsection{Post-registration repair: PTB-XL early-stopping validation leak}
+\label{sec:repair}
+During the 2026-10-07 audit of the released training pipeline, the PTB-XL
+\texttt{build\_ptbxl\_datasets} stem was found to keep its carved
+early-stopping validation records inside the training loader
+(\texttt{pos['train']} used the full folds-1--8 record list while the
+leakage assertion checked a different, already-reduced variable). The
+consequence is a model-selection failure, not test leakage: \emph{all
+endpoint evaluations remained clean} (cal and test are fold-9/10 patients,
+patient-disjoint from folds 1--8 under the pre-registered assertion), but
+the early-stopping monitor observed pseudo-low ECE on a training subset,
+selected earlier checkpoints (epochs 6--12 vs.\ 12--18 after the fix),
+and thereby surfaced checkpoints with higher raw OOD miscalibration
+(OOD raw ECE 0.176 vs.\ 0.140 across the 18 unaffected-architecture
+retrained cells). The stem was fixed
+(\texttt{np.setdiff1d(train\_pos, val\_pos)}), the leakage assertion was
+re-pointed to the produced splits, a four-part verification was passed
+(21{,}397 row-level split-diff changes confined to validation rows;
+builder/export cross-validation 20/20 MATCH; a new regression test
+\texttt{tests/test\_ptbxl\_val\_holdout.py}; full suite 189 passed), the
+splits CSVs were regenerated in place, and the twenty PTB-XL-source cells
+were retrained from scratch (2026-10-07; separate output tree
+\texttt{checkpoints/transfer\_valleak\_p0c}, swapped into the canonical
+tree only after per-cell SHA-256 and schema verification; the pre-repair
+tree is preserved under
+\texttt{checkpoints/\_PRE\_VALLEAK\_BACKUP\_20261007}). Every downstream
+result family was then recomputed against the retrained checkpoints
+(Sec.~\ref{sec:results}), and the mechanism of the headline shift is
+quantified in Sec.~\ref{sec:noise_mechanism}. This
+deviation is added to the protocol deviation register (A2 list, item
+after (xix)); it was \emph{not} covered by the 09-17 deviation entries.
+
+
+\section{Artifact index}
+\label{app:artifact-index}
+
+Table~\ref{tab:artifact-index} maps the repository artifacts cited
+in this manuscript to the sections that use them. Files marked
+"do-not-quote" in the repository inventory
+(\texttt{results/DO\_NOT\_QUOTE.md}) are listed with their
+replacements and must not be cited as current readouts.
+
+\begin{table}[tb]
+\centering
+\caption{Artifact index: repository artifacts $\leftrightarrow$
+manuscript sections. All paths relative to the repository root.}
+\label{tab:artifact-index}
+\footnotesize
+\begin{tabular}{p{0.52\textwidth}p{0.38\textwidth}}
+\toprule
+Artifact & Used in \\
+\midrule
+\texttt{results/robustness\_validation\_5seeds.csv} (primary-endpoint table, 60 cells) & Sec.~5.1, Table~\ref{tab:stratum_summary}, Table~\ref{tab:arch_robust} \\
+\texttt{results/samplelevel\_ts\_60cells.csv} (adaptive-TS per-cell deliverable) & Sec.~5.3 (ATS paragraph) \\
+\texttt{results/c4\_resnet1d\_8method.csv} (8-method delivered rows) & Sec.~5.3, Table~\ref{tab:methods} \\
+\texttt{results/robustness\_val\_8method\_perbranch\_recheck.csv} (per-branch correctness recheck) & Sec.~5.3; semantics notice \\
+\texttt{results/deployment\_780grid\_recompute.csv}, \texttt{results/l2\_shift\_full\_780cells\_detail.csv} & Sec.~5.6, Tables~\ref{tab:deploy_sens}, \ref{tab:trivial} \\
+\texttt{results/s2\_dose\_response.csv} (labeling-budget dose--response) & Sec.~5.7, Table~\ref{tab:s2_dose} \\
+\texttt{results/noise\_floor\_curve.csv} & Sec.~5.8 \\
+\texttt{results/counterexample\_discrimination.csv}/\texttt{.json} & Sec.~6.1 (discrimination experiment) \\
+\texttt{results/predictability\_corrected\_v2.csv}, \texttt{results/predictability\_3arch.csv} & Sec.~5.5, Table~\ref{tab:predictability} \\
+\texttt{results/c1\_dcr\_ncv\_multiclass.csv}, \texttt{results/c1\_dcr\_ncv\_summary.csv} & Sec.~5.9 \\
+\texttt{results/e3\_patient\_bca\_cells.csv}, \texttt{results/e3\_patient\_bca\_summary.json} & Sec.~5.9 (registered patient-level unit) \\
+\texttt{results/real\_prior\_recovery.csv}/\texttt{\_summary.json} & Honesty item~1 \\
+\texttt{results/discrimination\_metrics\_60exp.csv} (AUROC/AUPRC) & Sec.~6 (discrimination block) \\
+\texttt{results/decomposition\_validation\_n20000.csv} & Sec.~5.4 \\
+\texttt{results/rebuild\_shapley\_crossfit.\{csv,json\}}, \texttt{results/rebuild\_shapley\_slopeT.\{csv,json\}} & Sec.~5.11 \\
+\texttt{scripts/train.py}, \texttt{scripts/export\_splits.py} (leak-fixed code line) & Sec.~4.1, post-registration repair \\
+\texttt{scripts/verify\_release\_results.py} (12-check release gate) & repository; cited in Code availability \\
+\texttt{scripts/recheck\_method\_semantics.py}, \texttt{scripts/samplelevel\_ts.py}, \texttt{scripts/recompute\_deployment\_780grid.py} & Sec.~5.3, Sec.~5.6 \\
+\texttt{docs/EXPERIMENT\_PROTOCOL.md}, amendments A1--A4 & Sec.~4, Appendix~\ref{app:provenance} \\
+\texttt{results/DO\_NOT\_QUOTE.md} (do-not-quote gate) & Appendix~\ref{app:artifact-index} (this table) \\
+\bottomrule
+\end{tabular}
+\end{table}
 \section*{Honesty Declaration (5 items, adversarial audit product)}
 \label{sec:honesty}
 % ============================================================================
@@ -2649,7 +2604,7 @@ affect the sign-based support/counter-example classification.
     recovery registered as deferred (protocol \S13, item~7) has since
     been delivered on the real 60-cell grid and re-run on the
     post-retrain caches
-    (\texttt{scripts/real\_prior\_recovery.py}): with target labels withheld,
+    (Appendix~\ref{app:artifact-index}): with target labels withheld,
     BBSE reduces the prior-recovery error from $0.1916$ (source-prior
     baseline) to $0.1109$ --- a $42.1\%$ relative reduction, better than
     the baseline in 56/60 cells, positive in 6/6 transfer pairs. No
@@ -2695,7 +2650,7 @@ The PTB-XL \cite{wagner2020ptbxl}, Chapman--Shaoxing
 \cite{liu2018cpsc,physionet2020cpsc} datasets are publicly
 available via PhysioNet under their respective licenses. The
 pre-registered protocol v2.1-A1, its hash manifest
-(\texttt{docs/osf\_archive\_manifest.json}), the revision A1 document,
+(Appendix~\ref{app:artifact-index}), the revision A1 document,
 and the full per-experiment result files
 (\texttt{checkpoints/transfer/**/}\allowbreak\texttt{transfer\_result.json},
 \texttt{results/*.csv}) are included with the submission as
@@ -2717,27 +2672,13 @@ indices and label-mapping tables released with the code fully
 determine the data configuration used in every experiment.
 
 \section*{Pre-registration}
-The protocol, the amendments (A1, A2, A3, A4), and a per-file
+The protocol, the amendments (A1, A2, A3, A4), and the per-file
 archival-status report are publicly archived at
-\url{https://doi.org/10.17605/OSF.IO/53H64}; amendments A3 and A4 also
-ship in the repository (\texttt{docs/}) and are deposited in the OSF
-project deposit (project 53h64 Files, 2026-10-11 uploads, per-file
-SHA-256 verified against the repository copies). The frozen registration
-(WJZ3Y) is intentionally left at its v1 state: a registration is the
-dated record of its registration date, and this study's amendment set
-lives in the project deposit rather than in retro-edited frozen snapshots.
-
-The registration is retrospective: the protocol and its study-period
-amendments were authored during the study and dated in their own
-headers, then deposited and registered afterward. The registered
-analysis plan records that its analyses had already been conducted. The
-archive should therefore be read as a study-period protocol record with
-a dated before/after hash pair, not as a prospective registration.
-\texttt{docs/osf\_archive\_manifest.json} is an internal snapshot taken
-on 2026-09-16; the 2026-09-05 baseline freeze is
-\texttt{07\_HASH\_MANIFEST\_baseline\_2026-09-05.json}, and neither is a
-substitute for the public record (Sec.~\ref{sec:archival-status}).
-
+\url{https://doi.org/10.17605/OSF.IO/53H64} and ship with the repository
+(\texttt{docs/}); the full provenance record --- the retrospective-
+registration disclosure, the manifest chronology, and the two
+post-registration repairs --- is consolidated in
+Appendix~\ref{app:provenance}.
 \section*{CRediT authorship contribution statement}
 \textbf{Toni Guan:} Conceptualization, Methodology, Software, Validation,
 Formal analysis, Investigation, Data curation, Writing -- original draft,

@@ -2,9 +2,10 @@
 % Companion to main.tex (When Does Temperature Scaling Pay Off in Cross-Corpus ECG Transfer?)
 \documentclass[12pt]{article}
 \usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage{graphicx,booktabs,amsmath,amssymb}
+\usepackage{graphicx,booktabs,amsmath,amssymb,longtable}
 \usepackage[utf8]{inputenc}
 \usepackage{caption}
+\usepackage{pifont}
 \usepackage{hyperref}
 \captionsetup{font=small}
 \begin{document}
@@ -389,4 +390,156 @@ J.~Kwon, Y.-Y.~Jo, ``Foundation models for electrocardiograms,''
 \end{thebibliography}
 
 
+
+\clearpage
+\section*{S2.~Per-direction reliability diagrams and per-seed endpoint table}
+\label{sec:supp-s2}
+The three figure panels below are the main-text per-direction
+reliability diagrams (OOD target-test set, ResNet1D, seed~42); the
+full 60 per-seed catalog is Section~S1. Table~S1 then lists the
+per-seed values of the pre-registered primary endpoint
+$\Delta\text{ECE}_{\text{OOD}}$ underlying the main-text stratum
+summary (Table~2 of the main text): 60 rows, columns as in the
+main-text table; ``Support'' = 95\% CI lower bound $>0$.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_ptbxl_chapman.pdf}
+\hfill
+\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_ptbxl_cpsc.pdf}
+\caption{Reliability diagrams for PTB-XL$\to$Chapman (left) and
+PTB-XL$\to$CPSC (right). OOD target-test set, ResNet1D, seed~42.}
+\label{fig:rel-ptbxl-chapman}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_chapman_ptbxl.pdf}
+\hfill
+\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_chapman_cpsc.pdf}
+\caption{Reliability diagrams for Chapman$\to$PTB-XL (left) and
+Chapman$\to$CPSC (right). OOD target-test set, ResNet1D, seed~42.}
+\label{fig:rel-chapman-ptbxl}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_cpsc_ptbxl.pdf}
+\hfill
+\includegraphics[width=0.48\columnwidth]{figures/fig_reliability_cpsc_chapman.pdf}
+\caption{Reliability diagrams for CPSC$\to$PTB-XL (left) and
+CPSC$\to$Chapman (right). OOD target-test set, ResNet1D, seed~42.}
+\label{fig:rel-cpsc-chapman}
+\end{figure}
+
+{\footnotesize
+\renewcommand{\arraystretch}{0.92}
+\begin{longtable}{llrrrc}
+\caption{Supplementary Table S1. Pre-registered primary endpoint $\Delta\text{ECE}_{\text{OOD}}$
+for TS across 60 seed experiments (6 pairs $\times$ 2 architectures
+$\times$ 5 seeds, $B=10{,}000$, BCa operating CI). Architecture
+abbreviation: IT $=$ InceptionTime, RN $=$ ResNet1D. Class count $K=4$
+for the four pairs involving CPSC and $K=5$ for the two CPSC-free pairs; see the main-text shift-matrix section. ``Support'' = 95\% CI lower bound $>0$. Fifteen
+counter-examples are transparently disclosed. Twenty rows (the two
+PTB-XL-source pairs, one per architecture per seed) were retrained under
+the repaired split semantics; the other 40 rows are untouched. Full
+5-seed coverage on both architectures for all 6 directions.}
+\label{tab:s1_perseed}\\
+\toprule
+Arch & Seed & $\Delta\text{ECE}_{\text{ID}}$ & $\Delta\text{ECE}_{\text{OOD}}$ & CI lower & Support \\
+\midrule
+\endfirsthead
+\multicolumn{6}{l}{\footnotesize\itshape Table~\thetable\ (continued)}\\
+\toprule
+Arch & Seed & $\Delta\text{ECE}_{\text{ID}}$ & $\Delta\text{ECE}_{\text{OOD}}$ & CI lower & Support \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\multicolumn{6}{@{}l@{}}{Chap$\rightarrow$CPSC (K{=}4)}\\\addlinespace[1pt]
+IT & 42 & $+0.0075$ & $+0.0139$ & $+0.0135$ & \checkmark \\*
+IT & 43 & $+0.0012$ & $+0.0101$ & $+0.0099$ & \checkmark \\*
+IT & 44 & $+0.0104$ & $+0.0186$ & $+0.0181$ & \checkmark \\*
+IT & 45 & $+0.0019$ & $-0.0056$ & $-0.0058$ & \ding{55} \\*
+IT & 46 & $+0.0044$ & $+0.0130$ & $+0.0126$ & \checkmark \\
+\addlinespace
+RN & 42 & $+0.0002$ & $+0.0205$ & $+0.0200$ & \checkmark \\*
+RN & 43 & $+0.0003$ & $-0.0006$ & $-0.0006$ & \ding{55} \\*
+RN & 44 & $-0.0007$ & $+0.0078$ & $+0.0075$ & \checkmark \\*
+RN & 45 & $-0.0016$ & $+0.0271$ & $+0.0263$ & \checkmark \\*
+RN & 46 & $-0.0024$ & $+0.0169$ & $+0.0163$ & \checkmark \\
+\addlinespace
+\midrule
+\multicolumn{6}{@{}l@{}}{Chap$\rightarrow$PTB-XL (K{=}5)}\\\addlinespace[1pt]
+IT & 42 & $+0.0004$ & $-0.0025$ & $-0.0035$ & \ding{55} \\*
+IT & 43 & $+0.0005$ & $+0.0095$ & $+0.0068$ & \checkmark \\*
+IT & 44 & $+0.0055$ & $+0.0136$ & $+0.0106$ & \checkmark \\*
+IT & 45 & $-0.0128$ & $+0.0238$ & $+0.0208$ & \checkmark \\*
+IT & 46 & $+0.0048$ & $+0.0162$ & $+0.0141$ & \checkmark \\
+\addlinespace
+RN & 42 & $-0.0031$ & $+0.0309$ & $+0.0291$ & \checkmark \\*
+RN & 43 & $+0.0128$ & $+0.0291$ & $+0.0284$ & \checkmark \\*
+RN & 44 & $+0.0059$ & $+0.0172$ & $+0.0168$ & \checkmark \\*
+RN & 45 & $-0.0010$ & $-0.0036$ & $-0.0036$ & \ding{55} \\*
+RN & 46 & $-0.0042$ & $+0.0149$ & $+0.0140$ & \checkmark \\
+\addlinespace
+\midrule
+\multicolumn{6}{@{}l@{}}{CPSC$\rightarrow$Chap (K{=}4)}\\\addlinespace[1pt]
+IT & 42 & $+0.0029$ & $+0.0065$ & $+0.0061$ & \checkmark \\*
+IT & 43 & $-0.0012$ & $+0.0209$ & $+0.0203$ & \checkmark \\*
+IT & 44 & $+0.0164$ & $+0.0182$ & $+0.0167$ & \checkmark \\*
+IT & 45 & $+0.0091$ & $+0.0245$ & $+0.0242$ & \checkmark \\*
+IT & 46 & $+0.0014$ & $+0.0024$ & $+0.0024$ & \checkmark \\
+\addlinespace
+RN & 42 & $-0.0002$ & $-0.0010$ & $-0.0012$ & \ding{55} \\*
+RN & 43 & $+0.0038$ & $+0.0096$ & $+0.0094$ & \checkmark \\*
+RN & 44 & $-0.0152$ & $-0.0168$ & $-0.0170$ & \ding{55} \\*
+RN & 45 & $+0.0137$ & $+0.0181$ & $+0.0145$ & \checkmark \\*
+RN & 46 & $+0.0017$ & $+0.0017$ & $+0.0016$ & \checkmark \\
+\addlinespace
+\midrule
+\multicolumn{6}{@{}l@{}}{CPSC$\rightarrow$PTB-XL (K{=}4)}\\\addlinespace[1pt]
+IT & 42 & $+0.0028$ & $+0.0058$ & $+0.0056$ & \checkmark \\*
+IT & 43 & $-0.0038$ & $-0.0057$ & $-0.0058$ & \ding{55} \\*
+IT & 44 & $+0.0158$ & $+0.0195$ & $+0.0190$ & \checkmark \\*
+IT & 45 & $+0.0052$ & $+0.0197$ & $+0.0193$ & \checkmark \\*
+IT & 46 & $+0.0002$ & $+0.0002$ & $+0.0002$ & \checkmark \\
+\addlinespace
+RN & 42 & $+0.0114$ & $+0.0150$ & $+0.0148$ & \checkmark \\*
+RN & 43 & $+0.0048$ & $-0.0050$ & $-0.0051$ & \ding{55} \\*
+RN & 44 & $-0.0032$ & $-0.0049$ & $-0.0049$ & \ding{55} \\*
+RN & 45 & $+0.0130$ & $+0.0176$ & $+0.0173$ & \checkmark \\*
+RN & 46 & $+0.0261$ & $+0.0302$ & $+0.0295$ & \checkmark \\
+\addlinespace
+\midrule
+\multicolumn{6}{@{}l@{}}{PTB-XL$\rightarrow$Chap (K{=}5)}\\\addlinespace[1pt]
+IT & 42 & $+0.0183$ & $+0.0254$ & $+0.0212$ & \checkmark \\*
+IT & 43 & $+0.0046$ & $+0.0125$ & $+0.0119$ & \checkmark \\*
+IT & 44 & $-0.0025$ & $-0.0033$ & $-0.0034$ & \ding{55} \\*
+IT & 45 & $+0.0062$ & $+0.0108$ & $+0.0099$ & \checkmark \\*
+IT & 46 & $+0.0162$ & $+0.0217$ & $+0.0190$ & \checkmark \\
+\addlinespace
+RN & 42 & $+0.0036$ & $+0.0128$ & $+0.0118$ & \checkmark \\*
+RN & 43 & $+0.0020$ & $+0.0065$ & $+0.0060$ & \checkmark \\*
+RN & 44 & $-0.0008$ & $+0.0070$ & $+0.0062$ & \checkmark \\*
+RN & 45 & $+0.0125$ & $+0.0190$ & $+0.0175$ & \checkmark \\*
+RN & 46 & $+0.0040$ & $+0.0058$ & $+0.0057$ & \checkmark \\
+\addlinespace
+\midrule
+\multicolumn{6}{@{}l@{}}{PTB-XL$\rightarrow$CPSC (K{=}4)}\\\addlinespace[1pt]
+IT & 42 & $+0.0052$ & $-0.0083$ & $-0.0089$ & \ding{55} \\*
+IT & 43 & $+0.0002$ & $+0.0006$ & $+0.0005$ & \checkmark \\*
+IT & 44 & $+0.0161$ & $+0.0209$ & $+0.0198$ & \checkmark \\*
+IT & 45 & $-0.0056$ & $-0.0123$ & $-0.0132$ & \ding{55} \\*
+IT & 46 & $+0.0002$ & $+0.0024$ & $+0.0022$ & \checkmark \\
+\addlinespace
+RN & 42 & $-0.0057$ & $-0.0069$ & $-0.0079$ & \ding{55} \\*
+RN & 43 & $+0.0018$ & $+0.0024$ & $+0.0021$ & \checkmark \\*
+RN & 44 & $+0.0019$ & $+0.0063$ & $+0.0060$ & \checkmark \\*
+RN & 45 & $-0.0036$ & $-0.0057$ & $-0.0059$ & \ding{55} \\*
+RN & 46 & $-0.0022$ & $-0.0048$ & $-0.0051$ & \ding{55} \\
+\addlinespace
+
+\end{longtable}
+}
 \end{document}
