@@ -250,11 +250,15 @@ def fig2_main_results():
                  '60 seed experiments (6 pairs × 2 architectures × 5 seeds), TS only',
                  fontsize=12)
 
+    sup_i_all = int((df_ts[df_ts['arch'] == 'inceptiontime']['ood_ci_lo'] > 0).sum())
+    sup_r_all = int((df_ts[df_ts['arch'] == 'resnet1d']['ood_ci_lo'] > 0).sum())
     legend_elems = [
         mpatches.Patch(facecolor=ARCH_COLORS['inceptiontime'], alpha=0.75,
-                       edgecolor='black', label='InceptionTime (27/30 supported, 90%)'),
+                       edgecolor='black',
+                       label=f'InceptionTime ({sup_i_all}/30 supported, {sup_i_all/30*100:.0f}%)'),
         mpatches.Patch(facecolor=ARCH_COLORS['resnet1d'], alpha=0.75,
-                       edgecolor='black', label='ResNet1D (24/30 supported, 80%)'),
+                       edgecolor='black',
+                       label=f'ResNet1D ({sup_r_all}/30 supported, {sup_r_all/30*100:.0f}%)'),
     ]
     ax.legend(handles=legend_elems, loc='lower right', fontsize=10, framealpha=0.95)
     ax.grid(axis='y', alpha=0.3, linestyle=':')

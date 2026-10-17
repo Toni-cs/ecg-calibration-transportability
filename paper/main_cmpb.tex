@@ -59,7 +59,7 @@ Across Three Public Corpora}
 
 \begin{abstract}
 
-\noindent\textbf{What is new.} Cross-corpus ECG deployment is a decision
+\noindent Cross-corpus ECG deployment is a decision
 problem, not a calibration exercise. We deliver three reusable method
 components, validated end-to-end by a 60-experiment temperature-scaling
 boundary study: (i) a three-component Shapley decomposition of the
@@ -70,7 +70,7 @@ positive calibration benefit $\Delta\text{ECE}_{\mathrm{OOD}}>0$; S2:
 OOD accuracy at or above the target majority-class baseline; (iii) a
 pre-registered applicability-boundary protocol (ID criterion
 $\geq$80\% of CIs containing zero, amendment chain A1--A4) that fixes
-what may be claimed before analysis. The temperature-scaling instance
+what may be claimed before unblinding. The temperature-scaling instance
 is the validation carrier, not the contribution.
 
 The validation vehicle is the 60-experiment grid: six directed transfer
@@ -121,8 +121,7 @@ seeds), reframing the fifteen disclosed counter-examples.
 
 The per-sample adaptive-TS baseline (Robey et al., AISTATS 2021) on
 the identical caches averages $+0.0190$ (47/60 positive) and beats
-the global TS on 41/60 cells --- yet meets the strict post-
-calibration deployment bar on 0/60, the same ceiling global TS could
+the global TS on 41/60 cells --- yet meets the strict post-calibration deployment bar on 0/60, the same ceiling global TS could
 not cross, locating the limiting factor in \emph{transferred
 calibration}, not in the recalibrator family. Together these results
 bound when post-hoc recalibration pays off across institutions, and
@@ -189,24 +188,14 @@ Five independent contributions:
     pairs $\times$ 2 architectures; InceptionTime 24/30, ResNet1D 21/30),
     with fifteen counter-examples transparently disclosed and mechanistically
     explained.
-    InceptionTime: one of six directions achieves 5/5 (CPSC$\rightarrow$Chapman),
-    four achieve 4/5, one achieves 3/5 (PTB-XL$\rightarrow$CPSC).
-    ResNet1D: one of six achieves 5/5 (PTB-XL$\rightarrow$Chapman),
-    two achieve 4/5, two achieve 3/5, one achieves 2/5 (PTB-XL$\rightarrow$CPSC).
     \item[\textbf{C2} (Boundary condition, pre-registered branch triggered):]
-    Across 12 pair$\times$architecture strata, 30/60 cells (50.0\%;
-    BCa operating CI) have 95\% CIs containing zero and 24/60 have CI
-    lower bound $>0$ (stratum means $-0.0015$ to $+0.0104$; ID mean
-    $+0.0034$ vs.\ OOD mean $+0.0093$). The pre-registered criterion
+    30/60 cells (50.0\%; BCa operating CI) have 95\% CIs containing zero
+    and 24/60 have CI lower bound $>0$; the pre-registered criterion
     ($\geq$80\% of cells with CI containing zero) is \emph{not} met,
     triggering the ``ID nonzero boundary'' branch (protocol A1.4.2):
-    the premise that TS has no ID recalibratable miscalibration is
-    re-examined, the decay contrast restored as exploratory, and C1
-    qualified, since the OOD benefit is about $2.7\times$ the ID benefit
-    but is \emph{not} exclusively OOD-specific. $42/60 = 70.0\%$ of ID
-    point estimates are positive and $2/60 = 3.3\%$ have
-    $\Delta\text{ECE}_{\text{ID}} < -0.01$ (counter-example 6, $-0.0152$;
-    one marginal case, $-0.0128$).
+    the decay contrast is restored as exploratory and C1 is qualified,
+    the OOD benefit being about $2.7\times$ the ID benefit rather than
+    exclusively OOD-specific.
     \item[\textbf{C3} (Methodological, Shapley decomposition validation):]
     A 27-cell full-factorial synthetic validation
     (slope$\times$intercept$\times$prevalence, $n=20{,}000$) recovers
@@ -214,29 +203,14 @@ Five independent contributions:
     21/27 at $n=500$), flags entangled regions without a threshold,
     and reports bootstrap CIs on absolute Shapley values.
     \item[\textbf{C4} (Practical, method-selection boundary):] Across
-    8 methods $\times$ 6 pairs $\times$ 5 seeds $\times$ 2 architectures,
-    TS is the most consistent recalibrator among the eight delivered
-    methods (45/60, with the point-estimate
-    count equal to the CI count), while EM prior adaptation is harmful on
-    average ($-0.0040$; CI lower bound $>0$ in only 31/60 cells) and
-    especially fragile when ill-conditioned cells are included
-    (InceptionTime 11/30); after exclusion the EM OOD mean attenuates from
-    $-0.0040$ to $+0.0015$ (InceptionTime remains negative, $-0.0073$).
-    The mechanism is prior-likelihood mismatch: EM fits a target prior that
-    amplifies shift-induced miscalibration when the source confusion matrix
-    is ill-conditioned.
-    A semantics recheck
-    (\texttt{results/robustness\_val\_8method\_perbranch\_recheck.csv},
-    recomputed from the cached probability arrays by
-    \texttt{scripts/recheck\_method\_semantics.py} with per-branch
-    correctness) reproduces the TS endpoint exactly (60/60) and confirms
-    C4 under the corrected semantics with a strengthened EM claim: the
-    EM OOD mean is $-0.0378$ per-branch (vs.\ $-0.0040$ under the
-    historical shared-correctness implementation that produced the
-    delivered 8-method rows), BBSE stays the positive counterpoint
-    ($+0.0270 \to +0.0172$), and the remaining parametric recalibrators
-    shift by at most $0.003$ with no qualitative change. The TS
-    primary-endpoint figures quoted throughout are unaffected.
+    8 methods $\times$ 60 cells, TS is the most consistent
+    recalibrator among the eight delivered methods (45/60, point$=$CI),
+    while EM prior adaptation is harmful on average ($-0.0040$ delivered;
+    $-0.0378$ under the per-branch correctness recheck, which strengthens
+    the claim) and Matrix scaling is fragile (24/60 overall; IT 11/30,
+    RN 13/30), governed by a prior-likelihood mismatch mechanism
+    (Table~\ref{tab:methods}; recheck details in
+    Sec.~\ref{sec:method_boundary}).
     \item[\textbf{C5} (Clinical, discrimination-aware calibration gate):]
     A two-layer gate decouples calibration effectiveness (C1:
     $\Delta\text{ECE}_{\text{OOD}}>0$) from clinical viability
@@ -495,7 +469,7 @@ MC-Dropout, and Oracle are
 not delivered on real data (a registered deviation, see Limitations).
 Scenario: \textbf{S1} zero-shot transfer (source-cal fit
 $\rightarrow$ target apply), the main analysis scenario
-(Sec.~\ref{sec:methods}); S1$'$ denotes the target-domain unsupervised
+(Sec.~\ref{sec:shiftmatrix}); S1$'$ denotes the target-domain unsupervised
 variant in which EM/BBSE estimate the target prior from unlabeled
 target predictions.
 
@@ -1099,7 +1073,7 @@ EM prior adaptation and Matrix scaling are the most fragile on
 InceptionTime (11/30, 36.7\% each), exemplifying the prior-likelihood
 mismatch mechanism (C4). Across 2 architectures
 (Table~\ref{tab:arch_robust}), TS achieves 45/60 (75.0\%)
-(InceptionTime 24/30, 80.0\%; ResNet1D 21/30, 70.0%), with full
+(InceptionTime 24/30, 80.0\%; ResNet1D 21/30, 70.0\%), with full
 5-seed coverage on all 6 directions (Figure~\ref{fig:arch_comparison}).
 
 \begin{figure}[htbp]
@@ -1171,13 +1145,13 @@ Chap$\rightarrow$PTB-XL  & 4/5 & 4/5 & 8/10  & 2 counter-examples \\
 CPSC$\rightarrow$Chap    & 5/5 & 3/5 & 8/10  & 2 counter-examples \\
 CPSC$\rightarrow$PTB-XL  & 4/5 & 3/5 & 7/10  & 3 counter-examples \\
 PTB-XL$\rightarrow$Chap  & 4/5 & 5/5 & 9/10  & 1 counter-example \\
-PTB-XL$\rightarrow$CPSC  & 3/5 & 2/5 & 5/10 & five counter-examples \\
+PTB-XL$\rightarrow$CPSC  & 3/5 & 2/5 & 5/10 & 5 counter-examples \\
 \midrule
 \textbf{Total} & \textbf{24/30} & \textbf{21/30} & \textbf{45/60} & \textbf{75.0\%} \\
 \midrule
 \textbf{Mean $\Delta\text{ECE}$} & \textbf{$+0.0098$} & \textbf{$+0.0089$} & \textbf{$+0.0093$} & \\
 \textbf{Std $\Delta\text{ECE}$}  & \textbf{$0.0108$} & \textbf{$0.0124$} & \textbf{$0.0116$} & ResNet1D/Incep $=1.14$ \\
-\textbf{Mean OOD ECE}     & \multicolumn{2}{c}{$0.206 \rightarrow 0.196$ / $0.205 \rightarrow 0.196$} & $0.205 \rightarrow 0.196$ & raw $\rightarrow$ TS \\
+\textbf{Mean OOD ECE}     & \multicolumn{2}{c}{IT $0.206 \rightarrow 0.196$;\ RN $0.205 \rightarrow 0.196$} & pooled $0.205 \rightarrow 0.196$ & raw $\rightarrow$ TS \\
 \bottomrule
 \end{tabular}%
 }
@@ -1704,8 +1678,9 @@ TS-component ablation under the corrected label encoding
 an order of magnitude above the noise floor in this metric convention;
 the fifteen counter-examples
 also show raw ECE far above the floor ($0.065$--$0.321$), so they are
-not perfect-calibration cases. At their own
-fitted temperatures ($T \in [0.93, 1.00]$) the floor is $\leq 0.009$,
+not perfect-calibration cases. At the fifteen counter-examples' own
+fitted temperatures ($T \in [0.93, 1.00]$; the all-grid band is
+$[0.932, 1.181]$) the floor is $\leq 0.009$,
 comparable to their $|\Delta\text{ECE}|$ ($\leq 0.017$), but its
 direction is opposite to theirs, so they are not floor artifacts; their
 common mechanism is given in Sec.~\ref{sec:noise_mechanism}.
@@ -1839,7 +1814,10 @@ per-seed majority reading of the same two thresholds gives 11/12 for
 the calibration layer separately, 6/12 for the discrimination layer
 separately, and 5/12 for both layers jointly (each clearing on at
 least three of five seeds; 4/12 under the stricter reading that both
-layers pass on the same $\geq 3/5$ seeds). At the
+layers pass on the same $\geq 3/5$ seeds). The headline reading for
+C5 is the per-seed majority criterion (5/12 both layers), as quoted in
+the abstract and the conclusion; the stratum-mean (6/12) and the strict
+same-seed (4/12) counts are sensitivity calibers. At the
 stratum-mean level Layer 1 is cleared by 11 of the 12 strata; the sole
 Layer-1 rejection (PTB-XL$\rightarrow$CPSC ResNet1D, mean
 $\Delta\text{ECE}_{\text{OOD}}=-0.0018$; raw OOD ECE $0.159$ on the
@@ -2203,7 +2181,7 @@ $\Delta\text{ECE}_{\text{ID}}=-0.0032$ is slightly negative, leaving
 nothing to correct.
 
 Counter-example 10: PTB-XL$\rightarrow$Chapman / InceptionTime / seed 44
-(the PTB-XL-source cell retrained in the 2026-10-08 repair; the
+(the PTB-XL-source cell retrained in the 2026-10-07 repair; the
 pre-repair counter-example here was seed~46).
 $\Delta\text{ECE}_{\text{OOD}}=-0.0033$ (CI $[-0.0034, -0.0032]$); OOD
 accuracy $0.4956$ is the lowest across the seeds seen ($0.4956$--$0.609$)
@@ -2645,46 +2623,6 @@ not confirmatory; protocol v2.1-A1 applies. TS needs local
 validation, and OOD accuracy is below the
 majority-class baseline in 3 of 6 directions.
 
-A noise floor control
-(\S\ref{sec:noise_floor}) bounds, but does not eliminate, a SmoothECE
-artifact: at moderate temperatures metric noise is $3$--$17\times$ below
-the observed raw ECE ($0.062$--$0.357$, mean $0.205$), and the fitted
-temperatures stay in a narrow band ($[0.932, 1.181]$, so the
-floor-comparable large-$T$ regime never occurs in this grid). Real-data
-Shapley cross-fitting
-(\S\ref{sec:real_shapley}) fails as a diagnostic as well as a
-predictor---its 45/60 sign agreement is exactly the constant-positive
-baseline---overestimates the magnitude (mean error $+0.164$; RMSE
-$16.4\times$ the constant predictor), and is only weakly rank-correlated
-with the true benefit ($\rho=+0.095$). The predictability boundary holds
-only in the weak sense that no label-free feature reaches $R^2=0.5$
-under the implemented fold unit and registered ridge estimator: the
-source-fitted temperature $T$ does
-predict ($+0.051$ registered freeze, $+0.350$ delivered full-grid
-recompute; $\approx+0.94$ under
-plain OLS, disclosed; and the sign of $\Delta\text{ECE}_{\text{OOD}}$ in
-60/60 SmoothECE cells),
-while Wasserstein-1 and entropy features do not.
-
-The
-fixed-effect estimate is CI-width sensitive: ResNet1D is slightly
-negative ($-0.000506$) because narrow-CI studies dominate, while
-DerSimonian--Laird random effects are positive (InceptionTime
-$+0.0096$, ResNet1D $+0.0089$, CrossArchitecture $+0.0091$). We caution, however, that the
-meta-analytic independence assumption is \emph{not} satisfied here: the
-60 cells share the same three corpora, patient sets, and architectures,
-and their between-cell $Q$ statistics are extreme
-($I^2 \approx 99.98\%$), so both FE and DL confidence intervals are
-spuriously narrow; the 12-stratum $t$ interval inherits the same
-non-independence --- strata share the three corpora and the two
-architectures --- so it is approximate. The interpretable
-pooled uncertainty is therefore the
-cluster-robust interval over the 12 pair$\times$architecture strata:
-$\Delta\text{ECE}_{\text{OOD}} = +0.0093$ [$+0.0055$, $+0.0132$] (t,
-df$=11$; stratum SD $0.0060$, versus a narrowest-cell single-experiment
-bootstrap SE of $\approx 5\times10^{-6}$). The point estimate $+0.0093$
-and the count-based proportion (45/60 = 75.0\%) stand.
-
 The 60 experiments form the robustness-evidence family; amendment A2
 reduces the confirmatory family from the $6 \times 2 \times 13 = 156$
 shift grid to 12 hypotheses (6 pairs $\times$ 2 architectures $\times$ 1
@@ -2832,6 +2770,7 @@ did not require separate ethical approval.
 \section*{Declaration of competing interest}
 The authors declare no competing financial or personal interests.
 
+\section*{Supplementary materials}
 The 60 per-seed reliability diagrams
 (6 transfer pairs $\times$ 2 architectures $\times$ 5 seeds; calibration
 curves, reliability diagrams, and $\Delta$ECE bars per experiment) are
