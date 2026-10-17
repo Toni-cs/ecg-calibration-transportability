@@ -265,6 +265,24 @@ quantification, the ID boundary condition, the method-selection boundary
 failure, and the discrimination-aware gate. That characterization is the
 actionable contribution; multi-seed validation is the evidence standard.
 
+A reader may ask why a boundary study with disclosed negative branches
+is an actionable contribution rather than a methodological curiosity.
+The answer is operational. At deployment time an institution faces
+exactly three options --- deploy the recalibrated model, buy local
+labels and recalibrate, or refuse --- and the components delivered here
+assign that decision to measurable quantities: the two-layer gate S1/S2
+tells the operator whether the zero-cost path is safe to take; the
+dose--response records quantify what the second option buys at each
+labeling budget; and the registered boundary conditions state in
+advance which claims the evidence cannot support. Negative branches are
+load-bearing in this design: the triggered predictability failure
+branch is what prevents a label-free shortcut from being oversold, and
+the fifteen disclosed counter-examples are what make the 45/60 support
+figure falsifiable rather than promotional. For clinical informatics,
+the deliverable is not the claim that recalibration always transfers;
+it is a decision instrument whose failure modes are mapped and whose
+every number can be recomputed from public artifacts.
+
 \begin{figure}[htbp]
 \centering
 \includegraphics[width=0.95\columnwidth]{figures/fig_design_overview.pdf}
@@ -791,6 +809,29 @@ All analysis, statistical, and plotting code in the public repository
 was written and executed by the authors, who take full responsibility
 for it; every reported number is reproducible from the released
 artifacts (Code availability).
+
+\subsection{Reporting-guideline compliance}
+\label{sec:reporting}
+Reporting follows the TRIPOD+AI statement (27 items, 52 sub-items)
+\cite{tripodai2024}, which supersedes TRIPOD 2015 for prediction-model
+studies using machine-learning methods. The study both develops
+prediction models (backbone training) and evaluates model-updating
+steps (post-hoc recalibration), so both development and evaluation
+items apply; notably, the guideline's model-updating clause
+(``any model updating (\emph{e.g.}, recalibration) arising from the
+model evaluation'') is the object of study itself. A completed
+item-level map --- every item marked covered / partial / not
+applicable, with the manuscript section and a one-line justification
+--- ships with the submission
+(\texttt{S5\_checklists/TRIPOD\_AI\_item\_map.csv} in the
+supplementary package). Items without a counterpart in this study are
+disclosed there rather than silently marked: no sociodemographic
+subgroup or fairness analysis is performed (the public corpora do not
+support the intended stratification; Limitation~(xix) discloses the
+adjacent signal-quality gap), and no patient-and-public involvement
+was conducted. Cross-corpus clustering is handled at the patient level
+throughout (guideline item 12d; TRIPOD-Cluster considerations apply to
+the multi-corpus setting).
 
 % ============================================================================
 \section{Results}
@@ -2421,7 +2462,20 @@ multi-threshold NCV analysis are registered as future work.
 % ----------------------------------------------------------------------------
 \subsection{Limitations and future work}
 % ----------------------------------------------------------------------------
-Limitations: (i) the main endpoint covers InceptionTime and
+Limitations: the numbered items below are cited by number elsewhere in
+the paper, so the numbering is unchanged; they are grouped as follows.
+\emph{Claim-shaping (six)}: (ii) the registered predictability branch
+downgrades the deployment criterion to an empirical lookup table, (iii)
+the real-data Shapley decomposition carries no directional information
+beyond a constant-positive rule, (v) the strict operating wording of
+the safety criterion is rarely met, (xiii) the deployment lookup table
+requires labeled target data and no label-free gate is claimed,
+(xviii) the registered secondary endpoint $G$ is undelivered, and (xix)
+no signal-quality stratification is performed. \emph{Inference and
+measurement (seven)}: (viii), (x), (xi), (xv), (xx), (xxii), (xxiii).
+\emph{Scope and engineering (seven)}: (i), (iv), (vii), (ix), (xii),
+(xiv), (xvi). \emph{Process and provenance (three)}: (vi), (xvii),
+(xxi). Items: (i) the main endpoint covers InceptionTime and
 ResNet1D on all 6 directed pairs with 5-seed coverage (60 experiments,
 fully balanced); BiMamba is a toy experiment ($n=60$, supplement) after
 memory exhaustion on an RTX 5060 (8~GB); (ii) the predictability failure
@@ -2941,6 +2995,11 @@ PMLR 130:1249--1257. arXiv:2101.04538.
 \bibitem{song2024ecgfm} J.~Song, J.-H.~Jang, B.~T.~Lee, D.~Hong,
 J.~Kwon, Y.-Y.~Jo, ``Foundation models for electrocardiograms,''
 \emph{arXiv preprint} 2407.07110, 2024.
+\bibitem{tripodai2024} G.~S.~Collins, K.~G.~M.~Moons, P.~Dhiman,
+R.~D.~Riley, A.~L.~Beam, B.~Van~Calster, M.~Ghassemi, X.~Liu,
+J.~B.~Reitsma, M.~van~Smeden, et al., ``TRIPOD+AI statement: updated
+guidance for reporting clinical prediction models that use regression
+or machine learning methods,'' \emph{BMJ} 385:e078378, 2024.
 \end{thebibliography}
 
 \end{document}

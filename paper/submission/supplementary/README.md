@@ -127,7 +127,8 @@ Target journal: Computer Methods and Programs in Biomedicine (Elsevier).
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed45/` | see below | 1 |
 | `S3_per_experiment/ptbxl_cpsc/resnet1d/seed46/` | see below | 1 |
 | `S4_reliability_diagrams/` | see below | 60 |
-| **Total** | matches `SHA256SUMS.txt` | **178** (+ this README; the manifest additionally lists this README, 179 entries in total) |
+| `S5_checklists/` | TRIPOD+AI item-level compliance map (39 rows incl. sub-items; every item covered/partial/not-applicable with manuscript location) | 1 |
+| **Total** | matches `SHA256SUMS.txt` | **179** (+ this README; the manifest additionally lists this README, 180 entries in total) |
 
 ### S1_protocol
 `EXPERIMENT_PROTOCOL.md` (protocol v2.1-A1), the A1 endpoint re-location
@@ -158,6 +159,16 @@ repopulated from the repository of record on 2026-10-15.
 The 60 per-seed reliability diagrams catalogued in the Supplementary
 Materials section of the manuscript, named
 `fig_reliability_supp_{pair}_{arch}_seed{s}.pdf`.
+
+### S5_checklists
+`TRIPOD_AI_item_map.csv`: the item-level TRIPOD+AI compliance map
+referenced from the manuscript's Reporting-guideline-compliance
+subsection (each of the 27 items / 52 sub-items marked covered /
+partial / not applicable, with the manuscript location and a one-line
+justification; not-applicable items are disclosed, not silently
+marked). The official checklist form is available at
+tripod-statement.org; this map is the completed version for the
+submission.
 
 ## Verification
 
