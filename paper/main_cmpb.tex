@@ -155,52 +155,40 @@ by an independent pilot, and is archived with before/after protocol hashes
 robustness evidence; all 60 seed results, including fifteen counter-examples,
 are reported.
 
-Five independent contributions:
-\begin{description}
-    \item[\textbf{C1} (Primary OOD benefit):] On the pre-registered
-    endpoint $\Delta\text{ECE}_{\text{OOD}}$, TS yields a statistically
-    significant positive OOD benefit in 45/60 seed experiments (6 transfer
-    pairs $\times$ 2 architectures; InceptionTime 24/30, ResNet1D 21/30),
-    with fifteen counter-examples transparently disclosed and mechanistically
-    explained.
-    \item[\textbf{C2} (Boundary condition, pre-registered branch triggered):]
-    30/60 cells (50.0\%; BCa operating CI) have 95\% CIs containing zero
-    and 24/60 have CI lower bound $>0$; the pre-registered criterion
-    ($\geq$80\% of cells with CI containing zero) is \emph{not} met,
-    triggering the ``ID nonzero boundary'' branch (protocol A1.4.2):
-    the decay contrast is restored as exploratory and C1 is qualified,
-    the OOD benefit being about $2.7\times$ the ID benefit rather than
-    exclusively OOD-specific.
-    \item[\textbf{C3} (Methodological, Shapley decomposition validation):]
-    A 27-cell full-factorial synthetic validation
-    (slope$\times$intercept$\times$prevalence, $n=20{,}000$) recovers
-    ground truth in the identifiable regime (27/27 at $n=20{,}000$;
-    21/27 at $n=500$), flags entangled regions without a threshold,
-    and reports bootstrap CIs on absolute Shapley values.
-    \item[\textbf{C4} (Practical, method-selection boundary):] Across
-    8 methods $\times$ 60 cells, TS is the most consistent
-    recalibrator among the eight delivered methods (45/60, point$=$CI),
-    while EM prior adaptation is harmful on average ($-0.0040$ delivered;
-    $-0.0378$ under the per-branch correctness recheck, which strengthens
-    the claim) and Matrix scaling is fragile (24/60 overall; IT 11/30,
-    RN 13/30), governed by a prior-likelihood mismatch mechanism
-    (Table~\ref{tab:methods}; recheck details in
-    Sec.~\ref{sec:method_boundary}).
-    \item[\textbf{C5} (Clinical, discrimination-aware calibration gate):]
-    A two-layer gate decouples calibration effectiveness (C1:
-    $\Delta\text{ECE}_{\text{OOD}}>0$) from clinical viability
-    (accuracy $\geq$ the target majority-class baseline). Across 12
-    pair$\times$architecture strata, 5/12 pass both layers under a
-    per-seed majority criterion; 7/12 fail, six through the
-    discrimination layer, including directions with positive
-    $\Delta\text{ECE}_{\text{OOD}}$ but accuracy below baseline (e.g.,
-    PTB-XL$\rightarrow$Chapman InceptionTime: $\Delta\text{ECE}=+0.013$,
-    $\text{acc}=0.563 < 0.696$) and one through the calibration layer
-    (PTB-XL$\rightarrow$CPSC ResNet1D). The gate reframes the 15/60
-    counter-examples: all fifteen fail the calibration layer
-    ($\Delta\text{ECE}_{\text{OOD}} \leq 0$), and seven of them also
-    fall below the target majority-class baseline.
-\end{description}
+In summary, our contributions are as follows:
+\begin{enumerate}
+    \item \textbf{A reusable deployment-safety evaluation framework}
+    (Sec.~\ref{sec:methods}): (i)~a three-component Shapley decomposition
+    of the transfer benefit into slope, intercept, and prevalence effects
+    (\textbf{C3}; 27/27 cells at the pre-registered $n=20{,}000$
+    readout); (ii)~a two-layer deployment-safety gate S1/S2 (S1: a
+    positive calibration benefit $\Delta\text{ECE}_{\text{OOD}}>0$; S2:
+    OOD accuracy at or above the target majority-class baseline;
+    \textbf{C5}); and (iii)~a pre-registered applicability-boundary
+    protocol (amendments A1--A4) that fixes what may be claimed before
+    unblinding.
+    \item \textbf{A 60-experiment boundary characterization as the
+    validation carrier} (Sec.~\ref{sec:results}; \textbf{C1},
+    \textbf{C2}, \textbf{C4}): after a disclosed validation-leak repair
+    (20/60 cells retrained), TS yields a positive OOD benefit in 45/60
+    seed experiments (75.0\%; InceptionTime 24/30, ResNet1D 21/30), with
+    fifteen fully disclosed counter-examples; the registered ID-boundary
+    criterion is not met (30/60 = 50.0\% $<\!80\%$) and its branch fires
+    (the OOD benefit is $2.7\times$ the ID benefit); TS is the most
+    consistent of the eight delivered recalibrators, EM prior is harmful
+    on average ($-0.0040$ delivered, $-0.0378$ per-branch) and Matrix
+    scaling fragile (24/60); the gate passes 6/12 strata at the
+    stratum-mean level (5/12 per-seed majority); and the strict
+    post-calibration deployment bar is met on 0/60 cells --- by global
+    TS and by the stronger per-sample ATS ($+0.0190$) alike.
+    \item \textbf{A measured, verifiable deployment path}
+    (Sec.~\ref{sec:s2}; repository): buying 50 labeled target records
+    and recalibrating locally yields $+0.150$, an order of magnitude
+    above the zero-shot benefit; no label-free gate is claimed (the
+    registered failure branch); and the released code, patient-level
+    splits, hash-locked tables, and a 12-check verification gate make
+    every reported number recomputable from public artifacts.
+\end{enumerate}
 
 Prior ECG calibration studies report the phenomenon
 \cite{barandas2023,zhang2022,physiolmeas2026,medrxiv2026} but not an

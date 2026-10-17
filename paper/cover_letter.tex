@@ -65,23 +65,36 @@ $\leq 0.50$, seven have an ID--OOD accuracy drop $\geq 0.18$, and six
 satisfy both; the remainder are
 seed-level temperature mis-transfers, one of which is
 over-correction on an already well-calibrated backbone). The
-paper delivers \textbf{five independent contributions}:
-\textbf{C1} (Primary, OOD benefit quantification: 45/60 seed support),
-\textbf{C2} (Boundary condition, pre-registered branch triggered: only
-30/60 = 50.0\% of cells have BCa 95\% CIs containing zero, below the
-$\geq$80\% criterion, so the ``ID nonzero boundary'' branch applies and
-C1 is reported with this qualifier),
-\textbf{C3} (Methodological, Shapley decomposition validation: 27/27
-cells pass at $n=20{,}000$),
-\textbf{C4} (Practical, method-selection boundary: TS the most
-consistent recalibrator \emph{among the eight delivered methods} vs.\
-EM prior, which is negative on average,
-and Matrix scaling, governed by a prior-likelihood
-mismatch mechanism), and
-\textbf{C5} (Clinical, discrimination-aware calibration gate: 5/12
-pair$\times$architecture strata pass both layers under the per-seed
-majority criterion, reframing the counter-examples as fifteen Layer-1
-rejections, seven of which also fail the discrimination layer).
+paper delivers \textbf{three contributions}:
+\begin{enumerate}
+\item \textbf{A reusable deployment-safety evaluation framework:} a
+three-component Shapley decomposition of the transfer benefit
+(\textbf{C3}; 27/27 cells at the pre-registered $n=20{,}000$ readout),
+a two-layer deployment-safety gate S1/S2 (\textbf{C5}; S1: positive
+calibration benefit, S2: OOD accuracy at or above the target
+majority-class baseline), and a pre-registered applicability-boundary
+protocol (amendments A1--A4) that fixes what may be claimed before
+unblinding.
+\item \textbf{A 60-experiment boundary characterization as the
+validation carrier} (\textbf{C1}, \textbf{C2}, \textbf{C4}): after a
+disclosed validation-leak repair (20/60 cells retrained), TS yields a
+positive OOD benefit in 45/60 seed experiments (75.0\%; InceptionTime
+24/30, ResNet1D 21/30), with fifteen fully disclosed counter-examples;
+the registered ID-boundary criterion is not met (30/60 = 50.0\% $<\!80\%$)
+and its branch fires (OOD benefit $2.7\times$ the ID benefit); TS is
+the most consistent of the eight delivered recalibrators, EM prior
+harmful on average ($-0.0040$ delivered, $-0.0378$ per-branch) and
+Matrix scaling fragile (24/60); the gate passes 6/12 strata at the
+stratum-mean level (5/12 per-seed majority); the strict
+post-calibration deployment bar is met on 0/60 cells --- by global TS
+and by the stronger per-sample ATS ($+0.0190$) alike.
+\item \textbf{A measured, verifiable deployment path:} buying 50
+labeled target records and recalibrating locally yields $+0.150$, an
+order of magnitude above the zero-shot benefit; no label-free gate is
+claimed (the registered failure branch); released code, patient-level
+splits, hash-locked tables, and a 12-check verification gate make
+every reported number recomputable from public artifacts.
+\end{enumerate}
 
 \bigskip
 
