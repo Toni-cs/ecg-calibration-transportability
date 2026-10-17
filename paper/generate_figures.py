@@ -339,9 +339,10 @@ def fig4_counterexamples():
 
     # Counter-examples: CI lower bound < 0
     ce = df_ts[df_ts['ood_ci_lo'] < 0].copy()
-    print(f"Found {len(ce)} counter-examples (expected 9)")
+    print(f"Found {len(ce)} counter-examples")
 
-    # Paper narrative order (Counter-example 1..9 as defined in main.tex)
+    # Canonical order = results/counterexample_discrimination.json
+    # negative_cells_detail (the artifact the manuscript cites); CE1..CE15.
     _ce_order = [
         ('chapman_cpsc', 'inceptiontime', 45),
         ('chapman_cpsc', 'resnet1d', 43),
@@ -349,9 +350,15 @@ def fig4_counterexamples():
         ('chapman_ptbxl', 'resnet1d', 45),
         ('cpsc_chapman', 'resnet1d', 42),
         ('cpsc_chapman', 'resnet1d', 44),
+        ('cpsc_ptbxl', 'inceptiontime', 43),
         ('cpsc_ptbxl', 'resnet1d', 43),
         ('cpsc_ptbxl', 'resnet1d', 44),
-        ('ptbxl_chapman', 'inceptiontime', 46),
+        ('ptbxl_chapman', 'inceptiontime', 44),
+        ('ptbxl_cpsc', 'inceptiontime', 42),
+        ('ptbxl_cpsc', 'inceptiontime', 45),
+        ('ptbxl_cpsc', 'resnet1d', 42),
+        ('ptbxl_cpsc', 'resnet1d', 45),
+        ('ptbxl_cpsc', 'resnet1d', 46),
     ]
     ce['_rank'] = [ _ce_order.index((p, a, int(s))) if (p, a, int(s)) in _ce_order else 99
                     for p, a, s in zip(ce['pair'], ce['arch'], ce['seed']) ]
@@ -405,17 +412,19 @@ def fig4_counterexamples():
     ax.set_xticks(x)
     ax.set_xticklabels(labels, fontsize=8)
     ax.set_ylabel(r'$\Delta\mathrm{ECE}_{\mathrm{OOD}}$ (with 95% CI)', fontsize=11)
-    ax.set_title(f'Nine Counter-Examples: ΔECE_OOD < 0 (CI lower bound < 0)\n' +
-                 'All mechanistically explainable; 8 "low OOD acc + narrow cal room" + 1 "over-correction"',
+    ax.set_title(f'Fifteen Counter-Examples: ΔECE_OOD < 0 (CI lower bound < 0)\n' +
+                 'Seven co-occur with OOD accuracy ≤ 0.50, seven with an ID–OOD '
+                 'accuracy drop ≥ 0.18 (heuristic, not a gate)',
                  fontsize=11)
     ax.grid(axis='y', alpha=0.3, linestyle=':')
 
-    # Legend for mechanisms
+    # Legend for mechanisms (describe the coloring rule; the census lives in
+    # the manuscript caption -- do not hardcode counts here)
     legend_elems = [
         mpatches.Patch(facecolor='#d62728', edgecolor='black',
-                       label='Low OOD acc / narrow calibration room (8 cases)'),
+                       label='Seed-level temperature mis-transfers'),
         mpatches.Patch(facecolor='#ff7f0e', edgecolor='black',
-                       label='Over-correction (ID already calibrated) (1 case)'),
+                       label='ID-negative pattern ($\\Delta$ECE_ID $< -0.005$)'),
     ]
     ax.legend(handles=legend_elems, loc='lower right', fontsize=9, framealpha=0.95)
 

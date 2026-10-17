@@ -59,7 +59,7 @@ Across Three Public Corpora}
 
 \begin{abstract}
 
-oindent\textbf{What is new.} Cross-corpus ECG deployment is a decision
+\noindent\textbf{What is new.} Cross-corpus ECG deployment is a decision
 problem, not a calibration exercise. We deliver three reusable method
 components, validated end-to-end by a 60-experiment temperature-scaling
 boundary study: (i) a three-component Shapley decomposition of the
@@ -151,7 +151,7 @@ Its benefit, a reduction in expected calibration error (ECE), is measured
 on that same distribution. On a shifted target, it reverses.
 
 For ECG this question is not academic. PTB-XL \cite{wagner2020ptbxl},
-Chapman-Shaoxing \cite{zheng2022ecgarrhythmia}, and CPSC use different
+Chapman--Shaoxing \cite{zheng2022ecgarrhythmia}, and CPSC use different
 acquisition protocols, lead sets, and label vocabularies, so a model
 calibrated at one institution meets covariate, prior-probability, and
 label-concept shift at the next \cite{morenotorres2012}. Clinicians and
@@ -381,7 +381,7 @@ Figure~\ref{fig:design_overview} summarizes the experimental design.
     (folds 1--8 train, 9 calibration, 10 test). After
     single-label mapping, 21,522 records are mappable and 277 are
     excluded (STROBE), for 18,671 unique patients.
-    \item \textbf{Chapman-Shaoxing} \cite{zheng2022ecgarrhythmia,goldberger2000}: 20,265
+    \item \textbf{Chapman--Shaoxing} \cite{zheng2022ecgarrhythmia,goldberger2000}: 20,265
     raw records; 1 signal-read error removed and 21 non-finite records
     quarantined (\texttt{qc\_report.json}), for 20,243 analyzed records;
     1 ECG per patient, patient-wise 70/10/20 split.
@@ -1779,7 +1779,7 @@ clinically useless. We define a two-layer gate:
     \text{acc}_{\text{majority}}$, the target-corpus majority-class
     accuracy measured on the same OOD evaluation set as
     $\text{acc}_{\text{OOD}}$ (CPSC $0.528$; PTB-XL $0.409$;
-    Chapman-Shaoxing $0.713$; the two $K{=}5$ pairs use $0.399$ and
+    Chapman--Shaoxing $0.713$; the two $K{=}5$ pairs use $0.399$ and
     $0.696$ instead, which changes no gate verdict; the deployed
     baseline is the target majority-class baseline per amendment A2
     (reconciles the registered schema's wording variance).
@@ -2305,7 +2305,7 @@ The accuracy statistics make this concrete. Across the 60 TS
 experiments, mean OOD accuracy is 0.541 (median 0.558; range
 0.348--0.701) and the mean ID--OOD drop is 0.230 (maximum 0.412).
 Against each target corpus's majority-class baseline (CPSC 0.528,
-PTB-XL 0.409, Chapman-Shaoxing 0.713; the two $K{=}5$ pairs use
+PTB-XL 0.409, Chapman--Shaoxing 0.713; the two $K{=}5$ pairs use
 0.399 and 0.696), mean OOD accuracy is
 \emph{below} baseline in 3 of 6 directions, with a fourth essentially
 at baseline: Chapman$\rightarrow$CPSC
@@ -2511,7 +2511,7 @@ signal-processing readership and is the first item of future work;
 (xx) no test--retest or repeatability analysis of the fitted temperature
 is possible within this data regime: all three public corpora are
 cross-sectional and provide a single recording per patient
-(Chapman-Shaoxing reports exactly one ECG per patient, \S\ref{sec:data}),
+(Chapman--Shaoxing reports exactly one ECG per patient, \S\ref{sec:data}),
 so same-patient across-session stability of $T$ cannot be estimated from
 these data and is deferred to prospective multi-session collection;
 (xxi) the archived checkpoints are \emph{not} bit-reproducible: training
@@ -2581,7 +2581,7 @@ selection: TS the most consistent recalibrator among the delivered
 methods (45/60, point$=$CI), EM
 prior harmful on average ($-0.0040$; per-branch recheck $-0.0378$, which
 strengthens the claim) and Matrix scaling fragile (24/60
-overall). \textbf{(C5)} Gate: 5/12 strata pass both layers
+overall; IT 11/30, RN 13/30). \textbf{(C5)} Gate: 5/12 strata pass both layers
 (per-seed majority, none on all five seeds),
 reframing the counter-examples as fifteen Layer-1 rejections, seven of which
 also fail the discrimination layer. The
@@ -2698,7 +2698,7 @@ affect the sign-based support/counter-example classification.
 
 % ============================================================================
 \section*{Data availability}
-The PTB-XL \cite{wagner2020ptbxl}, Chapman-Shaoxing
+The PTB-XL \cite{wagner2020ptbxl}, Chapman--Shaoxing
 \cite{zheng2022ecgarrhythmia}, and CPSC2018 (CPSC Database and CPSC-Extra)
 \cite{liu2018cpsc,physionet2020cpsc} datasets are publicly
 available via PhysioNet under their respective licenses. The
@@ -2803,7 +2803,7 @@ dataset,'' \emph{Scientific Data}, 7:154, 2020.
 doi:10.1038/s41597-020-0495-6.
 \bibitem{zheng2022ecgarrhythmia} J.~Zheng, J.~Guo, H.~Chu,
 ``A large scale 12-lead electrocardiogram database for arrhythmia
-study (Chapman-Shaoxing e-cardiology),'' version 1.0.0,
+study (Chapman--Shaoxing e-cardiology),'' version 1.0.0,
 \emph{PhysioNet}, 2022. doi:10.13026/wgex-er52.
 \bibitem{liu2018cpsc} F.~Liu, C.~Liu, L.~Zhao, et al., ``An open
 access database for evaluating the algorithms of electrocardiogram
