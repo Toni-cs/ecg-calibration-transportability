@@ -368,9 +368,10 @@ def fig4_counterexamples():
                     for p, a, s in zip(ce['pair'], ce['arch'], ce['seed']) ]
     ce = ce.sort_values('_rank').reset_index(drop=True)
 
-    # Classify mechanism: "low OOD acc" vs "over-correction"
-    # Over-correction: ΔECE_ID is also negative (well-calibrated on ID)
-    ce['mechanism'] = np.where(ce['id_deltaECE'] < -0.005,
+    # Classify mechanism: over-correction = clearly ID-calibrated backbone
+    # (paper census: CE6 only, |DeltaECE_ID| >= 0.01); milder ID-negative
+    # cells stay in the mis-transfer class.
+    ce['mechanism'] = np.where(ce['id_deltaECE'] < -0.01,
                                'Over-correction\n(ID already calibrated)',
                                'Low OOD acc /\nnarrow cal room')
 
@@ -428,7 +429,7 @@ def fig4_counterexamples():
         mpatches.Patch(facecolor='#d62728', edgecolor='black',
                        label='Seed-level temperature mis-transfers'),
         mpatches.Patch(facecolor='#ff7f0e', edgecolor='black',
-                       label='ID-negative pattern ($\\Delta$ECE_ID $< -0.005$)'),
+                       label='Over-correction pattern ($\\Delta$ECE_ID $< -0.01$)'),
     ]
     ax.legend(handles=legend_elems, loc='lower right', fontsize=9, framealpha=0.95)
 

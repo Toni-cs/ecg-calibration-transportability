@@ -93,9 +93,9 @@ $[+0.0055,+0.0132]$. The pre-specified ID boundary criterion
 triggering the registered branch: the OOD benefit is $2.7\times$ the
 residual ID benefit ($+0.0093$ vs.\ $+0.0034$). A predictability
 experiment triggers its registered failure branch (no label-free
-feature reaches LOO $R^2=0.5$), and the S1/S2 gate passes 6/12 strata
-at the stratum-mean level (5/12 under a per-seed majority; none on all
-five seeds). The practical path is measured, not inferred: buying 50
+feature reaches LOO $R^2=0.5$), and the S1/S2 gate passes 5/12 strata
+under the per-seed majority criterion (6/12 at the stratum-mean level;
+none on all five seeds). The practical path is measured, not inferred: buying 50
 labeled target records and recalibrating locally yields $+0.150$, an
 order of magnitude above the zero-shot benefit, while no post-hoc
 zero-shot recalibrator (global TS or per-sample ATS, $+0.0190$) meets
@@ -412,7 +412,7 @@ $K$ and label mapping (\texttt{num\_classes}, \texttt{label\_map} in
 within a cell. Consequently the primary endpoint is a top-label ECE on
 a 4- or 5-class task depending on the pair, and the pooled
 $\Delta\text{ECE}_{\text{OOD}}$ mixes both $K$ values across cells; the
-per-pair tables (Tables~\ref{tab:stratum_summary} and~\ref{tab:arch_robust} (per-seed values: Supplementary Table~S1))
+per-pair tables (Tables~\ref{tab:stratum_summary} and~\ref{tab:arch_robust}, per-seed values in Supplementary Table~S1)
 are therefore the appropriate level at which to read $K$-specific
 results. The L2 eval-time shift matrix (no retraining)
 covers sampling rate $500\rightarrow250\rightarrow125$~Hz; leads
@@ -527,38 +527,38 @@ primary comparisons; the multi-seed validation is robustness evidence
 \subsection{Protocol provenance and deviations (summary)}
 \label{sec:provenance-summary}
 Four study-period amendments and two post-registration repairs shape the
-delivered record; Appendix~\ref{app:provenance} carries the full dated
+delivered record; \ref{app:provenance} carries the full dated
 texts, manifests, and verification details. What follows is the
 one-paragraph-per-event map.
-\paragraph{A1 (endpoint relocation, before unblinding).} The primary
+\paragraph{A1 (endpoint relocation, before unblinding)} The primary
 endpoint was re-located from the registered decay contrast to
 $\Delta\text{ECE}_{\text{OOD}}$, with the ID boundary criterion
 ($\geq$80\% of cells with 95\% CIs containing zero) and its failure
-branch fixed in the same amendment (Appendix~\ref{app:provenance}).
-\paragraph{A2 (confirmatory-family reduction).} The confirmatory family
+branch fixed in the same amendment (\ref{app:provenance}).
+\paragraph{A2 (confirmatory-family reduction)} The confirmatory family
 was reduced from the $6\times2\times13=156$ shift grid to 12
 pair$\times$architecture hypotheses; all 13 L2 shift levels are
 exploratory dose--response.
-\paragraph{A3 (corpus identity).} The third corpus is CPSC2018 only
+\paragraph{A3 (corpus identity)} The third corpus is CPSC2018 only
 (CPSC Database 6,877 $+$ CPSC-Extra 3,453, both via PhysioNet/CinC
 2020); CPSC2019 never entered the corpus. CPSC2018's official taxonomy
 has no MI superclass, so the MI class of the four-class subspace is
 populated entirely by CPSC-Extra SNOMED annotations.
-\paragraph{A4 (mapping-sensitivity gate).} The registered mapping gate
+\paragraph{A4 (mapping-sensitivity gate)} The registered mapping gate
 was re-operationalized on the delivered primary endpoint (cross-pair
 ordering Kendall $\tau \geq 0.8$; confirmatory counts unchanged); as of
 submission the variant battery remains unexecuted and the registered
 fallback clause applies --- no recorded value changes.
-\paragraph{Checkpoint retrain (2026-09-17).} Two cells
+\paragraph{Checkpoint retrain (2026-09-17)} Two cells
 (CPSC$\rightarrow$PTB-XL, InceptionTime, seeds 42--43) had reused a
 checkpoint instead of an independently trained model and were retrained;
 the root-cause audit is in the repository.
-\paragraph{Validation-leak repair (2026-10-07).} Early-stopping
+\paragraph{Validation-leak repair (2026-10-07)} Early-stopping
 validation patients were found to remain in the PTB-XL training loader;
 the fix was verified at the split-export level, all twenty PTB-XL-source
 cells were retrained, and every downstream result family was recomputed.
 The delivered values differ from the frozen registration by both events;
-every registered branch verdict is unchanged (Appendix~\ref{app:provenance}).
+every registered branch verdict is unchanged (\ref{app:provenance}).
 \subsection{Decomposition of the benefit decay}
 \label{sec:decomp}
 We decompose the retained benefit into slope / intercept / prevalence
@@ -801,7 +801,7 @@ the OOD benefit being about $2.7\times$ the ID benefit rather than an
 exclusively OOD effect. The positive ID estimates reflect
 finite-sample calibration-split variation and SmoothECE estimator
 bias, plus a model-selection effect that the 2026-10-07 repair
-(Sec.~\ref{sec:repair}) quantifies: while the PTB-XL early-stopping
+(\ref{sec:repair}) quantifies: while the PTB-XL early-stopping
 validation leak remained in place, the early-stopping monitor observed
 pseudo-low ECE on a training subset, and the repair cuts the ID mean
 from $+0.0082$ to $+0.0034$.
@@ -957,7 +957,7 @@ $\Delta$ECE across all 60 cells is $-0.0040$, the only method whose
 mean is not positive. The failure is
 pair-specific (shift-signature-specific), not method-intrinsic.
 
-\paragraph{Why TS and not Platt.} Platt and TS are statistically
+\paragraph{Why TS and not Platt} Platt and TS are statistically
 indistinguishable on the mean OOD benefit ($+0.0092$ vs.\ $+0.0093$;
 InceptionTime $+0.0088$ vs.\ $+0.0098$, Table~\ref{tab:methods}), which
 invites the
@@ -1270,7 +1270,7 @@ threshold, net benefit is $0.0096$ versus $0.0089$ for treating all cells;
 by the 90th percentile it rises to $0.0112$: on the completed post-retrain
 grid the benefit concentrates \emph{outside} the low-raw-ECE end, and the
 DCA qualifier becomes directional rather than causal
-(Appendix~\ref{app:artifact-index}).
+(\ref{app:artifact-index}).
 
 Trivial strategy comparison (Table~\ref{tab:trivial}): the
 lookup-table strategy remains a clinical analysis construct (it requires
@@ -1283,7 +1283,7 @@ routes 476 of 780 evaluations (61\%) and captures $\approx$80\% of the
 always-TS total benefit ($-5.54$ of $-6.97$ summed $\Delta$ECE; exact
 $-5.5370$ of $-6.9729$), i.e.
 most of the TS benefit without target labels
-(Appendix~\ref{app:artifact-index}).
+(\ref{app:artifact-index}).
 
 \begin{table}[t]
 \centering
@@ -1390,7 +1390,7 @@ confidence distributions it is essentially zero, or slightly negative at
 moderate $T$. We therefore do not evaluate it on synthetic
 distributions. Instead we use the empirical top-label confidence
 distribution of each of the 60 main-grid cells
-(Appendix~\ref{app:artifact-index}), relabel each cell as
+(\ref{app:artifact-index}), relabel each cell as
 perfectly calibrated by resampling $y \sim \mathrm{Bernoulli}(c)$ at its
 own confidence $c$ (three draws per cell), and report the band across
 cells. This removes any freedom to choose a distribution that suits the
@@ -1455,21 +1455,21 @@ implications of the ``floor artefact'' hypothesis, using the
 source-fitted temperature $T$ recovered per cell from the TS-component
 ablation under the corrected label encoding.
 
-\paragraph{(i) Direction.} The floor contributes negatively to
+\paragraph{(i) Direction} The floor contributes negatively to
 $\Delta\text{ECE}_{\text{OOD}}$ in $90$--$100\%$ of cells at every
 $T \neq 1$ (Sec.~\ref{sec:noise_floor}), so the hypothesis predicts a
 systematically \emph{negative} endpoint. The observed mean is
 $+0.0093$, positive in 45/60 cells (point count $=$ CI count).
 
-\paragraph{(ii) Sign pattern with $T$.} In the post-retrain data
+\paragraph{(ii) Sign pattern with $T$} In the post-retrain data
 $T \in [0.932, 1.181]$ (median $1.043$; no cell reaches $T \geq 2$), and
 $\mathrm{sign}(\Delta\text{ECE}_{\text{OOD}}) = \mathrm{sign}(T - 1)$ in
 \emph{60/60} cells: all 45 cells with $T \geq 1$ are positive (mean
 $+0.0144$) and all 15 cells with $T < 1$ are negative (mean $-0.0058$).
 This is the direction temperature scaling is expected to have --- $T>1$
 softens an over-confident target and lowers its ECE, while $T<1$ sharpens
-it and raises ECE --- and it supplies a unified mechanism for the ten
-counter-examples of Sec.~\ref{sec:counter}: they are exactly the ten
+it and raises ECE --- and it supplies a unified mechanism for the fifteen
+counter-examples of Sec.~\ref{sec:counter}: they are exactly the fifteen
 cells with $T<1$, including the extreme CPSC$\rightarrow$Chapman /
 ResNet1D / seed~44 case ($T = 0.932$,
 $\Delta\text{ECE}_{\text{OOD}} = -0.0168$), the sharpest sharpening in
@@ -1484,7 +1484,7 @@ here is therefore \emph{explanatory} (it accounts for the sign of every
 cell) rather than \emph{exclusionary}; the exclusion of the floor
 hypothesis rests on (i), (iii), and the mechanism test below.
 
-\paragraph{(iii) Magnitude strata.} Under an additive floor the endpoint
+\paragraph{(iii) Magnitude strata} Under an additive floor the endpoint
 should be \emph{smaller} where the floor is larger.
 $\text{floor}_{\text{hi}}(T)$ reaches the mean effect only for
 $T \geq 1.25$; on the fresh grid no cell reaches $1.25$, so we split at
@@ -1500,7 +1500,7 @@ bounds. This stratum comparison is nevertheless weaker evidence than
 (i)--(ii), because $\text{floor}_{\text{hi}}$ is monotone in $T$ on this
 side while the endpoint's growth with $T$ is partly mechanical.
 
-\paragraph{(iv) Negative control and additivity.} The independent
+\paragraph{(iv) Negative control and additivity} The independent
 ablation channel (same SmoothECE family) changes by $-0.0093$ on average
 and changes sign across cells ($-0.031$ to $+0.017$), so the metric has
 no systematic positive push. The floor at the cells' own temperatures
@@ -1511,7 +1511,7 @@ temperature leaves $+0.0085$, i.e.\ $91\%$ of the original $+0.0093$. The
 floor is therefore not a cell-level additive offset, and we do not
 subtract it per cell.
 
-\paragraph{Consistency check.} The endpoint also rises with $T$ (OLS
+\paragraph{Consistency check} The endpoint also rises with $T$ (OLS
 slope $+0.208$, $R^2 = 0.955$ over the 60 cells). We report this but do
 not rely on it: $T = 1$ is a fixed point at which the endpoint vanishes
 by construction, so part of this relation is mechanical. Its role here
@@ -1701,7 +1701,7 @@ calibration benefit should be deployed at all.
 The pre-registered NCV (Sec.~\ref{sec:ncv_methods}) is BH-FDR corrected
 ($q=0.05$) across the two secondary endpoints (DCR, NCV).
 
-\paragraph{Registered-unit delivery (patient-level BCa).} The
+\paragraph{Registered-unit delivery (patient-level BCa)} The
 registered unit --- the main endpoint's patient-level cluster paired
 bootstrap ($B=10{,}000$, BCa) --- is now computed directly: the script
 re-derives per-patient paired decision variables from the shipped E3
@@ -1724,7 +1724,7 @@ side is flat: NCV $+0.000040$, CI $[-0.000065, +0.000148]$ and DCR
 $+0.000093$, CI $[-0.000143, +0.000327]$ both cover zero ($p = 0.46$ /
 $0.43$) --- no ID decision-cost penalty.
 
-\paragraph{Unit-sensitivity (disclosed).} The two delivered units
+\paragraph{Unit-sensitivity (disclosed)} The two delivered units
 disagree in strength. The patient-weighted pooled bootstrap above
 pools all target patients, weight $\propto$ cell size; the
 equal-weight 12-stratum $t$ (each of the 12 pair$\times$architecture
@@ -1837,31 +1837,6 @@ vs.\ $0.4842$--$0.5051$, seeds 42--44, 46); lowest OOD raw ECE
 shortage); and negative decay ($-0.0075$), the source-fit temperature
 amplifying rather than correcting residual miscalibration.
 
-Counter-example 2: Chapman$\rightarrow$CPSC / ResNet1D / seed 43.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0006$ (CI $[-0.0006, -0.0006]$), marginal
-($|\Delta\text{ECE}_{\text{OOD}}|<0.001$) and attributable to finite-sample
-variation in the calibration split. The OOD raw ECE is $0.3144$ (the
-$0.4779$ in earlier drafts is the OOD \emph{accuracy}); the mechanism is
-seed-level variation, not room shortage.
-
-Counter-example 3: Chapman$\rightarrow$PTB-XL / InceptionTime / seed 42.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0025$ (CI $[-0.0035, -0.0016]$); OOD
-accuracy is the lowest across the 5 seeds ($0.4655$) and
-$\Delta\text{ECE}_{\text{ID}}=+0.0004$ is near zero, so the temperature is
-well-tuned to ID but mismatched to the PTB-XL target.
-
-Counter-example 4: Chapman$\rightarrow$PTB-XL / ResNet1D / seed 45.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0036$ (CI $[-0.0036, -0.0035]$); OOD
-accuracy is $0.5041$ and $\Delta\text{ECE}_{\text{ID}}=-0.0010$ is slightly
-negative, so the seed-45 backbone is already well-calibrated on ID,
-leaving nothing to correct.
-
-Counter-example 5: CPSC$\rightarrow$Chapman / ResNet1D / seed 42.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0010$ (CI $[-0.0012, -0.0008]$), marginal
-($|\Delta\text{ECE}_{\text{OOD}}|<0.002$); the seed-42 backbone has OOD
-accuracy $0.6147$, low OOD raw ECE ($0.0649$), and minimal calibration
-room.
-
 Counter-example 6: CPSC$\rightarrow$Chapman / ResNet1D / seed 44.
 $\Delta\text{ECE}_{\text{OOD}}=-0.0168$ (CI $[-0.0170, -0.0165]$), the
 largest-magnitude counter-example, with
@@ -1871,45 +1846,7 @@ and the temperature fit over-corrects slightly. Its OOD
 accuracy ($0.5725$) is the lowest across the 5 seeds. CE6 exhibits a
 distinct \emph{over-correction} mechanism (TS on an already-well-calibrated
 distribution degrades both ID and OOD calibration), unlike the ``low OOD
-accuracy + large gap'' mechanism of the other 9.
-
-Counter-example 7: CPSC$\rightarrow$PTB-XL / InceptionTime / seed 43.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0057$ (CI $[-0.0058, -0.0054]$). This
-cell is the lingering trace of the checkpoint-independence
-repair (Limitation~(xxi)): the pre-repair run had reused the
-CPSC$\rightarrow$Chapman model here and reported $+0.0203$, so the
-positive benefit at this cell was an artefact of a shared source model;
-the $T_{\text{src}}=0.975$ mechanism persists in the independent retrain.
-Three conditions co-occur: OOD accuracy $0.4656$ ($\leq 0.50$); the
-lowest OOD raw ECE of the direction ($0.1505$, so there is comparatively
-little room to correct); and negative decay ($-0.0038$), the source-fit
-temperature sharpening rather than softening the target.
-
-Counter-example 8: CPSC$\rightarrow$PTB-XL / ResNet1D / seed 43.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0050$ (CI $[-0.0051, -0.0049]$); OOD
-accuracy is the lowest across the 5 seeds ($0.3877$) and decay is
-$-0.0098$ (temperature mismatch to the PTB-XL target).
-
-Counter-example 9: CPSC$\rightarrow$PTB-XL / ResNet1D / seed 44.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0049$ (CI $[-0.0049, -0.0048]$); OOD
-accuracy is $0.3929$ (second-lowest) and
-$\Delta\text{ECE}_{\text{ID}}=-0.0032$ is slightly negative, leaving
-nothing to correct.
-
-Counter-example 10: PTB-XL$\rightarrow$Chapman / InceptionTime / seed 44
-(the PTB-XL-source cell retrained in the 2026-10-07 repair; the
-pre-repair counter-example here was seed~46).
-$\Delta\text{ECE}_{\text{OOD}}=-0.0033$ (CI $[-0.0034, -0.0032]$); OOD
-accuracy $0.4956$ is the lowest across the seeds seen ($0.4956$--$0.609$)
-and $\Delta\text{ECE}_{\text{ID}}=-0.0025$ is slightly negative, again
-leaving little to correct.
-
-Counter-example 11: PTB-XL$\rightarrow$CPSC / InceptionTime / seed 42.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0083$ (CI $[-0.0089, -0.0074]$); OOD
-accuracy is $0.5839$, \emph{above} the CPSC majority-class baseline
-($0.528$), and $\Delta\text{ECE}_{\text{ID}}=+0.0052$ is positive --- the
-failure is a pure seed-level temperature mis-transfer
-($T_{\text{src}}<1$) with full discrimination intact.
+accuracy + large gap'' mechanism of the other fourteen.
 
 Counter-example 12: PTB-XL$\rightarrow$CPSC / InceptionTime / seed 45.
 $\Delta\text{ECE}_{\text{OOD}}=-0.0123$ (CI $[-0.0132, -0.0106]$); OOD
@@ -1917,20 +1854,45 @@ accuracy $0.6101$ (well above baseline) and
 $\Delta\text{ECE}_{\text{ID}}=-0.0056$: the sharpest sharpening case in
 the direction.
 
-Counter-example 13: PTB-XL$\rightarrow$CPSC / ResNet1D / seed 42.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0069$ (CI $[-0.0079, -0.0052]$); OOD
-accuracy $0.5615$ (above baseline),
-$\Delta\text{ECE}_{\text{ID}}=-0.0057$.
+The remaining twelve counter-examples are tabulated cell by cell in
+Table~\ref{tab:ce15}; their per-cell narratives ship in the
+Supplementary Materials (\S3).
 
-Counter-example 14: PTB-XL$\rightarrow$CPSC / ResNet1D / seed 45.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0057$ (CI $[-0.0059, -0.0054]$); OOD
-accuracy $0.5746$ (above baseline),
-$\Delta\text{ECE}_{\text{ID}}=-0.0036$.
-
-Counter-example 15: PTB-XL$\rightarrow$CPSC / ResNet1D / seed 46.
-$\Delta\text{ECE}_{\text{OOD}}=-0.0048$ (CI $[-0.0051, -0.0041]$); OOD
-accuracy $0.5727$ (above baseline),
-$\Delta\text{ECE}_{\text{ID}}=-0.0022$.
+\begin{table}[tb]
+\centering
+\caption{The fifteen counter-examples, cell by cell. ID order is the
+canonical order of \texttt{results/counterexample\_discrimination.json}
+(the artifact the manuscript cites); per-cell narratives for the twelve
+non-tabulated paragraphs ship in the Supplementary Materials. $\Delta$ECE
+and 95\% CIs from the primary-endpoint table; OOD accuracy from the
+per-experiment checkpoint artifacts; $T_{\text{src}}$ = source-fitted
+temperature. Class census: seven ``low acc'' (OOD accuracy
+$\leq 0.50$), eight seed-level temperature mis-transfers, of which CE6
+is the over-correction case.}
+\label{tab:ce15}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llrrrrl}
+\toprule
+ID & Cell & $\Delta$ECE$_{\text{OOD}}$ & 95\% CI & OOD acc & $T_{\text{src}}$ & Class \\
+\midrule
+CE1 & Chap$\to$CPSC / IT / s45 & $-0.0056$ & $[-0.0058,-0.0055]$ & 0.4711 & 0.970 & low acc \\
+CE2 & Chap$\to$CPSC / RN / s43 & $-0.0006$ & $[-0.0006,-0.0006]$ & 0.4779 & 0.997 & low acc \\
+CE3 & Chap$\to$PTB-XL / IT / s42 & $-0.0025$ & $[-0.0035,-0.0016]$ & 0.4655 & 0.984 & low acc \\
+CE4 & Chap$\to$PTB-XL / RN / s45 & $-0.0036$ & $[-0.0036,-0.0035]$ & 0.5041 & 0.988 & T mis-transfer \\
+CE5 & CPSC$\to$Chap / RN / s42 & $-0.0010$ & $[-0.0012,-0.0008]$ & 0.6147 & 0.993 & T mis-transfer \\
+CE6 & CPSC$\to$Chap / RN / s44 & $-0.0168$ & $[-0.0170,-0.0165]$ & 0.5725 & 0.932 & over-correction \\
+CE7 & CPSC$\to$PTB-XL / IT / s43 & $-0.0057$ & $[-0.0058,-0.0054]$ & 0.4656 & 0.975 & low acc \\
+CE8 & CPSC$\to$PTB-XL / RN / s43 & $-0.0050$ & $[-0.0051,-0.0049]$ & 0.3877 & 0.980 & low acc \\
+CE9 & CPSC$\to$PTB-XL / RN / s44 & $-0.0049$ & $[-0.0049,-0.0048]$ & 0.3929 & 0.981 & low acc \\
+CE10 & PTB-XL$\to$Chap / IT / s44 & $-0.0033$ & $[-0.0034,-0.0032]$ & 0.4956 & 0.990 & low acc \\
+CE11 & PTB-XL$\to$CPSC / IT / s42 & $-0.0083$ & $[-0.0089,-0.0074]$ & 0.5839 & 0.967 & T mis-transfer \\
+CE12 & PTB-XL$\to$CPSC / IT / s45 & $-0.0123$ & $[-0.0132,-0.0106]$ & 0.6101 & 0.953 & T mis-transfer \\
+CE13 & PTB-XL$\to$CPSC / RN / s42 & $-0.0069$ & $[-0.0079,-0.0052]$ & 0.5615 & 0.970 & T mis-transfer \\
+CE14 & PTB-XL$\to$CPSC / RN / s45 & $-0.0057$ & $[-0.0059,-0.0054]$ & 0.5746 & 0.978 & T mis-transfer \\
+CE15 & PTB-XL$\to$CPSC / RN / s46 & $-0.0048$ & $[-0.0051,-0.0041]$ & 0.5727 & 0.981 & T mis-transfer \\
+\bottomrule
+\end{tabular}}
+\end{table}
 
 Common pattern: all fifteen counter-examples co-occur with non-positive
 decay, and seven of the fifteen also with OOD accuracy $\leq 0.50$,
@@ -1990,7 +1952,7 @@ val-ECE early-stopping deviation discovered and repaired on
 early-stopping monitor observed pseudo-low ECE on a training subset,
 and the repair cuts the ID mean by $58\%$
 ($+0.0082 \rightarrow +0.0034$; a registered deviation, see
-Limitations (xi) and Sec.~\ref{sec:repair}).
+Limitations (xi) and \ref{sec:repair}).
 Under this branch, protocol A1.4.2 restores the decay contrast
 $=\Delta\text{ECE}_{\text{OOD}}-\Delta\text{ECE}_{\text{ID}}$ as an
 exploratory endpoint, and C1 is qualified: the OOD benefit is about
@@ -1998,7 +1960,7 @@ $2.7\times$ the ID benefit rather than an exclusively OOD effect. The
 ID-vs-OOD asymmetry is therefore a \emph{difference in magnitude}
 between two positive benefits, not presence versus absence.
 
-\paragraph{Materiality (no MDE).} No minimum detectable difference or
+\paragraph{Materiality (no MDE)} No minimum detectable difference or
 equivalence margin is pre-registered, so the paper does not claim
 clinical materiality for a $+0.0093$ mean gain ($\approx 0.9$
 SmoothECE percentage points, $\approx 4.6\%$ of the mean raw error
@@ -2313,8 +2275,9 @@ multi-threshold permutation test on NCV.
 \section{Conclusion}
 \label{sec:conclusion}
 % ============================================================================
-We pre-registered and validated a multi-seed calibration boundary study
-of temperature scaling (TS) in cross-corpus ECG transfer. \textbf{(C1)}
+We followed a study-period protocol with archived amendments and
+validated a multi-seed calibration boundary study of temperature scaling
+(TS) in cross-corpus ECG transfer. \textbf{(C1)}
 OOD benefit: 45/60 seed experiments support
 $\Delta\text{ECE}_{\text{OOD}}>0$ (75.0\%; InceptionTime 24/30 = 80.0\%,
 ResNet1D 21/30 = 70.0\%) on all 6 directions. \textbf{(C2)} ID boundary:
@@ -2397,7 +2360,7 @@ one-sided normal. The A2 amendment is archived in
 \texttt{docs/PROTOCOL\_AMENDMENT\_A2\_}\allowbreak\texttt{FAMILY\_REDUCTION.md}.
 
 \paragraph{Residual selection risk and the 156-family deliverable
-(disclosed).} Both A1 and A2 move the analysis in the direction of the
+(disclosed)} Both A1 and A2 move the analysis in the direction of the
 observed effect: the OOD contrast is the larger one, and reducing the
 family from 156 to 12 raises BH power. A1 was keyed to a registered
 trigger (the pilot's near-zero $\Delta\text{ECE}_{\text{ID}}$) and
@@ -2502,7 +2465,7 @@ PTB-XL training pipeline found that its early-stopping validation patients
 remained in the training loader; the stem fix was verified with
 \texttt{export\_splits.py}-level cross-checks, all twenty cells trained
 from a PTB-XL source were retrained, and every downstream result family
-was recomputed (Sec.~\ref{sec:repair}; Limitation~(xi)). The
+was recomputed (\ref{sec:repair}; Limitation~(xi)). The
 values reported here --- fifteen counter-examples, 45/60 (38/60 excluding
 seven degenerate-CI support cells), mean $+0.009339$ with InceptionTime
 24/30 --- therefore differ from the frozen registration by both events.
@@ -2555,6 +2518,7 @@ after (xix)); it was \emph{not} covered by the 09-17 deviation entries.
 
 \section{Artifact index}
 \label{app:artifact-index}
+\setcounter{table}{0}
 
 Table~\ref{tab:artifact-index} maps the repository artifacts cited
 in this manuscript to the sections that use them. Files marked
@@ -2576,7 +2540,7 @@ Artifact & Used in \\
 \texttt{results/samplelevel\_ts\_60cells.csv} (adaptive-TS per-cell deliverable) & Sec.~5.3 (ATS paragraph) \\
 \texttt{results/c4\_resnet1d\_8method.csv} (8-method delivered rows) & Sec.~5.3, Table~\ref{tab:methods} \\
 \texttt{results/robustness\_val\_8method\_perbranch\_recheck.csv} (per-branch correctness recheck) & Sec.~5.3; semantics notice \\
-\texttt{results/deployment\_780grid\_recompute.csv}, \texttt{results/l2\_shift\_full\_780cells\_detail.csv} & Sec.~5.6, Tables~\ref{tab:deploy_sens}, \ref{tab:trivial} \\
+\texttt{results/deployment\_780grid\_recompute.csv} (+ 780-cell detail CSV) & Sec.~5.6, Tables~\ref{tab:deploy_sens}, \ref{tab:trivial} \\
 \texttt{results/s2\_dose\_response.csv} (labeling-budget dose--response) & Sec.~5.7, Table~\ref{tab:s2_dose} \\
 \texttt{results/noise\_floor\_curve.csv} & Sec.~5.8 \\
 \texttt{results/counterexample\_discrimination.csv}/\texttt{.json} & Sec.~6.1 (discrimination experiment) \\
@@ -2586,16 +2550,16 @@ Artifact & Used in \\
 \texttt{results/real\_prior\_recovery.csv}/\texttt{\_summary.json} & Honesty item~1 \\
 \texttt{results/discrimination\_metrics\_60exp.csv} (AUROC/AUPRC) & Sec.~6 (discrimination block) \\
 \texttt{results/decomposition\_validation\_n20000.csv} & Sec.~5.4 \\
-\texttt{results/rebuild\_shapley\_crossfit.\{csv,json\}}, \texttt{results/rebuild\_shapley\_slopeT.\{csv,json\}} & Sec.~5.11 \\
+\texttt{results/rebuild\_shapley\_\{crossfit,slopeT\}.\{csv,json\}} & Sec.~5.11 \\
 \texttt{scripts/train.py}, \texttt{scripts/export\_splits.py} (leak-fixed code line) & Sec.~4.1, post-registration repair \\
 \texttt{scripts/verify\_release\_results.py} (12-check release gate) & repository; cited in Code availability \\
-\texttt{scripts/recheck\_method\_semantics.py}, \texttt{scripts/samplelevel\_ts.py}, \texttt{scripts/recompute\_deployment\_780grid.py} & Sec.~5.3, Sec.~5.6 \\
-\texttt{docs/EXPERIMENT\_PROTOCOL.md}, amendments A1--A4 & Sec.~4, Appendix~\ref{app:provenance} \\
-\texttt{results/DO\_NOT\_QUOTE.md} (do-not-quote gate) & Appendix~\ref{app:artifact-index} (this table) \\
+\texttt{scripts/recheck\_method\_semantics.py} (+ samplelevel, deployment recompute scripts) & Sec.~5.3, Sec.~5.6 \\
+\texttt{docs/EXPERIMENT\_PROTOCOL.md}, amendments A1--A4 & Sec.~4, \ref{app:provenance} \\
+\texttt{results/DO\_NOT\_QUOTE.md} (do-not-quote gate) & \ref{app:artifact-index} (this table) \\
 \bottomrule
 \end{tabular}
 \end{table}
-\section*{Honesty Declaration (5 items, adversarial audit product)}
+\section{Honesty Declaration (adversarial audit product)}
 \label{sec:honesty}
 % ============================================================================
 \begin{enumerate}
@@ -2604,7 +2568,7 @@ Artifact & Used in \\
     recovery registered as deferred (protocol \S13, item~7) has since
     been delivered on the real 60-cell grid and re-run on the
     post-retrain caches
-    (Appendix~\ref{app:artifact-index}): with target labels withheld,
+    (\ref{app:artifact-index}): with target labels withheld,
     BBSE reduces the prior-recovery error from $0.1916$ (source-prior
     baseline) to $0.1109$ --- a $42.1\%$ relative reduction, better than
     the baseline in 56/60 cells, positive in 6/6 transfer pairs. No
@@ -2650,7 +2614,7 @@ The PTB-XL \cite{wagner2020ptbxl}, Chapman--Shaoxing
 \cite{liu2018cpsc,physionet2020cpsc} datasets are publicly
 available via PhysioNet under their respective licenses. The
 pre-registered protocol v2.1-A1, its hash manifest
-(Appendix~\ref{app:artifact-index}), the revision A1 document,
+(\ref{app:artifact-index}), the revision A1 document,
 and the full per-experiment result files
 (\texttt{checkpoints/transfer/**/}\allowbreak\texttt{transfer\_result.json},
 \texttt{results/*.csv}) are included with the submission as
@@ -2675,10 +2639,9 @@ determine the data configuration used in every experiment.
 The protocol, the amendments (A1, A2, A3, A4), and the per-file
 archival-status report are publicly archived at
 \url{https://doi.org/10.17605/OSF.IO/53H64} and ship with the repository
-(\texttt{docs/}); the full provenance record --- the retrospective-
-registration disclosure, the manifest chronology, and the two
+(\texttt{docs/}); the full provenance record --- the retrospective registration disclosure, the manifest chronology, and the two
 post-registration repairs --- is consolidated in
-Appendix~\ref{app:provenance}.
+\ref{app:provenance}.
 \section*{CRediT authorship contribution statement}
 \textbf{Toni Guan:} Conceptualization, Methodology, Software, Validation,
 Formal analysis, Investigation, Data curation, Writing -- original draft,
